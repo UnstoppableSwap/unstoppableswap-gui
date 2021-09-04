@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles, Box, Typography, Chip } from '@material-ui/core';
-import { satsToBtc } from '../convert-utils';
-import { Provider } from '../store';
+import { satsToBtc } from '../../convert-utils';
+import { Provider } from '../../store';
 
 const useStyles = makeStyles((theme) => ({
   title: {

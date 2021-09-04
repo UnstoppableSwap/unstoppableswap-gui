@@ -16,7 +16,7 @@ import {
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import ProviderInfo from './ProviderInfo';
-import useStore, { Provider } from '../store';
+import useStore, { Provider } from '../../store';
 
 const useStyles = makeStyles({
   dialogContent: {
