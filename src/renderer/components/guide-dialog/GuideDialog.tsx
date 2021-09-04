@@ -1,6 +1,6 @@
 import React from 'react';
 import { Dialog, useMediaQuery, useTheme } from '@material-ui/core';
-import useStore from '../store';
+import useStore from '../../store';
 import FirstPage from './pages/FirstPage';
 
 function CurrentPage({ page }: { page: number }) {

@@ -12,9 +12,9 @@ import {
 import InputAdornment from '@material-ui/core/InputAdornment';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
-import useStore, { Provider } from './store';
+import useStore, { Provider } from '../store';
 import ProviderSelect from './provider-dialog/ProviderSelect';
-import { satsToBtc } from './convert-utils';
+import { satsToBtc } from '../convert-utils';
 import ProviderSubmitDialog from './provider-dialog/ProviderSubmitDialog';
 
 const useStyles = makeStyles((theme) => ({

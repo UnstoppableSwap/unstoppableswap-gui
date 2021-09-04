@@ -7,7 +7,7 @@ import {
 } from '@material-ui/core';
 import { Alert, AlertTitle } from '@material-ui/lab';
 import React, { ChangeEvent, useState } from 'react';
-import useStore, { Provider } from '../../store';
+import useStore, { Provider } from '../../../store';
 import GuideDialogTitle from '../GuideDialogTitle';
 
 function isXmrAddressValid(address: string, testnet: boolean) {
