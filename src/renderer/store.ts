@@ -10,6 +10,7 @@ export interface Provider {
   uptimeSeconds: number;
   downtimeSeconds: number;
   age: number;
+  relevancy: number;
 }
 
 export interface Dialog {
