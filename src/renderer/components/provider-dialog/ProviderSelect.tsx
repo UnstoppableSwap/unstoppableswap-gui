@@ -8,7 +8,7 @@ import {
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import React, { useState } from 'react';
 import ProviderInfo from './ProviderInfo';
-import useStore, { Provider } from '../../store';
+import useStore, { ExtendedProvider } from '../../store';
 import ProviderSelectDialog from './ProviderSelectDialog';
 import ProviderSubmitDialog from './ProviderSubmitDialog';
 
@@ -31,7 +31,7 @@ export default function ProviderSelect() {
   const classes = useStyles();
   const currentProvider = useStore(
     (state) => state.currentProvider
-  ) as Provider;
+  ) as ExtendedProvider;
 
   const [selectDialogOpen, setSelectDialogOpen] = useState(false);
   const [submitDialogOpen, setSubmitDialogOpen] = useState(false);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles, Box, Typography, Chip } from '@material-ui/core';
-import { satsToBtc } from '../../convert-utils';
-import { Provider } from '../../store';
+import { satsToBtc } from '../../../swap/utils/unit-utils';
+import { ExtendedProvider } from '../../store';
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -25,11 +25,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-type ProviderInfoProps = {
-  provider: Provider;
-};
-
-export default function ProviderInfo({ provider }: ProviderInfoProps) {
+export default function ProviderInfo({
+  provider,
+}: {
+  provider: ExtendedProvider;
+}) {
   const classes = useStyles();
   const uptime = Math.round(
     (provider.uptimeSeconds /

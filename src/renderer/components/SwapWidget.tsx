@@ -12,10 +12,11 @@ import {
 import InputAdornment from '@material-ui/core/InputAdornment';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
-import useStore, { Provider } from '../store';
+import useStore, { ExtendedProvider } from '../store';
 import ProviderSelect from './provider-dialog/ProviderSelect';
-import { satsToBtc } from '../convert-utils';
+import { satsToBtc } from '../../swap/utils/unit-utils';
 import ProviderSubmitDialog from './provider-dialog/ProviderSubmitDialog';
+import SwapInitDialog from './swap-dialog/init/SwapInitDialog';
 
 const useStyles = makeStyles((theme) => ({
   outer: {
@@ -61,10 +62,9 @@ function Title() {
   );
 }
 
-function HasProviderSwapWidget({ provider }: { provider: Provider }) {
+function HasProviderSwapWidget({ provider }: { provider: ExtendedProvider }) {
   const classes = useStyles();
-  const setDialog = useStore((state) => state.setDialog);
-  const dialog = useStore((state) => state.dialog);
+  const [showDialog, setShowDialog] = useState(false);
 
   const [btcFieldValue, setBtcFieldValue] = useState(0.02);
   const [xmrFieldValue, setXmrFieldValue] = useState(1);
@@ -102,15 +102,8 @@ function HasProviderSwapWidget({ provider }: { provider: Provider }) {
   }
 
   function handleGuideDialogOpen() {
-    const parsedBtcAmount = Number(btcFieldValue);
-
     if (!getBtcFieldError()) {
-      setDialog({
-        ...dialog,
-        amount: parsedBtcAmount,
-        open: true,
-        page: 0,
-      });
+      setShowDialog(true);
     }
   }
 
@@ -163,6 +156,7 @@ function HasProviderSwapWidget({ provider }: { provider: Provider }) {
         <SwapHorizIcon className={classes.swapIcon} />
         Swap
       </Fab>
+      <SwapInitDialog open={showDialog} onClose={() => setShowDialog(false)} />
     </Box>
   );
 }

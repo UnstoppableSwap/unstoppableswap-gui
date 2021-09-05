@@ -1,9 +1,14 @@
 import create from 'zustand';
+// eslint-disable-next-line import/no-cycle
+import { SwapState } from '../swap/swap-state-machine';
 
 export interface Provider {
   multiAddr: string;
   peerId: string;
   testnet: boolean;
+}
+
+export interface ExtendedProvider extends Provider {
   price: number;
   minSwapAmount: number;
   maxSwapAmount: number;
@@ -13,26 +18,18 @@ export interface Provider {
   relevancy: number;
 }
 
-export interface Dialog {
-  amount: number;
-  open: boolean;
-  page: number;
-  payoutAddress: string | null;
-  refundAddress: string | null;
-}
-
 interface State {
-  providerList: Provider[];
-  setProviderList: (list: Provider[]) => void;
-  currentProvider: Provider | null;
-  setCurrentProvider: (provider: Provider) => void;
-  dialog: Dialog;
-  setDialog: (dialog: Dialog) => void;
+  providerList: ExtendedProvider[];
+  setProviderList: (list: ExtendedProvider[]) => void;
+  currentProvider: ExtendedProvider | null;
+  setCurrentProvider: (provider: ExtendedProvider) => void;
+  swapState: SwapState | null;
+  setSwapState: (newState: SwapState | null) => void;
 }
 
 const useStore = create<State>((set) => ({
   providerList: [],
-  setProviderList: (list: Provider[]) => {
+  setProviderList: (list: ExtendedProvider[]) => {
     set((state: State) => {
       if (state.currentProvider !== null) {
         return {
@@ -52,18 +49,12 @@ const useStore = create<State>((set) => ({
     });
   },
   currentProvider: null,
-  setCurrentProvider: (provider: Provider) => {
+  setCurrentProvider: (provider: ExtendedProvider) => {
     set({ currentProvider: provider });
   },
-  dialog: {
-    amount: 0,
-    open: false,
-    page: 0,
-    payoutAddress: null,
-    refundAddress: null,
-  },
-  setDialog: (dialog) => {
-    set({ dialog });
+  swapState: null,
+  setSwapState: (newState) => {
+    set({ swapState: newState });
   },
 }));
 
