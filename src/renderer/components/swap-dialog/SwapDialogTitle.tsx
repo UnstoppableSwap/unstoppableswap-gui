@@ -12,7 +12,7 @@ type GuideDialogTitleProps = {
   title: string;
 };
 
-export default function GuideDialogTitle({ title }: GuideDialogTitleProps) {
+export default function SwapDialogTitle({ title }: GuideDialogTitleProps) {
   const classes = useStyles();
 
   return (
