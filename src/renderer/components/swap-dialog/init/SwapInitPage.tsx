@@ -8,41 +8,38 @@ import {
 import { Alert, AlertTitle } from '@material-ui/lab';
 import React, { ChangeEvent, useState } from 'react';
 import useStore, { Provider } from '../../../store';
-import GuideDialogTitle from '../GuideDialogTitle';
-
-function isXmrAddressValid(address: string, testnet: boolean) {
-  const re = testnet
-    ? '[57][0-9AB][1-9A-HJ-NP-Za-km-z]{93}'
-    : '[48][0-9AB][1-9A-HJ-NP-Za-km-z]{93}';
-  return new RegExp(`(?:^${re}$)`).test(address);
-}
-
-function isBtcAddressValid(address: string, testnet: boolean) {
-  const re = testnet
-    ? '(tb1)[a-zA-HJ-NP-Z0-9]{25,49}'
-    : '(bc1)[a-zA-HJ-NP-Z0-9]{25,49}';
-  return new RegExp(`(?:^${re}$)`).test(address);
-}
+import SwapDialogTitle from '../SwapDialogTitle';
+import {
+  isBtcAddressValid,
+  isXmrAddressValid,
+} from '../../../../swap/utils/crypto-utils';
+import { startSwap } from '../../../../swap/swap-process-manager';
 
 const useStyles = makeStyles((theme) => ({
   alertBox: {
     marginTop: theme.spacing(1),
   },
-  payoutAddressField: {
+  redeemAddressField: {
     marginBottom: theme.spacing(2),
   },
 }));
 
-export default function FirstPage() {
+type FirstPageProps = {
+  onClose: () => void;
+};
+
+export default function SwapInitPage({ onClose }: FirstPageProps) {
   const classes = useStyles();
 
-  const setDialog = useStore((state) => state.setDialog);
-  const dialog = useStore((state) => state.dialog);
   const currentProvider = useStore(
     (state) => state.currentProvider
   ) as Provider;
-  const [payoutAddress, setPayoutAddress] = useState('');
-  const [refundAddress, setRefundAddress] = useState('');
+  const [redeemAddress, setPayoutAddress] = useState(
+    '59McWTPGc745SRWrSMoh8oTjoXoQq6sPUgKZ66dQWXuKFQ2q19h9gvhJNZcFTizcnT12r63NFgHiGd6gBCjabzmzHAMoyD6'
+  );
+  const [refundAddress, setRefundAddress] = useState(
+    'tb1qw508d6qejxtdg4y5r3zarvary0c5xw7kxpjzsx'
+  );
 
   function handlePayoutChange(event: ChangeEvent<HTMLInputElement>) {
     let text = event.target.value.trim();
@@ -57,45 +54,44 @@ export default function FirstPage() {
     setRefundAddress(text);
   }
 
-  function getPayoutAddressError() {
-    if (
-      isXmrAddressValid(payoutAddress, currentProvider.testnet) ||
-      payoutAddress.length < 5
-    ) {
+  function getRedeemAddressError() {
+    if (isXmrAddressValid(redeemAddress, currentProvider.testnet)) {
       return null;
     }
     return 'Not a valid monero address';
   }
 
-  const getRefundAddressError = () => {
-    if (
-      isBtcAddressValid(refundAddress, currentProvider.testnet) ||
-      refundAddress.length < 5
-    ) {
+  function getRefundAddressError() {
+    if (isBtcAddressValid(refundAddress, currentProvider.testnet)) {
       return null;
     }
     return `Only bech32 addresses are supported. They begin with "${
       currentProvider.testnet ? 'tb1' : 'bc1'
     }"`;
-  };
+  }
+
+  function handleSwapStart() {
+    startSwap(currentProvider, redeemAddress, refundAddress);
+    onClose();
+  }
 
   return (
     <>
-      <GuideDialogTitle title="Enter your addresses" />
+      <SwapDialogTitle title="Enter your addresses" />
       <DialogContent dividers>
         <TextField
           variant="outlined"
           label="Monero payout address"
-          value={payoutAddress}
+          value={redeemAddress}
           onChange={handlePayoutChange}
-          error={!!getPayoutAddressError()}
+          error={Boolean(getRedeemAddressError() && redeemAddress.length > 5)}
           fullWidth
-          className={classes.payoutAddressField}
+          className={classes.redeemAddressField}
           placeholder={
             currentProvider.testnet ? '59McWTPGc745...' : '888tNkZrPN6J...'
           }
           helperText={
-            getPayoutAddressError() ||
+            getRedeemAddressError() ||
             'The moneroj will be sent to this address'
           }
         />
@@ -105,7 +101,7 @@ export default function FirstPage() {
           label="Bitcoin refund address"
           value={refundAddress}
           onChange={handleRefundChange}
-          error={!!getRefundAddressError()}
+          error={Boolean(getRefundAddressError() && refundAddress.length > 5)}
           fullWidth
           placeholder={
             currentProvider.testnet ? 'tb1q4aelwalu...' : 'bc18ociqZ9mZ...'
@@ -132,8 +128,16 @@ export default function FirstPage() {
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={() => setDialog({ ...dialog, open: false })}>
+        <Button onClick={onClose} variant="text">
           Cancel
+        </Button>
+        <Button
+          disabled={Boolean(getRedeemAddressError() || getRefundAddressError())}
+          onClick={handleSwapStart}
+          color="primary"
+          variant="contained"
+        >
+          Next
         </Button>
       </DialogActions>
     </>

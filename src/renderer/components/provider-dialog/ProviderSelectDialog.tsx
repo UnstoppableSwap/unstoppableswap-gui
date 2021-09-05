@@ -16,7 +16,7 @@ import {
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import ProviderInfo from './ProviderInfo';
-import useStore, { Provider } from '../../store';
+import useStore, { ExtendedProvider } from '../../store';
 
 const useStyles = makeStyles({
   dialogContent: {
@@ -41,7 +41,7 @@ export default function ProviderSelectDialog({
   const theme = useTheme();
   const smallDevice = useMediaQuery(theme.breakpoints.down('sm'));
 
-  function handleProviderChange(provider: Provider) {
+  function handleProviderChange(provider: ExtendedProvider) {
     setCurrentProvider(provider);
     onClose();
   }
