@@ -15,5 +15,7 @@
     "postinstall": "yarn electron-rebuild && yarn link-modules"
   },
   "license": "MIT",
-  "dependencies": {}
+  "dependencies": {
+    "download": "^8.0.0"
+  }
 }

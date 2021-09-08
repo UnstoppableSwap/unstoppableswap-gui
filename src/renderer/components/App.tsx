@@ -3,7 +3,7 @@ import { Box, makeStyles, CssBaseline } from '@material-ui/core';
 import { createTheme, ThemeProvider } from '@material-ui/core/styles';
 import indigo from '@material-ui/core/colors/indigo';
 import SwapWidget from './SwapWidget';
-import GuideDialog from './guide-dialog/GuideDialog';
+import SwapInitDialog from './swap-dialog/state/SwapStateDialog';
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -36,7 +36,7 @@ export default function App() {
       <CssBaseline />
       <Box className={classes.content}>
         <SwapWidget />
-        <GuideDialog />
+        <SwapInitDialog />
       </Box>
     </ThemeProvider>
   );
