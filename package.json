@@ -83,7 +83,8 @@
     "publish": {
       "provider": "github",
       "owner": "binarybaron",
-      "repo": "unstoppableswap-gui"
+      "repo": "unstoppableswap-gui",
+      "releaseType": "draft"
     }
   },
   "repository": {
