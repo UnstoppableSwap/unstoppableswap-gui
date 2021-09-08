@@ -30,8 +30,8 @@
     ]
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.erb.ElectronReact",
+    "productName": "UnstoppableSwap-GUI",
+    "appId": "net.unstoppableswap.gui",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
     "files": [
@@ -82,8 +82,8 @@
     ],
     "publish": {
       "provider": "github",
-      "owner": "electron-react-boilerplate",
-      "repo": "electron-react-boilerplate"
+      "owner": "binarybaron",
+      "repo": "unstoppableswap-gui"
     }
   },
   "repository": {
