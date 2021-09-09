@@ -8,26 +8,31 @@ export function handleSwapProcessExit(
   exitCode: number | null,
   exitSignal?: NodeJS.Signals | null
 ): SwapState | null {
-  if (exitCode === 1) {
-    return <SwapStateFailed>{
+  if (exitCode === null) {
+    return <SwapState>{
       ...prevState,
-      state: 'failed',
-      reason: `Swap process excited unexpectedly. Exit Code: ${exitCode} Exit Signal: ${exitSignal}`,
+      running: false,
     };
   }
-  return null;
+  return <SwapStateFailed>{
+    ...prevState,
+    state: 'failed',
+    reason: `Swap process excited unexpectedly. Exit Code: ${exitCode} Exit Signal: ${exitSignal}`,
+    running: false,
+  };
 }
 
 export function handleBinaryDownloadStatusUpdate({
   totalDownloadedBytes,
   contentLengthBytes,
   binaryInfo,
-}: BinaryDownloadStatus): SwapState {
-  return <SwapStatePreparingBinary>{
+}: BinaryDownloadStatus): SwapStatePreparingBinary {
+  return {
     state: 'preparing binary',
     totalDownloadedBytes,
     contentLengthBytes,
     binaryInfo,
+    running: false,
   };
 }
 
@@ -245,6 +250,7 @@ type StateName =
 
 export interface SwapState {
   state: StateName;
+  running: boolean;
 }
 
 export interface SwapStatePreparingBinary extends SwapState {

@@ -145,6 +145,7 @@ export async function startSwap(
     provider,
     refundAddress,
     redeemAddress,
+    running: true,
   };
 
   setState(state);

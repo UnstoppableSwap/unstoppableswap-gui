@@ -56,7 +56,7 @@ function Title() {
   return (
     <Box className={classes.header}>
       <Typography variant="h5" className={classes.headerText}>
-        Swap BTC for XMR
+        Trade
       </Typography>
     </Box>
   );
