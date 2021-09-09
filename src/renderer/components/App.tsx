@@ -1,9 +1,9 @@
 import React from 'react';
 import { Box, makeStyles, CssBaseline } from '@material-ui/core';
 import { createTheme, ThemeProvider } from '@material-ui/core/styles';
-import indigo from '@material-ui/core/colors/indigo';
 import SwapWidget from './SwapWidget';
-import SwapInitDialog from './swap-dialog/state/SwapStateDialog';
+import SwapStateDialog from './swap-dialog/state/SwapStateDialog';
+import Header from './Header';
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -18,15 +18,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const theme = createTheme({
-  palette: {
-    type: 'dark',
-    primary: {
-      main: '#f4511e',
-    },
-    secondary: indigo,
-  },
-});
+const theme = createTheme({});
 
 export default function App() {
   const classes = useStyles();
@@ -34,9 +26,10 @@ export default function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <Header />
       <Box className={classes.content}>
         <SwapWidget />
-        <SwapInitDialog />
+        <SwapStateDialog />
       </Box>
     </ThemeProvider>
   );
