@@ -5,9 +5,9 @@ import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 import downloadSwapBinary, { BinaryDownloadStatus } from './downloader';
 import useStore, { Provider } from '../renderer/store';
 import {
-  getNextState,
-  handleBinaryDownloadStatusUpdate,
-  handleSwapProcessExit,
+  reduceSwapLog,
+  reduceBinaryDownloadStatusUpdate,
+  reduceSwapProcessExit,
   SwapLog,
   SwapState,
   SwapStateInitiated,
@@ -43,7 +43,7 @@ function handleSwapLog(logText: string) {
       const swapLog = parsedLog as SwapLog;
       const prevState = getState();
 
-      const nextState = getNextState(prevState, swapLog);
+      const nextState = reduceSwapLog(prevState, swapLog);
 
       console.log('next state', nextState);
 
@@ -67,7 +67,7 @@ export async function startSwap(
   const binaryInfo = await downloadSwapBinary(
     appDataPath,
     (status: BinaryDownloadStatus) => {
-      const newState = handleBinaryDownloadStatusUpdate(status);
+      const newState = reduceBinaryDownloadStatusUpdate(status);
       setState(newState);
     }
   );
@@ -136,7 +136,7 @@ export async function startSwap(
 
   swapProcess.on('exit', (code, signal) => {
     console.log(`Swap process excited Code: ${code} Signal: ${signal}`);
-    const nextState = handleSwapProcessExit(getState(), code, signal);
+    const nextState = reduceSwapProcessExit(getState(), code, signal);
     setState(nextState);
   });
 
@@ -145,6 +145,7 @@ export async function startSwap(
     provider,
     refundAddress,
     redeemAddress,
+    running: true,
   };
 
   setState(state);

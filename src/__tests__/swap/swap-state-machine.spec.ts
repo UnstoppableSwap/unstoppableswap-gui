@@ -118,6 +118,7 @@ test('should infer correct states from happy-path logs', () => {
     redeemAddress: 'tb1qw508d6qejxtdg4y5r3zarvary0c5xw7kxpjzsx',
     refundAddress:
       '59McWTPGc745SRWrSMoh8oTjoXoQq6sPUgKZ66dQWXuKFQ2q19h9gvhJNZcFTizcnT12r63NFgHiGd6gBCjabzmzHAMoyD6',
+    running: true,
   };
 
   const actualReceivedQuoteState: SwapState = getNextState(
