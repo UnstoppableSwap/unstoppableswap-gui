@@ -35,7 +35,9 @@ export default function PreparingBinaryPage({
 }: PreparingBinaryPageProps) {
   return (
     <>
-      <Typography>Downloading latest binary from Github...</Typography>
+      <Typography variant="h5">
+        Downloading latest binary from Github...
+      </Typography>
       <LinearProgressWithLabel
         value={(state.totalDownloadedBytes / state.contentLengthBytes) * 100}
       />

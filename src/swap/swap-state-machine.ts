@@ -8,18 +8,16 @@ export function handleSwapProcessExit(
   exitCode: number | null,
   exitSignal?: NodeJS.Signals | null
 ): SwapState | null {
-  if (exitCode === null) {
-    return <SwapState>{
-      ...prevState,
-      running: false,
-    };
-  }
-  return <SwapStateFailed>{
+  const nextState: SwapStateProcessExited = {
     ...prevState,
-    state: 'failed',
-    reason: `Swap process excited unexpectedly. Exit Code: ${exitCode} Exit Signal: ${exitSignal}`,
+    prevState,
+    state: 'process excited',
+    exitCode,
+    exitSignal,
     running: false,
   };
+
+  return nextState;
 }
 
 export function handleBinaryDownloadStatusUpdate({
@@ -27,13 +25,14 @@ export function handleBinaryDownloadStatusUpdate({
   contentLengthBytes,
   binaryInfo,
 }: BinaryDownloadStatus): SwapStatePreparingBinary {
-  return {
+  const nextState: SwapStatePreparingBinary = {
     state: 'preparing binary',
     totalDownloadedBytes,
     contentLengthBytes,
     binaryInfo,
     running: false,
   };
+  return nextState;
 }
 
 function handleReceivedQuoteLog(
@@ -48,13 +47,17 @@ function handleReceivedQuoteLog(
     log.fields.maximum_amount
   );
 
-  return <SwapStateReceivedQuote>{
-    ...prevState,
-    state: 'received quote',
-    price,
-    minimumSwapAmount,
-    maximumSwapAmount,
-  };
+  if (prevState.state === 'initiated') {
+    const nextState: SwapStateReceivedQuote = {
+      ...(prevState as SwapStateInitiated),
+      state: 'received quote',
+      price,
+      minimumSwapAmount,
+      maximumSwapAmount,
+    };
+    return nextState;
+  }
+  return prevState;
 }
 
 function handleWaitingForDepositLog(
@@ -64,12 +67,13 @@ function handleWaitingForDepositLog(
   const maxGiveable = extractAmountFromUnitString(log.fields.max_giveable);
   const depositAddress = log.fields.deposit_address;
 
-  return <SwapStateWaitingForBtcDeposit>{
+  const nextState: SwapStateWaitingForBtcDeposit = {
     ...(prevState as SwapStateReceivedQuote),
     state: 'waiting for btc deposit',
     maxGiveable,
     depositAddress,
   };
+  return nextState;
 }
 
 function handleReceivedBitcoinLog(
@@ -79,10 +83,11 @@ function handleReceivedBitcoinLog(
   const maxGiveable = extractAmountFromUnitString(log.fields.max_giveable);
 
   if (prevState.state === 'waiting for btc deposit') {
-    return <SwapStateWaitingForBtcDeposit>{
+    const nextState: SwapStateWaitingForBtcDeposit = {
       ...(prevState as SwapStateWaitingForBtcDeposit),
       maxGiveable,
     };
+    return nextState;
   }
   return prevState;
 }
@@ -95,13 +100,14 @@ function handleSwapStartedLog(
   const bobBtcLockTxFees = extractAmountFromUnitString(log.fields.fees);
   const id = log.fields.swap_id;
 
-  return <SwapStateStarted>{
+  const nextState: SwapStateStarted = {
     ...(prevState as SwapStateWaitingForBtcDeposit),
     state: 'started',
     btcAmount,
     bobBtcLockTxFees,
     id,
   };
+  return nextState;
 }
 
 function handlePublishedBtcTx(
@@ -111,12 +117,13 @@ function handlePublishedBtcTx(
   const bobBtcLockTxId = log.fields.txid;
 
   if (log.fields.kind === 'lock') {
-    return <SwapStateBtcLockInMempool>{
+    const nextState: SwapStateBtcLockInMempool = {
       ...(prevState as SwapStateStarted),
       state: 'btc lock tx is in mempool',
       bobBtcLockTxId,
       bobBtcLockTxConfirmations: 0,
     };
+    return nextState;
   }
   return prevState;
 }
@@ -136,10 +143,11 @@ function handleBtcTxStatusChanged(
           10
         );
 
-        return <SwapStateBtcLockInMempool>{
+        const nextState: SwapStateBtcLockInMempool = {
           ...prevBtcLockTxInMempoolState,
           bobBtcLockTxConfirmations,
         };
+        return nextState;
       }
     }
   }
@@ -151,12 +159,13 @@ function handleAliceLockedMonero(
   prevState: SwapState,
   log: SwapLogAliceLockedMonero
 ): SwapState {
-  return <SwapStateXmrLockInMempool>{
+  const nextState: SwapStateXmrLockInMempool = {
     ...(prevState as SwapStateBtcLockInMempool),
     state: 'xmr lock tx is in mempool',
     aliceXmrLockTxId: log.fields.txid,
     aliceXmrLockTxConfirmations: 0,
   };
+  return nextState;
 }
 
 function handleXmrLockTxStatusChange(
@@ -169,10 +178,11 @@ function handleXmrLockTxStatusChange(
       10
     );
 
-    return <SwapStateXmrLockInMempool>{
+    const nextState: SwapStateXmrLockInMempool = {
       ...(prevState as SwapStateXmrLockInMempool),
       aliceXmrLockTxConfirmations,
     };
+    return nextState;
   }
   return prevState;
 }
@@ -183,11 +193,12 @@ function handleRedeemedXmr(
 ): SwapState {
   const bobXmrRedeemTxId = log.fields.txid;
 
-  return <SwapStateXmrRedeemInMempool>{
+  const nextState: SwapStateXmrRedeemInMempool = {
     ...(prevState as SwapStateXmrLockInMempool),
     state: 'xmr redeem tx is in mempool',
     bobXmrRedeemTxId,
   };
+  return nextState;
 }
 
 export function getNextState(prevState: SwapState, log: SwapLog): SwapState {
@@ -246,7 +257,7 @@ type StateName =
   | 'xmr redeem tx is in mempool' // XmrRedeemed
   | 'btc is punished' // BtcPunished
   | 'safely aborted' // SafelyAborted
-  | 'failed';
+  | 'process excited';
 
 export interface SwapState {
   state: StateName;
@@ -296,8 +307,10 @@ export interface SwapStateXmrRedeemInMempool extends SwapStateXmrLockInMempool {
   bobXmrRedeemTxId: string;
 }
 
-export interface SwapStateFailed extends SwapState {
-  reason: string;
+export interface SwapStateProcessExited extends SwapState {
+  prevState: SwapState;
+  exitCode: number | null;
+  exitSignal: NodeJS.Signals | null | undefined;
 }
 
 export interface SwapLog {

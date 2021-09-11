@@ -53,7 +53,7 @@ export default function SwapStateStepper({ state }: SwapStateProgressBarProps) {
           <StepLabel
             optional={<Typography variant="caption">~20min</Typography>}
           >
-            Their lock their XMR
+            They lock their XMR
           </StepLabel>
         </Step>
         <Step key={3}>
