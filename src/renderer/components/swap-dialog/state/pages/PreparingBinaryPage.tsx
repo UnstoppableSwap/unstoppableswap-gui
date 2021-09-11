@@ -34,13 +34,13 @@ export default function PreparingBinaryPage({
   state,
 }: PreparingBinaryPageProps) {
   return (
-    <>
+    <Box>
       <Typography variant="h5">
         Downloading latest binary from Github...
       </Typography>
       <LinearProgressWithLabel
         value={(state.totalDownloadedBytes / state.contentLengthBytes) * 100}
       />
-    </>
+    </Box>
   );
 }

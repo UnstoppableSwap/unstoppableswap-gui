@@ -3,7 +3,7 @@ import { Provider } from '../renderer/store';
 import { extractAmountFromUnitString } from './utils/parse-utils';
 import { BinaryDownloadStatus, BinaryInfo } from './downloader';
 
-export function handleSwapProcessExit(
+export function reduceSwapProcessExit(
   prevState: SwapState,
   exitCode: number | null,
   exitSignal?: NodeJS.Signals | null
@@ -20,7 +20,7 @@ export function handleSwapProcessExit(
   return nextState;
 }
 
-export function handleBinaryDownloadStatusUpdate({
+export function reduceBinaryDownloadStatusUpdate({
   totalDownloadedBytes,
   contentLengthBytes,
   binaryInfo,
@@ -35,7 +35,7 @@ export function handleBinaryDownloadStatusUpdate({
   return nextState;
 }
 
-function handleReceivedQuoteLog(
+function reduceReceivedQuoteLog(
   prevState: SwapState,
   log: SwapLogReceivedQuote
 ): SwapState {
@@ -60,7 +60,7 @@ function handleReceivedQuoteLog(
   return prevState;
 }
 
-function handleWaitingForDepositLog(
+function reduceWaitingForDepositLog(
   prevState: SwapState,
   log: SwapLogWaitingForBtcDeposit
 ): SwapState {
@@ -76,7 +76,7 @@ function handleWaitingForDepositLog(
   return nextState;
 }
 
-function handleReceivedBitcoinLog(
+function reduceReceivedBitcoinLog(
   prevState: SwapState,
   log: SwapLogReceivedBitcoin
 ): SwapState {
@@ -92,7 +92,7 @@ function handleReceivedBitcoinLog(
   return prevState;
 }
 
-function handleSwapStartedLog(
+function reduceSwapStartedLog(
   prevState: SwapState,
   log: SwapLogStartedSwap
 ): SwapState {
@@ -110,7 +110,7 @@ function handleSwapStartedLog(
   return nextState;
 }
 
-function handlePublishedBtcTx(
+function reducePublishedBtcTx(
   prevState: SwapState,
   log: SwapLogPublishedBtcTx
 ): SwapState {
@@ -128,7 +128,7 @@ function handlePublishedBtcTx(
   return prevState;
 }
 
-function handleBtcTxStatusChanged(
+function reduceBtcTxStatusChanged(
   prevState: SwapState,
   log: SwapLogBtcTxStatusChanged
 ): SwapState {
@@ -155,7 +155,7 @@ function handleBtcTxStatusChanged(
   return prevState;
 }
 
-function handleAliceLockedMonero(
+function reduceAliceLockedMonero(
   prevState: SwapState,
   log: SwapLogAliceLockedMonero
 ): SwapState {
@@ -168,7 +168,7 @@ function handleAliceLockedMonero(
   return nextState;
 }
 
-function handleXmrLockTxStatusChange(
+function reduceXmrLockTxStatusChange(
   prevState: SwapState,
   log: SwapLogReceivedXmrLockTxConfirmation
 ): SwapState {
@@ -187,7 +187,7 @@ function handleXmrLockTxStatusChange(
   return prevState;
 }
 
-function handleRedeemedXmr(
+function reduceRedeemedXmr(
   prevState: SwapState,
   log: SwapLogRedeemedXmr
 ): SwapState {
@@ -201,40 +201,40 @@ function handleRedeemedXmr(
   return nextState;
 }
 
-export function getNextState(prevState: SwapState, log: SwapLog): SwapState {
+export function reduceSwapLog(prevState: SwapState, log: SwapLog): SwapState {
   switch (log.fields.message) {
     case 'Received quote':
-      return handleReceivedQuoteLog(prevState, log as SwapLogReceivedQuote);
+      return reduceReceivedQuoteLog(prevState, log as SwapLogReceivedQuote);
     case 'Waiting for Bitcoin deposit':
-      return handleWaitingForDepositLog(
+      return reduceWaitingForDepositLog(
         prevState,
         log as SwapLogWaitingForBtcDeposit
       );
     case 'Received Bitcoin':
-      return handleReceivedBitcoinLog(prevState, log as SwapLogReceivedBitcoin);
+      return reduceReceivedBitcoinLog(prevState, log as SwapLogReceivedBitcoin);
     case 'Starting new swap':
-      return handleSwapStartedLog(prevState, log as SwapLogStartedSwap);
+      return reduceSwapStartedLog(prevState, log as SwapLogStartedSwap);
     case 'Published Bitcoin transaction':
-      return handlePublishedBtcTx(prevState, log as SwapLogPublishedBtcTx);
+      return reducePublishedBtcTx(prevState, log as SwapLogPublishedBtcTx);
     case 'Bitcoin transaction status changed':
-      return handleBtcTxStatusChanged(
+      return reduceBtcTxStatusChanged(
         prevState,
         log as SwapLogBtcTxStatusChanged
       );
     case 'Alice locked Monero':
-      return handleAliceLockedMonero(
+      return reduceAliceLockedMonero(
         prevState,
         log as SwapLogAliceLockedMonero
       );
     case 'Received new confirmation for Monero lock tx':
-      return handleXmrLockTxStatusChange(
+      return reduceXmrLockTxStatusChange(
         prevState,
         log as SwapLogReceivedXmrLockTxConfirmation
       );
     case 'Successfully transferred XMR to wallet':
-      return handleRedeemedXmr(prevState, log as SwapLogRedeemedXmr);
+      return reduceRedeemedXmr(prevState, log as SwapLogRedeemedXmr);
     default:
-      console.error(`Swap log was not handled Log: ${JSON.stringify(log)}`);
+      console.error(`Swap log was not reduced Log: ${JSON.stringify(log)}`);
       return prevState;
   }
 }

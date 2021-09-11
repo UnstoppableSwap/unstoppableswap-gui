@@ -1,4 +1,4 @@
-import { Button, makeStyles, Paper, Typography } from '@material-ui/core';
+import { Box, Button, makeStyles, Paper, Typography } from '@material-ui/core';
 import React from 'react';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 import { clipboard } from 'electron';
@@ -27,7 +27,7 @@ export default function WaitingForBitcoinDepositPage({
   }
 
   return (
-    <>
+    <Box>
       <Typography variant="h5">
         Please deposit the Bitcoin you want to swap to the following address
       </Typography>
@@ -43,6 +43,6 @@ export default function WaitingForBitcoinDepositPage({
         </Button>
       </Paper>
       <Typography variant="body1">Max giveable: {state.maxGiveable}</Typography>
-    </>
+    </Box>
   );
 }

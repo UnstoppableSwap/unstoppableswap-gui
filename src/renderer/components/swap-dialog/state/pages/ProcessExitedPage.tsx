@@ -1,4 +1,4 @@
-import { Button, Typography } from '@material-ui/core';
+import { Box, Button, Typography } from '@material-ui/core';
 import React from 'react';
 import { SwapStateProcessExited } from '../../../../../swap/swap-state-machine';
 import useStore from '../../../../store';
@@ -17,14 +17,21 @@ export default function ProcessExitedPage({ state }: ProcessExitedPageProps) {
   }
 
   return (
-    <>
-      <Typography variant="h5">Swap process exited</Typography>
+    <Box>
+      <Typography variant="h5" align="center">
+        Swap exited
+      </Typography>
       {state.exitCode != null ? (
         <Typography variant="body1">Exit code: {state.exitCode}</Typography>
       ) : null}
-      <Button variant="contained" onClick={onClose}>
-        Close
-      </Button>
-    </>
+      <Box>
+        <Button variant="text" onClick={onClose}>
+          Show logs
+        </Button>
+        <Button variant="contained" onClick={onClose}>
+          Close
+        </Button>
+      </Box>
+    </Box>
   );
 }

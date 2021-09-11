@@ -1,9 +1,6 @@
-import { Link, Typography } from '@material-ui/core';
+import { Box, Link, Typography } from '@material-ui/core';
 import React from 'react';
-import {
-  SwapStateXmrLockInMempool,
-  SwapStateXmrRedeemInMempool,
-} from '../../../../../swap/swap-state-machine';
+import { SwapStateXmrRedeemInMempool } from '../../../../../swap/swap-state-machine';
 
 type XmrRedeemInMempoolPageProps = {
   state: SwapStateXmrRedeemInMempool;
@@ -13,7 +10,7 @@ export default function XmrRedeemInMempoolPage({
   state,
 }: XmrRedeemInMempoolPageProps) {
   return (
-    <>
+    <Box>
       <Typography variant="h5">
         Monero redeem transaction has been published
       </Typography>
@@ -30,6 +27,6 @@ export default function XmrRedeemInMempoolPage({
           {state.bobXmrRedeemTxId}
         </Link>
       </Typography>
-    </>
+    </Box>
   );
 }

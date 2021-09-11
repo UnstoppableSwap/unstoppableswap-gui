@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  Box,
   Button,
   DialogActions,
   DialogContent,
@@ -14,7 +13,6 @@ import {
   SwapStateInitiated,
   SwapStatePreparingBinary,
   SwapStateProcessExited,
-  SwapStateStarted,
   SwapStateWaitingForBtcDeposit,
   SwapStateXmrLockInMempool,
   SwapStateXmrRedeemInMempool,
@@ -53,7 +51,7 @@ function InnerContent({ state }: { state: SwapState }) {
         />
       );
     case 'started':
-      return <StartedPage state={state as SwapStateStarted} />;
+      return <StartedPage />;
     case 'btc lock tx is in mempool':
       return (
         <BitcoinLockTxInMempoolPage
@@ -90,12 +88,10 @@ export default function SwapStatePage({ state }: { state: SwapState }) {
 
   return (
     <>
-      <SwapDialogTitle title="Running swap" />
+      <SwapDialogTitle title="Swapping BTC for XMR" />
 
       <DialogContent dividers className={classes.content}>
-        <Box>
-          <InnerContent state={state} />
-        </Box>
+        <InnerContent state={state} />
         <SwapStateStepper state={state} />
       </DialogContent>
 

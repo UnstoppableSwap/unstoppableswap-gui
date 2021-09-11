@@ -149,7 +149,7 @@ function HasProviderSwapWidget({ provider }: { provider: ExtendedProvider }) {
       <ProviderSelect />
       <Fab
         variant="extended"
-        color="primary"
+        color="secondary"
         disabled={!!getBtcFieldError()}
         onClick={handleGuideDialogOpen}
       >
