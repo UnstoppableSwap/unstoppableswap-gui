@@ -101,6 +101,9 @@ export async function startSwap(
 
   swapProcess = spawn(`./${binaryInfo.name}`, spawnArgs, {
     cwd: appDataPath.toString(),
+    env: {
+      RUST_LOG: 'true',
+    },
   });
 
   console.log(
