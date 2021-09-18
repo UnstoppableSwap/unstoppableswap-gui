@@ -1,6 +1,6 @@
 import { Box, Link, Typography } from '@material-ui/core';
 import React from 'react';
-import { SwapStateXmrLockInMempool } from '../../../../../swap/swap-state-machine';
+import { SwapStateXmrLockInMempool } from '../../../../../models/store';
 
 type XmrLockTxInMempoolPageProps = {
   state: SwapStateXmrLockInMempool;

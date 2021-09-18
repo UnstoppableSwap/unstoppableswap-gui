@@ -26,7 +26,7 @@ export interface SwapLogWaitingForBtcDeposit extends SwapLog {
   };
 }
 
-export interface SwapLogReceivedBitcoin extends SwapLog {
+export interface SwapLogReceivedBtc extends SwapLog {
   fields: {
     message: 'Received Bitcoin';
     max_giveable: string;
@@ -36,7 +36,7 @@ export interface SwapLogReceivedBitcoin extends SwapLog {
 
 export interface SwapLogStartedSwap extends SwapLog {
   fields: {
-    message: 'Starting new swap';
+    message: 'Starting new store';
     amount: string;
     fees: string;
     swap_id: string;
@@ -59,7 +59,7 @@ export interface SwapLogBtcTxStatusChanged extends SwapLog {
   };
 }
 
-export interface SwapLogAliceLockedMonero extends SwapLog {
+export interface SwapLogAliceLockedXmr extends SwapLog {
   fields: {
     message: 'Alice locked Monero';
     txid: string;

@@ -5,23 +5,26 @@ import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 import downloadSwapBinary, { BinaryDownloadStatus } from './downloader';
 import { store } from '../store/store';
 import {
-  aliceLockedMoneroLog,
-  bitcoinTransactionStatusChangedLog,
+  addLog,
+  aliceLockedXmrLog,
+  btcTransactionStatusChangedLog,
   downloadProgressUpdate,
   initiateSwap,
   processExited,
-  publishedBitcoinTransactionLog,
+  publishedBtcTransactionLog,
+  receivedBtcLog,
   receivedQuoteLog,
   startingNewSwapLog,
-  transferedXmrToWalletLog,
-  waitingForBitcoinDepositLog,
+  transferredXmrToWalletLog,
+  waitingForBtcDepositLog,
   xmrLockStatusChangedLog,
 } from '../store/features/swap/swapSlice';
 import {
   SwapLog,
-  SwapLogAliceLockedMonero,
+  SwapLogAliceLockedXmr,
   SwapLogBtcTxStatusChanged,
   SwapLogPublishedBtcTx,
+  SwapLogReceivedBtc,
   SwapLogReceivedQuote,
   SwapLogReceivedXmrLockTxConfirmation,
   SwapLogRedeemedXmr,
@@ -51,32 +54,35 @@ function handleSwapLog(logText: string) {
     ) {
       const log = parsedLog as SwapLog;
 
+      store.dispatch(addLog(log));
+
       switch (log.fields.message) {
         case 'Received quote':
           store.dispatch(receivedQuoteLog(log as SwapLogReceivedQuote));
           break;
         case 'Waiting for Bitcoin deposit':
           store.dispatch(
-            waitingForBitcoinDepositLog(log as SwapLogWaitingForBtcDeposit)
+            waitingForBtcDepositLog(log as SwapLogWaitingForBtcDeposit)
           );
           break;
         case 'Received Bitcoin':
+          store.dispatch(receivedBtcLog(log as SwapLogReceivedBtc));
           break;
         case 'Starting new swap':
           store.dispatch(startingNewSwapLog(log as SwapLogStartedSwap));
           break;
         case 'Published Bitcoin transaction':
           store.dispatch(
-            publishedBitcoinTransactionLog(log as SwapLogPublishedBtcTx)
+            publishedBtcTransactionLog(log as SwapLogPublishedBtcTx)
           );
           break;
         case 'Bitcoin transaction status changed':
           store.dispatch(
-            bitcoinTransactionStatusChangedLog(log as SwapLogBtcTxStatusChanged)
+            btcTransactionStatusChangedLog(log as SwapLogBtcTxStatusChanged)
           );
           break;
         case 'Alice locked Monero':
-          store.dispatch(aliceLockedMoneroLog(log as SwapLogAliceLockedMonero));
+          store.dispatch(aliceLockedXmrLog(log as SwapLogAliceLockedXmr));
           break;
         case 'Received new confirmation for Monero lock tx':
           store.dispatch(
@@ -84,7 +90,7 @@ function handleSwapLog(logText: string) {
           );
           break;
         case 'Successfully transferred XMR to wallet':
-          store.dispatch(transferedXmrToWalletLog(log as SwapLogRedeemedXmr));
+          store.dispatch(transferredXmrToWalletLog(log as SwapLogRedeemedXmr));
           break;
         default:
           console.error(`Swap log was not reduced Log: ${JSON.stringify(log)}`);
@@ -175,8 +181,6 @@ export async function startSwap(
   store.dispatch(
     initiateSwap({
       provider,
-      refundAddress,
-      redeemAddress,
     })
   );
 }

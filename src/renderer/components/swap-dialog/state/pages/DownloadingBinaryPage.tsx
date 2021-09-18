@@ -5,7 +5,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import React from 'react';
-import { SwapStateDownloadingBinary } from '../../../../../swap/swap-state-machine';
+import { SwapStateDownloadingBinary } from '../../../../../models/store';
 
 function LinearProgressWithLabel({
   value,

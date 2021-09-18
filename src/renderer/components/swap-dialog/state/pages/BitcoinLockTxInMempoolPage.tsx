@@ -1,6 +1,7 @@
 import { Box, Link, Typography } from '@material-ui/core';
 import React from 'react';
-import { SwapStateBtcLockInMempool } from '../../../../../swap/swap-state-machine';
+import { SwapStateBtcLockInMempool } from '../../../../../models/store';
+import { useAppSelector } from '../../../../../store/hooks';
 
 type BitcoinLockTxInMempoolPageProps = {
   state: SwapStateBtcLockInMempool;
@@ -9,6 +10,8 @@ type BitcoinLockTxInMempoolPageProps = {
 export default function BitcoinLockTxInMempoolPage({
   state,
 }: BitcoinLockTxInMempoolPageProps) {
+  const provider = useAppSelector((s) => s.swap.provider);
+
   return (
     <Box>
       <Typography variant="h5">
@@ -18,7 +21,7 @@ export default function BitcoinLockTxInMempoolPage({
         TxId:{' '}
         <Link
           href={`https://blockchair.com/bitcoin${
-            state.provider.testnet ? '/testnet' : ''
+            provider?.testnet ? '/testnet' : ''
           }/transaction/${state.bobBtcLockTxId}`}
           target="_blank"
         >

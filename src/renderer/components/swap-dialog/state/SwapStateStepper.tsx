@@ -1,4 +1,5 @@
 import { Paper, Step, StepLabel, Stepper, Typography } from '@material-ui/core';
+import { SwapState, SwapStateType } from 'models/store';
 import React from 'react';
 
 type SwapStateProgressBarProps = {
@@ -6,22 +7,22 @@ type SwapStateProgressBarProps = {
 };
 
 function getActiveStep(state: SwapState) {
-  switch (state.state) {
-    case 'downloading binary':
+  switch (state.type) {
+    case SwapStateType.DOWNLOADING_BINARY:
       return 0;
-    case 'initiated':
+    case SwapStateType.INITIATED:
       return 0;
-    case 'received quote':
+    case SwapStateType.RECEIVED_QUOTE:
       return 0;
-    case 'waiting for btc deposit':
+    case SwapStateType.WAITING_FOR_BTC_DEPOSIT:
       return 1;
-    case 'started':
+    case SwapStateType.STARTED:
       return 1;
-    case 'btc lock tx is in mempool':
+    case SwapStateType.BTC_LOCK_TX_IN_MEMPOOL:
       return 1;
-    case 'xmr lock tx is in mempool':
+    case SwapStateType.XMR_LOCK_TX_IN_MEMPOOL:
       return 2;
-    case 'xmr redeem tx is in mempool':
+    case SwapStateType.XMR_REDEEM_IN_MEMPOOL:
       return 4;
     default:
       return 0;

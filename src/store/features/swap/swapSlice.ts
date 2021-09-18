@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { BinaryDownloadStatus } from '../../../swap/downloader';
 import { extractAmountFromUnitString } from '../../../swap/utils/parse-utils';
-import { RootState } from '../../store';
 import {
   Provider,
   Swap,
@@ -17,9 +16,11 @@ import {
   SwapStateXmrRedeemInMempool,
 } from '../../../models/store';
 import {
-  SwapLogAliceLockedMonero,
+  SwapLog,
+  SwapLogAliceLockedXmr,
   SwapLogBtcTxStatusChanged,
   SwapLogPublishedBtcTx,
+  SwapLogReceivedBtc,
   SwapLogReceivedQuote,
   SwapLogReceivedXmrLockTxConfirmation,
   SwapLogRedeemedXmr,
@@ -31,12 +32,17 @@ const initialState: Swap = {
   state: null,
   processRunning: false,
   logs: [],
+  provider: null,
 };
 
 export const swapSlice = createSlice({
   name: 'swap',
   initialState,
   reducers: {
+    addLog: (swap, action: PayloadAction<SwapLog>) => {
+      swap.logs.push(action.payload);
+    },
+    reset: () => initialState,
     downloadProgressUpdate: (
       swap,
       action: PayloadAction<BinaryDownloadStatus>
@@ -55,35 +61,16 @@ export const swapSlice = createSlice({
       swap,
       action: PayloadAction<{
         provider: Provider;
-        refundAddress: string;
-        redeemAddress: string;
       }>
     ) => {
       const nextState: SwapStateInitiated = {
         type: SwapStateType.INITIATED,
-        provider: action.payload.provider,
-        refundAddress: action.payload.refundAddress,
-        redeemAddress: action.payload.redeemAddress,
       };
 
       swap.processRunning = true;
       swap.state = nextState;
-    },
-    processExited: (
-      swap,
-      action: PayloadAction<{
-        exitCode: number | null;
-        exitSignal: NodeJS.Signals | null;
-      }>
-    ) => {
-      const nextState: SwapStateProcessExited = {
-        type: SwapStateType.PROCESS_EXITED,
-        exitSignal: action.payload.exitSignal,
-        exitCode: action.payload.exitCode,
-      };
-
-      swap.state = nextState;
-      swap.processRunning = false;
+      swap.logs = [];
+      swap.provider = action.payload.provider;
     },
     receivedQuoteLog: (swap, action: PayloadAction<SwapLogReceivedQuote>) => {
       const price = extractAmountFromUnitString(action.payload.fields.price);
@@ -103,7 +90,7 @@ export const swapSlice = createSlice({
 
       swap.state = nextState;
     },
-    waitingForBitcoinDepositLog: (
+    waitingForBtcDepositLog: (
       swap,
       action: PayloadAction<SwapLogWaitingForBtcDeposit>
     ) => {
@@ -119,6 +106,15 @@ export const swapSlice = createSlice({
       };
 
       swap.state = nextState;
+    },
+    receivedBtcLog: (swap, action: PayloadAction<SwapLogReceivedBtc>) => {
+      const maxGiveable = extractAmountFromUnitString(
+        action.payload.fields.max_giveable
+      );
+
+      if (swap.state?.type === SwapStateType.WAITING_FOR_BTC_DEPOSIT) {
+        (<SwapStateWaitingForBtcDeposit>swap.state).maxGiveable = maxGiveable;
+      }
     },
     startingNewSwapLog: (swap, action: PayloadAction<SwapLogStartedSwap>) => {
       const btcAmount = extractAmountFromUnitString(
@@ -137,7 +133,7 @@ export const swapSlice = createSlice({
 
       swap.state = nextState;
     },
-    publishedBitcoinTransactionLog: (
+    publishedBtcTransactionLog: (
       swap,
       action: PayloadAction<SwapLogPublishedBtcTx>
     ) => {
@@ -151,31 +147,24 @@ export const swapSlice = createSlice({
         swap.state = nextState;
       }
     },
-    bitcoinTransactionStatusChangedLog: (
+    btcTransactionStatusChangedLog: (
       swap,
       action: PayloadAction<SwapLogBtcTxStatusChanged>
     ) => {
-      if (swap.state) {
-        if (swap.state.type === SwapStateType.BTC_LOCK_TX_IN_MEMPOOL) {
-          const state = <SwapStateBtcLockInMempool>swap.state;
+      if (swap.state?.type === SwapStateType.BTC_LOCK_TX_IN_MEMPOOL) {
+        const state = <SwapStateBtcLockInMempool>swap.state;
 
-          if (state.bobBtcLockTxId === action.payload.fields.txid) {
-            if (action.payload.fields.new_status.startsWith('confirmed with')) {
-              const confirmations = Number.parseInt(
-                action.payload.fields.new_status.split(' ')[2],
-                10
-              );
-
-              state.bobBtcLockTxConfirmations = confirmations;
-            }
+        if (state.bobBtcLockTxId === action.payload.fields.txid) {
+          if (action.payload.fields.new_status.startsWith('confirmed with')) {
+            state.bobBtcLockTxConfirmations = Number.parseInt(
+              action.payload.fields.new_status.split(' ')[2],
+              10
+            );
           }
         }
       }
     },
-    aliceLockedMoneroLog: (
-      swap,
-      action: PayloadAction<SwapLogAliceLockedMonero>
-    ) => {
+    aliceLockedXmrLog: (swap, action: PayloadAction<SwapLogAliceLockedXmr>) => {
       const nextState: SwapStateXmrLockInMempool = {
         type: SwapStateType.XMR_LOCK_TX_IN_MEMPOOL,
         aliceXmrLockTxId: action.payload.fields.txid,
@@ -188,20 +177,18 @@ export const swapSlice = createSlice({
       swap,
       action: PayloadAction<SwapLogReceivedXmrLockTxConfirmation>
     ) => {
-      if (swap.state) {
-        if (swap.state.type === SwapStateType.XMR_LOCK_TX_IN_MEMPOOL) {
-          const state = <SwapStateXmrLockInMempool>swap.state;
+      if (swap.state?.type === SwapStateType.XMR_LOCK_TX_IN_MEMPOOL) {
+        const state = <SwapStateXmrLockInMempool>swap.state;
 
-          if (state.aliceXmrLockTxId === action.payload.fields.txid) {
-            state.aliceXmrLockTxConfirmations = Number.parseInt(
-              action.payload.fields.seen_confirmations,
-              10
-            );
-          }
+        if (state.aliceXmrLockTxId === action.payload.fields.txid) {
+          state.aliceXmrLockTxConfirmations = Number.parseInt(
+            action.payload.fields.seen_confirmations,
+            10
+          );
         }
       }
     },
-    transferedXmrToWalletLog: (
+    transferredXmrToWalletLog: (
       swap,
       action: PayloadAction<SwapLogRedeemedXmr>
     ) => {
@@ -212,23 +199,40 @@ export const swapSlice = createSlice({
 
       swap.state = nextState;
     },
+    processExited: (
+      swap,
+      action: PayloadAction<{
+        exitCode: number | null;
+        exitSignal: NodeJS.Signals | null;
+      }>
+    ) => {
+      const nextState: SwapStateProcessExited = {
+        type: SwapStateType.PROCESS_EXITED,
+        exitSignal: action.payload.exitSignal,
+        exitCode: action.payload.exitCode,
+      };
+
+      swap.state = nextState;
+      swap.processRunning = false;
+    },
   },
 });
-
-export const selectSwap = (state: RootState) => state.swap;
 
 export const {
   downloadProgressUpdate,
   receivedQuoteLog,
   startingNewSwapLog,
-  waitingForBitcoinDepositLog,
+  waitingForBtcDepositLog,
   initiateSwap,
   processExited,
-  publishedBitcoinTransactionLog,
-  bitcoinTransactionStatusChangedLog,
-  aliceLockedMoneroLog,
+  publishedBtcTransactionLog,
+  btcTransactionStatusChangedLog,
+  aliceLockedXmrLog,
   xmrLockStatusChangedLog,
-  transferedXmrToWalletLog,
+  transferredXmrToWalletLog,
+  receivedBtcLog,
+  addLog,
+  reset,
 } = swapSlice.actions;
 
 export default swapSlice.reducer;

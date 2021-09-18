@@ -8,10 +8,10 @@ export default function SwapStateDialog() {
   const smallDevice = useMediaQuery(theme.breakpoints.down('sm'));
   const swap = useAppSelector((state) => state.swap);
 
-  if (swap.state !== null) {
+  if (swap.state) {
     return (
       <Dialog
-        open={Boolean(swap)}
+        open
         onClose={() => {}}
         maxWidth="md"
         fullWidth

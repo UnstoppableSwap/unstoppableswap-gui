@@ -1,4 +1,5 @@
 import { BinaryInfo } from '../swap/downloader';
+import { SwapLog } from './swap';
 
 export interface Provider {
   multiAddr: string;
@@ -18,8 +19,9 @@ export interface ExtendedProvider extends Provider {
 
 export interface Swap {
   state: SwapState | null;
+  logs: SwapLog[];
   processRunning: boolean;
-  logs: string[];
+  provider: Provider | null;
 }
 
 export interface SwapState {
@@ -47,9 +49,6 @@ export interface SwapStateDownloadingBinary extends SwapState {
 
 export interface SwapStateInitiated extends SwapState {
   type: SwapStateType.INITIATED;
-  provider: Provider;
-  refundAddress: string;
-  redeemAddress: string;
 }
 
 export interface SwapStateReceivedQuote extends SwapState {

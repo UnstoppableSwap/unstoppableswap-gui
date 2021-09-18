@@ -2,7 +2,7 @@ import { Box, Button, makeStyles, Paper, Typography } from '@material-ui/core';
 import React from 'react';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 import { clipboard } from 'electron';
-import { SwapStateWaitingForBtcDeposit } from '../../../../../swap/swap-state-machine';
+import { SwapStateWaitingForBtcDeposit } from '../../../../../models/store';
 
 const useStyles = makeStyles((theme) => ({
   depositAddressOuter: {
@@ -13,13 +13,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-type WaitingForBitcoinDepositPageProps = {
+type WaitingForBtcDepositPageProps = {
   state: SwapStateWaitingForBtcDeposit;
 };
 
-export default function WaitingForBitcoinDepositPage({
+export default function WaitingForBtcDepositPage({
   state,
-}: WaitingForBitcoinDepositPageProps) {
+}: WaitingForBtcDepositPageProps) {
   const classes = useStyles();
 
   function handleDepositAddressCopy() {

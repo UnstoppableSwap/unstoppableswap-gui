@@ -7,13 +7,14 @@ import {
 } from '@material-ui/core';
 import { Alert, AlertTitle } from '@material-ui/lab';
 import React, { ChangeEvent, useState } from 'react';
-import useStore, { Provider } from '../../../store';
+import useStore from '../../../store';
 import SwapDialogTitle from '../SwapDialogTitle';
 import {
   isBtcAddressValid,
   isXmrAddressValid,
 } from '../../../../swap/utils/crypto-utils';
-import { startSwap } from '../../../../swap/swap-process-manager';
+import { startSwap } from '../../../../swap/swap-process';
+import { Provider } from '../../../../models/store';
 
 const useStyles = makeStyles((theme) => ({
   alertBox: {
