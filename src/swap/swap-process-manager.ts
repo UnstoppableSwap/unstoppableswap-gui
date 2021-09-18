@@ -3,15 +3,32 @@ import { PathLike, promises as fs } from 'fs';
 import { ipcRenderer } from 'electron';
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 import downloadSwapBinary, { BinaryDownloadStatus } from './downloader';
-import useStore, { Provider } from '../renderer/store';
+import { store } from '../store/store';
 import {
-  reduceSwapLog,
-  reduceBinaryDownloadStatusUpdate,
-  reduceSwapProcessExit,
+  aliceLockedMoneroLog,
+  bitcoinTransactionStatusChangedLog,
+  downloadProgressUpdate,
+  initiateSwap,
+  processExited,
+  publishedBitcoinTransactionLog,
+  receivedQuoteLog,
+  startingNewSwapLog,
+  transferedXmrToWalletLog,
+  waitingForBitcoinDepositLog,
+  xmrLockStatusChangedLog,
+} from '../store/features/swap/swapSlice';
+import {
   SwapLog,
-  SwapState,
-  SwapStateInitiated,
-} from './swap-state-machine';
+  SwapLogAliceLockedMonero,
+  SwapLogBtcTxStatusChanged,
+  SwapLogPublishedBtcTx,
+  SwapLogReceivedQuote,
+  SwapLogReceivedXmrLockTxConfirmation,
+  SwapLogRedeemedXmr,
+  SwapLogStartedSwap,
+  SwapLogWaitingForBtcDeposit,
+} from '../models/swap';
+import { Provider } from '../models/store';
 
 export async function getAppDataDir(): Promise<PathLike> {
   const appDataPath = await ipcRenderer.invoke('get-app-data-path');
@@ -24,14 +41,6 @@ export async function getAppDataDir(): Promise<PathLike> {
 
 let swapProcess: ChildProcessWithoutNullStreams | null = null;
 
-function setState(state: SwapState | null) {
-  useStore.getState().setSwapState(state);
-}
-
-function getState(): SwapState {
-  return <SwapState>useStore.getState().swapState;
-}
-
 function handleSwapLog(logText: string) {
   try {
     const parsedLog = JSON.parse(logText);
@@ -40,14 +49,46 @@ function handleSwapLog(logText: string) {
       ['DEBUG', 'INFO', 'WARN'].includes(parsedLog.level) &&
       parsedLog.fields.message
     ) {
-      const swapLog = parsedLog as SwapLog;
-      const prevState = getState();
+      const log = parsedLog as SwapLog;
 
-      const nextState = reduceSwapLog(prevState, swapLog);
-
-      console.log('next state', nextState);
-
-      setState(nextState);
+      switch (log.fields.message) {
+        case 'Received quote':
+          store.dispatch(receivedQuoteLog(log as SwapLogReceivedQuote));
+          break;
+        case 'Waiting for Bitcoin deposit':
+          store.dispatch(
+            waitingForBitcoinDepositLog(log as SwapLogWaitingForBtcDeposit)
+          );
+          break;
+        case 'Received Bitcoin':
+          break;
+        case 'Starting new swap':
+          store.dispatch(startingNewSwapLog(log as SwapLogStartedSwap));
+          break;
+        case 'Published Bitcoin transaction':
+          store.dispatch(
+            publishedBitcoinTransactionLog(log as SwapLogPublishedBtcTx)
+          );
+          break;
+        case 'Bitcoin transaction status changed':
+          store.dispatch(
+            bitcoinTransactionStatusChangedLog(log as SwapLogBtcTxStatusChanged)
+          );
+          break;
+        case 'Alice locked Monero':
+          store.dispatch(aliceLockedMoneroLog(log as SwapLogAliceLockedMonero));
+          break;
+        case 'Received new confirmation for Monero lock tx':
+          store.dispatch(
+            xmrLockStatusChangedLog(log as SwapLogReceivedXmrLockTxConfirmation)
+          );
+          break;
+        case 'Successfully transferred XMR to wallet':
+          store.dispatch(transferedXmrToWalletLog(log as SwapLogRedeemedXmr));
+          break;
+        default:
+          console.error(`Swap log was not reduced Log: ${JSON.stringify(log)}`);
+      }
     } else {
       throw new Error('Required properties are missing');
     }
@@ -67,11 +108,9 @@ export async function startSwap(
   const binaryInfo = await downloadSwapBinary(
     appDataPath,
     (status: BinaryDownloadStatus) => {
-      const newState = reduceBinaryDownloadStatusUpdate(status);
-      setState(newState);
+      store.dispatch(downloadProgressUpdate(status));
     }
   );
-
   const sellerIdentifier = `${provider.multiAddr}/p2p/${provider.peerId}`;
 
   const spawnArgs = provider.testnet
@@ -109,46 +148,37 @@ export async function startSwap(
     } Arguments: ${swapProcess.spawnargs.join(' ')}`
   );
 
-  swapProcess.stdout.setEncoding('utf8');
-  swapProcess.stderr.setEncoding('utf8');
-
-  swapProcess.stdout.on('data', (data) => {
-    data
-      .toString()
-      .split(/(\r?\n)/g)
-      .filter((s: string) => s.length > 4)
-      .forEach((line: string) => {
-        console.log(`Received stdout from swap process: ${line}`);
-        handleSwapLog(line);
-      });
-  });
-
-  swapProcess.stderr.on('data', (data) => {
-    data
-      .toString()
-      .split(/(\r?\n)/g)
-      .filter((s: string) => s.length > 4)
-      .forEach((line: string) => {
-        console.log(`Received stderr from swap process: ${line}`);
-        handleSwapLog(line);
-      });
+  [swapProcess.stderr, swapProcess.stdout].forEach((stream) => {
+    stream.setEncoding('utf8');
+    stream.on('data', (data) => {
+      data
+        .toString()
+        .split(/(\r?\n)/g)
+        .filter((s: string) => s.length > 4)
+        .forEach((line: string) => {
+          console.log(`Received stdout from swap process: ${line}`);
+          handleSwapLog(line);
+        });
+    });
   });
 
   swapProcess.on('exit', (code, signal) => {
     console.log(`Swap process excited Code: ${code} Signal: ${signal}`);
-    const nextState = reduceSwapProcessExit(getState(), code, signal);
-    setState(nextState);
+    store.dispatch(
+      processExited({
+        exitCode: code,
+        exitSignal: signal,
+      })
+    );
   });
 
-  const state: SwapStateInitiated = {
-    state: 'initiated',
-    provider,
-    refundAddress,
-    redeemAddress,
-    running: true,
-  };
-
-  setState(state);
+  store.dispatch(
+    initiateSwap({
+      provider,
+      refundAddress,
+      redeemAddress,
+    })
+  );
 }
 
 export function stopSwap() {

@@ -1,7 +1,32 @@
+/*
 // eslint-disable-next-line import/no-cycle
 import { Provider } from '../renderer/store';
 import { extractAmountFromUnitString } from './utils/parse-utils';
 import { BinaryDownloadStatus, BinaryInfo } from './downloader';
+import {
+  SwapLog,
+  SwapLogAliceLockedMonero,
+  SwapLogBtcTxStatusChanged,
+  SwapLogPublishedBtcTx,
+  SwapLogReceivedBitcoin,
+  SwapLogReceivedQuote,
+  SwapLogReceivedXmrLockTxConfirmation,
+  SwapLogRedeemedXmr,
+  SwapLogStartedSwap,
+  SwapLogWaitingForBtcDeposit,
+} from './swap-process-manager';
+
+enum StateType {
+  DOWNLOADING_BINARY = 'downloading binary',
+  INITIATED = 'initiated',
+  RECEIVED_QUOTE = 'received quote',
+  WAITING_FOR_BTC_DEPOSIT = 'waiting for btc deposit',
+  STARTED = 'started',
+  BTC_LOCK_TX_IN_MEMPOOL = 'btc lock tx is in mempool',
+  XMR_LOCK_TX_IN_MEMPOOL = 'xmr lock tx is in mempool',
+  XMR_REDEEM_IN_MEMPOOL = 'xmr redeem tx is in mempool',
+  PROCESS_EXITED = 'process exited',
+}
 
 export function reduceSwapProcessExit(
   prevState: SwapState,
@@ -11,7 +36,7 @@ export function reduceSwapProcessExit(
   const nextState: SwapStateProcessExited = {
     ...prevState,
     prevState,
-    state: 'process excited',
+    type: StateType.PROCESS_EXITED,
     exitCode,
     exitSignal,
     running: false,
@@ -24,9 +49,9 @@ export function reduceBinaryDownloadStatusUpdate({
   totalDownloadedBytes,
   contentLengthBytes,
   binaryInfo,
-}: BinaryDownloadStatus): SwapStatePreparingBinary {
-  const nextState: SwapStatePreparingBinary = {
-    state: 'preparing binary',
+}: BinaryDownloadStatus): SwapStateDownloadingBinary {
+  const nextState: SwapStateDownloadingBinary = {
+    state: 'downloading binary',
     totalDownloadedBytes,
     contentLengthBytes,
     binaryInfo,
@@ -195,7 +220,7 @@ function reduceRedeemedXmr(
 
   const nextState: SwapStateXmrRedeemInMempool = {
     ...(prevState as SwapStateXmrLockInMempool),
-    state: 'xmr redeem tx is in mempool',
+    type: StateType.XMR_REDEEM_IN_MEMPOOL,
     bobXmrRedeemTxId,
   };
   return nextState;
@@ -239,32 +264,12 @@ export function reduceSwapLog(prevState: SwapState, log: SwapLog): SwapState {
   }
 }
 
-type StateName =
-  | 'preparing binary'
-  | 'initiated'
-  | 'received quote' // Started, SwapStateStarted
-  | 'waiting for btc deposit'
-  | 'started'
-  | 'btc lock tx is in mempool' // SwapSetupCompleted
-  | 'btc is locked' // BtcLocked
-  | 'xmr lock tx is in mempool' // XmrLockProofReceived
-  | 'xmr is locked' // XmrLocked
-  | 'encrypted signature is sent' // EncSigSent
-  | 'btc is redeemed' // BtcRedeemed
-  | 'cancel timelock is expired' // CancelTimelockExpired
-  | 'btc is cancelled' // BtcCancelled
-  | 'btc is refunded' // BtcRefunded
-  | 'xmr redeem tx is in mempool' // XmrRedeemed
-  | 'btc is punished' // BtcPunished
-  | 'safely aborted' // SafelyAborted
-  | 'process excited';
-
 export interface SwapState {
-  state: StateName;
+  state: StateType;
   running: boolean;
 }
 
-export interface SwapStatePreparingBinary extends SwapState {
+export interface SwapStateDownloadingBinary extends SwapState {
   binaryInfo: BinaryInfo;
   totalDownloadedBytes: number;
   contentLengthBytes: number;
@@ -312,88 +317,4 @@ export interface SwapStateProcessExited extends SwapState {
   exitCode: number | null;
   exitSignal: NodeJS.Signals | null | undefined;
 }
-
-export interface SwapLog {
-  timestamp: string;
-  level: 'DEBUG' | 'INFO' | 'WARN';
-  fields: {
-    message: string;
-    [index: string]: unknown;
-  };
-}
-
-interface SwapLogReceivedQuote extends SwapLog {
-  fields: {
-    message: 'Received quote';
-    price: string;
-    minimum_amount: string;
-    maximum_amount: string;
-  };
-}
-
-interface SwapLogWaitingForBtcDeposit extends SwapLog {
-  fields: {
-    message: 'Waiting for Bitcoin deposit';
-    deposit_address: string;
-    max_giveable: string;
-    minimum_amount: string;
-    maximum_amount: string;
-  };
-}
-
-interface SwapLogReceivedBitcoin extends SwapLog {
-  fields: {
-    message: 'Received Bitcoin';
-    max_giveable: string;
-    new_balance: string;
-  };
-}
-
-interface SwapLogStartedSwap extends SwapLog {
-  fields: {
-    message: 'Starting new swap';
-    amount: string;
-    fees: string;
-    swap_id: string;
-  };
-}
-
-interface SwapLogPublishedBtcTx extends SwapLog {
-  fields: {
-    message: 'Published Bitcoin transaction';
-    txid: string;
-    kind: 'lock' | 'cancel' | 'withdraw';
-  };
-}
-
-interface SwapLogBtcTxStatusChanged extends SwapLog {
-  fields: {
-    message: 'Bitcoin transaction status changed';
-    txid: string;
-    new_status: string;
-  };
-}
-
-interface SwapLogAliceLockedMonero extends SwapLog {
-  fields: {
-    message: 'Alice locked Monero';
-    txid: string;
-  };
-}
-
-interface SwapLogReceivedXmrLockTxConfirmation extends SwapLog {
-  fields: {
-    message: 'Received new confirmation for Monero lock tx';
-    txid: string;
-    seen_confirmations: string;
-    needed_confirmations: string;
-  };
-}
-
-interface SwapLogRedeemedXmr extends SwapLog {
-  fields: {
-    message: 'Successfully transferred XMR to wallet';
-    monero_receive_address: string;
-    txid: string;
-  };
-}
+*/

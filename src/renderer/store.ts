@@ -1,22 +1,6 @@
 import create from 'zustand';
 // eslint-disable-next-line import/no-cycle
-import { SwapState } from '../swap/swap-state-machine';
-
-export interface Provider {
-  multiAddr: string;
-  peerId: string;
-  testnet: boolean;
-}
-
-export interface ExtendedProvider extends Provider {
-  price: number;
-  minSwapAmount: number;
-  maxSwapAmount: number;
-  uptimeSeconds: number;
-  downtimeSeconds: number;
-  age: number;
-  relevancy: number;
-}
+import { ExtendedProvider, SwapState } from '../models/store';
 
 interface State {
   providerList: ExtendedProvider[];

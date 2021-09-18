@@ -1,6 +1,5 @@
 import { Paper, Step, StepLabel, Stepper, Typography } from '@material-ui/core';
 import React from 'react';
-import { SwapState } from '../../../../swap/swap-state-machine';
 
 type SwapStateProgressBarProps = {
   state: SwapState;
@@ -8,7 +7,7 @@ type SwapStateProgressBarProps = {
 
 function getActiveStep(state: SwapState) {
   switch (state.state) {
-    case 'preparing binary':
+    case 'downloading binary':
       return 0;
     case 'initiated':
       return 0;

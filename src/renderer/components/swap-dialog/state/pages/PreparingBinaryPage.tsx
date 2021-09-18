@@ -5,7 +5,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import React from 'react';
-import { SwapStatePreparingBinary } from '../../../../../swap/swap-state-machine';
+import { SwapStateDownloadingBinary } from '../../../../../swap/swap-state-machine';
 
 function LinearProgressWithLabel({
   value,
@@ -26,13 +26,13 @@ function LinearProgressWithLabel({
   );
 }
 
-type PreparingBinaryPageProps = {
-  state: SwapStatePreparingBinary;
+type DownloadingBinaryPageProps = {
+  state: SwapStateDownloadingBinary;
 };
 
-export default function PreparingBinaryPage({
+export default function DownloadingBinaryPage({
   state,
-}: PreparingBinaryPageProps) {
+}: DownloadingBinaryPageProps) {
   return (
     <Box>
       <Typography variant="h5">
