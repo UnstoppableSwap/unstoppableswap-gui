@@ -9,7 +9,9 @@ type InitiatedPageProps = {
 export default function InitiatedPage({ state }: InitiatedPageProps) {
   return (
     <Box>
-      <Typography variant="h5">Connecting to swap provider</Typography>
+      <Typography variant="h5" align="center">
+        Requesting quote
+      </Typography>
       <CircularProgress />
     </Box>
   );

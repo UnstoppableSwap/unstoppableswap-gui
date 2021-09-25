@@ -35,7 +35,7 @@ export default function DownloadingBinaryPage({
 }: DownloadingBinaryPageProps) {
   return (
     <Box>
-      <Typography variant="h5">
+      <Typography variant="h5" align="center">
         Downloading latest binary from Github...
       </Typography>
       <LinearProgressWithLabel

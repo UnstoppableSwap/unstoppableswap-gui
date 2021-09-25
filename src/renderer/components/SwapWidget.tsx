@@ -12,11 +12,11 @@ import {
 import InputAdornment from '@material-ui/core/InputAdornment';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
-import useStore, { ExtendedProvider } from '../store';
 import ProviderSelect from './provider-dialog/ProviderSelect';
 import { satsToBtc } from '../../swap/utils/unit-utils';
 import ProviderSubmitDialog from './provider-dialog/ProviderSubmitDialog';
 import SwapInitDialog from './swap-dialog/init/SwapInitDialog';
+import { useAppSelector } from '../../store/hooks';
 
 const useStyles = makeStyles((theme) => ({
   outer: {
@@ -62,12 +62,21 @@ function Title() {
   );
 }
 
-function HasProviderSwapWidget({ provider }: { provider: ExtendedProvider }) {
+function HasProviderSwapWidget() {
   const classes = useStyles();
-  const [showDialog, setShowDialog] = useState(false);
 
+  const providers = useAppSelector((state) => state.providers);
+
+  const [showDialog, setShowDialog] = useState(false);
+  const [provider, setProvider] = useState(providers[0]);
   const [btcFieldValue, setBtcFieldValue] = useState(0.02);
   const [xmrFieldValue, setXmrFieldValue] = useState(1);
+
+  useEffect(() => {
+    setProvider(
+      providers.find((p) => p.peerId === provider.peerId) || providers[0]
+    );
+  }, [provider.peerId, providers, setProvider]);
 
   function onBtcAmountChange(event: ChangeEvent<HTMLInputElement>) {
     setBtcFieldValue(Number(event.target.value));
@@ -146,10 +155,10 @@ function HasProviderSwapWidget({ provider }: { provider: ExtendedProvider }) {
           endAdornment: <InputAdornment position="end">XMR</InputAdornment>,
         }}
       />
-      <ProviderSelect />
+      <ProviderSelect provider={provider} onProviderSelect={setProvider} />
       <Fab
         variant="extended"
-        color="secondary"
+        color="primary"
         disabled={!!getBtcFieldError()}
         onClick={handleGuideDialogOpen}
       >
@@ -187,18 +196,19 @@ function HasNoProviderSwapWidget() {
 
 export default function SwapWidget() {
   const classes = useStyles();
-  const currentProvider = useStore((state) => state.currentProvider);
+  const hasProviders = useAppSelector((state) => state.providers.length > 0);
 
-  if (currentProvider === null || currentProvider === undefined) {
+  if (hasProviders) {
     return (
       <Box className={classes.outer}>
-        <HasNoProviderSwapWidget />
+        <HasProviderSwapWidget />
       </Box>
     );
   }
+
   return (
     <Box className={classes.outer}>
-      <HasProviderSwapWidget provider={currentProvider} />
+      <HasNoProviderSwapWidget />
     </Box>
   );
 }

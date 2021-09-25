@@ -3,7 +3,7 @@ import {
   Button,
   DialogActions,
   DialogContent,
-  makeStyles,
+  makeStyles
 } from '@material-ui/core';
 import { reset } from 'store/features/swap/swapSlice';
 import SwapDialogTitle from '../SwapDialogTitle';
@@ -16,6 +16,7 @@ import {
   SwapStateDownloadingBinary,
   SwapStateInitiated,
   SwapStateProcessExited,
+  SwapStateReceivedQuote,
   SwapStateType,
   SwapStateWaitingForBtcDeposit,
   SwapStateXmrLockInMempool,
@@ -30,6 +31,7 @@ import BitcoinLockTxInMempoolPage from './pages/BitcoinLockTxInMempoolPage';
 import XmrLockTxInMempoolPage from './pages/XmrLockInMempoolPage';
 import ProcessExitedPage from './pages/ProcessExitedPage';
 import XmrRedeemInMempoolPage from './pages/XmrRedeemInMempoolPage';
+import ReceivedQuotePage from './pages/ReceivedQuotePage';
 
 const useStyles = makeStyles({
   content: {
@@ -49,6 +51,8 @@ function InnerContent({ state }: { state: SwapState }) {
       );
     case SwapStateType.INITIATED:
       return <InitiatedPage state={state as SwapStateInitiated} />;
+    case SwapStateType.RECEIVED_QUOTE:
+      return <ReceivedQuotePage state={state as SwapStateReceivedQuote} />;
     case SwapStateType.WAITING_FOR_BTC_DEPOSIT:
       return (
         <WaitingForBitcoinDepositPage

@@ -1,4 +1,4 @@
-import { Paper, Step, StepLabel, Stepper, Typography } from '@material-ui/core';
+import { Step, StepLabel, Stepper, Typography } from '@material-ui/core';
 import { SwapState, SwapStateType } from 'models/store';
 import React from 'react';
 
@@ -33,44 +33,32 @@ export default function SwapStateStepper({ state }: SwapStateProgressBarProps) {
   const activeStep = getActiveStep(state);
 
   return (
-    <Paper elevation={3}>
-      <Stepper activeStep={activeStep}>
-        <Step key={0}>
-          <StepLabel
-            optional={<Typography variant="caption">~1min</Typography>}
-          >
-            Starting swap
-          </StepLabel>
-        </Step>
-        <Step key={1}>
-          <StepLabel
-            optional={<Typography variant="caption">~20min</Typography>}
-          >
-            Locking your BTC
-          </StepLabel>
-        </Step>
-        <Step key={2}>
-          <StepLabel
-            optional={<Typography variant="caption">~20min</Typography>}
-          >
-            They lock their XMR
-          </StepLabel>
-        </Step>
-        <Step key={3}>
-          <StepLabel
-            optional={<Typography variant="caption">~5min</Typography>}
-          >
-            They redeem the BTC
-          </StepLabel>
-        </Step>
-        <Step key={4}>
-          <StepLabel
-            optional={<Typography variant="caption">~2min</Typography>}
-          >
-            Redeeming your XMR
-          </StepLabel>
-        </Step>
-      </Stepper>
-    </Paper>
+    <Stepper activeStep={activeStep}>
+      <Step key={0}>
+        <StepLabel optional={<Typography variant="caption">~1min</Typography>}>
+          Starting swap
+        </StepLabel>
+      </Step>
+      <Step key={1}>
+        <StepLabel optional={<Typography variant="caption">~20min</Typography>}>
+          Locking your BTC
+        </StepLabel>
+      </Step>
+      <Step key={2}>
+        <StepLabel optional={<Typography variant="caption">~20min</Typography>}>
+          They lock their XMR
+        </StepLabel>
+      </Step>
+      <Step key={3}>
+        <StepLabel optional={<Typography variant="caption">~5min</Typography>}>
+          They redeem the BTC
+        </StepLabel>
+      </Step>
+      <Step key={4}>
+        <StepLabel optional={<Typography variant="caption">~2min</Typography>}>
+          Redeeming your XMR
+        </StepLabel>
+      </Step>
+    </Stepper>
   );
 }

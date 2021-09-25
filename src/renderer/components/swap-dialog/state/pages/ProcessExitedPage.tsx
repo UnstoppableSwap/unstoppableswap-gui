@@ -36,7 +36,8 @@ export default function ProcessExitedPage({ state }: ProcessExitedPageProps) {
 
   return (
     <Box>
-      <Typography variant="h5">Swap process exited</Typography>
+      <Typography variant="h5" align="center">
+        Swap process exited</Typography>
       {state.exitCode != null ? (
         <Typography variant="body1">Exit code: {state.exitCode}</Typography>
       ) : null}

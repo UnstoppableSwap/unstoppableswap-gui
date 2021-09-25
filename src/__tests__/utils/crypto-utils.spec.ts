@@ -126,9 +126,9 @@ describe('btc address validation', () => {
     expect(isBtcAddressValid('2MzQwSSnBHWHqSAqtTVQ6v47XtaisrJa1Vc', true)).toBe(
       false
     );
-    expect(isBtcAddressValid('2MzQwSSnBHWHqSAqtTVQ6v47XtaisrJa1Vc', false)).toBe(
-      false
-    );
+    expect(
+      isBtcAddressValid('2MzQwSSnBHWHqSAqtTVQ6v47XtaisrJa1Vc', false)
+    ).toBe(false);
   });
 
   test('should detect valid mainnet p2sh address to be invalid for testnet and mainnet', () => {
@@ -141,11 +141,7 @@ describe('btc address validation', () => {
   });
 
   test('should detect invalid address to be invalid for testnet and mainnet', () => {
-    expect(isBtcAddressValid('73jdj2Mxjdj2929Mmcj399claMn', true)).toBe(
-      false
-    );
-    expect(isBtcAddressValid('73jdj2Mxjdj2929Mmcj399claMn', false)).toBe(
-      false
-    );
+    expect(isBtcAddressValid('73jdj2Mxjdj2929Mmcj399claMn', true)).toBe(false);
+    expect(isBtcAddressValid('73jdj2Mxjdj2929Mmcj399claMn', false)).toBe(false);
   });
 });
