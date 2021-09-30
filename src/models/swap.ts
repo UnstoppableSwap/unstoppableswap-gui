@@ -36,7 +36,7 @@ export interface SwapLogReceivedBtc extends SwapLog {
 
 export interface SwapLogStartedSwap extends SwapLog {
   fields: {
-    message: 'Starting new store';
+    message: 'Starting new swap';
     amount: string;
     fees: string;
     swap_id: string;

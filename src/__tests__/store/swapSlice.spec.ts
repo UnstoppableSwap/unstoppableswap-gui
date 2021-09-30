@@ -62,7 +62,7 @@ const mStartedSwapLog: SwapLogStartedSwap = {
   timestamp: '2021-09-05 03:41:03',
   level: 'INFO',
   fields: {
-    message: 'Starting new store',
+    message: 'Starting new swap',
     amount: '0.00099878 BTC',
     fees: '0.00000122 BTC',
     swap_id: '2a034c59-72bc-4b7b-839f-d32522099bcc',

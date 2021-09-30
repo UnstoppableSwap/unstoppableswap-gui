@@ -165,7 +165,11 @@ function HasProviderSwapWidget() {
         <SwapHorizIcon className={classes.swapIcon} />
         Swap
       </Fab>
-      <SwapInitDialog open={showDialog} onClose={() => setShowDialog(false)} />
+      <SwapInitDialog
+        open={showDialog}
+        onClose={() => setShowDialog(false)}
+        currentProvider={provider}
+      />
     </Box>
   );
 }

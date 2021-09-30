@@ -1,13 +1,16 @@
 import React from 'react';
 import { Dialog, useMediaQuery, useTheme } from '@material-ui/core';
 import SwapInitPage from './SwapInitPage';
+import { ExtendedProvider } from '../../../../models/store';
 
 export default function SwapInitDialog({
   open,
   onClose,
+  currentProvider,
 }: {
   open: boolean;
   onClose: () => void;
+  currentProvider: ExtendedProvider;
 }) {
   const theme = useTheme();
   const smallDevice = useMediaQuery(theme.breakpoints.down('sm'));
@@ -20,7 +23,7 @@ export default function SwapInitDialog({
       fullWidth
       fullScreen={smallDevice}
     >
-      <SwapInitPage onClose={onClose} />
+      <SwapInitPage onClose={onClose} currentProvider={currentProvider} />
     </Dialog>
   );
 }
