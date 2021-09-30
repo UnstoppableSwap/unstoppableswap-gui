@@ -1,12 +1,13 @@
 import {
   Button,
+  CircularProgress,
   DialogActions,
   DialogContent,
   makeStyles,
   TextField,
 } from '@material-ui/core';
 import { Alert, AlertTitle } from '@material-ui/lab';
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import SwapDialogTitle from '../SwapDialogTitle';
 import {
   isBtcAddressValid,
@@ -14,6 +15,7 @@ import {
 } from '../../../../swap/utils/crypto-utils';
 import { startSwap } from '../../../../swap/swap-process';
 import { ExtendedProvider } from '../../../../models/store';
+import { useAppSelector } from '../../../../store/hooks';
 
 const useStyles = makeStyles((theme) => ({
   alertBox: {
@@ -41,6 +43,8 @@ export default function SwapInitPage({
   const [refundAddress, setRefundAddress] = useState(
     'tb1qw508d6qejxtdg4y5r3zarvary0c5xw7kxpjzsx'
   );
+  const [loading, setLoading] = useState(false);
+  const swapState = useAppSelector((state) => state.swap.state);
 
   function handlePayoutChange(event: ChangeEvent<HTMLInputElement>) {
     let text = event.target.value.trim();
@@ -72,9 +76,15 @@ export default function SwapInitPage({
   }
 
   function handleSwapStart() {
+    setLoading(true);
     startSwap(currentProvider, redeemAddress, refundAddress);
-    onClose();
   }
+
+  useEffect(() => {
+    if (swapState) {
+      onClose();
+    }
+  });
 
   return (
     <>
@@ -138,7 +148,7 @@ export default function SwapInitPage({
           color="primary"
           variant="contained"
         >
-          Next
+          {loading ? <CircularProgress /> : 'Next'}
         </Button>
       </DialogActions>
     </>
