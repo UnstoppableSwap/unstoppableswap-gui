@@ -42,7 +42,7 @@ export const swapSlice = createSlice({
     addLog: (swap, action: PayloadAction<SwapLog>) => {
       swap.logs.push(action.payload);
     },
-    reset: () => initialState,
+    resetSwap: () => initialState,
     downloadProgressUpdate: (
       swap,
       action: PayloadAction<BinaryDownloadStatus>
@@ -232,7 +232,7 @@ export const {
   transferredXmrToWalletLog,
   receivedBtcLog,
   addLog,
-  reset,
+  resetSwap,
 } = swapSlice.actions;
 
 export default swapSlice.reducer;

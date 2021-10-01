@@ -1,6 +1,6 @@
 import { Box, Button, makeStyles, Paper, Typography } from '@material-ui/core';
 import React from 'react';
-import { reset } from 'store/features/swap/swapSlice';
+import { resetSwap } from 'store/features/swap/swapSlice';
 import { SwapStateProcessExited } from '../../../../../models/store';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { SwapLog } from '../../../../../models/swap';
@@ -28,7 +28,7 @@ export default function ProcessExitedPage({ state }: ProcessExitedPageProps) {
 
   function close() {
     if (!processRunning) {
-      dispatch(reset());
+      dispatch(resetSwap());
     }
   }
 
