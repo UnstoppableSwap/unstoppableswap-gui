@@ -10,6 +10,7 @@ import React from 'react';
 import { SwapStateXmrLockInMempool } from '../../../../../models/store';
 import { useAppSelector } from '../../../../../store/hooks';
 import MoneroIcon from '../../../icons/MoneroIcon';
+import { getMoneroTxExplorerUrl } from '../../../../utils/blockexplorer-utils';
 
 const useStyles = makeStyles((theme) => ({
   depositAddressOuter: {
@@ -30,13 +31,6 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(0.5),
   },
 }));
-
-function getXmrChainUrl(txid: string, testnet: boolean) {
-  if(testnet) {
-    return `https://stagenet.xmrchain.net/tx/${txid}`;
-  }
-  return `https://xmrchain.net/tx/${txid}`;
-}
 
 type XmrLockTxInMempoolPageProps = {
   state: SwapStateXmrLockInMempool;
@@ -65,7 +59,7 @@ export default function XmrLockTxInMempoolPage({
         </Typography>
         <Typography variant="body1">
           <Link
-            href={getXmrChainUrl(
+            href={getMoneroTxExplorerUrl(
               state.aliceXmrLockTxId,
               Boolean(provider?.testnet)
             )}

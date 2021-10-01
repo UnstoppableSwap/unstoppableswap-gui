@@ -1,4 +1,4 @@
-import { extractAmountFromUnitString } from '../../swap/utils/parse-utils';
+import { extractAmountFromUnitString } from '../../../swap/utils/parse-utils';
 
 test('should parse btc amount string correctly', () => {
   expect(extractAmountFromUnitString('0.1 BTC')).toBe(0.1);

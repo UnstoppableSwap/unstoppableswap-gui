@@ -1,7 +1,7 @@
 import {
   isBtcAddressValid,
   isXmrAddressValid,
-} from '../../swap/utils/crypto-utils';
+} from '../../../swap/utils/crypto-utils';
 
 describe('xmr address validation', () => {
   test('should detect valid primary testnet address to be valid for testnet and invalid for mainnet', () => {

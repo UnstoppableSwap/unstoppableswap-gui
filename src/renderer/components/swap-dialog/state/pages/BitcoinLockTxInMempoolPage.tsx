@@ -10,6 +10,7 @@ import React from 'react';
 import { SwapStateBtcLockInMempool } from '../../../../../models/store';
 import { useAppSelector } from '../../../../../store/hooks';
 import BitcoinIcon from '../../../icons/BitcoinIcon';
+import { getBitcoinTxExplorerUrl } from '../../../../utils/blockexplorer-utils';
 
 const useStyles = makeStyles((theme) => ({
   depositAddressOuter: {
@@ -34,12 +35,6 @@ const useStyles = makeStyles((theme) => ({
 type BitcoinLockTxInMempoolPageProps = {
   state: SwapStateBtcLockInMempool;
 };
-
-function getBlockchairUrl(txid: string, testnet: boolean) {
-  return `https://blockchair.com/bitcoin${
-    testnet ? '/testnet' : ''
-  }/transaction/${txid}`;
-}
 
 export default function BitcoinLockTxInMempoolPage({
   state,
@@ -66,7 +61,7 @@ export default function BitcoinLockTxInMempoolPage({
         </Typography>
         <Typography variant="body1">
           <Link
-            href={getBlockchairUrl(
+            href={getBitcoinTxExplorerUrl(
               state.bobBtcLockTxId,
               Boolean(provider?.testnet)
             )}
