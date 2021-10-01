@@ -3,7 +3,6 @@ import React from 'react';
 import { resetSwap } from 'store/features/swap/swapSlice';
 import { SwapStateProcessExited } from '../../../../../models/store';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import { SwapLog } from '../../../../../models/swap';
 
 const useStyles = makeStyles((theme) => ({
   leftButton: {
@@ -37,7 +36,8 @@ export default function ProcessExitedPage({ state }: ProcessExitedPageProps) {
   return (
     <Box>
       <Typography variant="h5" align="center">
-        Swap process exited</Typography>
+        Swap process exited
+      </Typography>
       {state.exitCode != null ? (
         <Typography variant="body1">Exit code: {state.exitCode}</Typography>
       ) : null}

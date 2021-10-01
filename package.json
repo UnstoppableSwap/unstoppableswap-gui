@@ -238,8 +238,7 @@
     "react-redux": "^7.2.5",
     "react-router-dom": "^5.2.0",
     "regenerator-runtime": "^0.13.5",
-    "socket.io-client": "^4.1.3",
-    "zustand": "^3.5.10"
+    "socket.io-client": "^4.1.3"
   },
   "devEngines": {
     "node": ">=10.x",
