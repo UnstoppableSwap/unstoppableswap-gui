@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from '@material-ui/core';
 import React from 'react';
-import { stopSwap } from '../../../../swap/swap-process-manager';
+import { stopSwap } from '../../../../swap/swap-process';
 
 type SwapCancelAlertProps = {
   open: boolean;
@@ -21,12 +21,7 @@ export default function SwapStopAlert({ open, onClose }: SwapCancelAlertProps) {
   }
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
+    <Dialog open={open} onClose={onClose}>
       <DialogTitle>Stop swap?</DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">

@@ -1,6 +1,36 @@
-import { Box, Link, Typography } from '@material-ui/core';
+import {
+  Box,
+  LinearProgress,
+  Link,
+  makeStyles,
+  Paper,
+  Typography,
+} from '@material-ui/core';
 import React from 'react';
-import { SwapStateBtcLockInMempool } from '../../../../../swap/swap-state-machine';
+import { SwapStateBtcLockInMempool } from '../../../../../models/store';
+import { useAppSelector } from '../../../../../store/hooks';
+import BitcoinIcon from '../../../icons/BitcoinIcon';
+import { getBitcoinTxExplorerUrl } from '../../../../utils/blockexplorer-utils';
+
+const useStyles = makeStyles((theme) => ({
+  depositAddressOuter: {
+    padding: theme.spacing(1.5),
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+  },
+  depositAddress: {
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+    alignItems: 'center',
+    display: 'flex',
+    '& > *': {
+      paddingRight: theme.spacing(0.25),
+    },
+  },
+  depositStatusText: {
+    paddingTop: theme.spacing(0.5),
+  },
+}));
 
 type BitcoinLockTxInMempoolPageProps = {
   state: SwapStateBtcLockInMempool;
@@ -9,25 +39,38 @@ type BitcoinLockTxInMempoolPageProps = {
 export default function BitcoinLockTxInMempoolPage({
   state,
 }: BitcoinLockTxInMempoolPageProps) {
+  const provider = useAppSelector((s) => s.swap.provider);
+  const classes = useStyles();
+
   return (
     <Box>
-      <Typography variant="h5">
-        Waiting for Bitcoin lock transaction be confirmed
+      <Typography variant="h5" align="center">
+        Waiting for Bitcoin lock confirmations
       </Typography>
-      <Typography variant="body1">
-        TxId:{' '}
-        <Link
-          href={`https://blockchair.com/bitcoin${
-            state.provider.testnet ? '/testnet' : ''
-          }/transaction/${state.bobBtcLockTxId}`}
-          target="_blank"
-        >
-          {state.bobBtcLockTxId}
-        </Link>
-      </Typography>
-      <Typography variant="body1">
-        Confirmations: {state.bobBtcLockTxConfirmations}
-      </Typography>
+      <Paper variant="outlined" className={classes.depositAddressOuter}>
+        <Typography variant="subtitle1">BTC Lock Transaction</Typography>
+        <Box className={classes.depositAddress}>
+          <BitcoinIcon />
+          <Typography variant="h5">{state.bobBtcLockTxId}</Typography>
+        </Box>
+        <LinearProgress variant="indeterminate" />
+        <Typography variant="subtitle2" className={classes.depositStatusText}>
+          Most swap providers require 2 confirmations
+          <br />
+          Confirmations: {state.bobBtcLockTxConfirmations}
+        </Typography>
+        <Typography variant="body1">
+          <Link
+            href={getBitcoinTxExplorerUrl(
+              state.bobBtcLockTxId,
+              Boolean(provider?.testnet)
+            )}
+            target="_blank"
+          >
+            View on explorer
+          </Link>
+        </Typography>
+      </Paper>
     </Box>
   );
 }

@@ -1,19 +1,21 @@
 import {
   Button,
+  CircularProgress,
   DialogActions,
   DialogContent,
   makeStyles,
   TextField,
 } from '@material-ui/core';
 import { Alert, AlertTitle } from '@material-ui/lab';
-import React, { ChangeEvent, useState } from 'react';
-import useStore, { Provider } from '../../../store';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import SwapDialogTitle from '../SwapDialogTitle';
 import {
   isBtcAddressValid,
   isXmrAddressValid,
 } from '../../../../swap/utils/crypto-utils';
-import { startSwap } from '../../../../swap/swap-process-manager';
+import { startSwap } from '../../../../swap/swap-process';
+import { ExtendedProvider } from '../../../../models/store';
+import { useAppSelector } from '../../../../store/hooks';
 
 const useStyles = makeStyles((theme) => ({
   alertBox: {
@@ -26,20 +28,23 @@ const useStyles = makeStyles((theme) => ({
 
 type FirstPageProps = {
   onClose: () => void;
+  currentProvider: ExtendedProvider;
 };
 
-export default function SwapInitPage({ onClose }: FirstPageProps) {
+export default function SwapInitPage({
+  onClose,
+  currentProvider,
+}: FirstPageProps) {
   const classes = useStyles();
 
-  const currentProvider = useStore(
-    (state) => state.currentProvider
-  ) as Provider;
   const [redeemAddress, setPayoutAddress] = useState(
     '59McWTPGc745SRWrSMoh8oTjoXoQq6sPUgKZ66dQWXuKFQ2q19h9gvhJNZcFTizcnT12r63NFgHiGd6gBCjabzmzHAMoyD6'
   );
   const [refundAddress, setRefundAddress] = useState(
     'tb1qw508d6qejxtdg4y5r3zarvary0c5xw7kxpjzsx'
   );
+  const [loading, setLoading] = useState(false);
+  const swapState = useAppSelector((state) => state.swap.state);
 
   function handlePayoutChange(event: ChangeEvent<HTMLInputElement>) {
     let text = event.target.value.trim();
@@ -71,9 +76,15 @@ export default function SwapInitPage({ onClose }: FirstPageProps) {
   }
 
   function handleSwapStart() {
+    setLoading(true);
     startSwap(currentProvider, redeemAddress, refundAddress);
-    onClose();
   }
+
+  useEffect(() => {
+    if (swapState) {
+      onClose();
+    }
+  });
 
   return (
     <>
@@ -137,7 +148,7 @@ export default function SwapInitPage({ onClose }: FirstPageProps) {
           color="primary"
           variant="contained"
         >
-          Next
+          {loading ? <CircularProgress /> : 'Next'}
         </Button>
       </DialogActions>
     </>
