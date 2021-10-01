@@ -93,7 +93,7 @@ export default function ProviderSubmitDialog({
           fullWidth
           helperText={
             getMultiAddressError() ||
-            'Tells the swap-cli where your ASB can be reached'
+            'Tells the swap client where your ASB can be reached'
           }
           value={multiAddr}
           onChange={handleMultiAddrChange}
