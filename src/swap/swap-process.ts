@@ -3,7 +3,7 @@ import { PathLike, promises as fs } from 'fs';
 import { ipcRenderer } from 'electron';
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 import downloadSwapBinary, { BinaryDownloadStatus } from './downloader';
-import { store } from '../store/store';
+import { IS_TESTNET, store } from '../store/store';
 import {
   addLog,
   aliceLockedXmrLog,
@@ -42,9 +42,28 @@ export async function getAppDataDir(): Promise<PathLike> {
   return dPath;
 }
 
+function getSpawnArgs(
+  subCommand: string,
+  options: { [option: string]: string }
+) {
+  const flagsArray = IS_TESTNET
+    ? ['--json', '--debug', '--testnet']
+    : ['--json', '--debug'];
+
+  const optionsArray: Array<string> = [];
+  Object.entries(options).forEach(([key, value]) => {
+    optionsArray.push(`--${key}`);
+    optionsArray.push(value);
+  });
+
+  return [...flagsArray, subCommand, ...optionsArray];
+}
+
 let swapProcess: ChildProcessWithoutNullStreams | null = null;
 
 function handleSwapLog(logText: string) {
+  console.log(`Received stdout from swap process: ${logText}`);
+
   try {
     const parsedLog = JSON.parse(logText);
     if (
@@ -119,30 +138,11 @@ export async function startSwap(
   );
   const sellerIdentifier = `${provider.multiAddr}/p2p/${provider.peerId}`;
 
-  const spawnArgs = provider.testnet
-    ? [
-        '--json',
-        provider.testnet ? '--testnet' : '',
-        '--debug',
-        'buy-xmr',
-        '--change-address',
-        refundAddress,
-        '--receive-address',
-        redeemAddress,
-        '--seller',
-        sellerIdentifier,
-      ]
-    : [
-        '--json',
-        '--debug',
-        'buy-xmr',
-        '--change-address',
-        refundAddress,
-        '--receive-address',
-        redeemAddress,
-        '--seller',
-        sellerIdentifier,
-      ];
+  const spawnArgs = getSpawnArgs('buy-xmr', {
+    'change-address': refundAddress,
+    'receive-address': redeemAddress,
+    seller: sellerIdentifier,
+  });
 
   swapProcess = spawn(`./${binaryInfo.name}`, spawnArgs, {
     cwd: appDataPath.toString(),
@@ -161,10 +161,7 @@ export async function startSwap(
         .toString()
         .split(/(\r?\n)/g)
         .filter((s: string) => s.length > 4)
-        .forEach((line: string) => {
-          console.log(`Received stdout from swap process: ${line}`);
-          handleSwapLog(line);
-        });
+        .forEach(handleSwapLog);
     });
   });
 

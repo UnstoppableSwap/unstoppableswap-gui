@@ -2,6 +2,9 @@ import { configureStore } from '@reduxjs/toolkit';
 import swapReducer from './features/swap/swapSlice';
 import providersReducer from './features/swap/providersSlice';
 
+export const IS_TESTNET =
+  process.env.TESTNET?.toString().toLowerCase() === 'true';
+
 export const store = configureStore({
   reducer: {
     swap: swapReducer,

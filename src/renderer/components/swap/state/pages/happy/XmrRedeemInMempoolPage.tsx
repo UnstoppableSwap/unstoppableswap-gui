@@ -1,8 +1,8 @@
 import { Box, Link, Typography } from '@material-ui/core';
 import React from 'react';
 import { SwapStateXmrRedeemInMempool } from '../../../../../../models/store';
-import { useAppSelector } from '../../../../../../store/hooks';
 import { getMoneroTxExplorerUrl } from '../../../../../utils/blockexplorer-utils';
+import { IS_TESTNET } from '../../../../../../store/store';
 
 type XmrRedeemInMempoolPageProps = {
   state: SwapStateXmrRedeemInMempool;
@@ -11,8 +11,6 @@ type XmrRedeemInMempoolPageProps = {
 export default function XmrRedeemInMempoolPage({
   state,
 }: XmrRedeemInMempoolPageProps) {
-  const provider = useAppSelector((s) => s.swap.provider);
-
   return (
     <Box>
       <Typography variant="h5">
@@ -21,10 +19,7 @@ export default function XmrRedeemInMempoolPage({
       <Typography variant="body1">
         TxId:{' '}
         <Link
-          href={getMoneroTxExplorerUrl(
-            state.bobXmrRedeemTxId,
-            Boolean(provider?.testnet)
-          )}
+          href={getMoneroTxExplorerUrl(state.bobXmrRedeemTxId, IS_TESTNET)}
           target="_blank"
         >
           {state.bobXmrRedeemTxId}

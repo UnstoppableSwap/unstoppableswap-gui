@@ -13,7 +13,7 @@ yarn
 Start the app in the `dev` environment:
 
 ```bash
-yarn start
+TESTNET=true yarn start
 ```
 
 ## Packaging for Production
