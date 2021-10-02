@@ -7,10 +7,10 @@ import {
   Typography,
 } from '@material-ui/core';
 import React from 'react';
-import { SwapStateBtcLockInMempool } from '../../../../../models/store';
-import { useAppSelector } from '../../../../../store/hooks';
-import BitcoinIcon from '../../../icons/BitcoinIcon';
-import { getBitcoinTxExplorerUrl } from '../../../../utils/blockexplorer-utils';
+import { SwapStateXmrLockInMempool } from '../../../../../../models/store';
+import { useAppSelector } from '../../../../../../store/hooks';
+import MoneroIcon from '../../../../icons/MoneroIcon';
+import { getMoneroTxExplorerUrl } from '../../../../../utils/blockexplorer-utils';
 
 const useStyles = makeStyles((theme) => ({
   depositAddressOuter: {
@@ -32,37 +32,35 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-type BitcoinLockTxInMempoolPageProps = {
-  state: SwapStateBtcLockInMempool;
+type XmrLockTxInMempoolPageProps = {
+  state: SwapStateXmrLockInMempool;
 };
 
-export default function BitcoinLockTxInMempoolPage({
+export default function XmrLockTxInMempoolPage({
   state,
-}: BitcoinLockTxInMempoolPageProps) {
-  const provider = useAppSelector((s) => s.swap.provider);
+}: XmrLockTxInMempoolPageProps) {
   const classes = useStyles();
+  const provider = useAppSelector((s) => s.swap.provider);
 
   return (
     <Box>
       <Typography variant="h5" align="center">
-        Waiting for Bitcoin lock confirmations
+        Waiting for Monero lock confirmations
       </Typography>
       <Paper variant="outlined" className={classes.depositAddressOuter}>
-        <Typography variant="subtitle1">BTC Lock Transaction</Typography>
+        <Typography variant="subtitle1">XMR Lock Transaction</Typography>
         <Box className={classes.depositAddress}>
-          <BitcoinIcon />
-          <Typography variant="h5">{state.bobBtcLockTxId}</Typography>
+          <MoneroIcon />
+          <Typography variant="h5">{state.aliceXmrLockTxId}</Typography>
         </Box>
         <LinearProgress variant="indeterminate" />
         <Typography variant="subtitle2" className={classes.depositStatusText}>
-          Most swap providers require 2 confirmations
-          <br />
-          Confirmations: {state.bobBtcLockTxConfirmations}
+          Confirmations: {state.aliceXmrLockTxConfirmations}/10
         </Typography>
         <Typography variant="body1">
           <Link
-            href={getBitcoinTxExplorerUrl(
-              state.bobBtcLockTxId,
+            href={getMoneroTxExplorerUrl(
+              state.aliceXmrLockTxId,
               Boolean(provider?.testnet)
             )}
             target="_blank"

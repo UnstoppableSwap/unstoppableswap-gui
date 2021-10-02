@@ -4,7 +4,7 @@ import { createTheme, ThemeProvider } from '@material-ui/core/styles';
 import { Provider } from 'react-redux';
 import { indigo } from '@material-ui/core/colors';
 import SwapWidget from './SwapWidget';
-import SwapStateDialog from './swap-dialog/state/SwapStateDialog';
+import SwapStateDialog from './swap/state/SwapStateDialog';
 import Header from './Header';
 import { store } from '../../store/store';
 
