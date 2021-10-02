@@ -8,9 +8,9 @@ import {
 } from '@material-ui/core';
 import React from 'react';
 import { SwapStateBtcLockInMempool } from '../../../../../../models/store';
-import { useAppSelector } from '../../../../../../store/hooks';
 import BitcoinIcon from '../../../../icons/BitcoinIcon';
 import { getBitcoinTxExplorerUrl } from '../../../../../utils/blockexplorer-utils';
+import { IS_TESTNET } from '../../../../../../store/store';
 
 const useStyles = makeStyles((theme) => ({
   depositAddressOuter: {
@@ -39,7 +39,6 @@ type BitcoinLockTxInMempoolPageProps = {
 export default function BitcoinLockTxInMempoolPage({
   state,
 }: BitcoinLockTxInMempoolPageProps) {
-  const provider = useAppSelector((s) => s.swap.provider);
   const classes = useStyles();
 
   return (
@@ -61,10 +60,7 @@ export default function BitcoinLockTxInMempoolPage({
         </Typography>
         <Typography variant="body1">
           <Link
-            href={getBitcoinTxExplorerUrl(
-              state.bobBtcLockTxId,
-              Boolean(provider?.testnet)
-            )}
+            href={getBitcoinTxExplorerUrl(state.bobBtcLockTxId, IS_TESTNET)}
             target="_blank"
           >
             View on explorer
