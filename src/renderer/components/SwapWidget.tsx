@@ -15,7 +15,7 @@ import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 import ProviderSelect from './provider-dialog/ProviderSelect';
 import { satsToBtc } from '../../swap/utils/unit-utils';
 import ProviderSubmitDialog from './provider-dialog/ProviderSubmitDialog';
-import SwapInitDialog from './swap-dialog/init/SwapInitDialog';
+import SwapInitDialog from './swap/init/SwapInitDialog';
 import { useAppSelector } from '../../store/hooks';
 
 const useStyles = makeStyles((theme) => ({

@@ -3,7 +3,7 @@ import {
   Button,
   DialogActions,
   DialogContent,
-  makeStyles
+  makeStyles,
 } from '@material-ui/core';
 import { resetSwap } from 'store/features/swap/swapSlice';
 import SwapDialogTitle from '../SwapDialogTitle';
@@ -23,15 +23,15 @@ import {
   SwapStateXmrRedeemInMempool,
 } from '../../../../models/store';
 import SwapStateStepper from './SwapStateStepper';
-import DownloadingBinaryPage from './pages/DownloadingBinaryPage';
-import InitiatedPage from './pages/InitiatedPage';
-import WaitingForBitcoinDepositPage from './pages/WaitingForBitcoinDepositPage';
-import StartedPage from './pages/StartedPage';
-import BitcoinLockTxInMempoolPage from './pages/BitcoinLockTxInMempoolPage';
-import XmrLockTxInMempoolPage from './pages/XmrLockInMempoolPage';
-import ProcessExitedPage from './pages/ProcessExitedPage';
-import XmrRedeemInMempoolPage from './pages/XmrRedeemInMempoolPage';
-import ReceivedQuotePage from './pages/ReceivedQuotePage';
+import DownloadingBinaryPage from './pages/happy/DownloadingBinaryPage';
+import InitiatedPage from './pages/happy/InitiatedPage';
+import WaitingForBitcoinDepositPage from './pages/happy/WaitingForBitcoinDepositPage';
+import StartedPage from './pages/happy/StartedPage';
+import BitcoinLockTxInMempoolPage from './pages/happy/BitcoinLockTxInMempoolPage';
+import XmrLockTxInMempoolPage from './pages/happy/XmrLockInMempoolPage';
+import ProcessExitedPage from './pages/happy/ProcessExitedPage';
+import XmrRedeemInMempoolPage from './pages/happy/XmrRedeemInMempoolPage';
+import ReceivedQuotePage from './pages/happy/ReceivedQuotePage';
 
 const useStyles = makeStyles({
   content: {
