@@ -11,6 +11,7 @@ import { SwapStateXmrLockInMempool } from '../../../../../../models/store';
 import { useAppSelector } from '../../../../../../store/hooks';
 import MoneroIcon from '../../../../icons/MoneroIcon';
 import { getMoneroTxExplorerUrl } from '../../../../../utils/blockexplorer-utils';
+import { IS_TESTNET } from '../../../../../../store/store';
 
 const useStyles = makeStyles((theme) => ({
   depositAddressOuter: {
@@ -59,10 +60,7 @@ export default function XmrLockTxInMempoolPage({
         </Typography>
         <Typography variant="body1">
           <Link
-            href={getMoneroTxExplorerUrl(
-              state.aliceXmrLockTxId,
-              Boolean(provider?.testnet)
-            )}
+            href={getMoneroTxExplorerUrl(state.aliceXmrLockTxId, IS_TESTNET)}
             target="_blank"
           >
             View on explorer

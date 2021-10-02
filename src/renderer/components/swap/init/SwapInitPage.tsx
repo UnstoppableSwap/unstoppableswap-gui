@@ -16,6 +16,7 @@ import {
 import { startSwap } from '../../../../swap/swap-process';
 import { ExtendedProvider } from '../../../../models/store';
 import { useAppSelector } from '../../../../store/hooks';
+import { IS_TESTNET } from '../../../../store/store';
 
 const useStyles = makeStyles((theme) => ({
   alertBox: {
@@ -38,10 +39,12 @@ export default function SwapInitPage({
   const classes = useStyles();
 
   const [redeemAddress, setPayoutAddress] = useState(
-    '59McWTPGc745SRWrSMoh8oTjoXoQq6sPUgKZ66dQWXuKFQ2q19h9gvhJNZcFTizcnT12r63NFgHiGd6gBCjabzmzHAMoyD6'
+    IS_TESTNET
+      ? '59McWTPGc745SRWrSMoh8oTjoXoQq6sPUgKZ66dQWXuKFQ2q19h9gvhJNZcFTizcnT12r63NFgHiGd6gBCjabzmzHAMoyD6'
+      : ''
   );
   const [refundAddress, setRefundAddress] = useState(
-    'tb1qw508d6qejxtdg4y5r3zarvary0c5xw7kxpjzsx'
+    IS_TESTNET ? 'tb1qw508d6qejxtdg4y5r3zarvary0c5xw7kxpjzsx' : ''
   );
   const [loading, setLoading] = useState(false);
   const swapState = useAppSelector((state) => state.swap.state);
@@ -60,18 +63,18 @@ export default function SwapInitPage({
   }
 
   function getRedeemAddressError() {
-    if (isXmrAddressValid(redeemAddress, currentProvider.testnet)) {
+    if (isXmrAddressValid(redeemAddress, IS_TESTNET)) {
       return null;
     }
     return 'Not a valid monero address';
   }
 
   function getRefundAddressError() {
-    if (isBtcAddressValid(refundAddress, currentProvider.testnet)) {
+    if (isBtcAddressValid(refundAddress, IS_TESTNET)) {
       return null;
     }
     return `Only bech32 addresses are supported. They begin with "${
-      currentProvider.testnet ? 'tb1' : 'bc1'
+      IS_TESTNET ? 'tb1' : 'bc1'
     }"`;
   }
 
@@ -98,9 +101,7 @@ export default function SwapInitPage({
           error={Boolean(getRedeemAddressError() && redeemAddress.length > 5)}
           fullWidth
           className={classes.redeemAddressField}
-          placeholder={
-            currentProvider.testnet ? '59McWTPGc745...' : '888tNkZrPN6J...'
-          }
+          placeholder={IS_TESTNET ? '59McWTPGc745...' : '888tNkZrPN6J...'}
           helperText={
             getRedeemAddressError() ||
             'The moneroj will be sent to this address'
@@ -114,9 +115,7 @@ export default function SwapInitPage({
           onChange={handleRefundChange}
           error={Boolean(getRefundAddressError() && refundAddress.length > 5)}
           fullWidth
-          placeholder={
-            currentProvider.testnet ? 'tb1q4aelwalu...' : 'bc18ociqZ9mZ...'
-          }
+          placeholder={IS_TESTNET ? 'tb1q4aelwalu...' : 'bc18ociqZ9mZ...'}
           helperText={
             getRefundAddressError() ||
             'In case something goes wrong all BTC is refunded to this address'
@@ -128,12 +127,11 @@ export default function SwapInitPage({
           Double check the XMR address — funds sent to the wrong address
           can&apos;t be recovered
         </Alert>
-        {currentProvider.testnet ? (
+        {IS_TESTNET ? (
           <Alert severity="info" className={classes.alertBox}>
             <AlertTitle>Testnet</AlertTitle>
-            This swap provider only trades testnet coins. They don&apos;t hold
-            any value. If you want to swap real coins switch to a mainnet swap
-            provider.
+            You are swapping testnet coins. Testnet coins are worthless and only
+            used for testing.
           </Alert>
         ) : null}
       </DialogContent>
