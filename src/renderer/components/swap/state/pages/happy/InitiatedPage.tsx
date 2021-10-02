@@ -1,12 +1,7 @@
 import { Box, CircularProgress, Typography } from '@material-ui/core';
 import React from 'react';
-import { SwapStateInitiated } from '../../../../../models/store';
 
-type InitiatedPageProps = {
-  state: SwapStateInitiated;
-};
-
-export default function InitiatedPage({ state }: InitiatedPageProps) {
+export default function InitiatedPage() {
   return (
     <Box>
       <Typography variant="h5" align="center">

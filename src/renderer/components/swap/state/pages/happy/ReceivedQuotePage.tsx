@@ -1,6 +1,6 @@
 import { Box, CircularProgress, Typography } from '@material-ui/core';
 import React from 'react';
-import { SwapStateReceivedQuote } from '../../../../../models/store';
+import { SwapStateReceivedQuote } from '../../../../../../models/store';
 
 type ReceivedQuotePageProps = {
   state: SwapStateReceivedQuote;
