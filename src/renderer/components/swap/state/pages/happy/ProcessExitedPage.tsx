@@ -22,7 +22,7 @@ type ProcessExitedPageProps = {
 export default function ProcessExitedPage({ state }: ProcessExitedPageProps) {
   const classes = useStyles();
   const processRunning = useAppSelector((s) => s.swap.processRunning);
-  const logs = useAppSelector((s) => s.swap.logs);
+  const stdOut = useAppSelector((s) => s.swap.stdOut);
   const dispatch = useAppDispatch();
 
   function close() {
@@ -53,11 +53,7 @@ export default function ProcessExitedPage({ state }: ProcessExitedPageProps) {
           Close
         </Button>
         <Paper className={classes.logsOuter}>
-          {logs.map((log) => (
-            <Typography variant="body2" key={JSON.stringify(log)}>
-              {JSON.stringify(log)}
-            </Typography>
-          ))}
+          <pre>{stdOut}</pre>
         </Paper>
       </Box>
     </Box>

@@ -20,6 +20,7 @@ export interface ExtendedProvider extends Provider {
 export interface Swap {
   state: SwapState | null;
   logs: SwapLog[];
+  stdOut: string;
   processRunning: boolean;
   provider: Provider | null;
 }

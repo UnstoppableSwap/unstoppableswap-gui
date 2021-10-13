@@ -32,6 +32,7 @@ const initialState: Swap = {
   state: null,
   processRunning: false,
   logs: [],
+  stdOut: '',
   provider: null,
 };
 
@@ -41,6 +42,9 @@ export const swapSlice = createSlice({
   reducers: {
     addLog: (swap, action: PayloadAction<SwapLog>) => {
       swap.logs.push(action.payload);
+    },
+    appendStdOut: (swap, action: PayloadAction<string>) => {
+      swap.stdOut += action.payload;
     },
     resetSwap: () => initialState,
     downloadProgressUpdate: (
@@ -233,6 +237,7 @@ export const {
   receivedBtcLog,
   addLog,
   resetSwap,
+  appendStdOut,
 } = swapSlice.actions;
 
 export default swapSlice.reducer;

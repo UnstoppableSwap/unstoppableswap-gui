@@ -1,5 +1,5 @@
 import { AnyAction } from '@reduxjs/toolkit';
-import { Swap, SwapStateType } from '../../models/store';
+import { Provider, Swap, SwapStateType } from '../../models/store';
 import {
   SwapLogAliceLockedXmr,
   SwapLogBtcTxStatusChanged,
@@ -121,31 +121,31 @@ const mXmrRedeemSuccessfulLog: SwapLogRedeemedXmr = {
   },
 };
 
+const initialSwapState = {
+  state: null,
+  processRunning: false,
+  logs: [],
+  provider: null,
+  stdOut: '',
+};
+
+const exampleProvider: Provider = {
+  multiAddr: '/dnsaddr/xmr.example',
+  peerId: '12394294389438924',
+  testnet: true,
+};
+
 test('should return the initial state', () => {
-  expect(reducer(undefined, {} as AnyAction)).toEqual({
-    state: null,
-    processRunning: false,
-    logs: [],
-    provider: null,
-  });
+  expect(reducer(undefined, {} as AnyAction)).toEqual(initialSwapState);
 });
 
 test('should infer correct states from happy-path logs', () => {
-  let swap: Swap = {
-    processRunning: false,
-    logs: [],
-    state: null,
-    provider: null,
-  };
+  let swap: Swap = initialSwapState;
 
   swap = reducer(
     swap,
     initiateSwap({
-      provider: {
-        multiAddr: '/dnsaddr/xmr.example',
-        peerId: '12394294389438924',
-        testnet: true,
-      },
+      provider: exampleProvider,
     })
   );
 
@@ -155,11 +155,8 @@ test('should infer correct states from happy-path logs', () => {
     state: {
       type: SwapStateType.INITIATED,
     },
-    provider: {
-      multiAddr: '/dnsaddr/xmr.example',
-      peerId: '12394294389438924',
-      testnet: true,
-    },
+    provider: exampleProvider,
+    stdOut: '',
   });
 
   swap = reducer(swap, receivedQuoteLog(mReceivedQuoteLog));
@@ -173,11 +170,8 @@ test('should infer correct states from happy-path logs', () => {
       minimumSwapAmount: 0.0001,
       maximumSwapAmount: 0.1,
     },
-    provider: {
-      multiAddr: '/dnsaddr/xmr.example',
-      peerId: '12394294389438924',
-      testnet: true,
-    },
+    provider: exampleProvider,
+    stdOut: '',
   });
 
   swap = reducer(swap, waitingForBtcDepositLog(mWaitingForBtcDepositLog));
@@ -190,11 +184,8 @@ test('should infer correct states from happy-path logs', () => {
       depositAddress: 'tb1qajq94d72k9hhcmtrlwhfuhc5yz0w298uym980g',
       maxGiveable: 0,
     },
-    provider: {
-      multiAddr: '/dnsaddr/xmr.example',
-      peerId: '12394294389438924',
-      testnet: true,
-    },
+    provider: exampleProvider,
+    stdOut: '',
   });
 
   swap = reducer(swap, receivedBtcLog(mReceivedNewBtcLog));
@@ -207,11 +198,8 @@ test('should infer correct states from happy-path logs', () => {
       depositAddress: 'tb1qajq94d72k9hhcmtrlwhfuhc5yz0w298uym980g',
       maxGiveable: 0.00099878,
     },
-    provider: {
-      multiAddr: '/dnsaddr/xmr.example',
-      peerId: '12394294389438924',
-      testnet: true,
-    },
+    provider: exampleProvider,
+    stdOut: '',
   });
 
   swap = reducer(swap, startingNewSwapLog(mStartedSwapLog));
@@ -225,11 +213,8 @@ test('should infer correct states from happy-path logs', () => {
       bobBtcLockTxFees: 0.00000122,
       id: '2a034c59-72bc-4b7b-839f-d32522099bcc',
     },
-    provider: {
-      multiAddr: '/dnsaddr/xmr.example',
-      peerId: '12394294389438924',
-      testnet: true,
-    },
+    provider: exampleProvider,
+    stdOut: '',
   });
 
   swap = reducer(swap, publishedBtcTransactionLog(mPublishedBtcLockTxLog));
@@ -243,11 +228,8 @@ test('should infer correct states from happy-path logs', () => {
         '6297106e3fb91cfb94e5b069af03248ebfdc63087db4a19c833f76df1b9aff51',
       bobBtcLockTxConfirmations: 0,
     },
-    provider: {
-      multiAddr: '/dnsaddr/xmr.example',
-      peerId: '12394294389438924',
-      testnet: true,
-    },
+    provider: exampleProvider,
+    stdOut: '',
   });
 
   swap = reducer(
@@ -264,11 +246,8 @@ test('should infer correct states from happy-path logs', () => {
         '6297106e3fb91cfb94e5b069af03248ebfdc63087db4a19c833f76df1b9aff51',
       bobBtcLockTxConfirmations: 3,
     },
-    provider: {
-      multiAddr: '/dnsaddr/xmr.example',
-      peerId: '12394294389438924',
-      testnet: true,
-    },
+    provider: exampleProvider,
+    stdOut: '',
   });
 
   swap = reducer(swap, aliceLockedXmrLog(mAliceLockedXmrLog));
@@ -282,11 +261,8 @@ test('should infer correct states from happy-path logs', () => {
         'cb46ad562ffc868a7c2d8c72cecd9090cca7b6f102199db6a6cbef65afeb09d1',
       aliceXmrLockTxConfirmations: 0,
     },
-    provider: {
-      multiAddr: '/dnsaddr/xmr.example',
-      peerId: '12394294389438924',
-      testnet: true,
-    },
+    provider: exampleProvider,
+    stdOut: '',
   });
 
   swap = reducer(
@@ -303,11 +279,8 @@ test('should infer correct states from happy-path logs', () => {
         'cb46ad562ffc868a7c2d8c72cecd9090cca7b6f102199db6a6cbef65afeb09d1',
       aliceXmrLockTxConfirmations: 1,
     },
-    provider: {
-      multiAddr: '/dnsaddr/xmr.example',
-      peerId: '12394294389438924',
-      testnet: true,
-    },
+    provider: exampleProvider,
+    stdOut: '',
   });
 
   swap = reducer(swap, transferredXmrToWalletLog(mXmrRedeemSuccessfulLog));
@@ -320,10 +293,7 @@ test('should infer correct states from happy-path logs', () => {
       bobXmrRedeemTxId:
         'eadda576b5929c55bcc58f55c24bb52ac1853edb7d3b068ab67a3f66b0a1c546',
     },
-    provider: {
-      multiAddr: '/dnsaddr/xmr.example',
-      peerId: '12394294389438924',
-      testnet: true,
-    },
+    provider: exampleProvider,
+    stdOut: '',
   });
 });
