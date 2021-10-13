@@ -20,23 +20,23 @@ function getSwapBinaryInfo(): BinaryInfo {
   switch (process.platform) {
     case 'darwin':
       return {
-        url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/0.8.3/swap_0.8.3_Darwin_x86_64.tar',
+        url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/0.9.0/swap_0.9.0_Darwin_x86_64.tar',
         sha256sum:
-          '13949ca45a7919d2ded13570f614df305e4dff61bb7e2e6c39203bcc0cabc23a',
+          '809ea13b4e9f8dfe9288b22394ae906161161c0763d1e453c81e60ee22cea3d7',
         name: 'swap',
       };
     case 'linux':
       return {
-        url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/0.8.3/swap_0.8.3_Linux_x86_64.tar',
+        url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/0.9.0/swap_0.9.0_Linux_x86_64.tar',
         sha256sum:
-          '9e080161ecc5664e3794a0139932eae23479b2d97d49ec4d7146ff789b345053',
+          'edb4c182004896ca49bb8458bc9527efd5d487dcdf9ad91398bb60be9b70f099',
         name: 'swap',
       };
     default:
       return {
-        url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/0.8.3/swap_0.8.3_Windows_x86_64.zip',
+        url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/0.9.0/swap_0.9.0_Windows_x86_64.zip',
         sha256sum:
-          '39a0e8f01d06647a9b24208202b1290305980d0dedeb0c2bbc560dc34b896835',
+          '3f2ade3e5ba1bb1522f070dd7896903a73e605a3507eaa35f69c92bb9b172ec9',
         name: 'swap.exe',
       };
   }
