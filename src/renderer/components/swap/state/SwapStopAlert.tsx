@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from '@material-ui/core';
 import React from 'react';
-import { stopSwap } from '../../../../swap/swap-process';
+import { stopProc } from '../../../../swap/cli';
 
 type SwapCancelAlertProps = {
   open: boolean;
@@ -16,7 +16,7 @@ type SwapCancelAlertProps = {
 
 export default function SwapStopAlert({ open, onClose }: SwapCancelAlertProps) {
   function handleSwapCancel() {
-    stopSwap();
+    stopProc();
     onClose();
   }
 

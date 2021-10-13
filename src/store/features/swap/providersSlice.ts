@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IS_TESTNET } from 'store/store';
 import { ExtendedProvider } from '../../../models/store';
+import { isTestnet } from '../../config';
 
 const initialState: ExtendedProvider[] = [];
 
@@ -19,7 +19,7 @@ export const swapSlice = createSlice({
   reducers: {
     setProviders: (_swap, action: PayloadAction<ExtendedProvider[]>) => {
       const providers = sortProviderList(action.payload).filter(
-        (provider) => provider.testnet === IS_TESTNET
+        (provider) => provider.testnet === isTestnet()
       );
       return providers;
     },

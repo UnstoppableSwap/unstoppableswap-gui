@@ -10,7 +10,7 @@ import React from 'react';
 import { SwapStateBtcLockInMempool } from '../../../../../../models/store';
 import BitcoinIcon from '../../../../icons/BitcoinIcon';
 import { getBitcoinTxExplorerUrl } from '../../../../../utils/blockexplorer-utils';
-import { IS_TESTNET } from '../../../../../../store/store';
+import { isTestnet } from '../../../../../../store/config';
 
 const useStyles = makeStyles((theme) => ({
   depositAddressOuter: {
@@ -60,7 +60,7 @@ export default function BitcoinLockTxInMempoolPage({
         </Typography>
         <Typography variant="body1">
           <Link
-            href={getBitcoinTxExplorerUrl(state.bobBtcLockTxId, IS_TESTNET)}
+            href={getBitcoinTxExplorerUrl(state.bobBtcLockTxId, isTestnet())}
             target="_blank"
           >
             View on explorer
