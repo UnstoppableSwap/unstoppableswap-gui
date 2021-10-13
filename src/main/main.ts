@@ -72,10 +72,8 @@ const createWindow = async () => {
     minWidth: 850,
     icon: getAssetPath('icon.png'),
     webPreferences: {
-      webSecurity: false,
       nodeIntegration: true,
       contextIsolation: false,
-      enableRemoteModule: true,
     },
   });
 
