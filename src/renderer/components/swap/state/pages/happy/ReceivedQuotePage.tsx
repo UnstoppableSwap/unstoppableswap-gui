@@ -1,12 +1,7 @@
 import { Box, CircularProgress, Typography } from '@material-ui/core';
 import React from 'react';
-import { SwapStateReceivedQuote } from '../../../../../../models/store';
 
-type ReceivedQuotePageProps = {
-  state: SwapStateReceivedQuote;
-};
-
-export default function ReceivedQuotePage({ state }: ReceivedQuotePageProps) {
+export default function ReceivedQuotePage() {
   return (
     <Box>
       <Typography variant="h5" align="center">
