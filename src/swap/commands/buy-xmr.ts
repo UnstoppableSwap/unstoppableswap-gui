@@ -1,14 +1,17 @@
 import {
+  isSwapLogAliceLockedXmr,
+  isSwapLogBtcTxStatusChanged,
+  isSwapLogPublishedBtcTx,
+  isSwapLogReceivedBtc,
+  isSwapLogReceivedQuote,
+  isSwapLogReceivedXmrLockTxConfirmation,
+  isSwapLogRedeemedXmr,
+  isSwapLogStartedSwap,
+  isSwapLogWaitingForBtcDeposit,
   SwapLog,
-  SwapLogAliceLockedXmr,
   SwapLogBtcTxStatusChanged,
-  SwapLogPublishedBtcTx,
-  SwapLogReceivedBtc,
-  SwapLogReceivedQuote,
   SwapLogReceivedXmrLockTxConfirmation,
   SwapLogRedeemedXmr,
-  SwapLogStartedSwap,
-  SwapLogWaitingForBtcDeposit,
 } from '../../models/swap';
 import { store } from '../../store/store';
 import {
@@ -34,42 +37,30 @@ import { spawnSubcommand } from '../cli';
 function onSwapLog(log: SwapLog) {
   store.dispatch(addLog(log));
 
-  switch (log.fields.message) {
-    case 'Received quote':
-      store.dispatch(receivedQuoteLog(log as SwapLogReceivedQuote));
-      break;
-    case 'Waiting for Bitcoin deposit':
-      store.dispatch(
-        waitingForBtcDepositLog(log as SwapLogWaitingForBtcDeposit)
-      );
-      break;
-    case 'Received Bitcoin':
-      store.dispatch(receivedBtcLog(log as SwapLogReceivedBtc));
-      break;
-    case 'Starting new swap':
-      store.dispatch(startingNewSwapLog(log as SwapLogStartedSwap));
-      break;
-    case 'Published Bitcoin transaction':
-      store.dispatch(publishedBtcTransactionLog(log as SwapLogPublishedBtcTx));
-      break;
-    case 'Bitcoin transaction status changed':
-      store.dispatch(
-        btcTransactionStatusChangedLog(log as SwapLogBtcTxStatusChanged)
-      );
-      break;
-    case 'Alice locked Monero':
-      store.dispatch(aliceLockedXmrLog(log as SwapLogAliceLockedXmr));
-      break;
-    case 'Received new confirmation for Monero lock tx':
-      store.dispatch(
-        xmrLockStatusChangedLog(log as SwapLogReceivedXmrLockTxConfirmation)
-      );
-      break;
-    case 'Successfully transferred XMR to wallet':
-      store.dispatch(transferredXmrToWalletLog(log as SwapLogRedeemedXmr));
-      break;
-    default:
-      console.error(`Swap log was not reduced Log: ${JSON.stringify(log)}`);
+  if (isSwapLogReceivedQuote(log)) {
+    store.dispatch(receivedQuoteLog(log));
+  } else if (isSwapLogWaitingForBtcDeposit(log)) {
+    store.dispatch(waitingForBtcDepositLog(log));
+  } else if (isSwapLogReceivedBtc(log)) {
+    store.dispatch(receivedBtcLog(log));
+  } else if (isSwapLogStartedSwap(log)) {
+    store.dispatch(startingNewSwapLog(log));
+  } else if (isSwapLogPublishedBtcTx(log)) {
+    store.dispatch(publishedBtcTransactionLog(log));
+  } else if (isSwapLogBtcTxStatusChanged(log)) {
+    store.dispatch(
+      btcTransactionStatusChangedLog(log as SwapLogBtcTxStatusChanged)
+    );
+  } else if (isSwapLogAliceLockedXmr(log)) {
+    store.dispatch(aliceLockedXmrLog(log));
+  } else if (isSwapLogReceivedXmrLockTxConfirmation(log)) {
+    store.dispatch(
+      xmrLockStatusChangedLog(log as SwapLogReceivedXmrLockTxConfirmation)
+    );
+  } else if (isSwapLogRedeemedXmr(log)) {
+    store.dispatch(transferredXmrToWalletLog(log as SwapLogRedeemedXmr));
+  } else {
+    console.error(`Swap log was not reduced Log: ${JSON.stringify(log)}`);
   }
 }
 

@@ -7,7 +7,7 @@ import {
 } from 'child_process';
 import downloadSwapBinary, { BinaryDownloadStatus } from './downloader';
 import { isTestnet } from '../store/config';
-import { SwapLog } from '../models/swap';
+import { isSwapLog, SwapLog } from '../models/swap';
 
 let cli: ChildProcessWithoutNullStreams | null = null;
 
@@ -20,20 +20,29 @@ export async function getAppDataDir(): Promise<string> {
   return dPath;
 }
 
-export async function getCliAppDataDir(): Promise<string> {
+export async function getCliDataBaseDir(): Promise<string> {
   const appDataPath = await ipcRenderer.invoke('get-app-data-path');
-  const dPath = path.join(appDataPath, 'xmr-btc-swap');
+  const dPath = path.join(appDataPath, 'xmr-btc-swap', 'cli');
   await fs.mkdir(dPath, {
     recursive: true,
   });
   return dPath;
 }
 
+export async function getCliDataDir(): Promise<string> {
+  const baseDir = await getCliDataBaseDir();
+  const dataDir = path.join(baseDir, isTestnet() ? 'testnet' : 'mainnet');
+  await fs.mkdir(dataDir, {
+    recursive: true,
+  });
+  return dataDir;
+}
+
 async function getSpawnArgs(
   subCommand: string,
   options: { [option: string]: string }
 ): Promise<string[]> {
-  const cliAppDataDir = await getCliAppDataDir();
+  const cliAppDataDir = await getCliDataBaseDir();
 
   const flagsArray = isTestnet()
     ? ['--json', '--debug', '--testnet', '--data-base-dir', cliAppDataDir]
@@ -82,13 +91,8 @@ export async function spawnSubcommand(
         .filter((s: string) => s.length > 3)
         .forEach((logText: string) => {
           try {
-            const parsedLog = JSON.parse(logText);
-            if (
-              parsedLog.timestamp &&
-              ['DEBUG', 'INFO', 'WARN'].includes(parsedLog.level) &&
-              parsedLog.fields.message
-            ) {
-              const log = parsedLog as SwapLog;
+            const log = JSON.parse(logText);
+            if (isSwapLog(log)) {
               onLog(log);
             } else {
               throw new Error('Required properties are missing');
