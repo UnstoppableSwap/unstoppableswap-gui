@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import swapReducer from './features/swap/swapSlice';
 import providersReducer from './features/swap/providersSlice';
+import historyReducer from './features/swap/historySlice';
 
 export const store = configureStore({
   reducer: {
     swap: swapReducer,
     providers: providersReducer,
+    history: historyReducer,
   },
 });
 

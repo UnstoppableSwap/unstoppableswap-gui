@@ -16,6 +16,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "better-sqlite3": "^7.4.3",
     "download": "^8.0.0"
   }
 }
