@@ -3,7 +3,7 @@ import Database, { Database as DatabaseT } from 'better-sqlite3';
 import fs from 'fs';
 import { getCliDataDir } from './cli';
 import { checkFileExists } from './utils/file-utils';
-import { AnyDbState, EncapsulatedDbState } from '../models/database';
+import { DbState, EncapsulatedDbState } from '../models/database';
 import { store } from '../store/store';
 import { databaseStateChanged } from '../store/features/swap/historySlice';
 
@@ -32,7 +32,7 @@ function getLatestStateForEachSwap(db: DatabaseT): EncapsulatedDbState[] {
     .all()
     .map(({ swap_id, state }) => ({
       swap_id: swap_id as string,
-      state: JSON.parse(state) as AnyDbState,
+      state: JSON.parse(state) as DbState,
     }));
 }
 
