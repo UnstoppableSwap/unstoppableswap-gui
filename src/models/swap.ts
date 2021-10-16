@@ -7,12 +7,12 @@ export interface SwapLog {
   };
 }
 
-export function isSwapLog(log: any): log is SwapLog {
+export function isSwapLog(log: unknown): log is SwapLog {
   return (
-    'timestamp' in log &&
-    'level' in log &&
-    'fields' in log &&
-    typeof log.fields?.message === 'string'
+    'timestamp' in (log as SwapLog) &&
+    'level' in (log as SwapLog) &&
+    'fields' in (log as SwapLog) &&
+    typeof (log as SwapLog).fields?.message === 'string'
   );
 }
 
