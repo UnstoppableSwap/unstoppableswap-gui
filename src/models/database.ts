@@ -3,20 +3,13 @@ export interface EncapsulatedDbState {
   state: DbState;
 }
 
-export type DbState =
-  | ExecutionSetupDoneDbState
-  | BtcLockedDbState
-  | XmrLockProofReceivedDbState
-  | XmrLockedDbState
-  | EncSigSentDbState
-  | BtcRedeemedDbState
-  | DoneXmrRedeemedDbState
-  | CancelTimelockExpiredDbState
-  | BtcCancelledDbState
-  | DoneBtcRefundedDbState
-  | DoneBtcPunishedDbState;
+export interface DbState {
+  Bob: {
+    [stateName: string]: unknown;
+  };
+}
 
-export interface ExecutionSetupDoneDbState {
+export interface ExecutionSetupDoneDbState extends DbState {
   Bob: {
     ExecutionSetupDone: {
       state2: {
@@ -42,7 +35,7 @@ export function isExecutionSetupDoneDbState(
   return 'ExecutionSetupDone' in dbState.Bob;
 }
 
-export interface BtcLockedDbState {
+export interface BtcLockedDbState extends DbState {
   Bob: {
     BtcLocked: {
       state3: DbState3;
@@ -56,7 +49,7 @@ export function isBtcLockedDbState(
   return 'BtcLocked' in dbState.Bob;
 }
 
-export interface XmrLockProofReceivedDbState {
+export interface XmrLockProofReceivedDbState extends DbState {
   Bob: {
     XmrLockProofReceived: {
       state: DbState3;
@@ -73,7 +66,7 @@ export function isXmrLockProofReceivedDbState(
   return 'XmrLockProofReceived' in dbState.Bob;
 }
 
-export interface XmrLockedDbState {
+export interface XmrLockedDbState extends DbState {
   Bob: {
     XmrLocked: {
       state4: DbState4;
@@ -87,7 +80,7 @@ export function isXmrLockedDbState(
   return 'XmrLocked' in dbState.Bob;
 }
 
-export interface EncSigSentDbState {
+export interface EncSigSentDbState extends DbState {
   Bob: {
     EncSigSent: {
       state4: DbState4;
@@ -101,7 +94,7 @@ export function isEncSigSentDbState(
   return 'EncSigSent' in dbState.Bob;
 }
 
-export interface BtcRedeemedDbState {
+export interface BtcRedeemedDbState extends DbState {
   Bob: {
     BtcRedeemed: DbState5;
   };
@@ -113,7 +106,7 @@ export function isBtcRedeemedDbState(
   return 'BtcRedeemed' in dbState.Bob;
 }
 
-export interface DoneXmrRedeemedDbState {
+export interface DoneXmrRedeemedDbState extends DbState {
   Bob: {
     Done: {
       XmrRedeemed: {
@@ -132,7 +125,7 @@ export function isDoneXmrRedeemedDbState(
   );
 }
 
-export interface CancelTimelockExpiredDbState {
+export interface CancelTimelockExpiredDbState extends DbState {
   Bob: {
     CancelTimelockExpired: DbState6;
   };
@@ -144,7 +137,7 @@ export function isCancelTimelockExpiredDbState(
   return 'CancelTimelockExpired' in dbState.Bob;
 }
 
-export interface BtcCancelledDbState {
+export interface BtcCancelledDbState extends DbState {
   Bob: {
     BtcCancelled: DbState6;
   };
@@ -156,7 +149,7 @@ export function isBtcCancelledDbState(
   return 'BtcCancelled' in dbState.Bob;
 }
 
-export interface DoneBtcRefundedDbState {
+export interface DoneBtcRefundedDbState extends DbState {
   Bob: {
     Done: {
       BtcRefunded: DbState6;
@@ -173,7 +166,7 @@ export function isDoneBtcRefundedDbState(
   );
 }
 
-export interface DoneBtcPunishedDbState {
+export interface DoneBtcPunishedDbState extends DbState {
   Bob: {
     Done: {
       BtcPunished: {
