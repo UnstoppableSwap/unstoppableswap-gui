@@ -1,0 +1,473 @@
+{
+  "Bob": {
+    "BtcRedeemed": {
+      "s_a": [
+        151,
+        146,
+        156,
+        122,
+        58,
+        80,
+        151,
+        101,
+        214,
+        250,
+        235,
+        9,
+        131,
+        211,
+        139,
+        78,
+        178,
+        145,
+        19,
+        180,
+        108,
+        147,
+        15,
+        47,
+        164,
+        122,
+        168,
+        211,
+        185,
+        251,
+        132,
+        15
+      ],
+      "s_b": [
+        166,
+        203,
+        27,
+        60,
+        96,
+        10,
+        134,
+        112,
+        136,
+        123,
+        43,
+        106,
+        69,
+        157,
+        218,
+        200,
+        52,
+        37,
+        48,
+        194,
+        167,
+        183,
+        183,
+        172,
+        219,
+        64,
+        40,
+        175,
+        86,
+        47,
+        65,
+        13
+      ],
+      "v": [
+        251,
+        147,
+        173,
+        210,
+        28,
+        67,
+        101,
+        75,
+        20,
+        221,
+        109,
+        201,
+        93,
+        132,
+        86,
+        34,
+        206,
+        66,
+        205,
+        8,
+        147,
+        128,
+        49,
+        161,
+        40,
+        157,
+        37,
+        43,
+        113,
+        249,
+        33,
+        3
+      ],
+      "tx_lock": {
+        "inner": {
+          "global": {
+            "unsigned_tx": {
+              "version": 1,
+              "lock_time": 0,
+              "input": [
+                {
+                  "previous_output": "786fa8a202225810f093715eed4f008028be806f813cb2ec4300a1a28ca3c07c:0",
+                  "script_sig": "",
+                  "sequence": 4294967295,
+                  "witness": []
+                },
+                {
+                  "previous_output": "088a96e1154028678cfe5ecec177bc86d4415a02163313e94dc17f2348f8c893:1",
+                  "script_sig": "",
+                  "sequence": 4294967295,
+                  "witness": []
+                }
+              ],
+              "output": [
+                {
+                  "value": 14809,
+                  "script_pubkey": "0020d97318e8f42f5f377759c2c34b05795e90ccab68d107927ab73a2d4814a4731e"
+                }
+              ]
+            },
+            "version": 0,
+            "xpub": {},
+            "proprietary": [],
+            "unknown": []
+          },
+          "inputs": [
+            {
+              "non_witness_utxo": {
+                "version": 2,
+                "lock_time": 2097025,
+                "input": [
+                  {
+                    "previous_output": "de52c715c1f7e58d6c422bf01d9d6d2875f9be07a80f03a1ca85d00cdff9398c:1",
+                    "script_sig": "",
+                    "sequence": 4294967293,
+                    "witness": [
+                      [
+                        48,
+                        68,
+                        2,
+                        32,
+                        15,
+                        125,
+                        148,
+                        64,
+                        42,
+                        168,
+                        212,
+                        149,
+                        171,
+                        223,
+                        103,
+                        95,
+                        225,
+                        230,
+                        11,
+                        51,
+                        50,
+                        119,
+                        35,
+                        55,
+                        3,
+                        219,
+                        132,
+                        237,
+                        159,
+                        212,
+                        108,
+                        127,
+                        18,
+                        124,
+                        196,
+                        226,
+                        2,
+                        32,
+                        27,
+                        52,
+                        231,
+                        45,
+                        180,
+                        248,
+                        48,
+                        217,
+                        227,
+                        201,
+                        63,
+                        240,
+                        161,
+                        40,
+                        137,
+                        76,
+                        70,
+                        131,
+                        233,
+                        23,
+                        160,
+                        164,
+                        178,
+                        31,
+                        193,
+                        181,
+                        103,
+                        195,
+                        149,
+                        92,
+                        199,
+                        85,
+                        1
+                      ],
+                      [
+                        2,
+                        64,
+                        87,
+                        104,
+                        107,
+                        121,
+                        153,
+                        183,
+                        190,
+                        201,
+                        88,
+                        178,
+                        235,
+                        247,
+                        111,
+                        37,
+                        159,
+                        119,
+                        178,
+                        78,
+                        209,
+                        54,
+                        208,
+                        11,
+                        209,
+                        160,
+                        111,
+                        90,
+                        73,
+                        156,
+                        87,
+                        144,
+                        226
+                      ]
+                    ]
+                  }
+                ],
+                "output": [
+                  {
+                    "value": 10000,
+                    "script_pubkey": "001479cb315123180083607615100dfa8eeec4a3636a"
+                  },
+                  {
+                    "value": 1445400,
+                    "script_pubkey": "0014485c0106632a85fa5b4a3a813c3ec57dfe8a63b5"
+                  }
+                ]
+              },
+              "witness_utxo": {
+                "value": 10000,
+                "script_pubkey": "001479cb315123180083607615100dfa8eeec4a3636a"
+              },
+              "partial_sigs": {},
+              "sighash_type": null,
+              "redeem_script": null,
+              "witness_script": null,
+              "bip32_derivation": [
+                [
+                  "037672e03b840034e47aec39ae202825c8ccab6514ee5ea2eb32ae13b1f695317e",
+                  [
+                    "7e0f3113",
+                    "m/84'/0'/0'/0/5"
+                  ]
+                ]
+              ],
+              "final_script_sig": null,
+              "final_script_witness": null,
+              "ripemd160_preimages": {},
+              "sha256_preimages": {},
+              "hash160_preimages": {},
+              "hash256_preimages": {},
+              "proprietary": [],
+              "unknown": []
+            },
+            {
+              "non_witness_utxo": {
+                "version": 2,
+                "lock_time": 2097014,
+                "input": [
+                  {
+                    "previous_output": "3e6341d5bf5da7663b3d120cbc45356798b37c44a29952d63a1caf78709089a6:0",
+                    "script_sig": "",
+                    "sequence": 4294967293,
+                    "witness": [
+                      [
+                        48,
+                        68,
+                        2,
+                        32,
+                        115,
+                        244,
+                        133,
+                        95,
+                        249,
+                        107,
+                        172,
+                        75,
+                        27,
+                        164,
+                        177,
+                        190,
+                        59,
+                        22,
+                        3,
+                        191,
+                        231,
+                        9,
+                        133,
+                        68,
+                        170,
+                        136,
+                        60,
+                        195,
+                        39,
+                        164,
+                        144,
+                        204,
+                        211,
+                        68,
+                        51,
+                        198,
+                        2,
+                        32,
+                        99,
+                        133,
+                        231,
+                        57,
+                        56,
+                        26,
+                        209,
+                        153,
+                        30,
+                        209,
+                        79,
+                        164,
+                        147,
+                        92,
+                        74,
+                        67,
+                        223,
+                        23,
+                        222,
+                        162,
+                        22,
+                        212,
+                        82,
+                        50,
+                        252,
+                        232,
+                        118,
+                        157,
+                        187,
+                        169,
+                        14,
+                        90,
+                        1
+                      ],
+                      [
+                        2,
+                        117,
+                        65,
+                        177,
+                        47,
+                        222,
+                        90,
+                        140,
+                        144,
+                        228,
+                        235,
+                        80,
+                        45,
+                        243,
+                        227,
+                        254,
+                        164,
+                        191,
+                        2,
+                        97,
+                        163,
+                        143,
+                        33,
+                        178,
+                        62,
+                        57,
+                        20,
+                        161,
+                        207,
+                        131,
+                        19,
+                        70,
+                        236
+                      ]
+                    ]
+                  }
+                ],
+                "output": [
+                  {
+                    "value": 800,
+                    "script_pubkey": "0014102a1cae65efc85888422cdd0bba11d11e48b55e"
+                  },
+                  {
+                    "value": 5000,
+                    "script_pubkey": "001479cb315123180083607615100dfa8eeec4a3636a"
+                  }
+                ]
+              },
+              "witness_utxo": {
+                "value": 5000,
+                "script_pubkey": "001479cb315123180083607615100dfa8eeec4a3636a"
+              },
+              "partial_sigs": {},
+              "sighash_type": null,
+              "redeem_script": null,
+              "witness_script": null,
+              "bip32_derivation": [
+                [
+                  "037672e03b840034e47aec39ae202825c8ccab6514ee5ea2eb32ae13b1f695317e",
+                  [
+                    "7e0f3113",
+                    "m/84'/0'/0'/0/5"
+                  ]
+                ]
+              ],
+              "final_script_sig": null,
+              "final_script_witness": null,
+              "ripemd160_preimages": {},
+              "sha256_preimages": {},
+              "hash160_preimages": {},
+              "hash256_preimages": {},
+              "proprietary": [],
+              "unknown": []
+            }
+          ],
+          "outputs": [
+            {
+              "redeem_script": null,
+              "witness_script": null,
+              "bip32_derivation": [],
+              "proprietary": [],
+              "unknown": []
+            }
+          ]
+        },
+        "output_descriptor": "wsh(c:and_v(v:pk(037d0ca9acfb05f6112ef65f010b8230ce3ab516ed10ffae9ce40e1db154545726),pk_k(02b2092134ede9789cf9517a12164920df29c094c6c27f8375b398e5d3d2e63784)))#r52mfe3t"
+      },
+      "monero_wallet_restore_blockheight": {
+        "height": 932955
+      }
+    }
+  }
+}
