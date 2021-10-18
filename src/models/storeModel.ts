@@ -1,5 +1,5 @@
 import { BinaryInfo } from '../swap/downloader';
-import { SwapLog } from './swap';
+import { SwapLog } from './swapModel';
 
 export interface Provider {
   multiAddr: string;

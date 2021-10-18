@@ -1,7 +1,7 @@
 import React from 'react';
 import { Dialog, useMediaQuery, useTheme } from '@material-ui/core';
 import SwapInitPage from './SwapInitPage';
-import { ExtendedProvider } from '../../../../models/store';
+import { ExtendedProvider } from '../../../../models/storeModel';
 
 export default function SwapInitDialog({
   open,

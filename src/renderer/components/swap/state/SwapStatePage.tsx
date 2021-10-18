@@ -22,7 +22,7 @@ import {
   Swap,
   SwapState,
   SwapStateWaitingForBtcDeposit,
-} from '../../../../models/store';
+} from '../../../../models/storeModel';
 import SwapStateStepper from './SwapStateStepper';
 import DownloadingBinaryPage from './pages/happy/DownloadingBinaryPage';
 import InitiatedPage from './pages/happy/InitiatedPage';

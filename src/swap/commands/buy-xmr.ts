@@ -12,7 +12,7 @@ import {
   SwapLogBtcTxStatusChanged,
   SwapLogReceivedXmrLockTxConfirmation,
   SwapLogRedeemedXmr,
-} from '../../models/swap';
+} from '../../models/swapModel';
 import { store } from '../../store/store';
 import {
   addLog,
@@ -30,7 +30,7 @@ import {
   waitingForBtcDepositLog,
   xmrLockStatusChangedLog,
 } from '../../store/features/swap/swapSlice';
-import { Provider } from '../../models/store';
+import { Provider } from '../../models/storeModel';
 import { BinaryDownloadStatus } from '../downloader';
 import { spawnSubcommand } from '../cli';
 

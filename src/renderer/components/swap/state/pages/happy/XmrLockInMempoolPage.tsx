@@ -7,7 +7,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import React from 'react';
-import { SwapStateXmrLockInMempool } from '../../../../../../models/store';
+import { SwapStateXmrLockInMempool } from '../../../../../../models/storeModel';
 import MoneroIcon from '../../../../icons/MoneroIcon';
 import { getMoneroTxExplorerUrl } from '../../../../../utils/blockexplorer-utils';
 import { isTestnet } from '../../../../../../store/config';

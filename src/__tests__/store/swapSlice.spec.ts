@@ -1,5 +1,5 @@
 import { AnyAction } from '@reduxjs/toolkit';
-import { Provider, Swap, SwapStateType } from '../../models/store';
+import { Provider, Swap, SwapStateType } from '../../models/storeModel';
 import {
   SwapLogAliceLockedXmr,
   SwapLogBtcTxStatusChanged,
@@ -10,7 +10,7 @@ import {
   SwapLogRedeemedXmr,
   SwapLogStartedSwap,
   SwapLogWaitingForBtcDeposit,
-} from '../../models/swap';
+} from '../../models/swapModel';
 
 import reducer, {
   aliceLockedXmrLog,

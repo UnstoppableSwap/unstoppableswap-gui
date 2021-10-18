@@ -13,7 +13,7 @@ import {
   isBtcAddressValid,
   isXmrAddressValid,
 } from '../../../../swap/utils/crypto-utils';
-import { ExtendedProvider } from '../../../../models/store';
+import { ExtendedProvider } from '../../../../models/storeModel';
 import { useAppSelector } from '../../../../store/hooks';
 import startSwap from '../../../../swap/commands/buy-xmr';
 import { isTestnet } from '../../../../store/config';

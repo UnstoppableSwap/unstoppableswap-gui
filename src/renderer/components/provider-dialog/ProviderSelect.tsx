@@ -6,7 +6,7 @@ import {
   Box,
 } from '@material-ui/core';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
-import { ExtendedProvider } from 'models/store';
+import { ExtendedProvider } from 'models/storeModel';
 import React, { useState } from 'react';
 import ProviderInfo from './ProviderInfo';
 import ProviderSelectDialog from './ProviderSelectDialog';

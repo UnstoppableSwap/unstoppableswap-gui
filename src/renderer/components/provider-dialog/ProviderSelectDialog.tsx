@@ -16,7 +16,7 @@ import {
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import ProviderInfo from './ProviderInfo';
-import { ExtendedProvider } from '../../../models/store';
+import { ExtendedProvider } from '../../../models/storeModel';
 import { useAppSelector } from '../../../store/hooks';
 
 const useStyles = makeStyles({

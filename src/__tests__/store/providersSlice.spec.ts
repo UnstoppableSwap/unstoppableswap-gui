@@ -2,7 +2,7 @@ import { AnyAction } from '@reduxjs/toolkit';
 import reducer, {
   setProviders,
 } from '../../store/features/swap/providersSlice';
-import { ExtendedProvider } from '../../models/store';
+import { ExtendedProvider } from '../../models/storeModel';
 
 const exampleTestnetProvider: ExtendedProvider = {
   multiAddr: '/dnsaddr/t.xmr.example',
