@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Paper,
   Table,
   TableBody,
   TableCell,

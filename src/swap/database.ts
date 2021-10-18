@@ -8,6 +8,7 @@ import {
   DbState,
   MergedDbState,
   getTypeOfDbState,
+  ExecutionSetupDoneDbState,
 } from '../models/databaseModel';
 import { store } from '../store/store';
 import { databaseStateChanged } from '../store/features/swap/historySlice';
@@ -75,7 +76,7 @@ function getMergedStateForEachSwap(db: DatabaseT): MergedDbState[] {
     return {
       swapId,
       type: latestStateType,
-      state: mergedState as DbState,
+      state: mergedState as ExecutionSetupDoneDbState,
     };
   });
 }
