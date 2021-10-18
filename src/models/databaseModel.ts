@@ -250,7 +250,7 @@ export enum DbStateType {
 export interface MergedDbState {
   swapId: string;
   type: DbStateType;
-  state: DbState;
+  state: ExecutionSetupDoneDbState; // Only ExecutionSetupDone states or more are saved
 }
 
 export interface MergedExecutionSetupDoneDbState extends MergedDbState {

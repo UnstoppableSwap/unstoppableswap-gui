@@ -128,7 +128,7 @@ function HasProviderSwapWidget() {
     // 'elevation' prop can't be passed down (type def issue)
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    <Box className={classes.inner} component={Paper} elevation={15}>
+    <Box className={classes.inner} component={Paper} elevation={5}>
       <Title />
       <TextField
         label="Send"
