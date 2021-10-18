@@ -1,7 +1,7 @@
 import { Box, Button, makeStyles, Paper, Typography } from '@material-ui/core';
 import React from 'react';
 import { resetSwap } from 'store/features/swap/swapSlice';
-import { SwapStateProcessExited } from '../../../../../../models/store';
+import { SwapStateProcessExited } from '../../../../../../models/storeModel';
 import { useAppDispatch, useAppSelector } from '../../../../../../store/hooks';
 
 const useStyles = makeStyles((theme) => ({

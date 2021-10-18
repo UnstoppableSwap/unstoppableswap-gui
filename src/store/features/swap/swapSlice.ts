@@ -17,7 +17,7 @@ import {
   SwapStateWaitingForBtcDeposit,
   SwapStateXmrLockInMempool,
   SwapStateXmrRedeemInMempool,
-} from '../../../models/store';
+} from '../../../models/storeModel';
 import {
   SwapLog,
   SwapLogAliceLockedXmr,
@@ -29,7 +29,7 @@ import {
   SwapLogRedeemedXmr,
   SwapLogStartedSwap,
   SwapLogWaitingForBtcDeposit,
-} from '../../../models/swap';
+} from '../../../models/swapModel';
 
 const initialState: Swap = {
   state: null,

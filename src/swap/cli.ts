@@ -7,7 +7,7 @@ import {
 } from 'child_process';
 import downloadSwapBinary, { BinaryDownloadStatus } from './downloader';
 import { isTestnet } from '../store/config';
-import { isSwapLog, SwapLog } from '../models/swap';
+import { isSwapLog, SwapLog } from '../models/swapModel';
 
 let cli: ChildProcessWithoutNullStreams | null = null;
 

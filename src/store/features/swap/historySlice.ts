@@ -1,13 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { EncapsulatedDbState } from '../../../models/database';
+import { MergedDbState } from '../../../models/databaseModel';
 
-const initialState: EncapsulatedDbState[] = [];
+const initialState: MergedDbState[] = [];
 
 export const historySlice = createSlice({
   name: 'history',
   initialState,
   reducers: {
-    databaseStateChanged: (_, action: PayloadAction<EncapsulatedDbState[]>) =>
+    databaseStateChanged: (_, action: PayloadAction<MergedDbState[]>) =>
       action.payload,
   },
 });

@@ -7,7 +7,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import React from 'react';
-import { SwapStateBtcLockInMempool } from '../../../../../../models/store';
+import { SwapStateBtcLockInMempool } from '../../../../../../models/storeModel';
 import BitcoinIcon from '../../../../icons/BitcoinIcon';
 import { getBitcoinTxExplorerUrl } from '../../../../../utils/blockexplorer-utils';
 import { isTestnet } from '../../../../../../store/config';

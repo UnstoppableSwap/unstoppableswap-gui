@@ -1,5 +1,5 @@
 import { Step, StepLabel, Stepper, Typography } from '@material-ui/core';
-import { SwapState, SwapStateType } from 'models/store';
+import { SwapState, SwapStateType } from 'models/storeModel';
 import React from 'react';
 
 type SwapStateProgressBarProps = {
