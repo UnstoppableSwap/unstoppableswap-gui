@@ -10,18 +10,19 @@ import SwapDialogTitle from '../SwapDialogTitle';
 import SwapStopAlert from './SwapStopAlert';
 import { useAppDispatch } from '../../../../store/hooks';
 import {
+  isSwapStateBtcLockInMempool,
+  isSwapStateDownloadingBinary,
+  isSwapStateInitiated,
+  isSwapStateProcessExited,
+  isSwapStateReceivedQuote,
+  isSwapStateStarted,
+  isSwapStateWaitingForBtcDeposit,
+  isSwapStateXmrLockInMempool,
+  isSwapStateXmrRedeemInMempool,
   Swap,
   SwapState,
-  SwapStateBtcLockInMempool,
-  SwapStateDownloadingBinary,
-  SwapStateInitiated,
-  SwapStateProcessExited,
-  SwapStateReceivedQuote,
-  SwapStateType,
   SwapStateWaitingForBtcDeposit,
-  SwapStateXmrLockInMempool,
-  SwapStateXmrRedeemInMempool,
-} from '../../../../models/store';
+} from '../../../../models/storeModel';
 import SwapStateStepper from './SwapStateStepper';
 import DownloadingBinaryPage from './pages/happy/DownloadingBinaryPage';
 import InitiatedPage from './pages/happy/InitiatedPage';
@@ -44,42 +45,45 @@ const useStyles = makeStyles({
 });
 
 function InnerContent({ state }: { state: SwapState }) {
-  switch (state.type) {
-    case SwapStateType.DOWNLOADING_BINARY:
-      return (
-        <DownloadingBinaryPage state={state as SwapStateDownloadingBinary} />
-      );
-    case SwapStateType.INITIATED:
-      return <InitiatedPage state={state as SwapStateInitiated} />;
-    case SwapStateType.RECEIVED_QUOTE:
-      return <ReceivedQuotePage state={state as SwapStateReceivedQuote} />;
-    case SwapStateType.WAITING_FOR_BTC_DEPOSIT:
-      return (
-        <WaitingForBitcoinDepositPage
-          state={state as SwapStateWaitingForBtcDeposit}
-        />
-      );
-    case SwapStateType.STARTED:
-      return <StartedPage />;
-    case SwapStateType.BTC_LOCK_TX_IN_MEMPOOL:
-      return (
-        <BitcoinLockTxInMempoolPage
-          state={state as SwapStateBtcLockInMempool}
-        />
-      );
-    case SwapStateType.XMR_LOCK_TX_IN_MEMPOOL:
-      return (
-        <XmrLockTxInMempoolPage state={state as SwapStateXmrLockInMempool} />
-      );
-    case SwapStateType.XMR_REDEEM_IN_MEMPOOL:
-      return (
-        <XmrRedeemInMempoolPage state={state as SwapStateXmrRedeemInMempool} />
-      );
-    case SwapStateType.PROCESS_EXITED:
-      return <ProcessExitedPage state={state as SwapStateProcessExited} />;
-    default:
-      return <pre>{JSON.stringify(state, null, '\t')}</pre>;
+  if (isSwapStateDownloadingBinary(state)) {
+    return <DownloadingBinaryPage state={state} />;
   }
+  if (isSwapStateInitiated(state)) {
+    return <InitiatedPage />;
+  }
+  if (isSwapStateReceivedQuote(state)) {
+    return <ReceivedQuotePage />;
+  }
+  if (isSwapStateWaitingForBtcDeposit(state)) {
+    return (
+      <WaitingForBitcoinDepositPage
+        state={state as SwapStateWaitingForBtcDeposit}
+      />
+    );
+  }
+  if (isSwapStateWaitingForBtcDeposit(state)) {
+    return (
+      <WaitingForBitcoinDepositPage
+        state={state as SwapStateWaitingForBtcDeposit}
+      />
+    );
+  }
+  if (isSwapStateStarted(state)) {
+    return <StartedPage />;
+  }
+  if (isSwapStateBtcLockInMempool(state)) {
+    return <BitcoinLockTxInMempoolPage state={state} />;
+  }
+  if (isSwapStateXmrLockInMempool(state)) {
+    return <XmrLockTxInMempoolPage state={state} />;
+  }
+  if (isSwapStateXmrRedeemInMempool(state)) {
+    return <XmrRedeemInMempoolPage state={state} />;
+  }
+  if (isSwapStateProcessExited(state)) {
+    return <ProcessExitedPage state={state} />;
+  }
+  return <pre>{JSON.stringify(state, null, 4)}</pre>;
 }
 
 export default function SwapStatePage({ swap }: { swap: Swap }) {

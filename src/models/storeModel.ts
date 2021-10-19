@@ -1,5 +1,5 @@
 import { BinaryInfo } from '../swap/downloader';
-import { SwapLog } from './swap';
+import { SwapLog } from './swapModel';
 
 export interface Provider {
   multiAddr: string;
@@ -20,6 +20,7 @@ export interface ExtendedProvider extends Provider {
 export interface Swap {
   state: SwapState | null;
   logs: SwapLog[];
+  stdOut: string;
   processRunning: boolean;
   provider: Provider | null;
 }
@@ -47,8 +48,20 @@ export interface SwapStateDownloadingBinary extends SwapState {
   contentLengthBytes: number;
 }
 
+export function isSwapStateDownloadingBinary(
+  state?: SwapState | null
+): state is SwapStateDownloadingBinary {
+  return state?.type === SwapStateType.DOWNLOADING_BINARY;
+}
+
 export interface SwapStateInitiated extends SwapState {
   type: SwapStateType.INITIATED;
+}
+
+export function isSwapStateInitiated(
+  state?: SwapState | null
+): state is SwapStateInitiated {
+  return state?.type === SwapStateType.INITIATED;
 }
 
 export interface SwapStateReceivedQuote extends SwapState {
@@ -58,17 +71,33 @@ export interface SwapStateReceivedQuote extends SwapState {
   maximumSwapAmount: number;
 }
 
+export function isSwapStateReceivedQuote(
+  state?: SwapState | null
+): state is SwapStateReceivedQuote {
+  return state?.type === SwapStateType.RECEIVED_QUOTE;
+}
+
 export interface SwapStateWaitingForBtcDeposit extends SwapState {
   type: SwapStateType.WAITING_FOR_BTC_DEPOSIT;
   depositAddress: string;
   maxGiveable: number;
 }
 
+export function isSwapStateWaitingForBtcDeposit(
+  state?: SwapState | null
+): state is SwapStateWaitingForBtcDeposit {
+  return state?.type === SwapStateType.WAITING_FOR_BTC_DEPOSIT;
+}
+
 export interface SwapStateStarted extends SwapState {
   type: SwapStateType.STARTED;
   id: string;
-  btcAmount: number;
-  bobBtcLockTxFees: number;
+}
+
+export function isSwapStateStarted(
+  state?: SwapState | null
+): state is SwapStateStarted {
+  return state?.type === SwapStateType.STARTED;
 }
 
 export interface SwapStateBtcLockInMempool extends SwapState {
@@ -77,10 +106,22 @@ export interface SwapStateBtcLockInMempool extends SwapState {
   bobBtcLockTxConfirmations: number;
 }
 
+export function isSwapStateBtcLockInMempool(
+  state?: SwapState | null
+): state is SwapStateBtcLockInMempool {
+  return state?.type === SwapStateType.BTC_LOCK_TX_IN_MEMPOOL;
+}
+
 export interface SwapStateXmrLockInMempool extends SwapState {
   type: SwapStateType.XMR_LOCK_TX_IN_MEMPOOL;
   aliceXmrLockTxId: string;
   aliceXmrLockTxConfirmations: number;
+}
+
+export function isSwapStateXmrLockInMempool(
+  state?: SwapState | null
+): state is SwapStateXmrLockInMempool {
+  return state?.type === SwapStateType.XMR_LOCK_TX_IN_MEMPOOL;
 }
 
 export interface SwapStateXmrRedeemInMempool extends SwapState {
@@ -88,8 +129,20 @@ export interface SwapStateXmrRedeemInMempool extends SwapState {
   bobXmrRedeemTxId: string;
 }
 
+export function isSwapStateXmrRedeemInMempool(
+  state?: SwapState | null
+): state is SwapStateXmrRedeemInMempool {
+  return state?.type === SwapStateType.XMR_REDEEM_IN_MEMPOOL;
+}
+
 export interface SwapStateProcessExited extends SwapState {
   type: SwapStateType.PROCESS_EXITED;
   exitCode: number | null;
   exitSignal: NodeJS.Signals | null | undefined;
+}
+
+export function isSwapStateProcessExited(
+  state?: SwapState | null
+): state is SwapStateProcessExited {
+  return state?.type === SwapStateType.PROCESS_EXITED;
 }

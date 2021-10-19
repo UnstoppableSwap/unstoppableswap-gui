@@ -7,6 +7,15 @@ export interface SwapLog {
   };
 }
 
+export function isSwapLog(log: unknown): log is SwapLog {
+  return (
+    'timestamp' in (log as SwapLog) &&
+    'level' in (log as SwapLog) &&
+    'fields' in (log as SwapLog) &&
+    typeof (log as SwapLog).fields?.message === 'string'
+  );
+}
+
 export interface SwapLogReceivedQuote extends SwapLog {
   fields: {
     message: 'Received quote';
@@ -14,6 +23,12 @@ export interface SwapLogReceivedQuote extends SwapLog {
     minimum_amount: string;
     maximum_amount: string;
   };
+}
+
+export function isSwapLogReceivedQuote(
+  log: SwapLog
+): log is SwapLogReceivedQuote {
+  return log.fields.message === 'Received quote';
 }
 
 export interface SwapLogWaitingForBtcDeposit extends SwapLog {
@@ -26,6 +41,12 @@ export interface SwapLogWaitingForBtcDeposit extends SwapLog {
   };
 }
 
+export function isSwapLogWaitingForBtcDeposit(
+  log: SwapLog
+): log is SwapLogWaitingForBtcDeposit {
+  return log.fields.message === 'Waiting for Bitcoin deposit';
+}
+
 export interface SwapLogReceivedBtc extends SwapLog {
   fields: {
     message: 'Received Bitcoin';
@@ -34,13 +55,19 @@ export interface SwapLogReceivedBtc extends SwapLog {
   };
 }
 
+export function isSwapLogReceivedBtc(log: SwapLog): log is SwapLogReceivedBtc {
+  return log.fields.message === 'Received Bitcoin';
+}
+
 export interface SwapLogStartedSwap extends SwapLog {
   fields: {
     message: 'Starting new swap';
-    amount: string;
-    fees: string;
     swap_id: string;
   };
+}
+
+export function isSwapLogStartedSwap(log: SwapLog): log is SwapLogStartedSwap {
+  return log.fields.message === 'Starting new swap';
 }
 
 export interface SwapLogPublishedBtcTx extends SwapLog {
@@ -51,6 +78,12 @@ export interface SwapLogPublishedBtcTx extends SwapLog {
   };
 }
 
+export function isSwapLogPublishedBtcTx(
+  log: SwapLog
+): log is SwapLogPublishedBtcTx {
+  return log.fields.message === 'Published Bitcoin transaction';
+}
+
 export interface SwapLogBtcTxStatusChanged extends SwapLog {
   fields: {
     message: 'Bitcoin transaction status changed';
@@ -59,11 +92,23 @@ export interface SwapLogBtcTxStatusChanged extends SwapLog {
   };
 }
 
+export function isSwapLogBtcTxStatusChanged(
+  log: SwapLog
+): log is SwapLogBtcTxStatusChanged {
+  return log.fields.message === 'Bitcoin transaction status changed';
+}
+
 export interface SwapLogAliceLockedXmr extends SwapLog {
   fields: {
     message: 'Alice locked Monero';
     txid: string;
   };
+}
+
+export function isSwapLogAliceLockedXmr(
+  log: SwapLog
+): log is SwapLogAliceLockedXmr {
+  return log.fields.message === 'Alice locked Monero';
 }
 
 export interface SwapLogReceivedXmrLockTxConfirmation extends SwapLog {
@@ -75,10 +120,20 @@ export interface SwapLogReceivedXmrLockTxConfirmation extends SwapLog {
   };
 }
 
+export function isSwapLogReceivedXmrLockTxConfirmation(
+  log: SwapLog
+): log is SwapLogReceivedXmrLockTxConfirmation {
+  return log.fields.message === 'Received new confirmation for Monero lock tx';
+}
+
 export interface SwapLogRedeemedXmr extends SwapLog {
   fields: {
     message: 'Successfully transferred XMR to wallet';
     monero_receive_address: string;
     txid: string;
   };
+}
+
+export function isSwapLogRedeemedXmr(log: SwapLog): log is SwapLogRedeemedXmr {
+  return log.fields.message === 'Successfully transferred XMR to wallet';
 }

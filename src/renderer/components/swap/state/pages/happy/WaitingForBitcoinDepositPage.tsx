@@ -3,7 +3,7 @@ import React from 'react';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 import { clipboard } from 'electron';
 import BitcoinIcon from 'renderer/components/icons/BitcoinIcon';
-import { SwapStateWaitingForBtcDeposit } from '../../../../../../models/store';
+import { SwapStateWaitingForBtcDeposit } from '../../../../../../models/storeModel';
 
 const useStyles = makeStyles((theme) => ({
   depositAddressOuter: {

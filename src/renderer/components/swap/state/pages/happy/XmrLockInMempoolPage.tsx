@@ -7,11 +7,10 @@ import {
   Typography,
 } from '@material-ui/core';
 import React from 'react';
-import { SwapStateXmrLockInMempool } from '../../../../../../models/store';
-import { useAppSelector } from '../../../../../../store/hooks';
+import { SwapStateXmrLockInMempool } from '../../../../../../models/storeModel';
 import MoneroIcon from '../../../../icons/MoneroIcon';
 import { getMoneroTxExplorerUrl } from '../../../../../utils/blockexplorer-utils';
-import { IS_TESTNET } from '../../../../../../store/store';
+import { isTestnet } from '../../../../../../store/config';
 
 const useStyles = makeStyles((theme) => ({
   depositAddressOuter: {
@@ -41,7 +40,6 @@ export default function XmrLockTxInMempoolPage({
   state,
 }: XmrLockTxInMempoolPageProps) {
   const classes = useStyles();
-  const provider = useAppSelector((s) => s.swap.provider);
 
   return (
     <Box>
@@ -60,7 +58,7 @@ export default function XmrLockTxInMempoolPage({
         </Typography>
         <Typography variant="body1">
           <Link
-            href={getMoneroTxExplorerUrl(state.aliceXmrLockTxId, IS_TESTNET)}
+            href={getMoneroTxExplorerUrl(state.aliceXmrLockTxId, isTestnet())}
             target="_blank"
           >
             View on explorer
