@@ -119,7 +119,7 @@ export const swapSlice = createSlice({
         action.payload.fields.max_giveable
       );
 
-      if (state && isSwapStateWaitingForBtcDeposit(state)) {
+      if (isSwapStateWaitingForBtcDeposit(state)) {
         state.maxGiveable = maxGiveable;
       }
     },
