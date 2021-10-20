@@ -1922,6 +1922,13 @@
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.3.tgz#2ab0d5da2e5815f94b0b9d4b95d1e5f243ab2ca7"
   integrity sha512-KfRL3PuHmqQLOG+2tGpRO26Ctg+Cq1E01D2DMriKEATHgWLfeNDmq9e29Q9WIky0dQ3NPkd1mzYH8Lm936Z9qw==
 
+"@types/ps-list@^6.2.1":
+  version "6.2.1"
+  resolved "https://registry.yarnpkg.com/@types/ps-list/-/ps-list-6.2.1.tgz#4547c2f4dcf32e6a2358f64f0f208066acfbfa89"
+  integrity sha512-YGrVUmLaAu89QffaehCcCp5kphlbCf72+vDxnRyP1soC9y7xaatnoB0Fgo/tEGHk8teglcLwY6b4iHcyd/UWFA==
+  dependencies:
+    ps-list "*"
+
 "@types/react-dom@^17.0.9":
   version "17.0.9"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-17.0.9.tgz#441a981da9d7be117042e1a6fd3dac4b30f55add"
@@ -9856,6 +9863,11 @@ prr@~1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/prr/-/prr-1.0.1.tgz#d3fc114ba06995a45ec6893f484ceb1d78f5f476"
   integrity sha1-0/wRS6BplaRexok/SEzrHXj19HY=
+
+ps-list@*, ps-list@^7.2.0:
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/ps-list/-/ps-list-7.2.0.tgz#3d110e1de8249a4b178c9b1cf2a215d1e4e42fc0"
+  integrity sha512-v4Bl6I3f2kJfr5o80ShABNHAokIgY+wFDTQfE+X3zWYgSGQOCBeYptLZUpoOALBqO5EawmDN/tjTldJesd0ujQ==
 
 psl@^1.1.28, psl@^1.1.33:
   version "1.8.0"

@@ -15,8 +15,8 @@ type SwapCancelAlertProps = {
 };
 
 export default function SwapStopAlert({ open, onClose }: SwapCancelAlertProps) {
-  function handleSwapCancel() {
-    stopProc();
+  async function handleSwapCancel() {
+    await stopProc();
     onClose();
   }
 

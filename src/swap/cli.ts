@@ -5,6 +5,7 @@ import {
   ChildProcessWithoutNullStreams,
   spawn as spawnProc,
 } from 'child_process';
+import { ProcessDescriptor } from 'ps-list';
 import downloadSwapBinary, { BinaryDownloadStatus } from './downloader';
 import { isTestnet } from '../store/config';
 import { isSwapLog, SwapLog } from '../models/swapModel';
@@ -57,6 +58,41 @@ async function getSpawnArgs(
   return [...flagsArray, subCommand, ...optionsArray];
 }
 
+async function killMoneroWalletRpc() {
+  const list = (await ipcRenderer.invoke(
+    'get-proc-list'
+  )) as ProcessDescriptor[];
+  const moneroWalletRpcProcPid = list.find(
+    (p) =>
+      p.name.match(/monero(.*)wallet(.*)rpc/gim) ||
+      p.cmd?.match(/monero(.*)wallet(.*)rpc/gim)
+  )?.pid;
+
+  if (moneroWalletRpcProcPid) {
+    const moneroWalletRpcKillErorr = (await ipcRenderer.invoke(
+      'kill-proc',
+      moneroWalletRpcProcPid
+    )) as any | null;
+
+    if (moneroWalletRpcKillErorr) {
+      console.error(
+        `Failed to kill monero-wallet-rpc PID: ${moneroWalletRpcProcPid} Error: ${moneroWalletRpcKillErorr}`
+      );
+    } else {
+      console.log(`Killed monero-wallet-rpc PID: ${moneroWalletRpcProcPid}`);
+    }
+  } else {
+    console.error(
+      `Failed to kill monero-wallet-rpc because process could not be found`
+    );
+  }
+}
+
+export async function stopProc() {
+  cli?.kill('SIGINT');
+  await killMoneroWalletRpc();
+}
+
 export async function spawnSubcommand(
   subCommand: string,
   options: { [option: string]: string },
@@ -75,6 +111,8 @@ export async function spawnSubcommand(
   cli = spawnProc(`./${binaryInfo.name}`, spawnArgs, {
     cwd: appDataPath,
   });
+
+  window.addEventListener('beforeunload', stopProc);
 
   console.log(
     `Spawned proc File: ${cli.spawnfile} Arguments: ${cli.spawnargs.join(' ')}`
@@ -109,11 +147,8 @@ export async function spawnSubcommand(
   cli.on('exit', (code, signal) => {
     console.log(`Proc excited Code: ${code} Signal: ${signal}`);
     onExit(code, signal);
+    window.removeEventListener('beforeunload', stopProc);
   });
 
   return cli;
-}
-
-export function stopProc() {
-  cli?.kill('SIGINT');
 }
