@@ -13,6 +13,7 @@ import 'regenerator-runtime/runtime';
 import path from 'path';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import log from 'electron-log';
+import psList from 'ps-list';
 import { resolveHtmlPath } from './util';
 
 export default class AppUpdater {
@@ -126,4 +127,17 @@ app.on('activate', () => {
 
 ipcMain.handle('get-app-data-path', async () => {
   return app.getPath('appData');
+});
+
+ipcMain.handle('get-proc-list', async () => {
+  return psList();
+});
+
+ipcMain.handle('kill-proc', async (_event, pid: number) => {
+  try {
+    process.kill(pid);
+    return null;
+  } catch (e) {
+    return e;
+  }
 });
