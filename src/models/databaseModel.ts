@@ -1,3 +1,5 @@
+import { TxLock } from './txLockModel';
+
 export interface DbState {
   Bob: {
     [stateName: string]: unknown;
@@ -204,6 +206,7 @@ export interface DbState3 {
   tx_redeem_fee: number;
   tx_refund_fee: number;
   tx_cancel_fee: number;
+  tx_lock: TxLock;
 }
 
 export interface DbState4 {
@@ -217,12 +220,14 @@ export interface DbState4 {
   tx_redeem_fee: number;
   tx_refund_fee: number;
   tx_cancel_fee: number;
+  tx_lock: TxLock;
 }
 
 export interface DbState5 {
   monero_wallet_restore_blockheight: {
     height: number;
   };
+  tx_lock: TxLock;
 }
 
 export interface DbState6 {
@@ -231,6 +236,7 @@ export interface DbState6 {
   refund_address: string;
   tx_refund_fee: number;
   tx_cancel_fee: number;
+  tx_lock: TxLock;
 }
 
 export enum DbStateType {

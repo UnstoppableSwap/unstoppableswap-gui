@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Paper,
   Table,
   TableBody,
   TableCell,
@@ -14,12 +15,15 @@ export default function HistoryTable() {
   const history = useAppSelector((state) => state.history);
 
   return (
-    <TableContainer>
-      <Table>
+    <TableContainer style={{}} component={Paper}>
+      <Table stickyHeader>
         <TableHead>
           <TableRow>
             <TableCell>Swap ID</TableCell>
             <TableCell>Amount (XMR)</TableCell>
+            <TableCell>Amount (BTC)</TableCell>
+            <TableCell>Exchange rate</TableCell>
+            <TableCell>Fee</TableCell>
             <TableCell>State</TableCell>
             <TableCell>Action</TableCell>
           </TableRow>
