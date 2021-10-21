@@ -90,7 +90,6 @@ async function killMoneroWalletRpc() {
 
 export async function stopProc() {
   cli?.kill('SIGINT');
-  await killMoneroWalletRpc();
 }
 
 export async function spawnSubcommand(
@@ -108,6 +107,7 @@ export async function spawnSubcommand(
   );
   const spawnArgs = await getSpawnArgs(subCommand, options);
 
+  await killMoneroWalletRpc();
   cli = spawnProc(`./${binaryInfo.name}`, spawnArgs, {
     cwd: appDataPath,
   });
@@ -144,8 +144,9 @@ export async function spawnSubcommand(
     });
   });
 
-  cli.on('exit', (code, signal) => {
+  cli.on('exit', async (code, signal) => {
     console.log(`Proc excited Code: ${code} Signal: ${signal}`);
+    await killMoneroWalletRpc();
     onExit(code, signal);
     window.removeEventListener('beforeunload', stopProc);
   });
