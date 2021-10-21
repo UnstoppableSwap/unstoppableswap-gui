@@ -66,10 +66,9 @@ function HasProviderSwapWidget() {
   const classes = useStyles();
 
   const providers = useAppSelector((state) => state.providers);
-
   const [showDialog, setShowDialog] = useState(false);
   const [provider, setProvider] = useState(providers[0]);
-  const [btcFieldValue, setBtcFieldValue] = useState(0.02);
+  const [btcFieldValue, setBtcFieldValue] = useState('0.02');
   const [xmrFieldValue, setXmrFieldValue] = useState(1);
 
   useEffect(() => {
@@ -79,7 +78,7 @@ function HasProviderSwapWidget() {
   }, [provider.peerId, providers, setProvider]);
 
   function onBtcAmountChange(event: ChangeEvent<HTMLInputElement>) {
-    setBtcFieldValue(Number(event.target.value));
+    setBtcFieldValue(event.target.value);
   }
 
   function updateXmrValue() {
@@ -117,12 +116,6 @@ function HasProviderSwapWidget() {
   }
 
   useEffect(updateXmrValue, [btcFieldValue, provider]);
-
-  useEffect(() => {
-    if (getBtcFieldError()) {
-      setBtcFieldValue(satsToBtc(provider.minSwapAmount));
-    }
-  }, [provider, getBtcFieldError]);
 
   return (
     // 'elevation' prop can't be passed down (type def issue)
