@@ -8,7 +8,7 @@ import {
   TableHead,
   TableRow,
 } from '@material-ui/core';
-import { useAppSelector } from '../../../store/hooks';
+import { useAppSelector } from '../../../../store/hooks';
 import HistoryRow from './HistoryRow';
 
 export default function HistoryTable() {
@@ -20,9 +20,8 @@ export default function HistoryTable() {
         <TableHead>
           <TableRow>
             <TableCell>Swap ID</TableCell>
-            <TableCell>Amount (XMR)</TableCell>
-            <TableCell>Amount (BTC)</TableCell>
-            <TableCell>Exchange rate</TableCell>
+            <TableCell>Amount</TableCell>
+            <TableCell>Rate</TableCell>
             <TableCell>Fee</TableCell>
             <TableCell>State</TableCell>
             <TableCell>Action</TableCell>

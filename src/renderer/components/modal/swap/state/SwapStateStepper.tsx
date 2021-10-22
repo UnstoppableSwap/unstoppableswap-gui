@@ -15,15 +15,15 @@ function getActiveStep(state: SwapState) {
     case SwapStateType.RECEIVED_QUOTE:
       return 0;
     case SwapStateType.WAITING_FOR_BTC_DEPOSIT:
-      return 1;
+      return 0;
     case SwapStateType.STARTED:
-      return 1;
+      return 0;
     case SwapStateType.BTC_LOCK_TX_IN_MEMPOOL:
-      return 1;
+      return 0;
     case SwapStateType.XMR_LOCK_TX_IN_MEMPOOL:
-      return 2;
+      return 1;
     case SwapStateType.XMR_REDEEM_IN_MEMPOOL:
-      return 4;
+      return 3;
     default:
       return 0;
   }
@@ -35,26 +35,21 @@ export default function SwapStateStepper({ state }: SwapStateProgressBarProps) {
   return (
     <Stepper activeStep={activeStep}>
       <Step key={0}>
-        <StepLabel optional={<Typography variant="caption">~1min</Typography>}>
-          Starting swap
-        </StepLabel>
-      </Step>
-      <Step key={1}>
         <StepLabel optional={<Typography variant="caption">~20min</Typography>}>
           Locking your BTC
         </StepLabel>
       </Step>
-      <Step key={2}>
+      <Step key={1}>
         <StepLabel optional={<Typography variant="caption">~20min</Typography>}>
           They lock their XMR
         </StepLabel>
       </Step>
-      <Step key={3}>
-        <StepLabel optional={<Typography variant="caption">~5min</Typography>}>
+      <Step key={2}>
+        <StepLabel optional={<Typography variant="caption">~2min</Typography>}>
           They redeem the BTC
         </StepLabel>
       </Step>
-      <Step key={4}>
+      <Step key={3}>
         <StepLabel optional={<Typography variant="caption">~2min</Typography>}>
           Redeeming your XMR
         </StepLabel>

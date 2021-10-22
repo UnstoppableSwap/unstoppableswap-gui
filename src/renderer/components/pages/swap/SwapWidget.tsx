@@ -12,11 +12,11 @@ import {
 import InputAdornment from '@material-ui/core/InputAdornment';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
-import ProviderSelect from './provider-dialog/ProviderSelect';
-import { satsToBtc } from '../../swap/utils/unit-utils';
-import ProviderSubmitDialog from './provider-dialog/ProviderSubmitDialog';
-import SwapInitDialog from './swap/init/SwapInitDialog';
-import { useAppSelector } from '../../store/hooks';
+import ProviderSelect from '../../modal/provider/ProviderSelect';
+import { satsToBtc } from '../../../../swap/utils/unit-utils';
+import ProviderSubmitDialog from '../../modal/provider/ProviderSubmitDialog';
+import SwapInitDialog from '../../modal/swap/init/SwapInitDialog';
+import { useAppSelector } from '../../../../store/hooks';
 
 const useStyles = makeStyles((theme) => ({
   outer: {
@@ -56,7 +56,7 @@ function Title() {
   return (
     <Box className={classes.header}>
       <Typography variant="h5" className={classes.headerText}>
-        Trade
+        Swap
       </Typography>
     </Box>
   );
@@ -195,17 +195,9 @@ export default function SwapWidget() {
   const classes = useStyles();
   const hasProviders = useAppSelector((state) => state.providers.length > 0);
 
-  if (hasProviders) {
-    return (
-      <Box className={classes.outer}>
-        <HasProviderSwapWidget />
-      </Box>
-    );
-  }
-
   return (
     <Box className={classes.outer}>
-      <HasNoProviderSwapWidget />
+      {hasProviders ? <HasProviderSwapWidget /> : <HasNoProviderSwapWidget />}
     </Box>
   );
 }

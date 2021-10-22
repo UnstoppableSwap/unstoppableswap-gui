@@ -7,7 +7,6 @@ import {
   DbState,
   MergedDbState,
   getTypeOfDbState,
-  ExecutionSetupDoneDbState,
   isExecutionSetupDoneDbState,
 } from '../models/databaseModel';
 import { store } from '../store/store';

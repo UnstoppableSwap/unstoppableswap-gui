@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from '@material-ui/core';
 import React from 'react';
-import { stopProc } from '../../../../swap/cli';
+import { stopProc } from '../../../../../swap/cli';
 
 type SwapCancelAlertProps = {
   open: boolean;

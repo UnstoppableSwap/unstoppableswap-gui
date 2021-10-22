@@ -7,10 +7,10 @@ import {
   Typography,
 } from '@material-ui/core';
 import React from 'react';
-import { SwapStateBtcLockInMempool } from '../../../../../../models/storeModel';
-import BitcoinIcon from '../../../../icons/BitcoinIcon';
-import { getBitcoinTxExplorerUrl } from '../../../../../utils/blockexplorer-utils';
-import { isTestnet } from '../../../../../../store/config';
+import { SwapStateBtcLockInMempool } from '../../../../../../../models/storeModel';
+import BitcoinIcon from '../../../../../icons/BitcoinIcon';
+import { getBitcoinTxExplorerUrl } from '../../../../../../utils/blockexplorer-utils';
+import { isTestnet } from '../../../../../../../store/config';
 
 const useStyles = makeStyles((theme) => ({
   depositAddressOuter: {

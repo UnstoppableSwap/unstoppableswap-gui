@@ -8,7 +8,7 @@ import {
 import { resetSwap } from 'store/features/swap/swapSlice';
 import SwapDialogTitle from '../SwapDialogTitle';
 import SwapStopAlert from './SwapStopAlert';
-import { useAppDispatch } from '../../../../store/hooks';
+import { useAppDispatch } from '../../../../../store/hooks';
 import {
   isSwapStateBtcLockInMempool,
   isSwapStateDownloadingBinary,
@@ -22,7 +22,7 @@ import {
   Swap,
   SwapState,
   SwapStateWaitingForBtcDeposit,
-} from '../../../../models/storeModel';
+} from '../../../../../models/storeModel';
 import SwapStateStepper from './SwapStateStepper';
 import DownloadingBinaryPage from './pages/happy/DownloadingBinaryPage';
 import InitiatedPage from './pages/happy/InitiatedPage';

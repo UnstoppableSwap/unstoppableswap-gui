@@ -9,15 +9,19 @@ import {
   Route,
   Redirect,
 } from 'react-router-dom';
-import Header from './Header';
+import Navigation, { drawerWidth } from './Navigation';
 import { store } from '../../store/store';
-import SwapStateDialog from './swap/state/SwapStateDialog';
-import SwapWidget from './SwapWidget';
-import HistoryTable from './history/HistoryTable';
+import SwapStateDialog from './modal/swap/state/SwapStateDialog';
+import HistoryPage from './pages/history/HistoryPage';
+import SwapPage from './pages/swap/SwapPage';
+import WalletPage from './pages/wallet/WalletPage';
 
 const useStyles = makeStyles((theme) => ({
   innerContent: {
-    marginTop: theme.spacing(4),
+    padding: theme.spacing(4),
+    marginLeft: drawerWidth,
+    maxHeight: `100vh`,
+    flex: 1,
   },
 }));
 
@@ -42,15 +46,18 @@ function Modals() {
 function InnerContent() {
   const classes = useStyles();
 
+  const routes = {
+    '/swap': SwapPage,
+    '/history': HistoryPage,
+    '/wallet': WalletPage,
+  };
+
   return (
     <Box className={classes.innerContent}>
       <Switch>
-        <Route path="/swap">
-          <SwapWidget />
-        </Route>
-        <Route path="/history">
-          <HistoryTable />
-        </Route>
+        {Object.entries(routes).map(([route, page]) => (
+          <Route key={route} path={route} component={page} />
+        ))}
       </Switch>
       <Modals />
     </Box>
@@ -60,10 +67,10 @@ function InnerContent() {
 export default function App() {
   return (
     <ThemeProvider theme={theme}>
+      <CssBaseline />
       <Provider store={store}>
         <Router>
-          <CssBaseline />
-          <Header />
+          <Navigation />
           <InnerContent />
           <Redirect exact from="/" to="/swap" />
         </Router>
