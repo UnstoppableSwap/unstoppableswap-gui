@@ -3,12 +3,12 @@ import Database, { Database as DatabaseT } from 'better-sqlite3';
 import fs from 'fs';
 import { merge } from 'lodash';
 import { getCliDataDir } from './cli';
-import { checkFileExists } from './utils/file-utils';
 import {
   DbState,
   MergedDbState,
   getTypeOfDbState,
   ExecutionSetupDoneDbState,
+  isExecutionSetupDoneDbState,
 } from '../models/databaseModel';
 import { store } from '../store/store';
 import { databaseStateChanged } from '../store/features/swap/historySlice';
@@ -67,22 +67,30 @@ function getLatestStateForSwap(db: DatabaseT, swapId: string): DbState {
 }
 
 function getMergedStateForEachSwap(db: DatabaseT): MergedDbState[] {
-  return getDistinctSwapIds(db).map((swapId) => {
-    const states = getAllStatesForSwap(db, swapId);
-    const latestState = getLatestStateForSwap(db, swapId);
-    const latestStateType = getTypeOfDbState(latestState);
-    const mergedState = merge({}, ...states);
+  return getDistinctSwapIds(db)
+    .map((swapId) => {
+      const states = getAllStatesForSwap(db, swapId);
+      const latestState = getLatestStateForSwap(db, swapId);
+      const latestStateType = getTypeOfDbState(latestState);
+      const mergedState = merge({}, ...states);
 
-    return {
-      swapId,
-      type: latestStateType,
-      state: mergedState as ExecutionSetupDoneDbState,
-    };
-  });
+      if (isExecutionSetupDoneDbState(mergedState)) {
+        return {
+          swapId,
+          type: latestStateType,
+          state: mergedState,
+        };
+      }
+      console.error(
+        `There is no execution setup done state saved for swap ${swapId}. Removing from store, database might be corrupted!`
+      );
+      return null;
+    })
+    .filter((s): s is MergedDbState => s !== null);
 }
 
 export default async function watchDatabase() {
-  const { primaryFile, walFile } = await getSqliteDbFiles();
+  const { primaryFile, walFile, shmFile } = await getSqliteDbFiles();
 
   function readFromDatabaseAndUpdateState() {
     try {
@@ -97,29 +105,12 @@ export default async function watchDatabase() {
     }
   }
 
-  async function watchFiles() {
-    if (
-      (await checkFileExists(walFile)) &&
-      (await checkFileExists(primaryFile))
-    ) {
-      try {
-        fs.watch(primaryFile, readFromDatabaseAndUpdateState);
-        fs.watch(walFile, readFromDatabaseAndUpdateState);
-        readFromDatabaseAndUpdateState();
-
-        console.log(
-          `Started watching database files ${walFile}, ${primaryFile}`
-        );
-
-        return;
-      } catch (e) {
-        console.error(
-          `Failed to watch database files ${walFile}, ${primaryFile} even though they exist`
-        );
-      }
-    }
-    setTimeout(watchFiles, 1000);
+  function watchFiles() {
+    [primaryFile, walFile, shmFile].forEach((file) => {
+      fs.watchFile(file, readFromDatabaseAndUpdateState);
+    });
   }
 
+  readFromDatabaseAndUpdateState();
   watchFiles();
 }
