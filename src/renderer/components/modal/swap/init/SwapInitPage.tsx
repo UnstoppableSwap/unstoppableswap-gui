@@ -9,14 +9,14 @@ import {
 import { Alert, AlertTitle } from '@material-ui/lab';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import SwapDialogTitle from '../SwapDialogTitle';
-import {
-  isBtcAddressValid,
-  isXmrAddressValid,
-} from '../../../../../swap/utils/crypto-utils';
 import { ExtendedProvider } from '../../../../../models/storeModel';
 import { useAppSelector } from '../../../../../store/hooks';
 import startSwap from '../../../../../swap/commands/buy-xmr';
 import { isTestnet } from '../../../../../store/config';
+import {
+  isBtcAddressValid,
+  isXmrAddressValid,
+} from '../../../../../utils/currency-utils';
 
 const useStyles = makeStyles((theme) => ({
   alertBox: {

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { BinaryDownloadStatus } from '../../../swap/downloader';
-import { extractAmountFromUnitString } from '../../../swap/utils/parse-utils';
+import { extractAmountFromUnitString } from '../../../utils/parse-utils';
 import {
   isSwapStateBtcLockInMempool,
   isSwapStateWaitingForBtcDeposit,

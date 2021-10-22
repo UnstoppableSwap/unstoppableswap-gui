@@ -1,8 +1,7 @@
 import path from 'path';
 import { PathLike, promises as fs } from 'fs';
 import download from 'download';
-import { checkFileExists } from './utils/file-utils';
-import { getFileSha256Sum } from './utils/crypto-utils';
+import { checkFileExists, getFileSha256Sum } from '../utils/file-utils';
 
 export interface BinaryInfo {
   url: string;
