@@ -10,7 +10,7 @@ import {
   isExecutionSetupDoneDbState,
 } from '../models/databaseModel';
 import { store } from '../store/store';
-import { databaseStateChanged } from '../store/features/swap/historySlice';
+import { databaseStateChanged } from '../store/features/historySlice';
 
 async function getSqliteDbFiles() {
   const cliDataDir = await getCliDataDir();

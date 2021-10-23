@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ExtendedProvider } from '../../../models/storeModel';
-import { isTestnet } from '../../config';
+import { ExtendedProvider } from '../../models/storeModel';
+import { isTestnet } from '../config';
 
 const initialState: ExtendedProvider[] = [];
 

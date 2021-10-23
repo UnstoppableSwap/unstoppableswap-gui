@@ -13,7 +13,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 import ProviderSelect from '../../modal/provider/ProviderSelect';
-import { satsToBtc } from '../../../../utils/currency-utils';
+import { satsToBtc } from '../../../../utils/currencyUtils';
 import ProviderSubmitDialog from '../../modal/provider/ProviderSubmitDialog';
 import SwapInitDialog from '../../modal/swap/init/SwapInitDialog';
 import { useAppSelector } from '../../../../store/hooks';

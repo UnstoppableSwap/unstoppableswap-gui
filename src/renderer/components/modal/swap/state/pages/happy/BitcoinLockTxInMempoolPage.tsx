@@ -10,7 +10,7 @@ import React from 'react';
 import { SwapStateBtcLockInMempool } from '../../../../../../../models/storeModel';
 import BitcoinIcon from '../../../../../icons/BitcoinIcon';
 import { isTestnet } from '../../../../../../../store/config';
-import { getBitcoinTxExplorerUrl } from '../../../../../../../utils/currency-utils';
+import { getBitcoinTxExplorerUrl } from '../../../../../../../utils/currencyUtils';
 
 const useStyles = makeStyles((theme) => ({
   depositAddressOuter: {

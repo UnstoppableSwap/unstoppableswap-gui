@@ -11,7 +11,7 @@ import {
   isBtcLockedDbState,
   MergedDbState,
 } from '../../../../models/databaseModel';
-import { pionerosToXmr, satsToBtc } from '../../../../utils/currency-utils';
+import { pionerosToXmr, satsToBtc } from '../../../../utils/currencyUtils';
 import { TxLock } from '../../../../models/txLockModel';
 
 type HistoryRowProps = {

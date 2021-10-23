@@ -1,7 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
-import swapReducer from './features/swap/swapSlice';
-import providersReducer from './features/swap/providersSlice';
-import historyReducer from './features/swap/historySlice';
+import swapReducer from './features/swapSlice';
+import providersReducer from './features/providersSlice';
+import historyReducer from './features/historySlice';
+import balanceReducer from './features/balanceSlice';
 
 export const IS_TESTNET =
   process.env.TESTNET?.toString().toLowerCase() === 'true';
@@ -11,6 +12,7 @@ export const store = configureStore({
     swap: swapReducer,
     providers: providersReducer,
     history: historyReducer,
+    balance: balanceReducer,
   },
 });
 

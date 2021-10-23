@@ -1,7 +1,5 @@
 import { AnyAction } from '@reduxjs/toolkit';
-import reducer, {
-  setProviders,
-} from '../../store/features/swap/providersSlice';
+import reducer, { setProviders } from '../../store/features/providersSlice';
 import { ExtendedProvider } from '../../models/storeModel';
 
 const exampleTestnetProvider: ExtendedProvider = {

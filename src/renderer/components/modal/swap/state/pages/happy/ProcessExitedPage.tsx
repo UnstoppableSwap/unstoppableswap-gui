@@ -1,6 +1,6 @@
 import { Box, Button, makeStyles, Paper, Typography } from '@material-ui/core';
 import React from 'react';
-import { resetSwap } from 'store/features/swap/swapSlice';
+import { swapReset } from 'store/features/swapSlice';
 import { SwapStateProcessExited } from '../../../../../../../models/storeModel';
 import {
   useAppDispatch,
@@ -30,7 +30,7 @@ export default function ProcessExitedPage({ state }: ProcessExitedPageProps) {
 
   function close() {
     if (!processRunning) {
-      dispatch(resetSwap());
+      dispatch(swapReset());
     }
   }
 

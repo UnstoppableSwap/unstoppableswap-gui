@@ -11,12 +11,12 @@ import React, { ChangeEvent, useEffect, useState } from 'react';
 import SwapDialogTitle from '../SwapDialogTitle';
 import { ExtendedProvider } from '../../../../../models/storeModel';
 import { useAppSelector } from '../../../../../store/hooks';
-import startSwap from '../../../../../swap/commands/buy-xmr';
+import spawnBuyXmr from '../../../../../swap/commands/buyXmrCommand';
 import { isTestnet } from '../../../../../store/config';
 import {
   isBtcAddressValid,
   isXmrAddressValid,
-} from '../../../../../utils/currency-utils';
+} from '../../../../../utils/currencyUtils';
 
 const useStyles = makeStyles((theme) => ({
   alertBox: {
@@ -80,7 +80,7 @@ export default function SwapInitPage({
 
   function handleSwapStart() {
     setLoading(true);
-    startSwap(currentProvider, redeemAddress, refundAddress);
+    spawnBuyXmr(currentProvider, redeemAddress, refundAddress);
   }
 
   useEffect(() => {
