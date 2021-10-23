@@ -6,7 +6,7 @@ import {
   isXmrAddressValid,
   pionerosToXmr,
   satsToBtc,
-} from '../../utils/currency-utils';
+} from '../../utils/currencyUtils';
 
 test('should convert sats to btc', () => {
   expect(satsToBtc(1350000000)).toBe(13.5);

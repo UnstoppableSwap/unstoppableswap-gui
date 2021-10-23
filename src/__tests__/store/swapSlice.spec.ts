@@ -13,17 +13,9 @@ import {
 } from '../../models/swapModel';
 
 import reducer, {
-  aliceLockedXmrLog,
-  btcTransactionStatusChangedLog,
-  initiateSwap,
-  publishedBtcTransactionLog,
-  receivedBtcLog,
-  receivedQuoteLog,
-  startingNewSwapLog,
-  transferredXmrToWalletLog,
-  waitingForBtcDepositLog,
-  xmrLockStatusChangedLog,
-} from '../../store/features/swap/swapSlice';
+  swapAddLog,
+  swapInitiate,
+} from '../../store/features/swapSlice';
 
 const mReceivedQuoteLog: SwapLogReceivedQuote = {
   timestamp: '2021-09-05 03:40:36',
@@ -142,7 +134,7 @@ test('should infer correct states from happy-path logs', () => {
 
   swap = reducer(
     swap,
-    initiateSwap({
+    swapInitiate({
       provider: exampleProvider,
     })
   );
@@ -157,11 +149,11 @@ test('should infer correct states from happy-path logs', () => {
     stdOut: '',
   });
 
-  swap = reducer(swap, receivedQuoteLog(mReceivedQuoteLog));
+  swap = reducer(swap, swapAddLog(mReceivedQuoteLog));
 
   expect(swap).toStrictEqual({
     processRunning: true,
-    logs: [],
+    logs: [mReceivedQuoteLog],
     state: {
       type: SwapStateType.RECEIVED_QUOTE,
       price: 0.00610233,
@@ -172,11 +164,11 @@ test('should infer correct states from happy-path logs', () => {
     stdOut: '',
   });
 
-  swap = reducer(swap, waitingForBtcDepositLog(mWaitingForBtcDepositLog));
+  swap = reducer(swap, swapAddLog(mWaitingForBtcDepositLog));
 
   expect(swap).toStrictEqual({
     processRunning: true,
-    logs: [],
+    logs: [mReceivedQuoteLog, mWaitingForBtcDepositLog],
     state: {
       type: SwapStateType.WAITING_FOR_BTC_DEPOSIT,
       depositAddress: 'tb1qajq94d72k9hhcmtrlwhfuhc5yz0w298uym980g',
@@ -186,11 +178,11 @@ test('should infer correct states from happy-path logs', () => {
     stdOut: '',
   });
 
-  swap = reducer(swap, receivedBtcLog(mReceivedNewBtcLog));
+  swap = reducer(swap, swapAddLog(mReceivedNewBtcLog));
 
   expect(swap).toStrictEqual({
     processRunning: true,
-    logs: [],
+    logs: [mReceivedQuoteLog, mWaitingForBtcDepositLog, mReceivedNewBtcLog],
     state: {
       type: SwapStateType.WAITING_FOR_BTC_DEPOSIT,
       depositAddress: 'tb1qajq94d72k9hhcmtrlwhfuhc5yz0w298uym980g',
@@ -200,11 +192,16 @@ test('should infer correct states from happy-path logs', () => {
     stdOut: '',
   });
 
-  swap = reducer(swap, startingNewSwapLog(mStartedSwapLog));
+  swap = reducer(swap, swapAddLog(mStartedSwapLog));
 
   expect(swap).toStrictEqual({
     processRunning: true,
-    logs: [],
+    logs: [
+      mReceivedQuoteLog,
+      mWaitingForBtcDepositLog,
+      mReceivedNewBtcLog,
+      mStartedSwapLog,
+    ],
     state: {
       type: SwapStateType.STARTED,
       id: '2a034c59-72bc-4b7b-839f-d32522099bcc',
@@ -213,11 +210,17 @@ test('should infer correct states from happy-path logs', () => {
     stdOut: '',
   });
 
-  swap = reducer(swap, publishedBtcTransactionLog(mPublishedBtcLockTxLog));
+  swap = reducer(swap, swapAddLog(mPublishedBtcLockTxLog));
 
   expect(swap).toStrictEqual({
     processRunning: true,
-    logs: [],
+    logs: [
+      mReceivedQuoteLog,
+      mWaitingForBtcDepositLog,
+      mReceivedNewBtcLog,
+      mStartedSwapLog,
+      mPublishedBtcLockTxLog,
+    ],
     state: {
       type: SwapStateType.BTC_LOCK_TX_IN_MEMPOOL,
       bobBtcLockTxId:
@@ -228,14 +231,18 @@ test('should infer correct states from happy-path logs', () => {
     stdOut: '',
   });
 
-  swap = reducer(
-    swap,
-    btcTransactionStatusChangedLog(mBobBtcTxLockStatusChanged)
-  );
+  swap = reducer(swap, swapAddLog(mBobBtcTxLockStatusChanged));
 
   expect(swap).toStrictEqual({
     processRunning: true,
-    logs: [],
+    logs: [
+      mReceivedQuoteLog,
+      mWaitingForBtcDepositLog,
+      mReceivedNewBtcLog,
+      mStartedSwapLog,
+      mPublishedBtcLockTxLog,
+      mBobBtcTxLockStatusChanged,
+    ],
     state: {
       type: SwapStateType.BTC_LOCK_TX_IN_MEMPOOL,
       bobBtcLockTxId:
@@ -246,11 +253,19 @@ test('should infer correct states from happy-path logs', () => {
     stdOut: '',
   });
 
-  swap = reducer(swap, aliceLockedXmrLog(mAliceLockedXmrLog));
+  swap = reducer(swap, swapAddLog(mAliceLockedXmrLog));
 
   expect(swap).toStrictEqual({
     processRunning: true,
-    logs: [],
+    logs: [
+      mReceivedQuoteLog,
+      mWaitingForBtcDepositLog,
+      mReceivedNewBtcLog,
+      mStartedSwapLog,
+      mPublishedBtcLockTxLog,
+      mBobBtcTxLockStatusChanged,
+      mAliceLockedXmrLog,
+    ],
     state: {
       type: SwapStateType.XMR_LOCK_TX_IN_MEMPOOL,
       aliceXmrLockTxId:
@@ -261,14 +276,20 @@ test('should infer correct states from happy-path logs', () => {
     stdOut: '',
   });
 
-  swap = reducer(
-    swap,
-    xmrLockStatusChangedLog(mAliceXmrLockTxConfirmationUpdateLog)
-  );
+  swap = reducer(swap, swapAddLog(mAliceXmrLockTxConfirmationUpdateLog));
 
   expect(swap).toStrictEqual({
     processRunning: true,
-    logs: [],
+    logs: [
+      mReceivedQuoteLog,
+      mWaitingForBtcDepositLog,
+      mReceivedNewBtcLog,
+      mStartedSwapLog,
+      mPublishedBtcLockTxLog,
+      mBobBtcTxLockStatusChanged,
+      mAliceLockedXmrLog,
+      mAliceXmrLockTxConfirmationUpdateLog,
+    ],
     state: {
       type: SwapStateType.XMR_LOCK_TX_IN_MEMPOOL,
       aliceXmrLockTxId:
@@ -279,11 +300,21 @@ test('should infer correct states from happy-path logs', () => {
     stdOut: '',
   });
 
-  swap = reducer(swap, transferredXmrToWalletLog(mXmrRedeemSuccessfulLog));
+  swap = reducer(swap, swapAddLog(mXmrRedeemSuccessfulLog));
 
   expect(swap).toStrictEqual({
     processRunning: true,
-    logs: [],
+    logs: [
+      mReceivedQuoteLog,
+      mWaitingForBtcDepositLog,
+      mReceivedNewBtcLog,
+      mStartedSwapLog,
+      mPublishedBtcLockTxLog,
+      mBobBtcTxLockStatusChanged,
+      mAliceLockedXmrLog,
+      mAliceXmrLockTxConfirmationUpdateLog,
+      mXmrRedeemSuccessfulLog,
+    ],
     state: {
       type: SwapStateType.XMR_REDEEM_IN_MEMPOOL,
       bobXmrRedeemTxId:

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { MergedDbState } from '../../../models/databaseModel';
+import { MergedDbState } from '../../models/databaseModel';
 
 const initialState: MergedDbState[] = [];
 

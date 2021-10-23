@@ -100,6 +100,13 @@ export async function spawnSubcommand(
   onExit: (code: number | null, signal: NodeJS.Signals | null) => void,
   onStdOut: (data: string) => void
 ) {
+  if (cli) {
+    throw new Error(
+      `Can't spawn subcommand ${subCommand} because other cli process is running RunningProcArgs: ${cli.spawnargs.join(
+        ' '
+      )}`
+    );
+  }
   const appDataPath = await getAppDataDir();
   const binaryInfo = await downloadSwapBinary(
     appDataPath,
@@ -146,9 +153,11 @@ export async function spawnSubcommand(
 
   cli.on('exit', async (code, signal) => {
     console.log(`Proc excited Code: ${code} Signal: ${signal}`);
+
     await killMoneroWalletRpc();
     onExit(code, signal);
     window.removeEventListener('beforeunload', stopProc);
+    cli = null;
   });
 
   return cli;

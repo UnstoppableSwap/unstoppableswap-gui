@@ -10,7 +10,7 @@ import React from 'react';
 import { SwapStateXmrLockInMempool } from '../../../../../../../models/storeModel';
 import MoneroIcon from '../../../../../icons/MoneroIcon';
 import { isTestnet } from '../../../../../../../store/config';
-import { getMoneroTxExplorerUrl } from '../../../../../../../utils/currency-utils';
+import { getMoneroTxExplorerUrl } from '../../../../../../../utils/currencyUtils';
 
 const useStyles = makeStyles((theme) => ({
   depositAddressOuter: {

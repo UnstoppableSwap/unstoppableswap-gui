@@ -2,7 +2,7 @@ import { Box, Link, Typography } from '@material-ui/core';
 import React from 'react';
 import { SwapStateXmrRedeemInMempool } from '../../../../../../../models/storeModel';
 import { isTestnet } from '../../../../../../../store/config';
-import { getMoneroTxExplorerUrl } from '../../../../../../../utils/currency-utils';
+import { getMoneroTxExplorerUrl } from '../../../../../../../utils/currencyUtils';
 
 type XmrRedeemInMempoolPageProps = {
   state: SwapStateXmrRedeemInMempool;

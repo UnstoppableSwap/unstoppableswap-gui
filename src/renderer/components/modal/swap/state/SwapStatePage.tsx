@@ -5,7 +5,7 @@ import {
   DialogContent,
   makeStyles,
 } from '@material-ui/core';
-import { resetSwap } from 'store/features/swap/swapSlice';
+import { swapReset } from 'store/features/swapSlice';
 import SwapDialogTitle from '../SwapDialogTitle';
 import SwapStopAlert from './SwapStopAlert';
 import { useAppDispatch } from '../../../../../store/hooks';
@@ -95,7 +95,7 @@ export default function SwapStatePage({ swap }: { swap: Swap }) {
     if (swap.processRunning) {
       setOpenCancelAlert(true);
     } else {
-      dispatch(resetSwap());
+      dispatch(swapReset());
     }
   }
 

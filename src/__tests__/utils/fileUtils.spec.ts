@@ -1,5 +1,5 @@
 import path from 'path';
-import { checkFileExists, getFileSha256Sum } from '../../utils/file-utils';
+import { checkFileExists, getFileSha256Sum } from '../../utils/fileUtils';
 
 test('should compute correct sha256 hash of file', async () => {
   const hash = await getFileSha256Sum(

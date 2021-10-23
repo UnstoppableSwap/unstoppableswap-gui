@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles, Box, Typography, Chip } from '@material-ui/core';
-import { satsToBtc } from '../../../../utils/currency-utils';
+import { satsToBtc } from '../../../../utils/currencyUtils';
 import { ExtendedProvider } from '../../../../models/storeModel';
 
 const useStyles = makeStyles((theme) => ({
