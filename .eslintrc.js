@@ -3,7 +3,18 @@ module.exports = {
   rules: {
     // A temporary hack related to IDE not resolving correct package.json
     'import/no-extraneous-dependencies': 'off',
+    'import/no-restricted-paths': [
+      'error',
+      {
+        basePath: './src',
+        zones: [
+          { target: './renderer', from: './main' },
+          { target: './main', from: './renderer' },
+        ],
+      },
+    ],
   },
+  plugins: ['import'],
   parserOptions: {
     ecmaVersion: 2020,
     sourceType: 'module',
