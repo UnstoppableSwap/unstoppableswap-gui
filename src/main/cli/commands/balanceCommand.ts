@@ -1,10 +1,10 @@
-import { store } from '../../store/store';
+import { store } from '../../../store/store';
 import { spawnSubcommand } from '../cli';
 import {
   balanceAppendStdOut,
   balanceInitiate,
   balanceProcessExited,
-} from '../../store/features/balanceSlice';
+} from '../../../store/features/balanceSlice';
 
 function onProcExit(code: number | null, signal: NodeJS.Signals | null) {
   store.dispatch(

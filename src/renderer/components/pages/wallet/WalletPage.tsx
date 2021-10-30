@@ -1,17 +1,13 @@
 import { Typography } from '@material-ui/core';
 import React, { useEffect } from 'react';
+import { ipcRenderer } from 'electron';
 import { useAppSelector } from '../../../../store/hooks';
-import spawnBalanceCheck from '../../../../swap/commands/balanceCommand';
 
 export default function WalletPage() {
   const walletBalance = useAppSelector((state) => state.balance.balanceValue);
 
   useEffect(() => {
-    spawnBalanceCheck();
-
-    const intervalId = setInterval(spawnBalanceCheck, 1000 * 30);
-
-    return () => clearInterval(intervalId);
+    ipcRenderer.invoke('spawn-balance-check');
   }, []);
 
   return (

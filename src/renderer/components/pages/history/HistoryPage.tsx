@@ -6,7 +6,7 @@ export default function HistoryPage() {
   return (
     <>
       <Typography variant="h3">History</Typography>
-      <HistoryTable />;
+      <HistoryTable />
     </>
   );
 }

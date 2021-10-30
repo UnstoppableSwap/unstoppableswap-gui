@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { BinaryDownloadStatus } from '../../swap/downloader';
+import { BinaryDownloadStatus } from '../../main/cli/downloader';
 import { extractAmountFromUnitString } from '../../utils/parseUtils';
 import {
   isSwapStateBtcLockInMempool,
@@ -142,7 +142,9 @@ export const swapSlice = createSlice({
 
         swap.state = nextState;
       } else {
-        console.error(`Swap log was not reduced Log: ${JSON.stringify(log)}`);
+        console.debug(
+          `Swap log was not reduced Log: ${JSON.stringify(log, null, 4)}`
+        );
       }
     },
     swapAppendStdOut: (swap, action: PayloadAction<string>) => {

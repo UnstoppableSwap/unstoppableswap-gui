@@ -1,7 +1,6 @@
 import React from 'react';
 import { Box, makeStyles, CssBaseline } from '@material-ui/core';
 import { createTheme, ThemeProvider } from '@material-ui/core/styles';
-import { Provider } from 'react-redux';
 import { indigo } from '@material-ui/core/colors';
 import {
   MemoryRouter as Router,
@@ -10,7 +9,6 @@ import {
   Redirect,
 } from 'react-router-dom';
 import Navigation, { drawerWidth } from './Navigation';
-import { store } from '../../store/store';
 import SwapStateDialog from './modal/swap/state/SwapStateDialog';
 import HistoryPage from './pages/history/HistoryPage';
 import SwapPage from './pages/swap/SwapPage';
@@ -68,13 +66,11 @@ export default function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Provider store={store}>
-        <Router>
-          <Navigation />
-          <InnerContent />
-          <Redirect exact from="/" to="/swap" />
-        </Router>
-      </Provider>
+      <Router>
+        <Navigation />
+        <InnerContent />
+        <Redirect exact from="/" to="/swap" />
+      </Router>
     </ThemeProvider>
   );
 }

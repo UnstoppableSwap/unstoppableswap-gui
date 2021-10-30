@@ -8,10 +8,10 @@ import {
 } from '@material-ui/core';
 import { Alert, AlertTitle } from '@material-ui/lab';
 import React, { ChangeEvent, useEffect, useState } from 'react';
+import { ipcRenderer } from 'electron';
 import SwapDialogTitle from '../SwapDialogTitle';
 import { ExtendedProvider } from '../../../../../models/storeModel';
 import { useAppSelector } from '../../../../../store/hooks';
-import spawnBuyXmr from '../../../../../swap/commands/buyXmrCommand';
 import { isTestnet } from '../../../../../store/config';
 import {
   isBtcAddressValid,
@@ -80,7 +80,12 @@ export default function SwapInitPage({
 
   function handleSwapStart() {
     setLoading(true);
-    spawnBuyXmr(currentProvider, redeemAddress, refundAddress);
+    ipcRenderer.invoke(
+      'spawn-buy-xmr',
+      currentProvider,
+      redeemAddress,
+      refundAddress
+    );
   }
 
   useEffect(() => {

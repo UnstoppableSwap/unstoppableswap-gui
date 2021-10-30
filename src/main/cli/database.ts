@@ -8,9 +8,9 @@ import {
   MergedDbState,
   getTypeOfDbState,
   isExecutionSetupDoneDbState,
-} from '../models/databaseModel';
-import { store } from '../store/store';
-import { databaseStateChanged } from '../store/features/historySlice';
+} from '../../models/databaseModel';
+import { store } from '../../store/store';
+import { databaseStateChanged } from '../../store/features/historySlice';
 
 async function getSqliteDbFiles() {
   const cliDataDir = await getCliDataDir();
@@ -107,6 +107,7 @@ export default async function watchDatabase() {
   function watchFiles() {
     [primaryFile, walFile, shmFile].forEach((file) => {
       fs.watchFile(file, readFromDatabaseAndUpdateState);
+      console.log(`Watching database file ${file}`);
     });
   }
 

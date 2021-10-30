@@ -1,13 +1,13 @@
-import { SwapLog } from '../../models/swapModel';
-import { store } from '../../store/store';
+import { SwapLog } from '../../../models/swapModel';
+import { store } from '../../../store/store';
 import {
   swapAddLog,
   swapAppendStdOut,
   swapDownloadProgressUpdate,
   swapInitiate,
   swapProcessExited,
-} from '../../store/features/swapSlice';
-import { Provider } from '../../models/storeModel';
+} from '../../../store/features/swapSlice';
+import { Provider } from '../../../models/storeModel';
 import { BinaryDownloadStatus } from '../downloader';
 import { spawnSubcommand } from '../cli';
 import spawnBalanceCheck from './balanceCommand';

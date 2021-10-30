@@ -1,19 +1,19 @@
 import path from 'path';
 import { promises as fs } from 'fs';
-import { ipcRenderer } from 'electron';
+import { app } from 'electron';
 import {
   ChildProcessWithoutNullStreams,
   spawn as spawnProc,
 } from 'child_process';
-import { ProcessDescriptor } from 'ps-list';
+import psList from 'ps-list';
 import downloadSwapBinary, { BinaryDownloadStatus } from './downloader';
-import { isTestnet } from '../store/config';
-import { isSwapLog, SwapLog } from '../models/swapModel';
+import { isTestnet } from '../../store/config';
+import { isSwapLog, SwapLog } from '../../models/swapModel';
 
 let cli: ChildProcessWithoutNullStreams | null = null;
 
 export async function getAppDataDir(): Promise<string> {
-  const appDataPath = await ipcRenderer.invoke('get-app-data-path');
+  const appDataPath = app.getPath('appData');
   const dPath = path.join(appDataPath, 'unstoppableswap');
   await fs.mkdir(dPath, {
     recursive: true,
@@ -22,7 +22,7 @@ export async function getAppDataDir(): Promise<string> {
 }
 
 export async function getCliDataBaseDir(): Promise<string> {
-  const appDataPath = await ipcRenderer.invoke('get-app-data-path');
+  const appDataPath = app.getPath('appData');
   const dPath = path.join(appDataPath, 'xmr-btc-swap', 'cli');
   await fs.mkdir(dPath, {
     recursive: true,
@@ -59,36 +59,31 @@ async function getSpawnArgs(
 }
 
 async function killMoneroWalletRpc() {
-  const list = (await ipcRenderer.invoke(
-    'get-proc-list'
-  )) as ProcessDescriptor[];
-  const moneroWalletRpcProcPid = list.find(
+  const list = await psList();
+  const pid = list.find(
     (p) =>
       p.name.match(/monero(.*)wallet(.*)rpc/gim) ||
       p.cmd?.match(/monero(.*)wallet(.*)rpc/gim)
   )?.pid;
 
-  if (moneroWalletRpcProcPid) {
-    const moneroWalletRpcKillErorr = (await ipcRenderer.invoke(
-      'kill-proc',
-      moneroWalletRpcProcPid
-    )) as any | null;
+  if (pid) {
+    const moneroWalletRpcKillErorr = process.kill(pid);
 
     if (moneroWalletRpcKillErorr) {
       console.error(
-        `Failed to kill monero-wallet-rpc PID: ${moneroWalletRpcProcPid} Error: ${moneroWalletRpcKillErorr}`
+        `Failed to kill monero-wallet-rpc PID: ${pid} Error: ${moneroWalletRpcKillErorr}`
       );
     } else {
-      console.log(`Killed monero-wallet-rpc PID: ${moneroWalletRpcProcPid}`);
+      console.debug(`Successfully monero-wallet-rpc killed PID: ${pid}`);
     }
   } else {
-    console.error(
-      `Failed to kill monero-wallet-rpc because process could not be found`
+    console.debug(
+      `monero-wallet-rpc was not killed because process could not be found`
     );
   }
 }
 
-export async function stopProc() {
+export async function stopCli() {
   cli?.kill('SIGINT');
 }
 
@@ -102,7 +97,7 @@ export async function spawnSubcommand(
 ) {
   if (cli) {
     throw new Error(
-      `Can't spawn subcommand ${subCommand} because other cli process is running RunningProcArgs: ${cli.spawnargs.join(
+      `Can't spawn cli with subcommand ${subCommand} because other cli process is running Arguments: ${cli.spawnargs.join(
         ' '
       )}`
     );
@@ -119,11 +114,7 @@ export async function spawnSubcommand(
     cwd: appDataPath,
   });
 
-  window.addEventListener('beforeunload', stopProc);
-
-  console.log(
-    `Spawned proc File: ${cli.spawnfile} Arguments: ${cli.spawnargs.join(' ')}`
-  );
+  console.log(`Spawned cli Arguments: ${cli.spawnargs.join(' ')}`);
 
   [cli.stderr, cli.stdout].forEach((stream) => {
     stream.setEncoding('utf8');
@@ -143,7 +134,7 @@ export async function spawnSubcommand(
               throw new Error('Required properties are missing');
             }
           } catch (e) {
-            console.error(
+            console.debug(
               `Failed to parse proc log. Log text: ${logText} Error: ${e.message}`
             );
           }
@@ -152,11 +143,10 @@ export async function spawnSubcommand(
   });
 
   cli.on('exit', async (code, signal) => {
-    console.log(`Proc excited Code: ${code} Signal: ${signal}`);
+    console.log(`Cli excited Code: ${code} Signal: ${signal}`);
 
     await killMoneroWalletRpc();
     onExit(code, signal);
-    window.removeEventListener('beforeunload', stopProc);
     cli = null;
   });
 
