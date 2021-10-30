@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from '@material-ui/core';
 import React from 'react';
-import { stopProc } from '../../../../../swap/cli';
+import { ipcRenderer } from 'electron';
 
 type SwapCancelAlertProps = {
   open: boolean;
@@ -16,7 +16,7 @@ type SwapCancelAlertProps = {
 
 export default function SwapStopAlert({ open, onClose }: SwapCancelAlertProps) {
   async function handleSwapCancel() {
-    await stopProc();
+    await ipcRenderer.invoke('stop-cli');
     onClose();
   }
 
@@ -24,7 +24,7 @@ export default function SwapStopAlert({ open, onClose }: SwapCancelAlertProps) {
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Stop swap?</DialogTitle>
       <DialogContent>
-        <DialogContentText id="alert-dialog-description">
+        <DialogContentText>
           If you have already sent funds, you are at risk of loosing funds if
           you stop the swap and walk away.
         </DialogContentText>

@@ -1,4 +1,4 @@
-import { BinaryInfo } from '../swap/downloader';
+import { BinaryInfo } from '../main/cli/downloader';
 import { SwapLog } from './swapModel';
 
 export interface Provider {

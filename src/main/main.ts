@@ -13,8 +13,11 @@ import 'regenerator-runtime/runtime';
 import path from 'path';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import log from 'electron-log';
-import psList from 'ps-list';
 import { resolveHtmlPath } from './util';
+import watchDatabase from './cli/database';
+import { stopCli } from './cli/cli';
+import spawnBalanceCheck from './cli/commands/balanceCommand';
+import spawnBuyXmr from './cli/commands/buyXmrCommand';
 
 export default class AppUpdater {
   constructor() {
@@ -99,10 +102,13 @@ const createWindow = async () => {
   });
 
   // Open urls in the user's browser
-  mainWindow.webContents.on('new-window', (event, url) => {
+  mainWindow.webContents.addListener('new-window', (event, url) => {
     event.preventDefault();
     shell.openExternal(url);
   });
+
+  await watchDatabase();
+  await spawnBalanceCheck();
 };
 
 /**
@@ -125,19 +131,14 @@ app.on('activate', () => {
   if (mainWindow === null) createWindow();
 });
 
-ipcMain.handle('get-app-data-path', async () => {
-  return app.getPath('appData');
-});
+app.on('will-quit', stopCli);
 
-ipcMain.handle('get-proc-list', async () => {
-  return psList();
-});
+ipcMain.handle('stop-cli', () => stopCli());
 
-ipcMain.handle('kill-proc', async (_event, pid: number) => {
-  try {
-    process.kill(pid);
-    return null;
-  } catch (e) {
-    return e;
-  }
-});
+ipcMain.handle('spawn-balance-check', () => spawnBalanceCheck());
+
+ipcMain.handle(
+  'spawn-buy-xmr',
+  (_event, provider, redeemAddress, refundAddress) =>
+    spawnBuyXmr(provider, redeemAddress, refundAddress)
+);
