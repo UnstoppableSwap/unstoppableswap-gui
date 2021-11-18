@@ -9,7 +9,6 @@ import {
   Redirect,
 } from 'react-router-dom';
 import Navigation, { drawerWidth } from './Navigation';
-import SwapStateDialog from './modal/swap/state/SwapStateDialog';
 import HistoryPage from './pages/history/HistoryPage';
 import SwapPage from './pages/swap/SwapPage';
 import WalletPage from './pages/wallet/WalletPage';
@@ -33,14 +32,6 @@ const theme = createTheme({
   },
 });
 
-function Modals() {
-  return (
-    <>
-      <SwapStateDialog />
-    </>
-  );
-}
-
 function InnerContent() {
   const classes = useStyles();
 
@@ -57,7 +48,6 @@ function InnerContent() {
           <Route key={route} path={route} component={page} />
         ))}
       </Switch>
-      <Modals />
     </Box>
   );
 }

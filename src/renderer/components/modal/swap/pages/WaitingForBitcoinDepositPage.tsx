@@ -1,9 +1,16 @@
-import { Box, Button, makeStyles, Paper, Typography } from '@material-ui/core';
+import {
+  Box,
+  Button,
+  DialogContentText,
+  makeStyles,
+  Paper,
+  Typography,
+} from '@material-ui/core';
 import React from 'react';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 import { clipboard } from 'electron';
 import BitcoinIcon from 'renderer/components/icons/BitcoinIcon';
-import { SwapStateWaitingForBtcDeposit } from '../../../../../../../models/storeModel';
+import { SwapStateWaitingForBtcDeposit } from '../../../../../models/storeModel';
 
 const useStyles = makeStyles((theme) => ({
   depositAddressOuter: {
@@ -16,9 +23,7 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(1),
     alignItems: 'center',
     display: 'flex',
-    '& > *': {
-      paddingRight: theme.spacing(0.25),
-    },
+    gap: theme.spacing(0.25),
   },
   depositStatusText: {
     paddingTop: theme.spacing(0.5),
@@ -40,13 +45,11 @@ export default function WaitingForBtcDepositPage({
 
   return (
     <Box>
-      <Typography variant="h5" align="center">
-        Deposit Bitcoin
-      </Typography>
-      <Typography variant="subtitle2">
-        The exchange will start automatically when the deposit arrives to the
-        address specified below
-      </Typography>
+      <DialogContentText>
+        The swap will start automatically as soon as you transfer the minimum
+        amount of Bitcoin to the address below. The funds will be used in their
+        entirety.
+      </DialogContentText>
 
       <Paper variant="outlined" className={classes.depositAddressOuter}>
         <Typography variant="subtitle1">Deposit Address</Typography>
@@ -64,7 +67,8 @@ export default function WaitingForBtcDepositPage({
           Copy
         </Button>
         <Typography variant="subtitle2" className={classes.depositStatusText}>
-          Sent any amount between 0.1 BTC and 0.5 BTC. You have deposited{' '}
+          Sent any amount between {state.minimumAmount} BTC and{' '}
+          {state.maximumAmount} BTC. You have deposited enough to swap{' '}
           {state.maxGiveable} BTC
         </Typography>
       </Paper>

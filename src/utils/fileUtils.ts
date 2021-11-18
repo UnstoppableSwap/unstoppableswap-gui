@@ -8,12 +8,7 @@ export function checkFileExists(path: PathLike) {
     .catch(() => false);
 }
 
-export async function getFileSha256Sum(path: PathLike): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const hash = crypto.createHash('sha256');
-    const stream = fs.createReadStream(path);
-    stream.on('error', (err) => reject(err));
-    stream.on('data', (chunk) => hash.update(chunk));
-    stream.on('end', () => resolve(hash.digest('hex')));
-  });
+export async function getFileSha256Sum(path: PathLike) {
+  const data = await fs.promises.readFile(path);
+  return crypto.createHash('sha256').update(data).digest('hex');
 }

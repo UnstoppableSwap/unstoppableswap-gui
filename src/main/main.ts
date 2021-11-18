@@ -18,6 +18,7 @@ import watchDatabase from './cli/database';
 import { stopCli } from './cli/cli';
 import spawnBalanceCheck from './cli/commands/balanceCommand';
 import spawnBuyXmr from './cli/commands/buyXmrCommand';
+import spawnWithdrawBtc from './cli/commands/withdrawBtcCommand';
 
 export default class AppUpdater {
   constructor() {
@@ -74,6 +75,7 @@ const createWindow = async () => {
     height: 728,
     minHeight: 728,
     minWidth: 1024,
+    resizable: true,
     icon: getAssetPath('icon.png'),
     webPreferences: {
       nodeIntegration: true,
@@ -85,7 +87,7 @@ const createWindow = async () => {
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/main/docs/api/browser-window.md#using-ready-to-show-event
-  mainWindow.webContents.on('did-finish-load', () => {
+  mainWindow.webContents.on('did-finish-load', async () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
@@ -95,6 +97,9 @@ const createWindow = async () => {
       mainWindow.show();
       mainWindow.focus();
     }
+
+    await watchDatabase();
+    await spawnBalanceCheck();
   });
 
   mainWindow.on('closed', () => {
@@ -106,9 +111,6 @@ const createWindow = async () => {
     event.preventDefault();
     shell.openExternal(url);
   });
-
-  await watchDatabase();
-  await spawnBalanceCheck();
 };
 
 /**
@@ -141,4 +143,8 @@ ipcMain.handle(
   'spawn-buy-xmr',
   (_event, provider, redeemAddress, refundAddress) =>
     spawnBuyXmr(provider, redeemAddress, refundAddress)
+);
+
+ipcMain.handle('spawn-withdraw-btc', (_event, address) =>
+  spawnWithdrawBtc(address)
 );

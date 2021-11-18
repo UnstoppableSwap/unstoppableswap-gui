@@ -49,8 +49,8 @@ export default async function downloadSwapBinary(
   const binaryPath = path.join(appDataDir.toString(), binaryInfo.name);
 
   if (await checkFileExists(binaryPath)) {
-    const checksum = await getFileSha256Sum(binaryPath);
-    if (checksum === binaryInfo.sha256sum) {
+    const sha256sum = await getFileSha256Sum(binaryPath);
+    if (sha256sum === binaryInfo.sha256sum) {
       return binaryInfo;
     }
     await fs.unlink(binaryPath);
@@ -83,18 +83,15 @@ export default async function downloadSwapBinary(
   });
 
   if (await checkFileExists(binaryPath)) {
-    const checksum = await getFileSha256Sum(binaryPath);
-    if (checksum === binaryInfo.sha256sum) {
-      return binaryInfo;
+    const sha256sum = await getFileSha256Sum(binaryPath);
+    if (sha256sum !== binaryInfo.sha256sum) {
+      throw new Error(
+        `SHA256 sum of downloaded binary does not match expected value`
+      );
     }
-
-    await fs.unlink(binaryPath);
-    throw new Error(
-      `Downloaded swap binary does not match the expected checksum Received: ${checksum} Expected: ${binaryInfo.sha256sum}`
-    );
+  } else {
+    throw new Error(`Downloaded binary does not exist at ${binaryPath}`);
   }
 
-  throw new Error(
-    `Extracted downloaded swap binary archive did not contain file with appropriate name Expected Filename: ${binaryInfo.name}`
-  );
+  return binaryInfo;
 }

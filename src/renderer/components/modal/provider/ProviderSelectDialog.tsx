@@ -7,8 +7,6 @@ import {
   ListItemText,
   DialogTitle,
   Dialog,
-  useTheme,
-  useMediaQuery,
   DialogActions,
   Button,
   DialogContent,
@@ -40,8 +38,6 @@ export default function ProviderSelectDialog({
 }: ProviderSelectDialogProps) {
   const classes = useStyles();
   const providers = useAppSelector((state) => state.providers);
-  const theme = useTheme();
-  const smallDevice = useMediaQuery(theme.breakpoints.down('sm'));
 
   function handleProviderChange(provider: ExtendedProvider) {
     onProviderSelect(provider);
@@ -49,7 +45,7 @@ export default function ProviderSelectDialog({
   }
 
   return (
-    <Dialog onClose={onClose} open={open} fullScreen={smallDevice}>
+    <Dialog onClose={onClose} open={open}>
       <DialogTitle>Select a swap provider</DialogTitle>
 
       <DialogContent className={classes.dialogContent} dividers>

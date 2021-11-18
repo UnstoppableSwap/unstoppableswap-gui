@@ -48,6 +48,10 @@ export interface SwapStateDownloadingBinary extends SwapState {
   contentLengthBytes: number;
 }
 
+export function isSwapState(state?: SwapState | null): state is SwapState {
+  return state?.type != null;
+}
+
 export function isSwapStateDownloadingBinary(
   state?: SwapState | null
 ): state is SwapStateDownloadingBinary {
@@ -81,6 +85,8 @@ export interface SwapStateWaitingForBtcDeposit extends SwapState {
   type: SwapStateType.WAITING_FOR_BTC_DEPOSIT;
   depositAddress: string;
   maxGiveable: number;
+  minimumAmount: number;
+  maximumAmount: number;
 }
 
 export function isSwapStateWaitingForBtcDeposit(
@@ -139,10 +145,73 @@ export interface SwapStateProcessExited extends SwapState {
   type: SwapStateType.PROCESS_EXITED;
   exitCode: number | null;
   exitSignal: NodeJS.Signals | null | undefined;
+  prevState: SwapState | null;
 }
 
 export function isSwapStateProcessExited(
   state?: SwapState | null
 ): state is SwapStateProcessExited {
   return state?.type === SwapStateType.PROCESS_EXITED;
+}
+
+export interface Withdraw {
+  state: WithdrawState | null;
+  stdOut: string;
+  logs: SwapLog[];
+  processRunning: boolean;
+}
+
+export enum WithdrawStateType {
+  INITIATED = 'initiated',
+  BTC_WITHDRAW_TX_IN_MEMPOOL = 'btc withdraw tx in mempool',
+  PROCESS_EXITED = 'process exited',
+}
+
+export interface WithdrawState {
+  type: WithdrawStateType;
+}
+
+export interface WithdrawStateInitiated {
+  type: WithdrawStateType.INITIATED;
+}
+
+export interface WithdrawStateWithdrawTxInMempool {
+  type: WithdrawStateType.BTC_WITHDRAW_TX_IN_MEMPOOL;
+  txid: string;
+}
+
+export interface WithdrawStateProcessExited {
+  type: WithdrawStateType.PROCESS_EXITED;
+  exitCode: number | null;
+  exitSignal: NodeJS.Signals | null | undefined;
+  prevState: WithdrawState | null;
+}
+
+export function isWithdrawState(
+  state?: WithdrawState | null
+): state is WithdrawState {
+  return state?.type != null;
+}
+
+export function isWithdrawStateInitiated(
+  state?: WithdrawState | null
+): state is WithdrawStateInitiated {
+  return isWithdrawState(state) && state.type === WithdrawStateType.INITIATED;
+}
+
+export function isWithdrawStateWithdrawTxInMempool(
+  state?: WithdrawState | null
+): state is WithdrawStateWithdrawTxInMempool {
+  return (
+    isWithdrawState(state) &&
+    state.type === WithdrawStateType.BTC_WITHDRAW_TX_IN_MEMPOOL
+  );
+}
+
+export function isWithdrawStateProcessExited(
+  state?: WithdrawState | null
+): state is WithdrawStateProcessExited {
+  return (
+    isWithdrawState(state) && state.type === WithdrawStateType.PROCESS_EXITED
+  );
 }

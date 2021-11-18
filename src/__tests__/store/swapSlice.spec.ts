@@ -15,6 +15,7 @@ import {
 import reducer, {
   swapAddLog,
   swapInitiate,
+  swapProcessExited,
 } from '../../store/features/swapSlice';
 
 const mReceivedQuoteLog: SwapLogReceivedQuote = {
@@ -173,6 +174,8 @@ test('should infer correct states from happy-path logs', () => {
       type: SwapStateType.WAITING_FOR_BTC_DEPOSIT,
       depositAddress: 'tb1qajq94d72k9hhcmtrlwhfuhc5yz0w298uym980g',
       maxGiveable: 0,
+      minimumAmount: 0.0001,
+      maximumAmount: 0.1,
     },
     provider: exampleProvider,
     stdOut: '',
@@ -187,6 +190,8 @@ test('should infer correct states from happy-path logs', () => {
       type: SwapStateType.WAITING_FOR_BTC_DEPOSIT,
       depositAddress: 'tb1qajq94d72k9hhcmtrlwhfuhc5yz0w298uym980g',
       maxGiveable: 0.00099878,
+      minimumAmount: 0.0001,
+      maximumAmount: 0.1,
     },
     provider: exampleProvider,
     stdOut: '',
@@ -319,6 +324,41 @@ test('should infer correct states from happy-path logs', () => {
       type: SwapStateType.XMR_REDEEM_IN_MEMPOOL,
       bobXmrRedeemTxId:
         'eadda576b5929c55bcc58f55c24bb52ac1853edb7d3b068ab67a3f66b0a1c546',
+    },
+    provider: exampleProvider,
+    stdOut: '',
+  });
+
+  swap = reducer(
+    swap,
+    swapProcessExited({
+      exitCode: 0,
+      exitSignal: null,
+    })
+  );
+
+  expect(swap).toStrictEqual({
+    processRunning: false,
+    logs: [
+      mReceivedQuoteLog,
+      mWaitingForBtcDepositLog,
+      mReceivedNewBtcLog,
+      mStartedSwapLog,
+      mPublishedBtcLockTxLog,
+      mBobBtcTxLockStatusChanged,
+      mAliceLockedXmrLog,
+      mAliceXmrLockTxConfirmationUpdateLog,
+      mXmrRedeemSuccessfulLog,
+    ],
+    state: {
+      type: SwapStateType.PROCESS_EXITED,
+      exitSignal: null,
+      exitCode: 0,
+      prevState: {
+        type: SwapStateType.XMR_REDEEM_IN_MEMPOOL,
+        bobXmrRedeemTxId:
+          'eadda576b5929c55bcc58f55c24bb52ac1853edb7d3b068ab67a3f66b0a1c546',
+      },
     },
     provider: exampleProvider,
     stdOut: '',

@@ -1,5 +1,6 @@
 import {
   Box,
+  DialogContentText,
   LinearProgress,
   Link,
   makeStyles,
@@ -7,10 +8,10 @@ import {
   Typography,
 } from '@material-ui/core';
 import React from 'react';
-import { SwapStateBtcLockInMempool } from '../../../../../../../models/storeModel';
-import BitcoinIcon from '../../../../../icons/BitcoinIcon';
-import { isTestnet } from '../../../../../../../store/config';
-import { getBitcoinTxExplorerUrl } from '../../../../../../../utils/currencyUtils';
+import { SwapStateBtcLockInMempool } from '../../../../../models/storeModel';
+import BitcoinIcon from '../../../icons/BitcoinIcon';
+import { isTestnet } from '../../../../../store/config';
+import { getBitcoinTxExplorerUrl } from '../../../../../utils/currencyUtils';
 
 const useStyles = makeStyles((theme) => ({
   depositAddressOuter: {
@@ -43,9 +44,10 @@ export default function BitcoinLockTxInMempoolPage({
 
   return (
     <Box>
-      <Typography variant="h5" align="center">
-        Waiting for Bitcoin lock confirmations
-      </Typography>
+      <DialogContentText>
+        The Bitcoin lock transaction has been published. The swap will continue
+        automatically once the transaction is confirmed.
+      </DialogContentText>
       <Paper variant="outlined" className={classes.depositAddressOuter}>
         <Typography variant="subtitle1">BTC Lock Transaction</Typography>
         <Box className={classes.depositAddress}>

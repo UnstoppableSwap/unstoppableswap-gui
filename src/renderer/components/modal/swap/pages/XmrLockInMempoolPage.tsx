@@ -1,5 +1,6 @@
 import {
   Box,
+  DialogContentText,
   LinearProgress,
   Link,
   makeStyles,
@@ -7,10 +8,10 @@ import {
   Typography,
 } from '@material-ui/core';
 import React from 'react';
-import { SwapStateXmrLockInMempool } from '../../../../../../../models/storeModel';
-import MoneroIcon from '../../../../../icons/MoneroIcon';
-import { isTestnet } from '../../../../../../../store/config';
-import { getMoneroTxExplorerUrl } from '../../../../../../../utils/currencyUtils';
+import { SwapStateXmrLockInMempool } from '../../../../../models/storeModel';
+import MoneroIcon from '../../../icons/MoneroIcon';
+import { isTestnet } from '../../../../../store/config';
+import { getMoneroTxExplorerUrl } from '../../../../../utils/currencyUtils';
 
 const useStyles = makeStyles((theme) => ({
   depositAddressOuter: {
@@ -23,9 +24,7 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(1),
     alignItems: 'center',
     display: 'flex',
-    '& > *': {
-      paddingRight: theme.spacing(0.25),
-    },
+    gap: theme.spacing(0.5),
   },
   depositStatusText: {
     paddingTop: theme.spacing(0.5),
@@ -43,9 +42,10 @@ export default function XmrLockTxInMempoolPage({
 
   return (
     <Box>
-      <Typography variant="h5" align="center">
-        Waiting for Monero lock confirmations
-      </Typography>
+      <DialogContentText>
+        The provider has published their Monero lock transaction. The swap will
+        continue when the transaction is confirmed and the outputs unlocked.
+      </DialogContentText>
       <Paper variant="outlined" className={classes.depositAddressOuter}>
         <Typography variant="subtitle1">XMR Lock Transaction</Typography>
         <Box className={classes.depositAddress}>
