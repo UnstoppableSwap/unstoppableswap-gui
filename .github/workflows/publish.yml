@@ -37,11 +37,7 @@ jobs:
       - name: Install dependencies
         run: |
           yarn install --prefer-offline
-
-      - name: Install dependencies
-        run: |
-          yarn install
-
+          
       - name: Publish releases
         env:
           # These values are used for auto updates signing
