@@ -1,11 +1,7 @@
 import { Box, Button, makeStyles, Paper, Typography } from '@material-ui/core';
 import React from 'react';
-import { swapReset } from 'store/features/swapSlice';
-import { SwapStateProcessExited } from '../../../../../../../models/storeModel';
-import {
-  useAppDispatch,
-  useAppSelector,
-} from '../../../../../../../store/hooks';
+import { SwapStateProcessExited } from '../../../../../models/storeModel';
+import { useAppSelector } from '../../../../../store/hooks';
 
 const useStyles = makeStyles((theme) => ({
   leftButton: {
@@ -20,19 +16,15 @@ const useStyles = makeStyles((theme) => ({
 
 type ProcessExitedPageProps = {
   state: SwapStateProcessExited;
+  onCancel: () => void;
 };
 
-export default function ProcessExitedPage({ state }: ProcessExitedPageProps) {
+export default function ProcessExitedPage({
+  state,
+  onCancel,
+}: ProcessExitedPageProps) {
   const classes = useStyles();
-  const processRunning = useAppSelector((s) => s.swap.processRunning);
   const stdOut = useAppSelector((s) => s.swap.stdOut);
-  const dispatch = useAppDispatch();
-
-  function close() {
-    if (!processRunning) {
-      dispatch(swapReset());
-    }
-  }
 
   function toggleLogs() {}
 
@@ -52,7 +44,7 @@ export default function ProcessExitedPage({ state }: ProcessExitedPageProps) {
         >
           Show logs
         </Button>
-        <Button variant="contained" onClick={close} color="primary">
+        <Button variant="contained" onClick={onCancel} color="primary">
           Close
         </Button>
         <Paper className={classes.logsOuter}>

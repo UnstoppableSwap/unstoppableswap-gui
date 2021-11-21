@@ -1,4 +1,4 @@
-import { TxLock } from './txLockModel';
+import { TxLock } from './bitcoinModel';
 
 export interface DbState {
   Bob: {

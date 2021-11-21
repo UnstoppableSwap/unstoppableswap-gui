@@ -8,11 +8,11 @@ const useStyles = makeStyles({
   },
 });
 
-type GuideDialogTitleProps = {
+type DialogTitleProps = {
   title: string;
 };
 
-export default function SwapDialogTitle({ title }: GuideDialogTitleProps) {
+export default function DialogHeader({ title }: DialogTitleProps) {
   const classes = useStyles();
 
   return (

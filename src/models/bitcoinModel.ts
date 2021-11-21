@@ -12,8 +12,8 @@ export interface Inner {
 export interface Global {
   unsigned_tx: UnsignedTx;
   version: number;
-  proprietary: any[];
-  unknown: any[];
+  proprietary: unknown[];
+  unknown: unknown[];
 }
 
 export interface UnsignedTx {
@@ -44,14 +44,14 @@ export interface InnerInput {
   bip32_derivation: Array<Array<string[] | string>>;
   final_script_sig: null;
   final_script_witness: null;
-  proprietary: any[];
-  unknown: any[];
+  proprietary: unknown[];
+  unknown: unknown[];
 }
 
 export interface Output {
   redeem_script: null;
   witness_script: null;
-  bip32_derivation: any[];
-  proprietary: any[];
-  unknown: any[];
+  bip32_derivation: unknown[];
+  proprietary: unknown[];
+  unknown: unknown[];
 }

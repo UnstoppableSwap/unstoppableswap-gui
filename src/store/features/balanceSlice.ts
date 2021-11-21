@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { extractBtcBalanceFromBalanceString } from '../../utils/parseUtils';
 
 export interface BalanceState {
   balanceValue: number | null;
@@ -21,20 +22,15 @@ export const balanceSlice = createSlice({
     balanceAppendStdOut: (balance, action: PayloadAction<string>) => {
       balance.stdOut += action.payload;
 
-      const balanceValueStr = action.payload
+      const balanceValue = action.payload
         .split(/(\r?\n)/g)
-        .find((s) => s.match(/Bitcoin balance is (.*) BTC/));
+        .map(extractBtcBalanceFromBalanceString)
+        .find((b) => b !== null);
 
-      if (balanceValueStr) {
-        const balanceValue = balanceValueStr
-          .split(' ')
-          .map(Number.parseFloat)
-          .find((f) => !Number.isNaN(f));
-        if (balanceValue !== undefined) {
-          balance.balanceValue = balanceValue;
-        } else {
-          console.error(`Failed to parse balance StdOut: ${balance.stdOut}`);
-        }
+      if (balanceValue != null) {
+        balance.balanceValue = balanceValue;
+      } else {
+        console.error(`Failed to parse balance StdOut: ${balance.stdOut}`);
       }
     },
     balanceInitiate: (balance) => {

@@ -15,11 +15,11 @@ export default function HistoryTable() {
   const history = useAppSelector((state) => state.history);
 
   return (
-    <TableContainer style={{}} component={Paper}>
-      <Table stickyHeader>
+    <TableContainer component={Paper}>
+      <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Swap ID</TableCell>
+            <TableCell>ID</TableCell>
             <TableCell>Amount</TableCell>
             <TableCell>Rate</TableCell>
             <TableCell>Fee</TableCell>

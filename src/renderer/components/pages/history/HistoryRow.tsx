@@ -12,7 +12,7 @@ import {
   MergedDbState,
 } from '../../../../models/databaseModel';
 import { pionerosToXmr, satsToBtc } from '../../../../utils/currencyUtils';
-import { TxLock } from '../../../../models/txLockModel';
+import { TxLock } from '../../../../models/bitcoinModel';
 
 type HistoryRowProps = {
   dbState: MergedDbState;

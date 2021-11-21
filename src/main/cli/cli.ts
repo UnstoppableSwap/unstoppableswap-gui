@@ -146,8 +146,9 @@ export async function spawnSubcommand(
     console.log(`Cli excited Code: ${code} Signal: ${signal}`);
 
     await killMoneroWalletRpc();
-    onExit(code, signal);
     cli = null;
+
+    onExit(code, signal);
   });
 
   return cli;

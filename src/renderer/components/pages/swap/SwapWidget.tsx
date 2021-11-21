@@ -15,16 +15,10 @@ import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 import ProviderSelect from '../../modal/provider/ProviderSelect';
 import { satsToBtc } from '../../../../utils/currencyUtils';
 import ProviderSubmitDialog from '../../modal/provider/ProviderSubmitDialog';
-import SwapInitDialog from '../../modal/swap/init/SwapInitDialog';
+import SwapDialog from '../../modal/swap/SwapDialog';
 import { useAppSelector } from '../../../../store/hooks';
 
 const useStyles = makeStyles((theme) => ({
-  outer: {
-    display: 'flex',
-    width: '100%',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
   inner: {
     width: 'min(480px, 100%)',
     minHeight: '150px',
@@ -158,7 +152,7 @@ function HasProviderSwapWidget() {
         <SwapHorizIcon className={classes.swapIcon} />
         Swap
       </Fab>
-      <SwapInitDialog
+      <SwapDialog
         open={showDialog}
         onClose={() => setShowDialog(false)}
         currentProvider={provider}
@@ -192,12 +186,10 @@ function HasNoProviderSwapWidget() {
 }
 
 export default function SwapWidget() {
-  const classes = useStyles();
   const hasProviders = useAppSelector((state) => state.providers.length > 0);
 
-  return (
-    <Box className={classes.outer}>
-      {hasProviders ? <HasProviderSwapWidget /> : <HasNoProviderSwapWidget />}
-    </Box>
-  );
+  if (hasProviders) {
+    return <HasProviderSwapWidget />;
+  }
+  return <HasNoProviderSwapWidget />;
 }

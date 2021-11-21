@@ -14,7 +14,7 @@ type SwapCancelAlertProps = {
   onClose: () => void;
 };
 
-export default function SwapStopAlert({ open, onClose }: SwapCancelAlertProps) {
+export default function CliStopAlert({ open, onClose }: SwapCancelAlertProps) {
   async function handleSwapCancel() {
     await ipcRenderer.invoke('stop-cli');
     onClose();

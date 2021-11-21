@@ -56,33 +56,57 @@ export const swapSlice = createSlice({
           log.fields.maximum_amount
         );
 
-        const nextState: SwapStateReceivedQuote = {
-          type: SwapStateType.RECEIVED_QUOTE,
-          price,
-          minimumSwapAmount,
-          maximumSwapAmount,
-        };
+        if (
+          price != null &&
+          minimumSwapAmount != null &&
+          maximumSwapAmount != null
+        ) {
+          const nextState: SwapStateReceivedQuote = {
+            type: SwapStateType.RECEIVED_QUOTE,
+            price,
+            minimumSwapAmount,
+            maximumSwapAmount,
+          };
 
-        swap.state = nextState;
+          swap.state = nextState;
+        }
       } else if (isSwapLogWaitingForBtcDeposit(log)) {
         const maxGiveable = extractAmountFromUnitString(
           log.fields.max_giveable
         );
+        const minimumAmount = extractAmountFromUnitString(
+          log.fields.minimum_amount
+        );
+        const maximumAmount = extractAmountFromUnitString(
+          log.fields.maximum_amount
+        );
+
         const depositAddress = log.fields.deposit_address;
 
-        const nextState: SwapStateWaitingForBtcDeposit = {
-          type: SwapStateType.WAITING_FOR_BTC_DEPOSIT,
-          depositAddress,
-          maxGiveable,
-        };
+        if (
+          maxGiveable != null &&
+          minimumAmount != null &&
+          maximumAmount != null
+        ) {
+          const nextState: SwapStateWaitingForBtcDeposit = {
+            type: SwapStateType.WAITING_FOR_BTC_DEPOSIT,
+            depositAddress,
+            maxGiveable,
+            minimumAmount,
+            maximumAmount,
+          };
 
-        swap.state = nextState;
+          swap.state = nextState;
+        }
       } else if (isSwapLogReceivedBtc(log)) {
         const maxGiveable = extractAmountFromUnitString(
           log.fields.max_giveable
         );
 
-        if (isSwapStateWaitingForBtcDeposit(swap.state)) {
+        if (
+          isSwapStateWaitingForBtcDeposit(swap.state) &&
+          maxGiveable != null
+        ) {
           swap.state.maxGiveable = maxGiveable;
         }
       } else if (isSwapLogStartedSwap(log)) {
@@ -191,6 +215,7 @@ export const swapSlice = createSlice({
         type: SwapStateType.PROCESS_EXITED,
         exitSignal: action.payload.exitSignal,
         exitCode: action.payload.exitCode,
+        prevState: swap.state,
       };
 
       swap.state = nextState;

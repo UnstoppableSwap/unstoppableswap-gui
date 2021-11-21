@@ -1,22 +1,16 @@
 import { Typography } from '@material-ui/core';
-import React, { useEffect } from 'react';
-import { ipcRenderer } from 'electron';
-import { useAppSelector } from '../../../../store/hooks';
+import React from 'react';
+import WithdrawWidget from './WithdrawWidget';
 
 export default function WalletPage() {
-  const walletBalance = useAppSelector((state) => state.balance.balanceValue);
-
-  useEffect(() => {
-    ipcRenderer.invoke('spawn-balance-check');
-  }, []);
-
   return (
     <>
       <Typography variant="h3">Wallet</Typography>
       <Typography variant="subtitle1">
-        Manage the funds of the internal wallet
+        These funds will automatically be used when starting a new swap. You can
+        also sweep the wallet and withdraw the BTC to an external wallet.
       </Typography>
-      <Typography>Balance: {walletBalance} BTC</Typography>
+      <WithdrawWidget />
     </>
   );
 }

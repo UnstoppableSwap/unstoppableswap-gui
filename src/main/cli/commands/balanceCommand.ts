@@ -21,6 +21,8 @@ function onStdOut(data: string) {
 
 export default async function spawnBalanceCheck() {
   try {
+    store.dispatch(balanceInitiate());
+
     await spawnSubcommand(
       'balance',
       {},
@@ -29,8 +31,6 @@ export default async function spawnBalanceCheck() {
       onProcExit,
       onStdOut
     );
-
-    store.dispatch(balanceInitiate());
   } catch (e) {
     console.error(`Failed to check balance Error: ${e}`);
   }

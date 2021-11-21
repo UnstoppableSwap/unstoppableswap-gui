@@ -4,6 +4,7 @@ import swapReducer from './features/swapSlice';
 import providersReducer from './features/providersSlice';
 import historyReducer from './features/historySlice';
 import balanceReducer from './features/balanceSlice';
+import withdrawReducer from './features/withdrawSlice';
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ export const store = configureStore({
     providers: providersReducer,
     history: historyReducer,
     balance: balanceReducer,
+    withdraw: withdrawReducer,
   },
   enhancers: [stateSyncEnhancer()],
 });
