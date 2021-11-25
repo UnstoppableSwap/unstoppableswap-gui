@@ -22,7 +22,6 @@ export default function HistoryTable() {
             <TableCell>ID</TableCell>
             <TableCell>Amount</TableCell>
             <TableCell>Rate</TableCell>
-            <TableCell>Fee</TableCell>
             <TableCell>State</TableCell>
             <TableCell>Action</TableCell>
           </TableRow>

@@ -35,7 +35,7 @@ function onStdOut(data: string) {
   store.dispatch(swapAppendStdOut(data));
 }
 
-export default async function spawnBuyXmr(
+export async function spawnBuyXmr(
   provider: Provider,
   redeemAddress: string,
   refundAddress: string
@@ -45,6 +45,7 @@ export default async function spawnBuyXmr(
   store.dispatch(
     swapInitiate({
       provider,
+      resume: false,
     })
   );
 
@@ -64,6 +65,34 @@ export default async function spawnBuyXmr(
   store.dispatch(
     swapInitiate({
       provider,
+      resume: false,
+    })
+  );
+}
+
+export async function resumeBuyXmr(swapId: string) {
+  store.dispatch(
+    swapInitiate({
+      provider: null,
+      resume: true,
+    })
+  );
+
+  await spawnSubcommand(
+    'resume',
+    {
+      'swap-id': swapId,
+    },
+    onDownloadProgress,
+    onSwapLog,
+    onProcExit,
+    onStdOut
+  );
+
+  store.dispatch(
+    swapInitiate({
+      provider: null,
+      resume: true,
     })
   );
 }

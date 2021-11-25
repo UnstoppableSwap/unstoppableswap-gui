@@ -17,7 +17,7 @@ import { resolveHtmlPath } from './util';
 import watchDatabase from './cli/database';
 import { stopCli } from './cli/cli';
 import spawnBalanceCheck from './cli/commands/balanceCommand';
-import spawnBuyXmr from './cli/commands/buyXmrCommand';
+import { spawnBuyXmr, resumeBuyXmr } from './cli/commands/buyXmrCommand';
 import spawnWithdrawBtc from './cli/commands/withdrawBtcCommand';
 
 export default class AppUpdater {
@@ -144,6 +144,8 @@ ipcMain.handle(
   (_event, provider, redeemAddress, refundAddress) =>
     spawnBuyXmr(provider, redeemAddress, refundAddress)
 );
+
+ipcMain.handle('resume-buy-xmr', (_event, swapId) => resumeBuyXmr(swapId));
 
 ipcMain.handle('spawn-withdraw-btc', (_event, address) =>
   spawnWithdrawBtc(address)
