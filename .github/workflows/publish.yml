@@ -11,7 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-latest]
+        os: [ubuntu-18.04]
 
     steps:
       - name: Checkout git repo
@@ -44,4 +44,4 @@ jobs:
           CSC_IDENTITY_AUTO_DISCOVERY: false
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          yarn postinstall && yarn build && yarn electron-builder --publish always --linux --win --mac
+          yarn postinstall && yarn build && yarn electron-builder --publish always --linux
