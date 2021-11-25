@@ -17,11 +17,9 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   chipsOuter: {
-    padding: theme.spacing(-0.25),
+    display: 'flex',
     marginTop: theme.spacing(1),
-    '& > *': {
-      margin: theme.spacing(0.25),
-    },
+    gap: theme.spacing(0.5),
   },
 }));
 
