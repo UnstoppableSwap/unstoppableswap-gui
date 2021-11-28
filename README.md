@@ -5,6 +5,10 @@
   <img src="assets/doc/history_screen.png" width="100%" />
 </div>
 
+## Disclaimer
+🚧 This project is in active development 🚧
+Do not use it for swapping coins on mainnet
+
 ## Install
 
 First, clone the repo via git and install dependencies:
