@@ -34,6 +34,7 @@ import {
 const initialState: Swap = {
   state: null,
   processRunning: false,
+  swapId: null,
   logs: [],
   stdOut: '',
   provider: null,
@@ -117,6 +118,7 @@ export const swapSlice = createSlice({
         };
 
         swap.state = nextState;
+        swap.swapId = log.fields.swap_id;
       } else if (isSwapLogPublishedBtcTx(log)) {
         if (log.fields.kind === 'lock') {
           const nextState: SwapStateBtcLockInMempool = {

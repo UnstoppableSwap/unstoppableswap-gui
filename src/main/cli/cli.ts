@@ -39,6 +39,15 @@ export async function getCliDataDir(): Promise<string> {
   return dataDir;
 }
 
+export async function getSwapLogFile(swapId: string): Promise<string> {
+  const baseDir = await getCliDataDir();
+  const logsDir = path.join(baseDir, 'logs');
+  await fs.mkdir(logsDir, {
+    recursive: true,
+  });
+  return path.join(logsDir, `swap-${swapId}.logs`);
+}
+
 async function getSpawnArgs(
   subCommand: string,
   options: { [option: string]: string }
@@ -94,7 +103,7 @@ export async function spawnSubcommand(
   onLog: (log: SwapLog) => void,
   onExit: (code: number | null, signal: NodeJS.Signals | null) => void,
   onStdOut: (data: string) => void
-) {
+): Promise<ChildProcessWithoutNullStreams> {
   if (cli) {
     throw new Error(
       `Can't spawn cli with subcommand ${subCommand} because other cli process is running Arguments: ${cli.spawnargs.join(
@@ -114,7 +123,9 @@ export async function spawnSubcommand(
     cwd: appDataPath,
   });
 
-  console.log(`Spawned cli Arguments: ${cli.spawnargs.join(' ')}`);
+  console.log(
+    `Spawned cli Arguments: ${cli.spawnargs.join(' ')} in folder ${appDataPath}`
+  );
 
   [cli.stderr, cli.stdout].forEach((stream) => {
     stream.setEncoding('utf8');

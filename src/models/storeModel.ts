@@ -24,6 +24,7 @@ export interface Swap {
   processRunning: boolean;
   provider: Provider | null;
   resume: boolean | null;
+  swapId: string | null;
 }
 
 export interface SwapState {
