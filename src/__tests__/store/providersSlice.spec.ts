@@ -28,8 +28,13 @@ const exampleMainnetProvider: ExtendedProvider = {
   relevancy: 1,
 };
 
+const initialState = {
+  providers: [],
+  selectedProvider: null,
+};
+
 test('should return the initial state', () => {
-  expect(reducer(undefined, {} as AnyAction)).toEqual([]);
+  expect(reducer(undefined, {} as AnyAction)).toEqual(initialState);
 });
 
 describe('testnet', () => {
@@ -40,10 +45,13 @@ describe('testnet', () => {
   test('should set and filter the provider list', () => {
     expect(
       reducer(
-        [],
+        initialState,
         setProviders([exampleMainnetProvider, exampleTestnetProvider])
       )
-    ).toEqual([exampleTestnetProvider]);
+    ).toEqual({
+      providers: [exampleTestnetProvider],
+      selectedProvider: exampleTestnetProvider,
+    });
   });
 });
 
@@ -55,9 +63,12 @@ describe('mainnet', () => {
   test('should set and filter the provider list', () => {
     expect(
       reducer(
-        [],
+        initialState,
         setProviders([exampleMainnetProvider, exampleTestnetProvider])
       )
-    ).toEqual([exampleMainnetProvider]);
+    ).toEqual({
+      providers: [exampleMainnetProvider],
+      selectedProvider: exampleMainnetProvider,
+    });
   });
 });
