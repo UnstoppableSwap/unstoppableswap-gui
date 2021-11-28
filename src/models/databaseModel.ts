@@ -1,4 +1,5 @@
 import { TxLock } from './bitcoinModel';
+import { Provider } from './storeModel';
 
 export interface DbState {
   Bob: {
@@ -257,6 +258,7 @@ export interface MergedDbState {
   swapId: string;
   type: DbStateType;
   state: ExecutionSetupDoneDbState; // Only ExecutionSetupDone states or more are saved
+  provider: Provider;
 }
 
 export interface MergedExecutionSetupDoneDbState extends MergedDbState {

@@ -118,6 +118,8 @@ const initialSwapState = {
   logs: [],
   provider: null,
   stdOut: '',
+  resume: null,
+  swapId: null,
 };
 
 const exampleProvider: Provider = {
@@ -137,6 +139,7 @@ test('should infer correct states from happy-path logs', () => {
     swap,
     swapInitiate({
       provider: exampleProvider,
+      resume: false,
     })
   );
 
@@ -148,6 +151,8 @@ test('should infer correct states from happy-path logs', () => {
     },
     provider: exampleProvider,
     stdOut: '',
+    resume: false,
+    swapId: null,
   });
 
   swap = reducer(swap, swapAddLog(mReceivedQuoteLog));
@@ -163,6 +168,8 @@ test('should infer correct states from happy-path logs', () => {
     },
     provider: exampleProvider,
     stdOut: '',
+    resume: false,
+    swapId: null,
   });
 
   swap = reducer(swap, swapAddLog(mWaitingForBtcDepositLog));
@@ -179,6 +186,8 @@ test('should infer correct states from happy-path logs', () => {
     },
     provider: exampleProvider,
     stdOut: '',
+    resume: false,
+    swapId: null,
   });
 
   swap = reducer(swap, swapAddLog(mReceivedNewBtcLog));
@@ -195,6 +204,8 @@ test('should infer correct states from happy-path logs', () => {
     },
     provider: exampleProvider,
     stdOut: '',
+    resume: false,
+    swapId: null,
   });
 
   swap = reducer(swap, swapAddLog(mStartedSwapLog));
@@ -213,6 +224,8 @@ test('should infer correct states from happy-path logs', () => {
     },
     provider: exampleProvider,
     stdOut: '',
+    resume: false,
+    swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
   });
 
   swap = reducer(swap, swapAddLog(mPublishedBtcLockTxLog));
@@ -234,6 +247,8 @@ test('should infer correct states from happy-path logs', () => {
     },
     provider: exampleProvider,
     stdOut: '',
+    resume: false,
+    swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
   });
 
   swap = reducer(swap, swapAddLog(mBobBtcTxLockStatusChanged));
@@ -256,6 +271,8 @@ test('should infer correct states from happy-path logs', () => {
     },
     provider: exampleProvider,
     stdOut: '',
+    resume: false,
+    swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
   });
 
   swap = reducer(swap, swapAddLog(mAliceLockedXmrLog));
@@ -279,6 +296,8 @@ test('should infer correct states from happy-path logs', () => {
     },
     provider: exampleProvider,
     stdOut: '',
+    resume: false,
+    swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
   });
 
   swap = reducer(swap, swapAddLog(mAliceXmrLockTxConfirmationUpdateLog));
@@ -303,6 +322,8 @@ test('should infer correct states from happy-path logs', () => {
     },
     provider: exampleProvider,
     stdOut: '',
+    resume: false,
+    swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
   });
 
   swap = reducer(swap, swapAddLog(mXmrRedeemSuccessfulLog));
@@ -327,6 +348,8 @@ test('should infer correct states from happy-path logs', () => {
     },
     provider: exampleProvider,
     stdOut: '',
+    resume: false,
+    swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
   });
 
   swap = reducer(
@@ -362,5 +385,7 @@ test('should infer correct states from happy-path logs', () => {
     },
     provider: exampleProvider,
     stdOut: '',
+    resume: false,
+    swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
   });
 });

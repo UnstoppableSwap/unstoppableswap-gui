@@ -24,9 +24,7 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(1),
     alignItems: 'center',
     display: 'flex',
-    '& > *': {
-      paddingRight: theme.spacing(0.25),
-    },
+    gap: theme.spacing(0.25),
   },
   depositStatusText: {
     paddingTop: theme.spacing(0.5),

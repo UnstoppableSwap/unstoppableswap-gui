@@ -7,7 +7,7 @@ import {
   makeStyles,
 } from '@material-ui/core';
 import SwapInitPage from './pages/SwapInitPage';
-import { ExtendedProvider, isSwapState } from '../../../../models/storeModel';
+import { isSwapState } from '../../../../models/storeModel';
 import DialogTitle from '../DialogHeader';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import SwapStatePage from './SwapStatePage';
@@ -27,11 +27,9 @@ const useStyles = makeStyles({
 export default function SwapDialog({
   open,
   onClose,
-  currentProvider,
 }: {
   open: boolean;
   onClose: () => void;
-  currentProvider: ExtendedProvider;
 }) {
   const classes = useStyles();
   const swap = useAppSelector((state) => state.swap);
@@ -56,7 +54,7 @@ export default function SwapDialog({
         {isSwapState(swap.state) ? (
           <SwapStatePage swapState={swap.state} onCancel={onCancel} />
         ) : (
-          <SwapInitPage currentProvider={currentProvider} />
+          <SwapInitPage />
         )}
         <SwapStateStepper />
       </DialogContent>

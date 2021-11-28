@@ -11,6 +11,8 @@ import {
 } from '../../models/databaseModel';
 import { store } from '../../store/store';
 import { databaseStateChanged } from '../../store/features/historySlice';
+import { Provider } from '../../models/storeModel';
+import { isTestnet } from '../../store/config';
 
 async function getSqliteDbFiles() {
   const cliDataDir = await getCliDataDir();
@@ -56,13 +58,36 @@ function getLatestStateForSwap(db: DatabaseT, swapId: string): DbState {
     state: string;
   };
 
-  return parseStateString(
-    (
-      db
-        .prepare('SELECT max(id), state FROM swap_states WHERE swap_id = ?;')
-        .get([swapId]) as ResponseFormat
-    ).state
-  );
+  const response = db
+    .prepare(`SELECT max(id), state FROM swap_states WHERE swap_id = ?;`)
+    .get([swapId]) as ResponseFormat;
+
+  const state = parseStateString(response.state);
+
+  return state;
+}
+
+function getProviderForSwap(db: DatabaseT, swapId: string): Provider {
+  type ResponseFormat = {
+    swap_id: string;
+    peer_id: string;
+    address: string;
+  };
+
+  const response = db
+    .prepare(
+      'SELECT DISTINCT peers.swap_id, peers.peer_id, peer_addresses.address ' +
+        'FROM peers ' +
+        'JOIN peer_addresses on peer_addresses.peer_id = peers.peer_id ' +
+        'WHERE swap_id = ?;'
+    )
+    .get([swapId]) as ResponseFormat;
+
+  return {
+    peerId: response.peer_id,
+    multiAddr: response.address,
+    testnet: isTestnet(),
+  };
 }
 
 function getMergedStateForEachSwap(db: DatabaseT): MergedDbState[] {
@@ -72,12 +97,14 @@ function getMergedStateForEachSwap(db: DatabaseT): MergedDbState[] {
       const latestState = getLatestStateForSwap(db, swapId);
       const latestStateType = getTypeOfDbState(latestState);
       const mergedState = merge({}, ...states);
+      const provider = getProviderForSwap(db, swapId);
 
       if (isExecutionSetupDoneDbState(mergedState)) {
         return {
           swapId,
           type: latestStateType,
           state: mergedState,
+          provider,
         };
       }
       console.error(

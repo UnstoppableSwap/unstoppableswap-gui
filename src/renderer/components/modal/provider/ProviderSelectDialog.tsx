@@ -15,7 +15,8 @@ import {
 import AddIcon from '@material-ui/icons/Add';
 import ProviderInfo from './ProviderInfo';
 import { ExtendedProvider } from '../../../../models/storeModel';
-import { useAppSelector } from '../../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { setSelectedProvider } from '../../../../store/features/providersSlice';
 
 const useStyles = makeStyles({
   dialogContent: {
@@ -27,20 +28,19 @@ type ProviderSelectDialogProps = {
   open: boolean;
   onClose: () => void;
   onSubmitDialogOpen: () => void;
-  onProviderSelect: (provider: ExtendedProvider) => void;
 };
 
 export default function ProviderSelectDialog({
   open,
   onClose,
   onSubmitDialogOpen,
-  onProviderSelect,
 }: ProviderSelectDialogProps) {
   const classes = useStyles();
-  const providers = useAppSelector((state) => state.providers);
+  const providers = useAppSelector((state) => state.providers.providers);
+  const dispatch = useAppDispatch();
 
   function handleProviderChange(provider: ExtendedProvider) {
-    onProviderSelect(provider);
+    dispatch(setSelectedProvider(provider));
     onClose();
   }
 

@@ -23,6 +23,8 @@ export interface Swap {
   stdOut: string;
   processRunning: boolean;
   provider: Provider | null;
+  resume: boolean | null;
+  swapId: string | null;
 }
 
 export interface SwapState {

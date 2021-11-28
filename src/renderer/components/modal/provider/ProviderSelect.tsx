@@ -6,11 +6,11 @@ import {
   Box,
 } from '@material-ui/core';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
-import { ExtendedProvider } from 'models/storeModel';
 import React, { useState } from 'react';
 import ProviderInfo from './ProviderInfo';
 import ProviderSelectDialog from './ProviderSelectDialog';
 import ProviderSubmitDialog from './ProviderSubmitDialog';
+import { useAppSelector } from '../../../../store/hooks';
 
 const useStyles = makeStyles({
   inner: {
@@ -27,16 +27,15 @@ const useStyles = makeStyles({
   },
 });
 
-export default function ProviderSelect({
-  provider,
-  onProviderSelect,
-}: {
-  provider: ExtendedProvider;
-  onProviderSelect: (provider: ExtendedProvider) => void;
-}) {
+export default function ProviderSelect() {
   const classes = useStyles();
   const [selectDialogOpen, setSelectDialogOpen] = useState(false);
   const [submitDialogOpen, setSubmitDialogOpen] = useState(false);
+  const selectedProvider = useAppSelector(
+    (state) => state.providers.selectedProvider
+  );
+
+  if (!selectedProvider) return <>No provider selected</>;
 
   const handleSelectDialogClose = () => {
     setSelectDialogOpen(false);
@@ -58,7 +57,6 @@ export default function ProviderSelect({
   return (
     <Box>
       <ProviderSelectDialog
-        onProviderSelect={onProviderSelect}
         open={selectDialogOpen}
         onClose={handleSelectDialogClose}
         onSubmitDialogOpen={handleSubmitDialogOpen}
@@ -71,7 +69,7 @@ export default function ProviderSelect({
       <ButtonBase className={classes.inner} onClick={handleSelectDialogOpen}>
         <Card variant="outlined" className={classes.providerCard}>
           <CardContent className={classes.providerCardContent}>
-            <ProviderInfo provider={provider} />
+            <ProviderInfo provider={selectedProvider} />
             <ArrowForwardIosIcon />
           </CardContent>
         </Card>

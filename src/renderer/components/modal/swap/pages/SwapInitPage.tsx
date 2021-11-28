@@ -1,9 +1,9 @@
 import { Box, Button, DialogContentText, makeStyles } from '@material-ui/core';
 import React, { useState } from 'react';
 import { ipcRenderer } from 'electron';
-import { ExtendedProvider } from 'models/storeModel';
 import MoneroAddressTextField from '../../../inputs/MoneroAddressTextField';
 import BitcoinAddressTextField from '../../../inputs/BitcoinAddressTextField';
+import { useAppSelector } from '../../../../../store/hooks';
 
 const useStyles = makeStyles((theme) => ({
   initButton: {
@@ -11,11 +11,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SwapInitPage({
-  currentProvider,
-}: {
-  currentProvider: ExtendedProvider;
-}) {
+export default function SwapInitPage() {
   const classes = useStyles();
   const [redeemAddress, setRedeemAddress] = useState(
     '59McWTPGc745SRWrSMoh8oTjoXoQq6sPUgKZ66dQWXuKFQ2q19h9gvhJNZcFTizcnT12r63NFgHiGd6gBCjabzmzHAMoyD6'
@@ -25,17 +21,22 @@ export default function SwapInitPage({
     'tb1qw508d6qejxtdg4y5r3zarvary0c5xw7kxpjzsx'
   );
   const [refundAddressValid, setRefundAddressValid] = useState(false);
+  const selectedProvider = useAppSelector(
+    (state) => state.providers.selectedProvider
+  );
 
   async function handleSwapStart() {
-    try {
-      await ipcRenderer.invoke(
-        'spawn-buy-xmr',
-        currentProvider,
-        redeemAddress,
-        refundAddress
-      );
-    } catch (e) {
-      console.error(e);
+    if (selectedProvider) {
+      try {
+        await ipcRenderer.invoke(
+          'spawn-buy-xmr',
+          selectedProvider,
+          redeemAddress,
+          refundAddress
+        );
+      } catch (e) {
+        console.error(e);
+      }
     }
   }
 
@@ -63,7 +64,9 @@ export default function SwapInitPage({
       />
 
       <Button
-        disabled={!refundAddressValid || !redeemAddressValid}
+        disabled={
+          !refundAddressValid || !redeemAddressValid || !selectedProvider
+        }
         onClick={handleSwapStart}
         variant="contained"
         color="primary"

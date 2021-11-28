@@ -1,3 +1,4 @@
+import fs from 'fs/promises';
 import { SwapLog } from '../../../models/swapModel';
 import { store } from '../../../store/store';
 import {
@@ -9,11 +10,25 @@ import {
 } from '../../../store/features/swapSlice';
 import { Provider } from '../../../models/storeModel';
 import { BinaryDownloadStatus } from '../downloader';
-import { spawnSubcommand } from '../cli';
+import { getSwapLogFile, spawnSubcommand } from '../cli';
 import spawnBalanceCheck from './balanceCommand';
+import { checkFileExists } from '../../../utils/fileUtils';
 
-function onSwapLog(log: SwapLog) {
+async function onSwapLog(log: SwapLog) {
   store.dispatch(swapAddLog(log));
+
+  const { swapId } = store.getState().swap;
+  if (swapId) {
+    const logFile = await getSwapLogFile(swapId);
+
+    if (!(await checkFileExists(logFile))) {
+      console.log(
+        `Creating log file ${logFile} for swap ${swapId} and appending all past stdout to it`
+      );
+      const allStdOut = store.getState().swap.stdOut;
+      await fs.appendFile(logFile, allStdOut);
+    }
+  }
 }
 
 function onDownloadProgress(status: BinaryDownloadStatus) {
@@ -31,11 +46,20 @@ function onProcExit(code: number | null, signal: NodeJS.Signals | null) {
   spawnBalanceCheck();
 }
 
-function onStdOut(data: string) {
+async function onStdOut(data: string) {
   store.dispatch(swapAppendStdOut(data));
+
+  const { swapId } = store.getState().swap;
+  if (swapId) {
+    const logFile = await getSwapLogFile(swapId);
+
+    if (await checkFileExists(logFile)) {
+      await fs.appendFile(logFile, data);
+    }
+  }
 }
 
-export default async function spawnBuyXmr(
+export async function spawnBuyXmr(
   provider: Provider,
   redeemAddress: string,
   refundAddress: string
@@ -45,6 +69,7 @@ export default async function spawnBuyXmr(
   store.dispatch(
     swapInitiate({
       provider,
+      resume: false,
     })
   );
 
@@ -64,6 +89,52 @@ export default async function spawnBuyXmr(
   store.dispatch(
     swapInitiate({
       provider,
+      resume: false,
     })
   );
+}
+
+export async function resumeBuyXmr(swapId: string) {
+  const provider = store
+    .getState()
+    .history.find((h) => h.swapId === swapId)?.provider;
+
+  if (provider) {
+    store.dispatch(
+      swapInitiate({
+        provider,
+        resume: true,
+      })
+    );
+
+    const cli = await spawnSubcommand(
+      'resume',
+      {
+        'swap-id': swapId,
+      },
+      onDownloadProgress,
+      onSwapLog,
+      onProcExit,
+      onStdOut
+    );
+
+    store.dispatch(
+      swapInitiate({
+        provider,
+        resume: true,
+      })
+    );
+
+    try {
+      const logFile = await getSwapLogFile(swapId);
+      const prevLogData = await fs.readFile(logFile, {
+        encoding: 'utf8',
+      });
+      cli.stderr.push(prevLogData);
+    } catch (e) {
+      console.error(`Failed to read swap log file: ${e}`);
+    }
+  } else {
+    console.error('Could not find swap in database');
+  }
 }
