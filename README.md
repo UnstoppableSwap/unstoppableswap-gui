@@ -1,3 +1,10 @@
+<div align="center">
+  <img src="assets/doc/main_screen.png" width="100%" />
+  <img src="assets/doc/swap_screen.png" width="100%" />
+  <img src="assets/doc/wallet_screen.png" width="100%" />
+  <img src="assets/doc/history_screen.png" width="100%" />
+</div>
+
 ## Install
 
 First, clone the repo via git and install dependencies:
@@ -10,7 +17,7 @@ yarn
 
 ## Starting Development
 
-Start the app in the `dev` environment:
+Start the app in the `TESTNET` environment:
 
 ```bash
 TESTNET=true yarn start
