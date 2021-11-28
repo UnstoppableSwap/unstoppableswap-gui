@@ -17,6 +17,7 @@ import { satsToBtc } from '../../../../utils/currencyUtils';
 import ProviderSubmitDialog from '../../modal/provider/ProviderSubmitDialog';
 import SwapDialog from '../../modal/swap/SwapDialog';
 import { useAppSelector } from '../../../../store/hooks';
+import { ExtendedProvider } from '../../../../models/storeModel';
 
 const useStyles = makeStyles((theme) => ({
   inner: {
@@ -56,20 +57,16 @@ function Title() {
   );
 }
 
-function HasProviderSwapWidget() {
+function HasProviderSwapWidget({
+  selectedProvider,
+}: {
+  selectedProvider: ExtendedProvider;
+}) {
   const classes = useStyles();
 
-  const providers = useAppSelector((state) => state.providers);
   const [showDialog, setShowDialog] = useState(false);
-  const [provider, setProvider] = useState(providers[0]);
   const [btcFieldValue, setBtcFieldValue] = useState('0.02');
   const [xmrFieldValue, setXmrFieldValue] = useState(1);
-
-  useEffect(() => {
-    setProvider(
-      providers.find((p) => p.peerId === provider.peerId) || providers[0]
-    );
-  }, [provider.peerId, providers, setProvider]);
 
   function onBtcAmountChange(event: ChangeEvent<HTMLInputElement>) {
     setBtcFieldValue(event.target.value);
@@ -80,7 +77,8 @@ function HasProviderSwapWidget() {
     if (Number.isNaN(parsedBtcAmount)) {
       setXmrFieldValue(0);
     } else {
-      const convertedXmrAmount = parsedBtcAmount / satsToBtc(provider.price);
+      const convertedXmrAmount =
+        parsedBtcAmount / satsToBtc(selectedProvider.price);
       setXmrFieldValue(convertedXmrAmount);
     }
   }
@@ -90,14 +88,14 @@ function HasProviderSwapWidget() {
     if (Number.isNaN(parsedBtcAmount)) {
       return 'This is not a valid number';
     }
-    if (parsedBtcAmount < satsToBtc(provider.minSwapAmount)) {
+    if (parsedBtcAmount < satsToBtc(selectedProvider.minSwapAmount)) {
       return `The minimum swap amount is ${satsToBtc(
-        provider.minSwapAmount
+        selectedProvider.minSwapAmount
       )} BTC`;
     }
-    if (parsedBtcAmount > satsToBtc(provider.maxSwapAmount)) {
+    if (parsedBtcAmount > satsToBtc(selectedProvider.maxSwapAmount)) {
       return `The maximum swap amount is ${satsToBtc(
-        provider.maxSwapAmount
+        selectedProvider.maxSwapAmount
       )} BTC`;
     }
     return null;
@@ -109,7 +107,7 @@ function HasProviderSwapWidget() {
     }
   }
 
-  useEffect(updateXmrValue, [btcFieldValue, provider]);
+  useEffect(updateXmrValue, [btcFieldValue, selectedProvider]);
 
   return (
     // 'elevation' prop can't be passed down (type def issue)
@@ -142,7 +140,7 @@ function HasProviderSwapWidget() {
           endAdornment: <InputAdornment position="end">XMR</InputAdornment>,
         }}
       />
-      <ProviderSelect provider={provider} onProviderSelect={setProvider} />
+      <ProviderSelect />
       <Fab
         variant="extended"
         color="primary"
@@ -152,11 +150,7 @@ function HasProviderSwapWidget() {
         <SwapHorizIcon className={classes.swapIcon} />
         Swap
       </Fab>
-      <SwapDialog
-        open={showDialog}
-        onClose={() => setShowDialog(false)}
-        currentProvider={provider}
-      />
+      <SwapDialog open={showDialog} onClose={() => setShowDialog(false)} />
     </Box>
   );
 }
@@ -186,10 +180,12 @@ function HasNoProviderSwapWidget() {
 }
 
 export default function SwapWidget() {
-  const hasProviders = useAppSelector((state) => state.providers.length > 0);
+  const selectedProvider = useAppSelector(
+    (state) => state.providers.selectedProvider
+  );
 
-  if (hasProviders) {
-    return <HasProviderSwapWidget />;
+  if (selectedProvider) {
+    return <HasProviderSwapWidget selectedProvider={selectedProvider} />;
   }
   return <HasNoProviderSwapWidget />;
 }

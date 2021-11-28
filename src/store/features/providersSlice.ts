@@ -2,7 +2,13 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ExtendedProvider } from '../../models/storeModel';
 import { isTestnet } from '../config';
 
-const initialState: ExtendedProvider[] = [];
+const initialState: {
+  providers: ExtendedProvider[];
+  selectedProvider: ExtendedProvider | null;
+} = {
+  providers: [],
+  selectedProvider: null,
+};
 
 function sortProviderList(list: ExtendedProvider[]) {
   return list.concat().sort((firstEl, secondEl) => {
@@ -17,15 +23,23 @@ export const swapSlice = createSlice({
   name: 'providers',
   initialState,
   reducers: {
-    setProviders: (_swap, action: PayloadAction<ExtendedProvider[]>) => {
+    setProviders: (state, action: PayloadAction<ExtendedProvider[]>) => {
       const providers = sortProviderList(action.payload).filter(
         (provider) => provider.testnet === isTestnet()
       );
-      return providers;
+      state.providers = providers;
+
+      const newSelectedProvider = providers.find(
+        (prov) => prov.peerId === state.selectedProvider?.peerId
+      );
+      state.selectedProvider = newSelectedProvider || providers[0] || null;
+    },
+    setSelectedProvider: (state, action: PayloadAction<ExtendedProvider>) => {
+      state.selectedProvider = action.payload;
     },
   },
 });
 
-export const { setProviders } = swapSlice.actions;
+export const { setProviders, setSelectedProvider } = swapSlice.actions;
 
 export default swapSlice.reducer;

@@ -1,12 +1,24 @@
-import { Box, makeStyles, TableCell, TableRow } from '@material-ui/core';
-import React from 'react';
-import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import {
-  isBtcLockedDbState,
-  MergedDbState,
-} from '../../../../models/databaseModel';
-import { pionerosToXmr, satsToBtc } from '../../../../utils/currencyUtils';
+  Box,
+  Collapse,
+  IconButton,
+  makeStyles,
+  TableCell,
+  TableRow,
+} from '@material-ui/core';
+import React, { useState } from 'react';
+import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import { MergedDbState } from '../../../../models/databaseModel';
 import HistoryRowActions from './HistoryRowActions';
+import MoneroIcon from '../../icons/MoneroIcon';
+import BitcoinIcon from '../../icons/BitcoinIcon';
+import HistoryRowExpanded from './HistoryRowExpanded';
+import {
+  getSwapBtcAmount,
+  getSwapXmrAmount,
+} from '../../../../utils/parseUtils';
 
 type HistoryRowProps = {
   dbState: MergedDbState;
@@ -31,37 +43,46 @@ function AmountTransfer({
 
   return (
     <Box className={classes.amountTransferContainer}>
-      {btcAmount ? `${btcAmount.toFixed(6)} BTC ` : '?'}
+      {btcAmount ? `${btcAmount.toFixed(6)}` : '?'}
+      <BitcoinIcon />
       <ArrowForwardIcon />
-      {`${xmrAmount.toFixed(5)} XMR`}
+      {`${xmrAmount.toFixed(5)}`}
+      <MoneroIcon />
     </Box>
   );
 }
 
 export default function HistoryRow({ dbState }: HistoryRowProps) {
-  const btcAmount = isBtcLockedDbState(dbState.state)
-    ? satsToBtc(
-        dbState.state.Bob.BtcLocked.state3.tx_lock.inner.global.unsigned_tx
-          .output[0]?.value
-      )
-    : null;
-  const xmrAmount = pionerosToXmr(
-    dbState.state.Bob.ExecutionSetupDone.state2.xmr
-  );
+  const btcAmount = getSwapBtcAmount(dbState);
+  const xmrAmount = getSwapXmrAmount(dbState);
+
+  const [expanded, setExpanded] = useState(false);
 
   return (
-    <TableRow>
-      <TableCell>{dbState.swapId.substr(0, 5)}...</TableCell>
-      <TableCell>
-        <AmountTransfer xmrAmount={xmrAmount} btcAmount={btcAmount} />
-      </TableCell>
-      <TableCell>
-        {btcAmount ? (btcAmount / xmrAmount).toFixed(5) : '?'} XMR/BTC
-      </TableCell>
-      <TableCell>{dbState.type}</TableCell>
-      <TableCell>
-        <HistoryRowActions dbState={dbState} />
-      </TableCell>
-    </TableRow>
+    <>
+      <TableRow>
+        <TableCell>
+          <IconButton size="small" onClick={() => setExpanded(!expanded)}>
+            {expanded ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+          </IconButton>
+        </TableCell>
+        <TableCell>{dbState.swapId.substr(0, 5)}...</TableCell>
+        <TableCell>
+          <AmountTransfer xmrAmount={xmrAmount} btcAmount={btcAmount} />
+        </TableCell>
+        <TableCell>{dbState.type}</TableCell>
+        <TableCell>
+          <HistoryRowActions dbState={dbState} />
+        </TableCell>
+      </TableRow>
+
+      <TableRow>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+          <Collapse in={expanded} timeout="auto" unmountOnExit>
+            <HistoryRowExpanded dbState={dbState} />
+          </Collapse>
+        </TableCell>
+      </TableRow>
+    </>
   );
 }

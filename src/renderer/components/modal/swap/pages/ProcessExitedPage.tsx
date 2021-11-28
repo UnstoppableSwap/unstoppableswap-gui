@@ -1,4 +1,11 @@
-import { Box, Button, makeStyles, Paper, Typography } from '@material-ui/core';
+import {
+  Box,
+  Button,
+  DialogContentText,
+  makeStyles,
+  Paper,
+  Typography,
+} from '@material-ui/core';
 import React from 'react';
 import { SwapStateProcessExited } from '../../../../../models/storeModel';
 import { useAppSelector } from '../../../../../store/hooks';
@@ -10,7 +17,9 @@ const useStyles = makeStyles((theme) => ({
   logsOuter: {
     overflow: 'auto',
     padding: theme.spacing(1),
-    margin: theme.spacing(1),
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+    maxHeight: '10rem',
   },
 }));
 
@@ -26,31 +35,22 @@ export default function ProcessExitedPage({
   const classes = useStyles();
   const stdOut = useAppSelector((s) => s.swap.stdOut);
 
-  function toggleLogs() {}
-
   return (
     <Box>
-      <Typography variant="h5" align="center">
-        Swap process exited
-      </Typography>
-      {state.exitCode != null ? (
-        <Typography variant="body1">Exit code: {state.exitCode}</Typography>
-      ) : null}
-      <Box>
-        <Button
-          variant="text"
-          onClick={toggleLogs}
-          className={classes.leftButton}
-        >
-          Show logs
-        </Button>
-        <Button variant="contained" onClick={onCancel} color="primary">
-          Close
-        </Button>
-        <Paper className={classes.logsOuter}>
-          <pre>{stdOut}</pre>
-        </Paper>
-      </Box>
+      <DialogContentText>
+        The swap-cli process has exited
+        {state.exitCode != null ? ` with the exit code ${state.exitCode}` : ''}.
+        This might be totally normal or some error might have occurred. Please
+        check the logs displayed below for more information.
+      </DialogContentText>
+      <Paper className={classes.logsOuter} variant="outlined">
+        <Typography component="pre" variant="body2">
+          {stdOut}
+        </Typography>
+      </Paper>
+      <Button variant="contained" onClick={onCancel} color="primary">
+        Close
+      </Button>
     </Box>
   );
 }
