@@ -37,16 +37,16 @@ import {
 } from '../../models/databaseModel';
 import { Provider } from '../../models/storeModel';
 
-const executionSetupDoneState = require('./example_states/execution_setup_done.json');
-const btcLockedState = require('./example_states/btc_locked.json');
-const xmrLockProofReceivedState = require('./example_states/xmr_lock_proof_received.json');
-const xmrLockedState = require('./example_states/xmr_locked.json');
-const encSigSentState = require('./example_states/enc_sig_sent.json');
-const btcRedeemedState = require('./example_states/btc_redeemed.json');
-const doneXmrRedeemedState = require('./example_states/done_xmr_redeemed.json');
-const cancelTimelockExpiredState = require('./example_states/cancel_timelock_expired.json');
-const btcCancelledState = require('./example_states/btc_cancelled.json');
-const doneBtcPunished = require('./example_states/done_btc_punished.json');
+import encSigSentState from './example_states/enc_sig_sent.json';
+import executionSetupDoneState from './example_states/execution_setup_done.json';
+import btcLockedState from './example_states/btc_locked.json';
+import xmrLockProofReceivedState from './example_states/xmr_lock_proof_received.json';
+import xmrLockedState from './example_states/xmr_locked.json';
+import btcRedeemedState from './example_states/btc_redeemed.json';
+import doneXmrRedeemedState from './example_states/done_xmr_redeemed.json';
+import cancelTimelockExpiredState from './example_states/cancel_timelock_expired.json';
+import btcCancelledState from './example_states/btc_cancelled.json';
+import doneBtcPunished from './example_states/done_btc_punished.json';
 
 /*
 TODO!
