@@ -1,14 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { extractBtcBalanceFromBalanceString } from '../../utils/parseUtils';
 
-export interface BalanceState {
+export interface BalanceSlice {
   balanceValue: number | null;
   exitCode: number | null;
   processRunning: boolean;
   stdOut: string;
 }
 
-const initialState: BalanceState = {
+const initialState: BalanceSlice = {
   balanceValue: null,
   processRunning: false,
   exitCode: null,
@@ -19,8 +19,8 @@ export const balanceSlice = createSlice({
   name: 'balance',
   initialState,
   reducers: {
-    balanceAppendStdOut: (balance, action: PayloadAction<string>) => {
-      balance.stdOut += action.payload;
+    balanceAppendStdOut(slice, action: PayloadAction<string>) {
+      slice.stdOut += action.payload;
 
       const balanceValue = action.payload
         .split(/(\r?\n)/g)
@@ -28,24 +28,24 @@ export const balanceSlice = createSlice({
         .find((b) => b !== null);
 
       if (balanceValue != null) {
-        balance.balanceValue = balanceValue;
+        slice.balanceValue = balanceValue;
       } else {
-        console.error(`Failed to parse balance StdOut: ${balance.stdOut}`);
+        console.error(`Failed to parse balance StdOut: ${slice.stdOut}`);
       }
     },
-    balanceInitiate: (balance) => {
-      balance.processRunning = true;
-      balance.stdOut = '';
+    balanceInitiate(slice) {
+      slice.processRunning = true;
+      slice.stdOut = '';
     },
-    balanceProcessExited: (
-      balance,
+    balanceProcessExited(
+      slice,
       action: PayloadAction<{
         exitCode: number | null;
         exitSignal: NodeJS.Signals | null;
       }>
-    ) => {
-      balance.processRunning = false;
-      balance.exitCode = action.payload.exitCode;
+    ) {
+      slice.processRunning = false;
+      slice.exitCode = action.payload.exitCode;
     },
   },
 });

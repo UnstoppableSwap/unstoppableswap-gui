@@ -1,14 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { isSwapLogPublishedBtcTx, SwapLog } from '../../models/swapModel';
 import {
-  Withdraw,
+  WithdrawSlice,
   WithdrawStateInitiated,
   WithdrawStateProcessExited,
   WithdrawStateType,
   WithdrawStateWithdrawTxInMempool,
 } from '../../models/storeModel';
 
-const initialState: Withdraw = {
+const initialState: WithdrawSlice = {
   state: null,
   stdOut: '',
   logs: [],
@@ -19,13 +19,15 @@ export const withdrawSlice = createSlice({
   name: 'withdraw',
   initialState,
   reducers: {
-    withdrawReset: () => initialState,
-    withdrawAppendStdOut: (withdraw, action: PayloadAction<string>) => {
-      withdraw.stdOut += action.payload;
+    withdrawReset() {
+      return initialState;
     },
-    withdrawAddLog: (withdraw, action: PayloadAction<SwapLog>) => {
+    withdrawAppendStdOut(slice, action: PayloadAction<string>) {
+      slice.stdOut += action.payload;
+    },
+    withdrawAddLog(slice, action: PayloadAction<SwapLog>) {
       const log = action.payload;
-      withdraw.logs.push(log);
+      slice.logs.push(log);
 
       if (isSwapLogPublishedBtcTx(log)) {
         const nextState: WithdrawStateWithdrawTxInMempool = {
@@ -33,35 +35,35 @@ export const withdrawSlice = createSlice({
           txid: log.fields.txid,
         };
 
-        withdraw.state = nextState;
+        slice.state = nextState;
       }
     },
-    withdrawInitiate: (withdraw) => {
+    withdrawInitiate(slice) {
       const nextState: WithdrawStateInitiated = {
         type: WithdrawStateType.INITIATED,
       };
 
-      withdraw.state = nextState;
-      withdraw.stdOut = '';
-      withdraw.logs = [];
-      withdraw.processRunning = true;
+      slice.state = nextState;
+      slice.stdOut = '';
+      slice.logs = [];
+      slice.processRunning = true;
     },
-    withdrawProcessExited: (
-      withdraw,
+    withdrawProcessExited(
+      slice,
       action: PayloadAction<{
         exitCode: number | null;
         exitSignal: NodeJS.Signals | null;
       }>
-    ) => {
+    ) {
       const nextState: WithdrawStateProcessExited = {
         type: WithdrawStateType.PROCESS_EXITED,
         exitCode: action.payload.exitCode,
         exitSignal: action.payload.exitSignal,
-        prevState: withdraw.state,
+        prevState: slice.state,
       };
 
-      withdraw.state = nextState;
-      withdraw.processRunning = false;
+      slice.state = nextState;
+      slice.processRunning = false;
     },
   },
 });

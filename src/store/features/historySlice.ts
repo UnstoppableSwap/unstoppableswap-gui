@@ -7,8 +7,9 @@ export const historySlice = createSlice({
   name: 'history',
   initialState,
   reducers: {
-    databaseStateChanged: (_, action: PayloadAction<MergedDbState[]>) =>
-      action.payload,
+    databaseStateChanged(_, action: PayloadAction<MergedDbState[]>) {
+      return action.payload;
+    },
   },
 });
 

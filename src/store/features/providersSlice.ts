@@ -1,41 +1,42 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { sortProviderList } from '../../utils/sortUtils';
 import { ExtendedProvider } from '../../models/storeModel';
 import { isTestnet } from '../config';
 
-const initialState: {
+interface ProvidersSlice {
   providers: ExtendedProvider[];
   selectedProvider: ExtendedProvider | null;
-} = {
+}
+
+const initialState: ProvidersSlice = {
   providers: [],
   selectedProvider: null,
 };
-
-function sortProviderList(list: ExtendedProvider[]) {
-  return list.concat().sort((firstEl, secondEl) => {
-    if (firstEl.relevancy > secondEl.relevancy) {
-      return -1;
-    }
-    return 1;
-  });
-}
 
 export const swapSlice = createSlice({
   name: 'providers',
   initialState,
   reducers: {
-    setProviders: (state, action: PayloadAction<ExtendedProvider[]>) => {
+    setProviders(slice, action: PayloadAction<ExtendedProvider[]>) {
       const providers = sortProviderList(action.payload).filter(
         (provider) => provider.testnet === isTestnet()
       );
-      state.providers = providers;
+      slice.providers = providers;
 
       const newSelectedProvider = providers.find(
-        (prov) => prov.peerId === state.selectedProvider?.peerId
+        (prov) => prov.peerId === slice.selectedProvider?.peerId
       );
-      state.selectedProvider = newSelectedProvider || providers[0] || null;
+      slice.selectedProvider = newSelectedProvider || providers[0] || null;
     },
-    setSelectedProvider: (state, action: PayloadAction<ExtendedProvider>) => {
-      state.selectedProvider = action.payload;
+    setSelectedProvider(
+      slice,
+      action: PayloadAction<{
+        peerId: string;
+      }>
+    ) {
+      slice.selectedProvider =
+        slice.providers.find((prov) => prov.peerId === action.payload.peerId) ||
+        null;
     },
   },
 });
