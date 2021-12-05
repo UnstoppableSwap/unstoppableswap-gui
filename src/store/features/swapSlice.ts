@@ -6,7 +6,7 @@ import {
   isSwapStateWaitingForBtcDeposit,
   isSwapStateXmrLockInMempool,
   Provider,
-  Swap,
+  SwapSlice,
   SwapStateBtcLockInMempool,
   SwapStateDownloadingBinary,
   SwapStateInitiated,
@@ -31,7 +31,7 @@ import {
   SwapLog,
 } from '../../models/swapModel';
 
-const initialState: Swap = {
+const initialState: SwapSlice = {
   state: null,
   processRunning: false,
   swapId: null,
@@ -45,9 +45,9 @@ export const swapSlice = createSlice({
   name: 'swap',
   initialState,
   reducers: {
-    swapAddLog: (swap, action: PayloadAction<SwapLog>) => {
+    swapAddLog(slice, action: PayloadAction<SwapLog>) {
       const log = action.payload;
-      swap.logs.push(log);
+      slice.logs.push(log);
 
       if (isSwapLogReceivedQuote(log)) {
         const price = extractAmountFromUnitString(log.fields.price);
@@ -70,7 +70,7 @@ export const swapSlice = createSlice({
             maximumSwapAmount,
           };
 
-          swap.state = nextState;
+          slice.state = nextState;
         }
       } else if (isSwapLogWaitingForBtcDeposit(log)) {
         const maxGiveable = extractAmountFromUnitString(
@@ -98,7 +98,7 @@ export const swapSlice = createSlice({
             maximumAmount,
           };
 
-          swap.state = nextState;
+          slice.state = nextState;
         }
       } else if (isSwapLogReceivedBtc(log)) {
         const maxGiveable = extractAmountFromUnitString(
@@ -106,10 +106,10 @@ export const swapSlice = createSlice({
         );
 
         if (
-          isSwapStateWaitingForBtcDeposit(swap.state) &&
+          isSwapStateWaitingForBtcDeposit(slice.state) &&
           maxGiveable != null
         ) {
-          swap.state.maxGiveable = maxGiveable;
+          slice.state.maxGiveable = maxGiveable;
         }
       } else if (isSwapLogStartedSwap(log)) {
         const nextState: SwapStateStarted = {
@@ -117,8 +117,8 @@ export const swapSlice = createSlice({
           id: log.fields.swap_id,
         };
 
-        swap.state = nextState;
-        swap.swapId = log.fields.swap_id;
+        slice.state = nextState;
+        slice.swapId = log.fields.swap_id;
       } else if (isSwapLogPublishedBtcTx(log)) {
         if (log.fields.kind === 'lock') {
           const nextState: SwapStateBtcLockInMempool = {
@@ -127,11 +127,11 @@ export const swapSlice = createSlice({
             bobBtcLockTxConfirmations: 0,
           };
 
-          swap.state = nextState;
+          slice.state = nextState;
         }
       } else if (isSwapLogBtcTxStatusChanged(log)) {
-        if (isSwapStateBtcLockInMempool(swap.state)) {
-          if (swap.state.bobBtcLockTxId === log.fields.txid) {
+        if (isSwapStateBtcLockInMempool(slice.state)) {
+          if (slice.state.bobBtcLockTxId === log.fields.txid) {
             const newStatusText = log.fields.new_status;
 
             if (newStatusText.startsWith('confirmed with')) {
@@ -140,7 +140,7 @@ export const swapSlice = createSlice({
                 10
               );
 
-              swap.state.bobBtcLockTxConfirmations = confirmations;
+              slice.state.bobBtcLockTxConfirmations = confirmations;
             }
           }
         }
@@ -151,11 +151,11 @@ export const swapSlice = createSlice({
           aliceXmrLockTxConfirmations: 0,
         };
 
-        swap.state = nextState;
+        slice.state = nextState;
       } else if (isSwapLogReceivedXmrLockTxConfirmation(log)) {
-        if (isSwapStateXmrLockInMempool(swap.state)) {
-          if (swap.state.aliceXmrLockTxId === log.fields.txid) {
-            swap.state.aliceXmrLockTxConfirmations = Number.parseInt(
+        if (isSwapStateXmrLockInMempool(slice.state)) {
+          if (slice.state.aliceXmrLockTxId === log.fields.txid) {
+            slice.state.aliceXmrLockTxConfirmations = Number.parseInt(
               log.fields.seen_confirmations,
               10
             );
@@ -167,21 +167,23 @@ export const swapSlice = createSlice({
           bobXmrRedeemTxId: log.fields.txid,
         };
 
-        swap.state = nextState;
+        slice.state = nextState;
       } else {
         console.debug(
           `Swap log was not reduced Log: ${JSON.stringify(log, null, 4)}`
         );
       }
     },
-    swapAppendStdOut: (swap, action: PayloadAction<string>) => {
-      swap.stdOut += action.payload;
+    swapAppendStdOut(slice, action: PayloadAction<string>) {
+      slice.stdOut += action.payload;
     },
-    swapReset: () => initialState,
-    swapDownloadProgressUpdate: (
+    swapReset() {
+      return initialState;
+    },
+    swapDownloadProgressUpdate(
       swap,
       action: PayloadAction<BinaryDownloadStatus>
-    ) => {
+    ) {
       const nextState: SwapStateDownloadingBinary = {
         type: SwapStateType.DOWNLOADING_BINARY,
         binaryInfo: action.payload.binaryInfo,
@@ -192,13 +194,13 @@ export const swapSlice = createSlice({
       swap.processRunning = false;
       swap.state = nextState;
     },
-    swapInitiate: (
+    swapInitiate(
       swap,
       action: PayloadAction<{
         provider: Provider | null;
         resume: boolean;
       }>
-    ) => {
+    ) {
       const nextState: SwapStateInitiated = {
         type: SwapStateType.INITIATED,
       };
@@ -209,13 +211,13 @@ export const swapSlice = createSlice({
       swap.provider = action.payload.provider;
       swap.resume = action.payload.resume;
     },
-    swapProcessExited: (
+    swapProcessExited(
       swap,
       action: PayloadAction<{
         exitCode: number | null;
         exitSignal: NodeJS.Signals | null;
       }>
-    ) => {
+    ) {
       const nextState: SwapStateProcessExited = {
         type: SwapStateType.PROCESS_EXITED,
         exitSignal: action.payload.exitSignal,

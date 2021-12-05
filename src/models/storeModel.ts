@@ -17,7 +17,7 @@ export interface ExtendedProvider extends Provider {
   relevancy: number;
 }
 
-export interface Swap {
+export interface SwapSlice {
   state: SwapState | null;
   logs: SwapLog[];
   stdOut: string;
@@ -156,7 +156,7 @@ export function isSwapStateProcessExited(
   return state?.type === SwapStateType.PROCESS_EXITED;
 }
 
-export interface Withdraw {
+export interface WithdrawSlice {
   state: WithdrawState | null;
   stdOut: string;
   logs: SwapLog[];
