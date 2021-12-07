@@ -1,0 +1,42 @@
+@startuml
+!theme plain
+
+package "Parent process" {
+  package "Electron" {
+      component [React Frontend] as ElectronFrontend
+      component [Shared Redux State] as ReduxState
+      component [NodeJS Backend] as NodeBackend
+
+      ElectronFrontend --> NodeBackend : IPC
+      ElectronFrontend <-- ReduxState : Read state
+      NodeBackend <--> ReduxState : Read state and dispatch actions
+  }
+}
+
+database "Sqlite" as Sqlite {
+    folder "Cli data directory" {
+        file "sqlite"
+    }
+}
+
+NodeBackend <-- Sqlite : SQL
+
+package "Child process" as ChildProces {
+  package "COMIT Swap Cli" {
+      component [Monero Wallet RPC\n(auto installed)] as CliMonRpc
+      () RPC as MonRpcCli
+      component "swap" {
+          component [CLI] as CLI
+          component [Bitcoin Wallet] as CliBitWal
+      }
+      CliMonRpc - MonRpcCli
+      CLI - CliBitWal
+      MonRpcCli - CLI
+  }
+}
+
+NodeBackend <--> ChildProces : Spawns and reads stdout logs
+CLI <--> Sqlite : SQL
+
+footer XMR<>BTC swap GUI overview
+@enduml
