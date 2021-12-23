@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   DialogContentText,
   makeStyles,
   Paper,
@@ -25,13 +24,9 @@ const useStyles = makeStyles((theme) => ({
 
 type ProcessExitedPageProps = {
   state: SwapStateProcessExited;
-  onCancel: () => void;
 };
 
-export default function ProcessExitedPage({
-  state,
-  onCancel,
-}: ProcessExitedPageProps) {
+export default function ProcessExitedPage({ state }: ProcessExitedPageProps) {
   const classes = useStyles();
   const stdOut = useAppSelector((s) => s.swap.stdOut);
 
@@ -48,9 +43,6 @@ export default function ProcessExitedPage({
           {stdOut}
         </Typography>
       </Paper>
-      <Button variant="contained" onClick={onCancel} color="primary">
-        Close
-      </Button>
     </Box>
   );
 }

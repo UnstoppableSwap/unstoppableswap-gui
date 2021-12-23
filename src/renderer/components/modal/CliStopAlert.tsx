@@ -25,8 +25,7 @@ export default function CliStopAlert({ open, onClose }: SwapCancelAlertProps) {
       <DialogTitle>Stop swap?</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          If you have already sent funds, you are at risk of loosing funds if
-          you stop the swap and walk away.
+          Are you sure you want to force stop the running operation?
         </DialogContentText>
       </DialogContent>
       <DialogActions>

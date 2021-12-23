@@ -19,6 +19,7 @@ import { stopCli } from './cli/cli';
 import spawnBalanceCheck from './cli/commands/balanceCommand';
 import { spawnBuyXmr, resumeBuyXmr } from './cli/commands/buyXmrCommand';
 import spawnWithdrawBtc from './cli/commands/withdrawBtcCommand';
+import downloadSwapBinary from './cli/downloader';
 
 export default class AppUpdater {
   constructor() {
@@ -150,3 +151,5 @@ ipcMain.handle('resume-buy-xmr', (_event, swapId) => resumeBuyXmr(swapId));
 ipcMain.handle('spawn-withdraw-btc', (_event, address) =>
   spawnWithdrawBtc(address)
 );
+
+ipcMain.handle('initiate-downloader', (_event) => downloadSwapBinary());

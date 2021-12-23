@@ -1,97 +1,106 @@
 import path from 'path';
-import { PathLike, promises as fs } from 'fs';
+import { promises as fs } from 'fs';
 import download from 'download';
+import { BinaryInfo } from 'models/downloaderModel';
 import { checkFileExists, getFileSha256Sum } from '../../utils/fileUtils';
-
-export interface BinaryInfo {
-  url: string;
-  sha256sum: string;
-  name: string;
-}
-
-export interface BinaryDownloadStatus {
-  totalDownloadedBytes: number;
-  contentLengthBytes: number;
-  binaryInfo: BinaryInfo;
-}
+import { store } from '../../store/store';
+import {
+  cliDownloadEnd,
+  cliDownloaderProgressUpdate,
+} from '../../store/features/downloaderSlice';
+import { getAppDataDir } from './dirs';
 
 function getSwapBinaryInfo(): BinaryInfo {
   switch (process.platform) {
     case 'darwin':
       return {
-        url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/0.9.0/swap_0.9.0_Darwin_x86_64.tar',
+        url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/preview/swap_preview_Darwin_x86_64.tar',
         sha256sum:
-          '809ea13b4e9f8dfe9288b22394ae906161161c0763d1e453c81e60ee22cea3d7',
+          '8dae4eb615cf8f6a7abec306da097820f1f68f1b863cbe96d3d1e8cde6450835',
         name: 'swap',
       };
     case 'linux':
       return {
-        url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/0.9.0/swap_0.9.0_Linux_x86_64.tar',
+        url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/preview/swap_preview_Linux_x86_64.tar',
         sha256sum:
-          'edb4c182004896ca49bb8458bc9527efd5d487dcdf9ad91398bb60be9b70f099',
+          '1505e8671d2b68038c4d38ada192360be6aa097866eef86afdab6db1454f9b20',
         name: 'swap',
       };
     default:
       return {
-        url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/0.9.0/swap_0.9.0_Windows_x86_64.zip',
+        url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/preview/swap_preview_Windows_x86_64.zip',
         sha256sum:
-          '3f2ade3e5ba1bb1522f070dd7896903a73e605a3507eaa35f69c92bb9b172ec9',
+          '29112407a4d87a653e835b9c6f3545540bb79e8225bcfe6be03fda732d843091',
         name: 'swap.exe',
       };
   }
 }
 
-export default async function downloadSwapBinary(
-  appDataDir: PathLike,
-  downloadProgressCallback: (status: BinaryDownloadStatus) => void
-): Promise<BinaryInfo> {
+let locked = false;
+
+export default async function downloadSwapBinary(): Promise<BinaryInfo> {
+  const appDataDir = await getAppDataDir();
   const binaryInfo = getSwapBinaryInfo();
   const binaryPath = path.join(appDataDir.toString(), binaryInfo.name);
 
-  if (await checkFileExists(binaryPath)) {
-    const sha256sum = await getFileSha256Sum(binaryPath);
-    if (sha256sum === binaryInfo.sha256sum) {
-      return binaryInfo;
+  try {
+    if (locked) throw new Error('Downloader has already been initiated');
+    locked = true;
+
+    if (await checkFileExists(binaryPath)) {
+      const sha256sum = await getFileSha256Sum(binaryPath);
+      if (sha256sum === binaryInfo.sha256sum) {
+        locked = false;
+        return binaryInfo;
+      }
+      await fs.unlink(binaryPath);
     }
-    await fs.unlink(binaryPath);
-  }
 
-  console.log(
-    `Downloading ${binaryInfo.name} from ${binaryInfo.url} to ${appDataDir}`
-  );
+    console.log(
+      `Downloading ${binaryInfo.name} from ${binaryInfo.url} to ${appDataDir}`
+    );
 
-  await download(binaryInfo.url, appDataDir.toString(), {
-    extract: true,
-  }).on('response', (res) => {
-    const contentLengthBytesStr = res.headers['content-length'];
+    await download(binaryInfo.url, appDataDir.toString(), {
+      extract: true,
+    }).on('response', (res) => {
+      const contentLengthBytesStr = res.headers['content-length'];
 
-    if (contentLengthBytesStr != null) {
-      const contentLengthBytes = Number.parseInt(contentLengthBytesStr, 10);
-      let totalDownloadedBytes = 0;
+      if (contentLengthBytesStr != null) {
+        const contentLengthBytes = Number.parseInt(contentLengthBytesStr, 10);
+        let totalDownloadedBytes = 0;
 
-      res.on('data', (data) => {
-        const dataLength = data.length;
-        totalDownloadedBytes += dataLength;
+        res.on('data', (data) => {
+          const dataLength = data.length;
+          totalDownloadedBytes += dataLength;
 
-        downloadProgressCallback({
-          binaryInfo,
-          contentLengthBytes,
-          totalDownloadedBytes,
+          store.dispatch(
+            cliDownloaderProgressUpdate({
+              binary: binaryInfo,
+              contentLengthBytes,
+              totalDownloadedBytes,
+            })
+          );
         });
-      });
-    }
-  });
+      }
+    });
 
-  if (await checkFileExists(binaryPath)) {
-    const sha256sum = await getFileSha256Sum(binaryPath);
-    if (sha256sum !== binaryInfo.sha256sum) {
-      throw new Error(
-        `SHA256 sum of downloaded binary does not match expected value`
-      );
+    if (await checkFileExists(binaryPath)) {
+      const sha256sum = await getFileSha256Sum(binaryPath);
+      if (sha256sum !== binaryInfo.sha256sum) {
+        throw new Error(
+          `SHA256 sum of downloaded binary does not match expected value Excepted: ${binaryInfo.sha256sum} Actual: ${sha256sum}`
+        );
+      }
+    } else {
+      throw new Error(`Downloaded binary does not exist at ${binaryPath}`);
     }
-  } else {
-    throw new Error(`Downloaded binary does not exist at ${binaryPath}`);
+
+    store.dispatch(cliDownloadEnd(null));
+  } catch (e) {
+    store.dispatch(cliDownloadEnd(e.toString()));
   }
+
+  locked = false;
 
   return binaryInfo;
 }

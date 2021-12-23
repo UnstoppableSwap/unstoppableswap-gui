@@ -2,7 +2,6 @@ import path from 'path';
 import Database, { Database as DatabaseT } from 'better-sqlite3';
 import fs from 'fs';
 import { merge } from 'lodash';
-import { getCliDataDir } from './cli';
 import {
   DbState,
   MergedDbState,
@@ -13,6 +12,7 @@ import { store } from '../../store/store';
 import { databaseStateChanged } from '../../store/features/historySlice';
 import { Provider } from '../../models/storeModel';
 import { isTestnet } from '../../store/config';
+import { getCliDataDir } from './dirs';
 
 async function getSqliteDbFiles() {
   const cliDataDir = await getCliDataDir();

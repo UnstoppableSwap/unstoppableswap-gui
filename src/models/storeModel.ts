@@ -1,4 +1,3 @@
-import { BinaryInfo } from '../main/cli/downloader';
 import { SwapLog } from './swapModel';
 
 export interface Provider {
@@ -32,7 +31,6 @@ export interface SwapState {
 }
 
 export enum SwapStateType {
-  DOWNLOADING_BINARY = 'downloading binary',
   INITIATED = 'initiated',
   RECEIVED_QUOTE = 'received quote',
   WAITING_FOR_BTC_DEPOSIT = 'waiting for btc deposit',
@@ -43,21 +41,8 @@ export enum SwapStateType {
   PROCESS_EXITED = 'process exited',
 }
 
-export interface SwapStateDownloadingBinary extends SwapState {
-  type: SwapStateType.DOWNLOADING_BINARY;
-  binaryInfo: BinaryInfo;
-  totalDownloadedBytes: number;
-  contentLengthBytes: number;
-}
-
 export function isSwapState(state?: SwapState | null): state is SwapState {
   return state?.type != null;
-}
-
-export function isSwapStateDownloadingBinary(
-  state?: SwapState | null
-): state is SwapStateDownloadingBinary {
-  return state?.type === SwapStateType.DOWNLOADING_BINARY;
 }
 
 export interface SwapStateInitiated extends SwapState {
