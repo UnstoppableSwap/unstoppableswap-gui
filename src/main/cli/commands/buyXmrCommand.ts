@@ -1,38 +1,20 @@
 import fs from 'fs/promises';
+import { ChildProcessWithoutNullStreams } from 'child_process';
 import { SwapLog } from '../../../models/swapModel';
 import { store } from '../../../store/store';
 import {
   swapAddLog,
   swapAppendStdOut,
-  swapDownloadProgressUpdate,
   swapInitiate,
   swapProcessExited,
 } from '../../../store/features/swapSlice';
 import { Provider } from '../../../models/storeModel';
-import { BinaryDownloadStatus } from '../downloader';
-import { getSwapLogFile, spawnSubcommand } from '../cli';
+import { spawnSubcommand } from '../cli';
 import spawnBalanceCheck from './balanceCommand';
-import { checkFileExists } from '../../../utils/fileUtils';
+import { getSwapLogFile } from '../dirs';
 
 async function onSwapLog(log: SwapLog) {
   store.dispatch(swapAddLog(log));
-
-  const { swapId } = store.getState().swap;
-  if (swapId) {
-    const logFile = await getSwapLogFile(swapId);
-
-    if (!(await checkFileExists(logFile))) {
-      console.log(
-        `Creating log file ${logFile} for swap ${swapId} and appending all past stdout to it`
-      );
-      const allStdOut = store.getState().swap.stdOut;
-      await fs.appendFile(logFile, allStdOut);
-    }
-  }
-}
-
-function onDownloadProgress(status: BinaryDownloadStatus) {
-  store.dispatch(swapDownloadProgressUpdate(status));
 }
 
 function onProcExit(code: number | null, signal: NodeJS.Signals | null) {
@@ -48,15 +30,6 @@ function onProcExit(code: number | null, signal: NodeJS.Signals | null) {
 
 async function onStdOut(data: string) {
   store.dispatch(swapAppendStdOut(data));
-
-  const { swapId } = store.getState().swap;
-  if (swapId) {
-    const logFile = await getSwapLogFile(swapId);
-
-    if (await checkFileExists(logFile)) {
-      await fs.appendFile(logFile, data);
-    }
-  }
 }
 
 export async function spawnBuyXmr(
@@ -64,55 +37,23 @@ export async function spawnBuyXmr(
   redeemAddress: string,
   refundAddress: string
 ) {
-  const sellerIdentifier = `${provider.multiAddr}/p2p/${provider.peerId}`;
+  try {
+    const sellerIdentifier = `${provider.multiAddr}/p2p/${provider.peerId}`;
 
-  store.dispatch(
-    swapInitiate({
-      provider,
-      resume: false,
-    })
-  );
-
-  await spawnSubcommand(
-    'buy-xmr',
-    {
-      'change-address': refundAddress,
-      'receive-address': redeemAddress,
-      seller: sellerIdentifier,
-    },
-    onDownloadProgress,
-    onSwapLog,
-    onProcExit,
-    onStdOut
-  );
-
-  store.dispatch(
-    swapInitiate({
-      provider,
-      resume: false,
-    })
-  );
-}
-
-export async function resumeBuyXmr(swapId: string) {
-  const provider = store
-    .getState()
-    .history.find((h) => h.swapId === swapId)?.provider;
-
-  if (provider) {
     store.dispatch(
       swapInitiate({
         provider,
-        resume: true,
+        resume: false,
       })
     );
 
-    const cli = await spawnSubcommand(
-      'resume',
+    await spawnSubcommand(
+      'buy-xmr',
       {
-        'swap-id': swapId,
+        'change-address': refundAddress,
+        'receive-address': redeemAddress,
+        seller: sellerIdentifier,
       },
-      onDownloadProgress,
       onSwapLog,
       onProcExit,
       onStdOut
@@ -121,20 +62,71 @@ export async function resumeBuyXmr(swapId: string) {
     store.dispatch(
       swapInitiate({
         provider,
-        resume: true,
+        resume: false,
       })
     );
+  } catch (e) {
+    console.log(
+      `Failed to spawn swap Provider: ${provider.peerId} RedeemAddress: ${redeemAddress} RefundAddress: ${refundAddress} Error: ${e}`
+    );
+    onProcExit(null, null);
+  }
+}
 
-    try {
-      const logFile = await getSwapLogFile(swapId);
-      const prevLogData = await fs.readFile(logFile, {
-        encoding: 'utf8',
-      });
-      cli.stderr.push(prevLogData);
-    } catch (e) {
-      console.error(`Failed to read swap log file: ${e}`);
+async function tryReplaySwapLogs(
+  cli: ChildProcessWithoutNullStreams,
+  swapId: string
+) {
+  try {
+    const logFile = await getSwapLogFile(swapId);
+    const prevLogData = await fs.readFile(logFile, {
+      encoding: 'utf8',
+    });
+    cli.stderr.push(prevLogData);
+  } catch (e) {
+    console.error(
+      `Failed to read and replay swap log file! SwapID: ${swapId} Error: ${e}`
+    );
+  }
+}
+
+export async function resumeBuyXmr(swapId: string) {
+  try {
+    const provider = store
+      .getState()
+      .history.find((h) => h.swapId === swapId)?.provider;
+
+    if (provider) {
+      store.dispatch(
+        swapInitiate({
+          provider,
+          resume: true,
+        })
+      );
+
+      const cli = await spawnSubcommand(
+        'resume',
+        {
+          'swap-id': swapId,
+        },
+        onSwapLog,
+        onProcExit,
+        onStdOut
+      );
+
+      store.dispatch(
+        swapInitiate({
+          provider,
+          resume: true,
+        })
+      );
+
+      await tryReplaySwapLogs(cli, swapId);
+    } else {
+      throw new Error('Could not find swap in database');
     }
-  } else {
-    console.error('Could not find swap in database');
+  } catch (e) {
+    console.log(`Failed to spawn swap resume SwapID: ${swapId} Error: ${e}`);
+    onProcExit(null, null);
   }
 }

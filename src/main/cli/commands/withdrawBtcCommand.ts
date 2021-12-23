@@ -37,7 +37,6 @@ export default async function spawnWithdrawBtc(address: string) {
       {
         address,
       },
-      () => {},
       onSwapLog,
       onProcExit,
       onStdOut
@@ -45,6 +44,7 @@ export default async function spawnWithdrawBtc(address: string) {
 
     store.dispatch(withdrawInitiate());
   } catch (e) {
-    console.error(`Failed to check balance Error: ${e}`);
+    console.error(`Failed to withdraw funds Error: ${e}`);
+    onProcExit(null, null);
   }
 }

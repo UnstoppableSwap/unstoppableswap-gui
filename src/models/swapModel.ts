@@ -137,3 +137,16 @@ export interface SwapLogRedeemedXmr extends SwapLog {
 export function isSwapLogRedeemedXmr(log: SwapLog): log is SwapLogRedeemedXmr {
   return log.fields.message === 'Successfully transferred XMR to wallet';
 }
+
+export interface SwapLogCheckedBitcoinBalance extends SwapLog {
+  fields: {
+    message: 'Checked Bitcoin balance';
+    balance: string;
+  };
+}
+
+export function isSwapLogCheckedBitcoinBalance(
+  log: SwapLog
+): log is SwapLogCheckedBitcoinBalance {
+  return log.fields.message === 'Checked Bitcoin balance';
+}

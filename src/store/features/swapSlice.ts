@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { BinaryDownloadStatus } from '../../main/cli/downloader';
 import { extractAmountFromUnitString } from '../../utils/parseUtils';
 import {
   isSwapStateBtcLockInMempool,
@@ -8,7 +7,6 @@ import {
   Provider,
   SwapSlice,
   SwapStateBtcLockInMempool,
-  SwapStateDownloadingBinary,
   SwapStateInitiated,
   SwapStateProcessExited,
   SwapStateReceivedQuote,
@@ -180,20 +178,6 @@ export const swapSlice = createSlice({
     swapReset() {
       return initialState;
     },
-    swapDownloadProgressUpdate(
-      swap,
-      action: PayloadAction<BinaryDownloadStatus>
-    ) {
-      const nextState: SwapStateDownloadingBinary = {
-        type: SwapStateType.DOWNLOADING_BINARY,
-        binaryInfo: action.payload.binaryInfo,
-        totalDownloadedBytes: action.payload.totalDownloadedBytes,
-        contentLengthBytes: action.payload.contentLengthBytes,
-      };
-
-      swap.processRunning = false;
-      swap.state = nextState;
-    },
     swapInitiate(
       swap,
       action: PayloadAction<{
@@ -234,7 +218,6 @@ export const swapSlice = createSlice({
 export const {
   swapInitiate,
   swapProcessExited,
-  swapDownloadProgressUpdate,
   swapReset,
   swapAddLog,
   swapAppendStdOut,

@@ -1,20 +1,21 @@
 import { AnyAction } from '@reduxjs/toolkit';
 
 import reducer, {
+  balanceAddLog,
   balanceInitiate,
   balanceProcessExited,
-  balanceAppendStdOut,
-  BalanceState,
+  BalanceSlice,
 } from '../../store/features/balanceSlice';
+import { SwapLogCheckedBitcoinBalance } from '../../models/swapModel';
 
-const mBalanceLog = `[Log] initiated
-Bitcoin balance is 0.00001000 BTC`;
+const mBalanceLog: SwapLogCheckedBitcoinBalance = require('../example_cli_logs/cli_log_checked_bitcoin_balance.json');
 
 const initialBalanceState = {
   balanceValue: null,
   processRunning: false,
   exitCode: null,
   stdOut: '',
+  logs: [],
 };
 
 test('should return the initial state', () => {
@@ -22,38 +23,41 @@ test('should return the initial state', () => {
 });
 
 test('should infer correct states from happy-path logs', () => {
-  let balance: BalanceState = initialBalanceState;
+  let slice: BalanceSlice = initialBalanceState;
 
-  balance = reducer(balance, balanceInitiate());
+  slice = reducer(slice, balanceInitiate());
 
-  expect(balance).toStrictEqual({
+  expect(slice).toStrictEqual({
     balanceValue: null,
     processRunning: true,
     exitCode: null,
     stdOut: '',
+    logs: [],
   });
 
-  balance = reducer(balance, balanceAppendStdOut(mBalanceLog));
+  slice = reducer(slice, balanceAddLog(mBalanceLog));
 
-  expect(balance).toStrictEqual({
-    balanceValue: 0.00001,
+  expect(slice).toStrictEqual({
+    balanceValue: 0.1,
     processRunning: true,
     exitCode: null,
-    stdOut: mBalanceLog,
+    stdOut: '',
+    logs: [mBalanceLog],
   });
 
-  balance = reducer(
-    balance,
+  slice = reducer(
+    slice,
     balanceProcessExited({
       exitCode: 1,
       exitSignal: null,
     })
   );
 
-  expect(balance).toStrictEqual({
-    balanceValue: 0.00001,
+  expect(slice).toStrictEqual({
+    balanceValue: 0.1,
     processRunning: false,
     exitCode: 1,
-    stdOut: mBalanceLog,
+    stdOut: '',
+    logs: [mBalanceLog],
   });
 });

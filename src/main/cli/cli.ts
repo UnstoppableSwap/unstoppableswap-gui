@@ -1,52 +1,14 @@
-import path from 'path';
-import { promises as fs } from 'fs';
-import { app } from 'electron';
 import {
   ChildProcessWithoutNullStreams,
   spawn as spawnProc,
 } from 'child_process';
 import psList from 'ps-list';
-import downloadSwapBinary, { BinaryDownloadStatus } from './downloader';
+import downloadSwapBinary from './downloader';
 import { isTestnet } from '../../store/config';
 import { isSwapLog, SwapLog } from '../../models/swapModel';
+import { getAppDataDir, getCliDataBaseDir } from './dirs';
 
 let cli: ChildProcessWithoutNullStreams | null = null;
-
-export async function getAppDataDir(): Promise<string> {
-  const appDataPath = app.getPath('appData');
-  const dPath = path.join(appDataPath, 'unstoppableswap');
-  await fs.mkdir(dPath, {
-    recursive: true,
-  });
-  return dPath;
-}
-
-export async function getCliDataBaseDir(): Promise<string> {
-  const appDataPath = app.getPath('appData');
-  const dPath = path.join(appDataPath, 'xmr-btc-swap', 'cli');
-  await fs.mkdir(dPath, {
-    recursive: true,
-  });
-  return dPath;
-}
-
-export async function getCliDataDir(): Promise<string> {
-  const baseDir = await getCliDataBaseDir();
-  const dataDir = path.join(baseDir, isTestnet() ? 'testnet' : 'mainnet');
-  await fs.mkdir(dataDir, {
-    recursive: true,
-  });
-  return dataDir;
-}
-
-export async function getSwapLogFile(swapId: string): Promise<string> {
-  const baseDir = await getCliDataDir();
-  const logsDir = path.join(baseDir, 'logs');
-  await fs.mkdir(logsDir, {
-    recursive: true,
-  });
-  return path.join(logsDir, `swap-${swapId}.logs`);
-}
 
 async function getSpawnArgs(
   subCommand: string,
@@ -99,7 +61,6 @@ export async function stopCli() {
 export async function spawnSubcommand(
   subCommand: string,
   options: { [option: string]: string },
-  downloadProgressCallback: (status: BinaryDownloadStatus) => void,
   onLog: (log: SwapLog) => void,
   onExit: (code: number | null, signal: NodeJS.Signals | null) => void,
   onStdOut: (data: string) => void
@@ -112,10 +73,7 @@ export async function spawnSubcommand(
     );
   }
   const appDataPath = await getAppDataDir();
-  const binaryInfo = await downloadSwapBinary(
-    appDataPath,
-    downloadProgressCallback
-  );
+  const binaryInfo = await downloadSwapBinary();
   const spawnArgs = await getSpawnArgs(subCommand, options);
 
   await killMoneroWalletRpc();
