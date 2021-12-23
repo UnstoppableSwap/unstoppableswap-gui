@@ -1,0 +1,9 @@
+{
+  "timestamp":"2021-09-05 03:41:07",
+  "level":"INFO",
+  "fields":{
+    "message":"Published Bitcoin transaction",
+    "txid":"6297106e3fb91cfb94e5b069af03248ebfdc63087db4a19c833f76df1b9aff51",
+    "kind":"lock"
+  }
+}

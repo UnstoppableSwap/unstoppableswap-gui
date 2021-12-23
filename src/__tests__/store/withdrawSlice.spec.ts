@@ -6,7 +6,7 @@ import reducer, {
   withdrawProcessExited,
 } from '../../store/features/withdrawSlice';
 import { SwapLog } from '../../models/swapModel';
-import { Withdraw, WithdrawStateType } from '../../models/storeModel';
+import { WithdrawSlice, WithdrawStateType } from '../../models/storeModel';
 
 const mWithdrawLog: SwapLog = {
   timestamp: '2021-11-05 21:06:35',
@@ -18,7 +18,7 @@ const mWithdrawLog: SwapLog = {
   },
 };
 
-const initialWithdrawState: Withdraw = {
+const initialWithdrawState: WithdrawSlice = {
   state: null,
   stdOut: '',
   logs: [],

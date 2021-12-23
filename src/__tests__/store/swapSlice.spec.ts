@@ -1,5 +1,5 @@
 import { AnyAction } from '@reduxjs/toolkit';
-import { Provider, Swap, SwapStateType } from '../../models/storeModel';
+import { Provider, SwapSlice, SwapStateType } from '../../models/storeModel';
 import {
   SwapLogAliceLockedXmr,
   SwapLogBtcTxStatusChanged,
@@ -18,99 +18,15 @@ import reducer, {
   swapProcessExited,
 } from '../../store/features/swapSlice';
 
-const mReceivedQuoteLog: SwapLogReceivedQuote = {
-  timestamp: '2021-09-05 03:40:36',
-  level: 'INFO',
-  fields: {
-    message: 'Received quote',
-    price: '0.00610233 BTC',
-    minimum_amount: '0.00010000 BTC',
-    maximum_amount: '0.10000000 BTC',
-  },
-};
-
-const mWaitingForBtcDepositLog: SwapLogWaitingForBtcDeposit = {
-  timestamp: '2021-09-05 03:40:36',
-  level: 'INFO',
-  fields: {
-    message: 'Waiting for Bitcoin deposit',
-    deposit_address: 'tb1qajq94d72k9hhcmtrlwhfuhc5yz0w298uym980g',
-    max_giveable: '0.00000000 BTC',
-    minimum_amount: '0.00010000 BTC',
-    maximum_amount: '0.10000000 BTC',
-  },
-};
-
-const mReceivedNewBtcLog: SwapLogReceivedBtc = {
-  timestamp: '2021-09-05 03:41:03',
-  level: 'INFO',
-  fields: {
-    message: 'Received Bitcoin',
-    new_balance: '0.00100000 BTC',
-    max_giveable: '0.00099878 BTC',
-  },
-};
-
-const mStartedSwapLog: SwapLogStartedSwap = {
-  timestamp: '2021-09-05 03:41:03',
-  level: 'INFO',
-  fields: {
-    message: 'Starting new swap',
-    swap_id: '2a034c59-72bc-4b7b-839f-d32522099bcc',
-  },
-};
-
-const mPublishedBtcLockTxLog: SwapLogPublishedBtcTx = {
-  timestamp: '2021-09-05 03:41:07',
-  level: 'INFO',
-  fields: {
-    message: 'Published Bitcoin transaction',
-    txid: '6297106e3fb91cfb94e5b069af03248ebfdc63087db4a19c833f76df1b9aff51',
-    kind: 'lock',
-  },
-};
-
-const mBobBtcTxLockStatusChanged: SwapLogBtcTxStatusChanged = {
-  timestamp: '2021-09-05 03:56:02',
-  level: 'DEBUG',
-  fields: {
-    message: 'Bitcoin transaction status changed',
-    txid: '6297106e3fb91cfb94e5b069af03248ebfdc63087db4a19c833f76df1b9aff51',
-    new_status: 'confirmed with 3 blocks',
-  },
-};
-
-const mAliceLockedXmrLog: SwapLogAliceLockedXmr = {
-  timestamp: '2021-09-05 03:56:52',
-  level: 'INFO',
-  fields: {
-    message: 'Alice locked Monero',
-    txid: 'cb46ad562ffc868a7c2d8c72cecd9090cca7b6f102199db6a6cbef65afeb09d1',
-  },
-};
-
-const mAliceXmrLockTxConfirmationUpdateLog: SwapLogReceivedXmrLockTxConfirmation =
-  {
-    timestamp: '2021-09-05 03:57:16',
-    level: 'INFO',
-    fields: {
-      message: 'Received new confirmation for Monero lock tx',
-      txid: 'cb46ad562ffc868a7c2d8c72cecd9090cca7b6f102199db6a6cbef65afeb09d1',
-      seen_confirmations: '1',
-      needed_confirmations: '10',
-    },
-  };
-
-const mXmrRedeemSuccessfulLog: SwapLogRedeemedXmr = {
-  timestamp: '2021-09-05 04:07:37',
-  level: 'INFO',
-  fields: {
-    message: 'Successfully transferred XMR to wallet',
-    monero_receive_address:
-      '59McWTPGc745SRWrSMoh8oTjoXoQq6sPUgKZ66dQWXuKFQ2q19h9gvhJNZcFTizcnT12r63NFgHiGd6gBCjabzmzHAMoyD6',
-    txid: 'eadda576b5929c55bcc58f55c24bb52ac1853edb7d3b068ab67a3f66b0a1c546',
-  },
-};
+const mWaitingForBtcDepositLog: SwapLogWaitingForBtcDeposit = require('../example_cli_logs/cli_log_waiting_for_bitcoin_deposit.json');
+const mReceivedNewBtcLog: SwapLogReceivedBtc = require('../example_cli_logs/cli_log_received_bitcoin.json');
+const mReceivedQuoteLog: SwapLogReceivedQuote = require('../example_cli_logs/cli_log_received_quote.json');
+const mStartedSwapLog: SwapLogStartedSwap = require('../example_cli_logs/cli_log_starting_new_swap.json');
+const mPublishedBtcLockTxLog: SwapLogPublishedBtcTx = require('../example_cli_logs/cli_log_published_btc_lock_tx.json');
+const mBobBtcTxLockStatusChanged: SwapLogBtcTxStatusChanged = require('../example_cli_logs/cli_log_bitcoin_transaction_status_changed.json');
+const mAliceLockedXmrLog: SwapLogAliceLockedXmr = require('../example_cli_logs/cli_log_alice_locked_monero.json');
+const mAliceXmrLockTxConfirmationUpdateLog: SwapLogReceivedXmrLockTxConfirmation = require('../example_cli_logs/cli_log_received_new_conf_for_monero_lock_tx.json');
+const mXmrRedeemSuccessfulLog: SwapLogRedeemedXmr = require('../example_cli_logs/cli_log_redeemed_xmr.json');
 
 const initialSwapState = {
   state: null,
@@ -133,7 +49,7 @@ test('should return the initial state', () => {
 });
 
 test('should infer correct states from happy-path logs', () => {
-  let swap: Swap = initialSwapState;
+  let swap: SwapSlice = initialSwapState;
 
   swap = reducer(
     swap,

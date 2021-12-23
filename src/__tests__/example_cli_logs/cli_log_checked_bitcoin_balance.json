@@ -1,0 +1,8 @@
+{
+  "timestamp": "2021-12-23 15:50:39",
+  "level": "INFO",
+  "fields": {
+    "message": "Checked Bitcoin balance",
+    "balance": "0.10000000 BTC"
+  }
+}

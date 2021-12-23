@@ -1,0 +1,9 @@
+{
+  "timestamp":"2021-09-05 03:41:03",
+  "level":"INFO",
+  "fields":{
+    "message":"Received Bitcoin",
+    "new_balance":"0.00100000 BTC",
+    "max_giveable":"0.00099878 BTC"
+  }
+}

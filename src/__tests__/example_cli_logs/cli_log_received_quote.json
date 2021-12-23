@@ -1,0 +1,10 @@
+{
+  "timestamp": "2021-09-05 03:40:36",
+  "level": "INFO",
+  "fields": {
+    "message": "Received quote",
+    "price": "0.00610233 BTC",
+    "minimum_amount": "0.00010000 BTC",
+    "maximum_amount": "0.10000000 BTC"
+  }
+}
