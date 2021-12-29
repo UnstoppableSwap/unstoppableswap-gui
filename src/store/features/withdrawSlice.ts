@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { isSwapLogPublishedBtcTx, SwapLog } from '../../models/swapModel';
+import { isCliLogPublishedBtcTx, CliLog } from '../../models/swapModel';
 import {
   WithdrawSlice,
   WithdrawStateInitiated,
@@ -25,11 +25,11 @@ export const withdrawSlice = createSlice({
     withdrawAppendStdOut(slice, action: PayloadAction<string>) {
       slice.stdOut += action.payload;
     },
-    withdrawAddLog(slice, action: PayloadAction<SwapLog>) {
+    withdrawAddLog(slice, action: PayloadAction<CliLog>) {
       const log = action.payload;
       slice.logs.push(log);
 
-      if (isSwapLogPublishedBtcTx(log)) {
+      if (isCliLogPublishedBtcTx(log)) {
         const nextState: WithdrawStateWithdrawTxInMempool = {
           type: WithdrawStateType.BTC_WITHDRAW_TX_IN_MEMPOOL,
           txid: log.fields.txid,

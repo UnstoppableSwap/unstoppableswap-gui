@@ -1,4 +1,4 @@
-import { SwapLog } from './swapModel';
+import { CliLog } from './swapModel';
 
 export interface Provider {
   multiAddr: string;
@@ -18,7 +18,7 @@ export interface ExtendedProvider extends Provider {
 
 export interface SwapSlice {
   state: SwapState | null;
-  logs: SwapLog[];
+  logs: CliLog[];
   stdOut: string;
   processRunning: boolean;
   provider: Provider | null;
@@ -144,7 +144,7 @@ export function isSwapStateProcessExited(
 export interface WithdrawSlice {
   state: WithdrawState | null;
   stdOut: string;
-  logs: SwapLog[];
+  logs: CliLog[];
   processRunning: boolean;
 }
 

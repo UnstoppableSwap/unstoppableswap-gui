@@ -30,7 +30,7 @@ export async function getCliDataDir(): Promise<string> {
   return dataDir;
 }
 
-export async function getSwapLogFile(swapId: string): Promise<string> {
+export async function getCliLogFile(swapId: string): Promise<string> {
   const baseDir = await getCliDataDir();
   const logsDir = path.join(baseDir, 'logs');
   await fs.mkdir(logsDir, {

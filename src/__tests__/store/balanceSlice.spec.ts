@@ -6,9 +6,9 @@ import reducer, {
   balanceProcessExited,
   BalanceSlice,
 } from '../../store/features/balanceSlice';
-import { SwapLogCheckedBitcoinBalance } from '../../models/swapModel';
+import { CliLogCheckedBitcoinBalance } from '../../models/swapModel';
 
-const mBalanceLog: SwapLogCheckedBitcoinBalance = require('../example_cli_logs/cli_log_checked_bitcoin_balance.json');
+const mBalanceLog: CliLogCheckedBitcoinBalance = require('../mock_cli_logs/cli_log_checked_bitcoin_balance.json');
 
 const initialBalanceState = {
   balanceValue: null,

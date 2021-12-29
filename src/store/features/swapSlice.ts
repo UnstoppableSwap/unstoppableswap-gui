@@ -17,16 +17,16 @@ import {
   SwapStateXmrRedeemInMempool,
 } from '../../models/storeModel';
 import {
-  isSwapLogAliceLockedXmr,
-  isSwapLogBtcTxStatusChanged,
-  isSwapLogPublishedBtcTx,
-  isSwapLogReceivedBtc,
-  isSwapLogReceivedQuote,
-  isSwapLogReceivedXmrLockTxConfirmation,
-  isSwapLogRedeemedXmr,
-  isSwapLogStartedSwap,
-  isSwapLogWaitingForBtcDeposit,
-  SwapLog,
+  isCliLogAliceLockedXmr,
+  isCliLogBtcTxStatusChanged,
+  isCliLogPublishedBtcTx,
+  isCliLogReceivedBtc,
+  isCliLogReceivedQuote,
+  isCliLogReceivedXmrLockTxConfirmation,
+  isCliLogRedeemedXmr,
+  isCliLogStartedSwap,
+  isCliLogWaitingForBtcDeposit,
+  CliLog,
 } from '../../models/swapModel';
 
 const initialState: SwapSlice = {
@@ -43,11 +43,11 @@ export const swapSlice = createSlice({
   name: 'swap',
   initialState,
   reducers: {
-    swapAddLog(slice, action: PayloadAction<SwapLog>) {
+    swapAddLog(slice, action: PayloadAction<CliLog>) {
       const log = action.payload;
       slice.logs.push(log);
 
-      if (isSwapLogReceivedQuote(log)) {
+      if (isCliLogReceivedQuote(log)) {
         const price = extractAmountFromUnitString(log.fields.price);
         const minimumSwapAmount = extractAmountFromUnitString(
           log.fields.minimum_amount
@@ -70,7 +70,7 @@ export const swapSlice = createSlice({
 
           slice.state = nextState;
         }
-      } else if (isSwapLogWaitingForBtcDeposit(log)) {
+      } else if (isCliLogWaitingForBtcDeposit(log)) {
         const maxGiveable = extractAmountFromUnitString(
           log.fields.max_giveable
         );
@@ -98,7 +98,7 @@ export const swapSlice = createSlice({
 
           slice.state = nextState;
         }
-      } else if (isSwapLogReceivedBtc(log)) {
+      } else if (isCliLogReceivedBtc(log)) {
         const maxGiveable = extractAmountFromUnitString(
           log.fields.max_giveable
         );
@@ -109,7 +109,7 @@ export const swapSlice = createSlice({
         ) {
           slice.state.maxGiveable = maxGiveable;
         }
-      } else if (isSwapLogStartedSwap(log)) {
+      } else if (isCliLogStartedSwap(log)) {
         const nextState: SwapStateStarted = {
           type: SwapStateType.STARTED,
           id: log.fields.swap_id,
@@ -117,7 +117,7 @@ export const swapSlice = createSlice({
 
         slice.state = nextState;
         slice.swapId = log.fields.swap_id;
-      } else if (isSwapLogPublishedBtcTx(log)) {
+      } else if (isCliLogPublishedBtcTx(log)) {
         if (log.fields.kind === 'lock') {
           const nextState: SwapStateBtcLockInMempool = {
             type: SwapStateType.BTC_LOCK_TX_IN_MEMPOOL,
@@ -127,7 +127,7 @@ export const swapSlice = createSlice({
 
           slice.state = nextState;
         }
-      } else if (isSwapLogBtcTxStatusChanged(log)) {
+      } else if (isCliLogBtcTxStatusChanged(log)) {
         if (isSwapStateBtcLockInMempool(slice.state)) {
           if (slice.state.bobBtcLockTxId === log.fields.txid) {
             const newStatusText = log.fields.new_status;
@@ -142,7 +142,7 @@ export const swapSlice = createSlice({
             }
           }
         }
-      } else if (isSwapLogAliceLockedXmr(log)) {
+      } else if (isCliLogAliceLockedXmr(log)) {
         const nextState: SwapStateXmrLockInMempool = {
           type: SwapStateType.XMR_LOCK_TX_IN_MEMPOOL,
           aliceXmrLockTxId: log.fields.txid,
@@ -150,7 +150,7 @@ export const swapSlice = createSlice({
         };
 
         slice.state = nextState;
-      } else if (isSwapLogReceivedXmrLockTxConfirmation(log)) {
+      } else if (isCliLogReceivedXmrLockTxConfirmation(log)) {
         if (isSwapStateXmrLockInMempool(slice.state)) {
           if (slice.state.aliceXmrLockTxId === log.fields.txid) {
             slice.state.aliceXmrLockTxConfirmations = Number.parseInt(
@@ -159,7 +159,7 @@ export const swapSlice = createSlice({
             );
           }
         }
-      } else if (isSwapLogRedeemedXmr(log)) {
+      } else if (isCliLogRedeemedXmr(log)) {
         const nextState: SwapStateXmrRedeemInMempool = {
           type: SwapStateType.XMR_REDEEM_IN_MEMPOOL,
           bobXmrRedeemTxId: log.fields.txid,

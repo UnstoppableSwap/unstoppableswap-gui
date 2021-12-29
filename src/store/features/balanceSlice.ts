@@ -1,16 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { extractAmountFromUnitString } from '../../utils/parseUtils';
-import {
-  isSwapLogCheckedBitcoinBalance,
-  SwapLog,
-} from '../../models/swapModel';
+import { isCliLogCheckedBitcoinBalance, CliLog } from '../../models/swapModel';
 
 export interface BalanceSlice {
   balanceValue: number | null;
   exitCode: number | null;
   processRunning: boolean;
   stdOut: string;
-  logs: SwapLog[];
+  logs: CliLog[];
 }
 
 const initialState: BalanceSlice = {
@@ -28,10 +25,10 @@ export const balanceSlice = createSlice({
     balanceAppendStdOut(slice, action: PayloadAction<string>) {
       slice.stdOut += action.payload;
     },
-    balanceAddLog(slice, action: PayloadAction<SwapLog>) {
+    balanceAddLog(slice, action: PayloadAction<CliLog>) {
       const log = action.payload;
 
-      if (isSwapLogCheckedBitcoinBalance(log)) {
+      if (isCliLogCheckedBitcoinBalance(log)) {
         slice.balanceValue = extractAmountFromUnitString(log.fields.balance);
       }
 

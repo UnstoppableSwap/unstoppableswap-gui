@@ -5,7 +5,7 @@ import {
 import psList from 'ps-list';
 import downloadSwapBinary from './downloader';
 import { isTestnet } from '../../store/config';
-import { isSwapLog, SwapLog } from '../../models/swapModel';
+import { isCliLog, CliLog } from '../../models/swapModel';
 import { getAppDataDir, getCliDataBaseDir } from './dirs';
 
 let cli: ChildProcessWithoutNullStreams | null = null;
@@ -38,14 +38,14 @@ async function killMoneroWalletRpc() {
   )?.pid;
 
   if (pid) {
-    const moneroWalletRpcKillErorr = process.kill(pid);
+    const moneroWalletRpcKillError = process.kill(pid);
 
-    if (moneroWalletRpcKillErorr) {
+    if (moneroWalletRpcKillError) {
       console.error(
-        `Failed to kill monero-wallet-rpc PID: ${pid} Error: ${moneroWalletRpcKillErorr}`
+        `Failed to kill monero-wallet-rpc PID: ${pid} Error: ${moneroWalletRpcKillError}`
       );
     } else {
-      console.debug(`Successfully monero-wallet-rpc killed PID: ${pid}`);
+      console.debug(`Successfully killed monero-wallet-rpc PID: ${pid}`);
     }
   } else {
     console.debug(
@@ -61,7 +61,7 @@ export async function stopCli() {
 export async function spawnSubcommand(
   subCommand: string,
   options: { [option: string]: string },
-  onLog: (log: SwapLog) => void,
+  onLog: (log: CliLog) => void,
   onExit: (code: number | null, signal: NodeJS.Signals | null) => void,
   onStdOut: (data: string) => void
 ): Promise<ChildProcessWithoutNullStreams> {
@@ -77,6 +77,7 @@ export async function spawnSubcommand(
   const spawnArgs = await getSpawnArgs(subCommand, options);
 
   await killMoneroWalletRpc();
+
   cli = spawnProc(`./${binaryInfo.name}`, spawnArgs, {
     cwd: appDataPath,
   });
@@ -93,18 +94,20 @@ export async function spawnSubcommand(
       data
         .toString()
         .split(/(\r?\n)/g)
-        .filter((s: string) => s.length > 3)
+        .filter((s: string) => s.length > 2)
         .forEach((logText: string) => {
+          console.log(`[${subCommand}] ${logText.trim()}`);
+
           try {
             const log = JSON.parse(logText);
-            if (isSwapLog(log)) {
+            if (isCliLog(log)) {
               onLog(log);
             } else {
               throw new Error('Required properties are missing');
             }
           } catch (e) {
-            console.debug(
-              `Failed to parse proc log. Log text: ${logText} Error: ${e.message}`
+            console.log(
+              `[${subCommand}] Failed to parse cli log. Log text: ${logText} Error: ${e.message}`
             );
           }
         });
@@ -112,11 +115,11 @@ export async function spawnSubcommand(
   });
 
   cli.on('exit', async (code, signal) => {
-    console.log(`Cli excited Code: ${code} Signal: ${signal}`);
+    console.log(
+      `[${subCommand}] Cli excited with Code. ${code} and Signal: ${signal}`
+    );
 
-    await killMoneroWalletRpc();
     cli = null;
-
     onExit(code, signal);
   });
 

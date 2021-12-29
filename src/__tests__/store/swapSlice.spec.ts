@@ -1,15 +1,15 @@
 import { AnyAction } from '@reduxjs/toolkit';
 import { Provider, SwapSlice, SwapStateType } from '../../models/storeModel';
 import {
-  SwapLogAliceLockedXmr,
-  SwapLogBtcTxStatusChanged,
-  SwapLogPublishedBtcTx,
-  SwapLogReceivedBtc,
-  SwapLogReceivedQuote,
-  SwapLogReceivedXmrLockTxConfirmation,
-  SwapLogRedeemedXmr,
-  SwapLogStartedSwap,
-  SwapLogWaitingForBtcDeposit,
+  CliLogAliceLockedXmr,
+  CliLogBtcTxStatusChanged,
+  CliLogPublishedBtcTx,
+  CliLogReceivedBtc,
+  CliLogReceivedQuote,
+  CliLogReceivedXmrLockTxConfirmation,
+  CliLogRedeemedXmr,
+  CliLogStartedSwap,
+  CliLogWaitingForBtcDeposit,
 } from '../../models/swapModel';
 
 import reducer, {
@@ -18,15 +18,15 @@ import reducer, {
   swapProcessExited,
 } from '../../store/features/swapSlice';
 
-const mWaitingForBtcDepositLog: SwapLogWaitingForBtcDeposit = require('../example_cli_logs/cli_log_waiting_for_bitcoin_deposit.json');
-const mReceivedNewBtcLog: SwapLogReceivedBtc = require('../example_cli_logs/cli_log_received_bitcoin.json');
-const mReceivedQuoteLog: SwapLogReceivedQuote = require('../example_cli_logs/cli_log_received_quote.json');
-const mStartedSwapLog: SwapLogStartedSwap = require('../example_cli_logs/cli_log_starting_new_swap.json');
-const mPublishedBtcLockTxLog: SwapLogPublishedBtcTx = require('../example_cli_logs/cli_log_published_btc_lock_tx.json');
-const mBobBtcTxLockStatusChanged: SwapLogBtcTxStatusChanged = require('../example_cli_logs/cli_log_bitcoin_transaction_status_changed.json');
-const mAliceLockedXmrLog: SwapLogAliceLockedXmr = require('../example_cli_logs/cli_log_alice_locked_monero.json');
-const mAliceXmrLockTxConfirmationUpdateLog: SwapLogReceivedXmrLockTxConfirmation = require('../example_cli_logs/cli_log_received_new_conf_for_monero_lock_tx.json');
-const mXmrRedeemSuccessfulLog: SwapLogRedeemedXmr = require('../example_cli_logs/cli_log_redeemed_xmr.json');
+const mWaitingForBtcDepositLog: CliLogWaitingForBtcDeposit = require('../mock_cli_logs/cli_log_waiting_for_bitcoin_deposit.json');
+const mReceivedNewBtcLog: CliLogReceivedBtc = require('../mock_cli_logs/cli_log_received_bitcoin.json');
+const mReceivedQuoteLog: CliLogReceivedQuote = require('../mock_cli_logs/cli_log_received_quote.json');
+const mStartedCliLog: CliLogStartedSwap = require('../mock_cli_logs/cli_log_starting_new_swap.json');
+const mPublishedBtcLockTxLog: CliLogPublishedBtcTx = require('../mock_cli_logs/cli_log_published_btc_lock_tx.json');
+const mBobBtcTxLockStatusChanged: CliLogBtcTxStatusChanged = require('../mock_cli_logs/cli_log_bitcoin_transaction_status_changed.json');
+const mAliceLockedXmrLog: CliLogAliceLockedXmr = require('../mock_cli_logs/cli_log_alice_locked_monero.json');
+const mAliceXmrLockTxConfirmationUpdateLog: CliLogReceivedXmrLockTxConfirmation = require('../mock_cli_logs/cli_log_received_new_conf_for_monero_lock_tx.json');
+const mXmrRedeemSuccessfulLog: CliLogRedeemedXmr = require('../mock_cli_logs/cli_log_redeemed_xmr.json');
 
 const initialSwapState = {
   state: null,
@@ -124,7 +124,7 @@ test('should infer correct states from happy-path logs', () => {
     swapId: null,
   });
 
-  swap = reducer(swap, swapAddLog(mStartedSwapLog));
+  swap = reducer(swap, swapAddLog(mStartedCliLog));
 
   expect(swap).toStrictEqual({
     processRunning: true,
@@ -132,7 +132,7 @@ test('should infer correct states from happy-path logs', () => {
       mReceivedQuoteLog,
       mWaitingForBtcDepositLog,
       mReceivedNewBtcLog,
-      mStartedSwapLog,
+      mStartedCliLog,
     ],
     state: {
       type: SwapStateType.STARTED,
@@ -152,7 +152,7 @@ test('should infer correct states from happy-path logs', () => {
       mReceivedQuoteLog,
       mWaitingForBtcDepositLog,
       mReceivedNewBtcLog,
-      mStartedSwapLog,
+      mStartedCliLog,
       mPublishedBtcLockTxLog,
     ],
     state: {
@@ -175,7 +175,7 @@ test('should infer correct states from happy-path logs', () => {
       mReceivedQuoteLog,
       mWaitingForBtcDepositLog,
       mReceivedNewBtcLog,
-      mStartedSwapLog,
+      mStartedCliLog,
       mPublishedBtcLockTxLog,
       mBobBtcTxLockStatusChanged,
     ],
@@ -199,7 +199,7 @@ test('should infer correct states from happy-path logs', () => {
       mReceivedQuoteLog,
       mWaitingForBtcDepositLog,
       mReceivedNewBtcLog,
-      mStartedSwapLog,
+      mStartedCliLog,
       mPublishedBtcLockTxLog,
       mBobBtcTxLockStatusChanged,
       mAliceLockedXmrLog,
@@ -224,7 +224,7 @@ test('should infer correct states from happy-path logs', () => {
       mReceivedQuoteLog,
       mWaitingForBtcDepositLog,
       mReceivedNewBtcLog,
-      mStartedSwapLog,
+      mStartedCliLog,
       mPublishedBtcLockTxLog,
       mBobBtcTxLockStatusChanged,
       mAliceLockedXmrLog,
@@ -250,7 +250,7 @@ test('should infer correct states from happy-path logs', () => {
       mReceivedQuoteLog,
       mWaitingForBtcDepositLog,
       mReceivedNewBtcLog,
-      mStartedSwapLog,
+      mStartedCliLog,
       mPublishedBtcLockTxLog,
       mBobBtcTxLockStatusChanged,
       mAliceLockedXmrLog,
@@ -282,7 +282,7 @@ test('should infer correct states from happy-path logs', () => {
       mReceivedQuoteLog,
       mWaitingForBtcDepositLog,
       mReceivedNewBtcLog,
-      mStartedSwapLog,
+      mStartedCliLog,
       mPublishedBtcLockTxLog,
       mBobBtcTxLockStatusChanged,
       mAliceLockedXmrLog,

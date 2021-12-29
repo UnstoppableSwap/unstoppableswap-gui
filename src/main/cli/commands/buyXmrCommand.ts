@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import { ChildProcessWithoutNullStreams } from 'child_process';
-import { SwapLog } from '../../../models/swapModel';
+import { CliLog } from '../../../models/swapModel';
 import { store } from '../../../store/store';
 import {
   swapAddLog,
@@ -11,9 +11,9 @@ import {
 import { Provider } from '../../../models/storeModel';
 import { spawnSubcommand } from '../cli';
 import spawnBalanceCheck from './balanceCommand';
-import { getSwapLogFile } from '../dirs';
+import { getCliLogFile } from '../dirs';
 
-async function onSwapLog(log: SwapLog) {
+async function onCliLog(log: CliLog) {
   store.dispatch(swapAddLog(log));
 }
 
@@ -54,7 +54,7 @@ export async function spawnBuyXmr(
         'receive-address': redeemAddress,
         seller: sellerIdentifier,
       },
-      onSwapLog,
+      onCliLog,
       onProcExit,
       onStdOut
     );
@@ -73,12 +73,12 @@ export async function spawnBuyXmr(
   }
 }
 
-async function tryReplaySwapLogs(
+async function tryReplayCliLogs(
   cli: ChildProcessWithoutNullStreams,
   swapId: string
 ) {
   try {
-    const logFile = await getSwapLogFile(swapId);
+    const logFile = await getCliLogFile(swapId);
     const prevLogData = await fs.readFile(logFile, {
       encoding: 'utf8',
     });
@@ -109,7 +109,7 @@ export async function resumeBuyXmr(swapId: string) {
         {
           'swap-id': swapId,
         },
-        onSwapLog,
+        onCliLog,
         onProcExit,
         onStdOut
       );
@@ -121,7 +121,7 @@ export async function resumeBuyXmr(swapId: string) {
         })
       );
 
-      await tryReplaySwapLogs(cli, swapId);
+      await tryReplayCliLogs(cli, swapId);
     } else {
       throw new Error('Could not find swap in database');
     }

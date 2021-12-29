@@ -6,7 +6,7 @@ import {
   balanceInitiate,
   balanceProcessExited,
 } from '../../../store/features/balanceSlice';
-import { SwapLog } from '../../../models/swapModel';
+import { CliLog } from '../../../models/swapModel';
 
 function onProcExit(code: number | null, signal: NodeJS.Signals | null) {
   store.dispatch(
@@ -21,7 +21,7 @@ function onStdOut(data: string) {
   store.dispatch(balanceAppendStdOut(data));
 }
 
-function onAddLog(data: SwapLog) {
+function onAddLog(data: CliLog) {
   store.dispatch(balanceAddLog(data));
 }
 

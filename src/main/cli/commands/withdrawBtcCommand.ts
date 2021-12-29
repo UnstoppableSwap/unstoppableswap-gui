@@ -6,7 +6,7 @@ import {
   withdrawProcessExited,
   withdrawAddLog,
 } from '../../../store/features/withdrawSlice';
-import { SwapLog } from '../../../models/swapModel';
+import { CliLog } from '../../../models/swapModel';
 import spawnBalanceCheck from './balanceCommand';
 
 function onProcExit(code: number | null, signal: NodeJS.Signals | null) {
@@ -24,7 +24,7 @@ function onStdOut(data: string) {
   store.dispatch(withdrawAppendStdOut(data));
 }
 
-function onSwapLog(log: SwapLog) {
+function onCliLog(log: CliLog) {
   store.dispatch(withdrawAddLog(log));
 }
 
@@ -37,7 +37,7 @@ export default async function spawnWithdrawBtc(address: string) {
       {
         address,
       },
-      onSwapLog,
+      onCliLog,
       onProcExit,
       onStdOut
     );
