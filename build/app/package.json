@@ -2,7 +2,7 @@
   "name": "unstoppableswap-gui",
   "productName": "unstoppableswap-gui",
   "description": "Graphical User Interface for XMR<>BTC Atomic Swaps",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "./dist/main/main.js",
   "author": {
     "name": "UnstoppableSwap",
