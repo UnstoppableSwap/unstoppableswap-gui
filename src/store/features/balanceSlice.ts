@@ -1,11 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { extractBtcBalanceFromBalanceString } from '../../utils/parseUtils';
+import { extractAmountFromUnitString } from '../../utils/parseUtils';
+import { isCliLogCheckedBitcoinBalance, CliLog } from '../../models/swapModel';
 
 export interface BalanceSlice {
   balanceValue: number | null;
   exitCode: number | null;
   processRunning: boolean;
   stdOut: string;
+  logs: CliLog[];
 }
 
 const initialState: BalanceSlice = {
@@ -13,6 +15,7 @@ const initialState: BalanceSlice = {
   processRunning: false,
   exitCode: null,
   stdOut: '',
+  logs: [],
 };
 
 export const balanceSlice = createSlice({
@@ -21,21 +24,20 @@ export const balanceSlice = createSlice({
   reducers: {
     balanceAppendStdOut(slice, action: PayloadAction<string>) {
       slice.stdOut += action.payload;
+    },
+    balanceAddLog(slice, action: PayloadAction<CliLog>) {
+      const log = action.payload;
 
-      const balanceValue = action.payload
-        .split(/(\r?\n)/g)
-        .map(extractBtcBalanceFromBalanceString)
-        .find((b) => b !== null);
-
-      if (balanceValue != null) {
-        slice.balanceValue = balanceValue;
-      } else {
-        console.error(`Failed to parse balance StdOut: ${slice.stdOut}`);
+      if (isCliLogCheckedBitcoinBalance(log)) {
+        slice.balanceValue = extractAmountFromUnitString(log.fields.balance);
       }
+
+      slice.logs.push(log);
     },
     balanceInitiate(slice) {
       slice.processRunning = true;
       slice.stdOut = '';
+      slice.logs = [];
     },
     balanceProcessExited(
       slice,
@@ -50,7 +52,11 @@ export const balanceSlice = createSlice({
   },
 });
 
-export const { balanceAppendStdOut, balanceInitiate, balanceProcessExited } =
-  balanceSlice.actions;
+export const {
+  balanceAppendStdOut,
+  balanceInitiate,
+  balanceProcessExited,
+  balanceAddLog,
+} = balanceSlice.actions;
 
 export default balanceSlice.reducer;

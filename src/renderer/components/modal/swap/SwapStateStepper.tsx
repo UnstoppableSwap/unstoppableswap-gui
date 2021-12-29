@@ -13,8 +13,6 @@ function getActiveStep(swapState: SwapState | null) {
   }
 
   switch (swapState.type) {
-    case SwapStateType.DOWNLOADING_BINARY:
-      return 0;
     case SwapStateType.INITIATED:
       return 0;
     case SwapStateType.RECEIVED_QUOTE:

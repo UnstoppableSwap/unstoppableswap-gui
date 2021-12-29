@@ -3,7 +3,7 @@ import { sortProviderList } from '../../utils/sortUtils';
 import { ExtendedProvider } from '../../models/storeModel';
 import { isTestnet } from '../config';
 
-interface ProvidersSlice {
+export interface ProvidersSlice {
   providers: ExtendedProvider[];
   selectedProvider: ExtendedProvider | null;
 }
@@ -13,7 +13,7 @@ const initialState: ProvidersSlice = {
   selectedProvider: null,
 };
 
-export const swapSlice = createSlice({
+export const providersSlice = createSlice({
   name: 'providers',
   initialState,
   reducers: {
@@ -41,6 +41,6 @@ export const swapSlice = createSlice({
   },
 });
 
-export const { setProviders, setSelectedProvider } = swapSlice.actions;
+export const { setProviders, setSelectedProvider } = providersSlice.actions;
 
-export default swapSlice.reducer;
+export default providersSlice.reducer;

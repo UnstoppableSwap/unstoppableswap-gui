@@ -35,7 +35,7 @@ export default function WithdrawDialog({
       setOpenCancelAlert(true);
     } else {
       onClose();
-      dispatch(withdrawReset());
+      setImmediate(() => dispatch(withdrawReset()));
     }
   }
 

@@ -1,0 +1,9 @@
+{
+  "timestamp":"2021-09-05 04:07:37",
+  "level":"INFO",
+  "fields":{
+    "message":"Successfully transferred XMR to wallet",
+    "monero_receive_address":"59McWTPGc745SRWrSMoh8oTjoXoQq6sPUgKZ66dQWXuKFQ2q19h9gvhJNZcFTizcnT12r63NFgHiGd6gBCjabzmzHAMoyD6",
+    "txid":"eadda576b5929c55bcc58f55c24bb52ac1853edb7d3b068ab67a3f66b0a1c546"
+  }
+}

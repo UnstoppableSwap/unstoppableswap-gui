@@ -42,7 +42,7 @@ export default function SwapDialog({
       setOpenCancelAlert(true);
     } else {
       onClose();
-      dispatch(swapReset());
+      setImmediate(() => dispatch(swapReset()));
     }
   }
 
@@ -52,7 +52,7 @@ export default function SwapDialog({
 
       <DialogContent dividers className={classes.content}>
         {isSwapState(swap.state) ? (
-          <SwapStatePage swapState={swap.state} onCancel={onCancel} />
+          <SwapStatePage swapState={swap.state} />
         ) : (
           <SwapInitPage />
         )}

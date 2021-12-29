@@ -1,0 +1,11 @@
+{
+  "timestamp":"2021-09-05 03:40:36",
+  "level":"INFO",
+  "fields":{
+    "message":"Waiting for Bitcoin deposit",
+    "deposit_address":"tb1qajq94d72k9hhcmtrlwhfuhc5yz0w298uym980g",
+    "max_giveable":"0.00000000 BTC",
+    "minimum_amount":"0.00010000 BTC",
+    "maximum_amount":"0.10000000 BTC"
+  }
+}

@@ -12,6 +12,7 @@ import React from 'react';
 import { MergedDbState } from '../../../../models/databaseModel';
 import {
   getSwapBtcAmount,
+  getSwapExchangeRate,
   getSwapTxFees,
   getSwapXmrAmount,
 } from '../../../../utils/parseUtils';
@@ -55,9 +56,8 @@ export default function HistoryRowExpanded({
   const btcAmount = getSwapBtcAmount(dbState);
   const xmrAmount = getSwapXmrAmount(dbState);
   const txFees = getSwapTxFees(dbState);
+  const exchangeRate = getSwapExchangeRate(dbState);
   const { provider } = dbState;
-
-  const exchangeRate = btcAmount ? `${btcAmount / xmrAmount} XMR/BTC` : '?';
 
   return (
     <Box className={classes.outer}>
@@ -82,7 +82,9 @@ export default function HistoryRowExpanded({
             </TableRow>
             <TableRow>
               <TableCell>Exchange Rate</TableCell>
-              <TableCell>{exchangeRate}</TableCell>
+              <TableCell>
+                {exchangeRate ? `${exchangeRate.toPrecision(6)} XMR/BTC` : '?'}
+              </TableCell>
             </TableRow>
             <TableRow>
               <TableCell>Bitcoin Network Fees</TableCell>

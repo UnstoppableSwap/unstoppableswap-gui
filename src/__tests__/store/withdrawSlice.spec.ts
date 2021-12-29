@@ -5,20 +5,12 @@ import reducer, {
   withdrawInitiate,
   withdrawProcessExited,
 } from '../../store/features/withdrawSlice';
-import { SwapLog } from '../../models/swapModel';
-import { Withdraw, WithdrawStateType } from '../../models/storeModel';
+import { CliLog } from '../../models/swapModel';
+import { WithdrawSlice, WithdrawStateType } from '../../models/storeModel';
 
-const mWithdrawLog: SwapLog = {
-  timestamp: '2021-11-05 21:06:35',
-  level: 'INFO',
-  fields: {
-    message: 'Published Bitcoin transaction',
-    txid: '3462e1179c6035120608921bf1177c65456bd35fd31ed37545a19fd58818f796',
-    kind: 'withdraw',
-  },
-};
+const mWithdrawLog: CliLog = require('../mock_cli_logs/cli_log_published_btc_withdraw_tx.json');
 
-const initialWithdrawState: Withdraw = {
+const initialWithdrawState: WithdrawSlice = {
   state: null,
   stdOut: '',
   logs: [],

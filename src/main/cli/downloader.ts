@@ -1,97 +1,116 @@
 import path from 'path';
-import { PathLike, promises as fs } from 'fs';
+import { promises as fs } from 'fs';
 import download from 'download';
+import { BinaryInfo } from 'models/downloaderModel';
 import { checkFileExists, getFileSha256Sum } from '../../utils/fileUtils';
-
-export interface BinaryInfo {
-  url: string;
-  sha256sum: string;
-  name: string;
-}
-
-export interface BinaryDownloadStatus {
-  totalDownloadedBytes: number;
-  contentLengthBytes: number;
-  binaryInfo: BinaryInfo;
-}
+import { store } from '../../store/store';
+import {
+  cliDownloadEnd,
+  cliDownloaderProgressUpdate,
+} from '../../store/features/downloaderSlice';
+import { getAppDataDir } from './dirs';
 
 function getSwapBinaryInfo(): BinaryInfo {
   switch (process.platform) {
     case 'darwin':
       return {
-        url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/0.9.0/swap_0.9.0_Darwin_x86_64.tar',
+        url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/0.10.2/swap_0.10.2_Darwin_x86_64.tar',
         sha256sum:
-          '809ea13b4e9f8dfe9288b22394ae906161161c0763d1e453c81e60ee22cea3d7',
+          'bbfed3a0c21748f8e88608df94fdbe52101a5284afe97d7174bba05e7c09cc8e',
         name: 'swap',
       };
     case 'linux':
       return {
-        url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/0.9.0/swap_0.9.0_Linux_x86_64.tar',
+        url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/0.10.2/swap_0.10.2_Linux_x86_64.tar',
         sha256sum:
-          'edb4c182004896ca49bb8458bc9527efd5d487dcdf9ad91398bb60be9b70f099',
+          'cb1dc3b78cb648e6148fbc20dffab39ab985c1cd3168f11bb543ac660215f7b7',
         name: 'swap',
       };
     default:
       return {
-        url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/0.9.0/swap_0.9.0_Windows_x86_64.zip',
+        url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/0.10.2/swap_0.10.2_Windows_x86_64.zip',
         sha256sum:
-          '3f2ade3e5ba1bb1522f070dd7896903a73e605a3507eaa35f69c92bb9b172ec9',
+          '0e5d81416626cdedc0965e65bf4a3d43119ebeab5ee19776fdcf1ab03aa9efc3',
         name: 'swap.exe',
       };
   }
 }
 
-export default async function downloadSwapBinary(
-  appDataDir: PathLike,
-  downloadProgressCallback: (status: BinaryDownloadStatus) => void
-): Promise<BinaryInfo> {
-  const binaryInfo = getSwapBinaryInfo();
-  const binaryPath = path.join(appDataDir.toString(), binaryInfo.name);
+let runningOperation: Promise<BinaryInfo> | null = null;
 
-  if (await checkFileExists(binaryPath)) {
-    const sha256sum = await getFileSha256Sum(binaryPath);
-    if (sha256sum === binaryInfo.sha256sum) {
-      return binaryInfo;
-    }
-    await fs.unlink(binaryPath);
+export default async function downloadSwapBinary(): Promise<BinaryInfo> {
+  if (runningOperation) {
+    console.warn(
+      `Download has already been initiated. Returning existing promise`
+    );
+    return runningOperation;
   }
 
-  console.log(
-    `Downloading ${binaryInfo.name} from ${binaryInfo.url} to ${appDataDir}`
-  );
+  async function initiate() {
+    const appDataDir = await getAppDataDir();
+    const binaryInfo = getSwapBinaryInfo();
+    const binaryPath = path.join(appDataDir.toString(), binaryInfo.name);
 
-  await download(binaryInfo.url, appDataDir.toString(), {
-    extract: true,
-  }).on('response', (res) => {
-    const contentLengthBytesStr = res.headers['content-length'];
+    try {
+      if (await checkFileExists(binaryPath)) {
+        const sha256sum = await getFileSha256Sum(binaryPath);
+        if (sha256sum === binaryInfo.sha256sum) {
+          return binaryInfo;
+        }
+        await fs.unlink(binaryPath);
+      }
 
-    if (contentLengthBytesStr != null) {
-      const contentLengthBytes = Number.parseInt(contentLengthBytesStr, 10);
-      let totalDownloadedBytes = 0;
-
-      res.on('data', (data) => {
-        const dataLength = data.length;
-        totalDownloadedBytes += dataLength;
-
-        downloadProgressCallback({
-          binaryInfo,
-          contentLengthBytes,
-          totalDownloadedBytes,
-        });
-      });
-    }
-  });
-
-  if (await checkFileExists(binaryPath)) {
-    const sha256sum = await getFileSha256Sum(binaryPath);
-    if (sha256sum !== binaryInfo.sha256sum) {
-      throw new Error(
-        `SHA256 sum of downloaded binary does not match expected value`
+      console.log(
+        `Downloading ${binaryInfo.name} from ${binaryInfo.url} to ${appDataDir}`
       );
+
+      await download(binaryInfo.url, appDataDir.toString(), {
+        extract: true,
+      }).on('response', (res) => {
+        const contentLengthBytesStr = res.headers['content-length'];
+
+        if (contentLengthBytesStr != null) {
+          const contentLengthBytes = Number.parseInt(contentLengthBytesStr, 10);
+          let totalDownloadedBytes = 0;
+
+          res.on('data', (data) => {
+            const dataLength = data.length;
+            totalDownloadedBytes += dataLength;
+
+            store.dispatch(
+              cliDownloaderProgressUpdate({
+                binary: binaryInfo,
+                contentLengthBytes,
+                totalDownloadedBytes,
+              })
+            );
+          });
+        }
+      });
+
+      if (await checkFileExists(binaryPath)) {
+        const sha256sum = await getFileSha256Sum(binaryPath);
+        if (sha256sum !== binaryInfo.sha256sum) {
+          throw new Error(
+            `SHA256 sum of downloaded binary does not match expected value Excepted: ${binaryInfo.sha256sum} Actual: ${sha256sum}`
+          );
+        }
+      } else {
+        throw new Error(`Downloaded binary does not exist at ${binaryPath}`);
+      }
+
+      store.dispatch(cliDownloadEnd(null));
+    } catch (e) {
+      store.dispatch(cliDownloadEnd(e.toString()));
+      throw e;
     }
-  } else {
-    throw new Error(`Downloaded binary does not exist at ${binaryPath}`);
+
+    return binaryInfo;
   }
 
-  return binaryInfo;
+  runningOperation = initiate();
+
+  return runningOperation.finally(() => {
+    runningOperation = null;
+  });
 }

@@ -31,27 +31,6 @@ export function extractAmountFromUnitString(text: string): number | null {
   return null;
 }
 
-/*
-Extract btc amount from stdout from balance subcommand
-
-E.g: "Bitcoin balance is 0.00000000 BTC"
-Output: 0.00000000
-
-E.g: "Bitcoin balance is 0.10300000 BTC"
-Output: 0.10300000
- */
-export function extractBtcBalanceFromBalanceString(
-  text: string
-): number | null {
-  if (text != null) {
-    if (text.match(/Bitcoin balance is (.*) BTC/)) {
-      const balance = Number.parseFloat(text.split(' ')[3]);
-      return balance;
-    }
-  }
-  return null;
-}
-
 export function getSwapTxFees(dbState: MergedDbState): number | null {
   if (isBtcLockedDbState(dbState.state)) {
     const tx = dbState.state.Bob.BtcLocked.state3.tx_lock;
@@ -72,6 +51,7 @@ export function getSwapTxFees(dbState: MergedDbState): number | null {
 
 export function getSwapBtcAmount(dbState: MergedDbState): number | null {
   if (isBtcLockedDbState(dbState.state)) {
+    // This assumes that the lock tx always has one output
     return satsToBtc(
       dbState.state.Bob.BtcLocked.state3.tx_lock.inner.global.unsigned_tx
         .output[0]?.value
@@ -83,6 +63,18 @@ export function getSwapBtcAmount(dbState: MergedDbState): number | null {
 
 export function getSwapXmrAmount(dbState: MergedDbState): number {
   return pionerosToXmr(dbState.state.Bob.ExecutionSetupDone.state2.xmr);
+}
+
+export function getSwapExchangeRate(dbState: MergedDbState): number | null {
+  const txFees = getSwapTxFees(dbState);
+  const btcAmount = getSwapBtcAmount(dbState);
+  const xmrAmount = getSwapXmrAmount(dbState);
+
+  if (txFees && btcAmount && xmrAmount) {
+    return btcAmount / xmrAmount;
+  }
+
+  return null;
 }
 
 export function isSwapResumable(dbState: MergedDbState): boolean {
