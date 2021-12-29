@@ -100,7 +100,7 @@ const createWindow = async () => {
     }
 
     await watchDatabase();
-    await spawnBalanceCheck();
+    spawnBalanceCheck();
   });
 
   mainWindow.on('closed', () => {
@@ -152,4 +152,4 @@ ipcMain.handle('spawn-withdraw-btc', (_event, address) =>
   spawnWithdrawBtc(address)
 );
 
-ipcMain.handle('initiate-downloader', (_event) => downloadSwapBinary());
+ipcMain.handle('initiate-downloader', () => downloadSwapBinary());
