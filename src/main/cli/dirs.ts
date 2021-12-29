@@ -36,5 +36,5 @@ export async function getCliLogFile(swapId: string): Promise<string> {
   await fs.mkdir(logsDir, {
     recursive: true,
   });
-  return path.join(logsDir, `swap-${swapId}.logs`);
+  return path.join(logsDir, `swap-${swapId}.log`);
 }
