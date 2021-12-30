@@ -43,5 +43,6 @@ jobs:
           # These values are used for auto updates signing
           CSC_IDENTITY_AUTO_DISCOVERY: false
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EP_GH_IGNORE_TIME: true
         run: |
           yarn postinstall && yarn build && yarn electron-builder --publish always --linux --win --mac
