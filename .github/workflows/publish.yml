@@ -20,7 +20,7 @@ jobs:
       - name: Install Node, NPM and Yarn
         uses: actions/setup-node@v1
         with:
-          node-version: 15
+          node-version: 16
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -37,7 +37,7 @@ jobs:
       - name: Install dependencies
         run: |
           yarn install
-          
+
       - name: Publish releases
         env:
           # These values are used for auto updates signing
