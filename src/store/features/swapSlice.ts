@@ -27,7 +27,7 @@ import {
   isCliLogStartedSwap,
   isCliLogWaitingForBtcDeposit,
   CliLog,
-} from '../../models/swapModel';
+} from '../../models/cliModel';
 
 const initialState: SwapSlice = {
   state: null,
@@ -163,6 +163,7 @@ export const swapSlice = createSlice({
         const nextState: SwapStateXmrRedeemInMempool = {
           type: SwapStateType.XMR_REDEEM_IN_MEMPOOL,
           bobXmrRedeemTxId: log.fields.txid,
+          bobXmrRedeemAddress: log.fields.monero_receive_address,
         };
 
         slice.state = nextState;

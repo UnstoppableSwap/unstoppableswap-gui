@@ -16,14 +16,14 @@ function getSwapBinaryInfo(): BinaryInfo {
       return {
         url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/0.10.2/swap_0.10.2_Darwin_x86_64.tar',
         sha256sum:
-          'bbfed3a0c21748f8e88608df94fdbe52101a5284afe97d7174bba05e7c09cc8e',
+          '3d3d701fd17a6c335bd80938204528c0c5a930041751fb66ff47a71893f1e5f1',
         name: 'swap',
       };
     case 'linux':
       return {
         url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/0.10.2/swap_0.10.2_Linux_x86_64.tar',
         sha256sum:
-          'cb1dc3b78cb648e6148fbc20dffab39ab985c1cd3168f11bb543ac660215f7b7',
+          '3d3d701fd17a6c335bd80938204528c0c5a930041751fb66ff47a71893f1e5f1',
         name: 'swap',
       };
     default:

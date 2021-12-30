@@ -4,6 +4,7 @@ import {
   Dialog,
   DialogContent,
   DialogContentText,
+  makeStyles,
   Typography,
 } from '@material-ui/core';
 import { useAppSelector } from 'store/hooks';
@@ -13,25 +14,39 @@ import DialogTitle from '../DialogHeader';
 import LinearProgressWithLabel from '../../progress/LinearProgressWithLabel';
 import { isBinaryDownloadStatus } from '../../../../models/downloaderModel';
 
+const useStyles = makeStyles((theme) => ({
+  retryButton: {
+    marginTop: theme.spacing(1),
+  },
+}));
+
 function ErrorAlert({ error }: { error: string }) {
+  const classes = useStyles();
+
   async function retry() {
-    await ipcRenderer.invoke('initiate-downloader');
+    ipcRenderer.invoke('initiate-downloader').catch((err) => {
+      console.error(err);
+    });
   }
 
   return (
-    <Alert
-      severity="error"
-      action={
-        <Button color="inherit" size="large" onClick={retry}>
-          RETRY
-        </Button>
-      }
-    >
-      <AlertTitle>Update failed</AlertTitle>
-      We tried but failed to download the most recent Swap-CLI release from
-      Github. Do you have proper internet connectivity?
-      <Typography variant="caption">{error}</Typography>
-    </Alert>
+    <>
+      <Alert severity="error">
+        <AlertTitle>Update failed</AlertTitle>
+        We tried but failed to download the most recent Swap-CLI release from
+        Github. Do you have proper internet connectivity?
+        <br />
+        <Typography variant="caption">{error}</Typography>
+      </Alert>
+      <Button
+        color="inherit"
+        size="large"
+        onClick={retry}
+        className={classes.retryButton}
+      >
+        RETRY
+      </Button>
+    </>
   );
 }
 

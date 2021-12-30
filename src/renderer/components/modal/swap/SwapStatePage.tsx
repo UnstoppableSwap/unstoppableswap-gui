@@ -45,7 +45,19 @@ export default function SwapStatePage({ swapState }: { swapState: SwapState }) {
     return <XmrRedeemInMempoolPage state={swapState} />;
   }
   if (isSwapStateProcessExited(swapState)) {
+    if (swapState.exitCode === 0) {
+      if (swapState.prevState) {
+        return <SwapStatePage swapState={swapState.prevState} />;
+      }
+    }
     return <ProcessExitedPage state={swapState} />;
   }
-  return <pre>{JSON.stringify(swapState, null, 4)}</pre>;
+  console.error(
+    `No swap state page found for swap state State: ${JSON.stringify(
+      swapState,
+      null,
+      4
+    )}`
+  );
+  return null;
 }

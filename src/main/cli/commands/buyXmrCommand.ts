@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import { ChildProcessWithoutNullStreams } from 'child_process';
-import { CliLog } from '../../../models/swapModel';
+import { CliLog } from '../../../models/cliModel';
 import { store } from '../../../store/store';
 import {
   swapAddLog,

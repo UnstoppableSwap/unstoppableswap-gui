@@ -1,4 +1,4 @@
-import { CliLog } from './swapModel';
+import { CliLog } from './cliModel';
 
 export interface Provider {
   multiAddr: string;
@@ -120,6 +120,7 @@ export function isSwapStateXmrLockInMempool(
 export interface SwapStateXmrRedeemInMempool extends SwapState {
   type: SwapStateType.XMR_REDEEM_IN_MEMPOOL;
   bobXmrRedeemTxId: string;
+  bobXmrRedeemAddress: string;
 }
 
 export function isSwapStateXmrRedeemInMempool(

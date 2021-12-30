@@ -5,7 +5,7 @@ import {
 import psList from 'ps-list';
 import downloadSwapBinary from './downloader';
 import { isTestnet } from '../../store/config';
-import { isCliLog, CliLog } from '../../models/swapModel';
+import { isCliLog, CliLog } from '../../models/cliModel';
 import { getAppDataDir, getCliDataBaseDir } from './dirs';
 
 let cli: ChildProcessWithoutNullStreams | null = null;
@@ -38,14 +38,11 @@ async function killMoneroWalletRpc() {
   )?.pid;
 
   if (pid) {
-    const moneroWalletRpcKillError = process.kill(pid);
-
-    if (moneroWalletRpcKillError) {
-      console.error(
-        `Failed to kill monero-wallet-rpc PID: ${pid} Error: ${moneroWalletRpcKillError}`
-      );
-    } else {
+    try {
+      process.kill(pid);
       console.debug(`Successfully killed monero-wallet-rpc PID: ${pid}`);
+    } catch (e) {
+      console.error(`Failed to kill monero-wallet-rpc PID: ${pid} Error: ${e}`);
     }
   } else {
     console.debug(
@@ -116,7 +113,7 @@ export async function spawnSubcommand(
 
   cli.on('exit', async (code, signal) => {
     console.log(
-      `[${subCommand}] Cli excited with Code. ${code} and Signal: ${signal}`
+      `[${subCommand}] Cli excited with code: ${code} and signal: ${signal}`
     );
 
     cli = null;

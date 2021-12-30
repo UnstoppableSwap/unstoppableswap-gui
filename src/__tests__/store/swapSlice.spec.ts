@@ -10,7 +10,7 @@ import {
   CliLogRedeemedXmr,
   CliLogStartedSwap,
   CliLogWaitingForBtcDeposit,
-} from '../../models/swapModel';
+} from '../../models/cliModel';
 
 import reducer, {
   swapAddLog,
@@ -261,6 +261,8 @@ test('should infer correct states from happy-path logs', () => {
       type: SwapStateType.XMR_REDEEM_IN_MEMPOOL,
       bobXmrRedeemTxId:
         'eadda576b5929c55bcc58f55c24bb52ac1853edb7d3b068ab67a3f66b0a1c546',
+      bobXmrRedeemAddress:
+        '59McWTPGc745SRWrSMoh8oTjoXoQq6sPUgKZ66dQWXuKFQ2q19h9gvhJNZcFTizcnT12r63NFgHiGd6gBCjabzmzHAMoyD6',
     },
     provider: exampleProvider,
     stdOut: '',
@@ -297,6 +299,8 @@ test('should infer correct states from happy-path logs', () => {
         type: SwapStateType.XMR_REDEEM_IN_MEMPOOL,
         bobXmrRedeemTxId:
           'eadda576b5929c55bcc58f55c24bb52ac1853edb7d3b068ab67a3f66b0a1c546',
+        bobXmrRedeemAddress:
+          '59McWTPGc745SRWrSMoh8oTjoXoQq6sPUgKZ66dQWXuKFQ2q19h9gvhJNZcFTizcnT12r63NFgHiGd6gBCjabzmzHAMoyD6',
       },
     },
     provider: exampleProvider,

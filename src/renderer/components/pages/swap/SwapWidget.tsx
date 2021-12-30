@@ -135,7 +135,7 @@ function HasProviderSwapWidget({
         label="Receive"
         variant="outlined"
         size="medium"
-        value={xmrFieldValue.toFixed(4)}
+        value={xmrFieldValue.toFixed(6)}
         InputProps={{
           endAdornment: <InputAdornment position="end">XMR</InputAdornment>,
         }}

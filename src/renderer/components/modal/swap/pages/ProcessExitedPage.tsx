@@ -35,8 +35,7 @@ export default function ProcessExitedPage({ state }: ProcessExitedPageProps) {
       <DialogContentText>
         The swap-cli process has exited
         {state.exitCode != null ? ` with the exit code ${state.exitCode}` : ''}.
-        This might be totally normal or some error might have occurred. Please
-        check the logs displayed below for more information.
+        Please check the logs displayed below for more information.
       </DialogContentText>
       <Paper className={classes.logsOuter} variant="outlined">
         <Typography component="pre" variant="body2">

@@ -6,7 +6,7 @@ import {
   withdrawProcessExited,
   withdrawAddLog,
 } from '../../../store/features/withdrawSlice';
-import { CliLog } from '../../../models/swapModel';
+import { CliLog } from '../../../models/cliModel';
 import spawnBalanceCheck from './balanceCommand';
 
 function onProcExit(code: number | null, signal: NodeJS.Signals | null) {

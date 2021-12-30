@@ -3,6 +3,6 @@ import CircularProgressWithSubtitle from '../CircularProgressWithSubtitle';
 
 export default function ReceivedQuotePage() {
   return (
-    <CircularProgressWithSubtitle description="Exchanging keys with provider and generating multi-signature wallet" />
+    <CircularProgressWithSubtitle description="Exchanging keys, zero-knowledge proofs and generating multi-signature addresses" />
   );
 }

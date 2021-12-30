@@ -26,14 +26,18 @@ function getActiveStep(swapState: SwapState | null) {
     case SwapStateType.XMR_LOCK_TX_IN_MEMPOOL:
       return 1;
     case SwapStateType.XMR_REDEEM_IN_MEMPOOL:
-      return 3;
+      return 4;
     default:
       return 0;
   }
 }
 
 export default function SwapStateStepper() {
-  const activeStep = useAppSelector((s) => getActiveStep(s.swap.state));
+  const activeStep = useAppSelector((s) =>
+    isSwapStateProcessExited(s.swap.state)
+      ? getActiveStep(s.swap.state.prevState)
+      : getActiveStep(s.swap.state)
+  );
   const error = useAppSelector(
     (s) => isSwapStateProcessExited(s.swap.state) && s.swap.state.exitCode !== 0
   );
@@ -67,7 +71,7 @@ export default function SwapStateStepper() {
       <Step key={3}>
         <StepLabel
           optional={<Typography variant="caption">~2min</Typography>}
-          error={error && activeStep === 3}
+          error={false /* error && activeStep === 3 */}
         >
           Redeeming your XMR
         </StepLabel>
