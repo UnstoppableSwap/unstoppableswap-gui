@@ -5,6 +5,9 @@ module.exports = {
     'import/no-named-as-default': 'off',
     'import/no-extraneous-dependencies': 'off',
     'react/jsx-props-no-spreading': 'off',
+    'react/jsx-no-bind': 'off',
+    'promise/param-names': 'off',
+    'no-async-promise-executor': 'off',
     'import/no-restricted-paths': [
       'error',
       {

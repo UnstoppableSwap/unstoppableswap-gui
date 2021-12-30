@@ -72,12 +72,10 @@ export async function spawnSubcommand(
 
   This prevents multiple subcommands from being spawned at the same time and causing issues
    */
-  // eslint-disable-next-line promise/param-names
   return new Promise<ChildProcessWithoutNullStreams>(
     (resolveSpawn, rejectSpawn) => {
       queue.add(
         () =>
-          // eslint-disable-next-line no-async-promise-executor,promise/param-names
           new Promise<void>(async (resolveRunning) => {
             try {
               const [appDataPath, binaryInfo, spawnArgs] = await Promise.all([
@@ -91,7 +89,7 @@ export async function spawnSubcommand(
                 cwd: appDataPath,
               });
 
-              // Added in: v15.1.0, v14.17.0
+              // Added in: Node v15.1.0, v14.17.0
               cli.on('spawn', () => {
                 if (cli) {
                   console.log(
