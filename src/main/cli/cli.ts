@@ -38,14 +38,11 @@ async function killMoneroWalletRpc() {
   )?.pid;
 
   if (pid) {
-    const moneroWalletRpcKillError = process.kill(pid);
-
-    if (moneroWalletRpcKillError) {
-      console.error(
-        `Failed to kill monero-wallet-rpc PID: ${pid} Error: ${moneroWalletRpcKillError}`
-      );
-    } else {
+    try {
+      process.kill(pid);
       console.debug(`Successfully killed monero-wallet-rpc PID: ${pid}`);
+    } catch (e) {
+      console.error(`Failed to kill monero-wallet-rpc PID: ${pid} Error: ${e}`);
     }
   } else {
     console.debug(
