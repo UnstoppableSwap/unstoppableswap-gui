@@ -10,7 +10,7 @@ import {
   CliLogRedeemedXmr,
   CliLogStartedSwap,
   CliLogWaitingForBtcDeposit,
-} from '../../models/swapModel';
+} from '../../models/cliModel';
 
 import reducer, {
   swapAddLog,

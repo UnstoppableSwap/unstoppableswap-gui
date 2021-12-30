@@ -5,7 +5,7 @@ import {
 import psList from 'ps-list';
 import downloadSwapBinary from './downloader';
 import { isTestnet } from '../../store/config';
-import { isCliLog, CliLog } from '../../models/swapModel';
+import { isCliLog, CliLog } from '../../models/cliModel';
 import { getAppDataDir, getCliDataBaseDir } from './dirs';
 
 let cli: ChildProcessWithoutNullStreams | null = null;
@@ -116,7 +116,7 @@ export async function spawnSubcommand(
 
   cli.on('exit', async (code, signal) => {
     console.log(
-      `[${subCommand}] Cli excited with Code. ${code} and Signal: ${signal}`
+      `[${subCommand}] Cli excited with code: ${code} and signal: ${signal}`
     );
 
     cli = null;

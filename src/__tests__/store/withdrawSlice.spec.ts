@@ -5,7 +5,7 @@ import reducer, {
   withdrawInitiate,
   withdrawProcessExited,
 } from '../../store/features/withdrawSlice';
-import { CliLog } from '../../models/swapModel';
+import { CliLog } from '../../models/cliModel';
 import { WithdrawSlice, WithdrawStateType } from '../../models/storeModel';
 
 const mWithdrawLog: CliLog = require('../mock_cli_logs/cli_log_published_btc_withdraw_tx.json');

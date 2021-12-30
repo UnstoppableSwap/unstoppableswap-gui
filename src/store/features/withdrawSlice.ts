@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { isCliLogPublishedBtcTx, CliLog } from '../../models/swapModel';
+import { isCliLogPublishedBtcTx, CliLog } from '../../models/cliModel';
 import {
   WithdrawSlice,
   WithdrawStateInitiated,

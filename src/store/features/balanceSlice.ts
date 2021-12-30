@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { extractAmountFromUnitString } from '../../utils/parseUtils';
-import { isCliLogCheckedBitcoinBalance, CliLog } from '../../models/swapModel';
+import { isCliLogCheckedBitcoinBalance, CliLog } from '../../models/cliModel';
 
 export interface BalanceSlice {
   balanceValue: number | null;

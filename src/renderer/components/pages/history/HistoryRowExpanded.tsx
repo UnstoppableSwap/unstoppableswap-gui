@@ -94,10 +94,6 @@ export default function HistoryRowExpanded({
               <TableCell>Provider Address</TableCell>
               <TableCell>{provider.multiAddr}</TableCell>
             </TableRow>
-            <TableRow>
-              <TableCell>Provider Peer ID</TableCell>
-              <TableCell>{provider.peerId}</TableCell>
-            </TableRow>
           </TableBody>
         </Table>
       </TableContainer>

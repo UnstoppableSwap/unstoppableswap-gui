@@ -6,7 +6,7 @@ import {
   balanceInitiate,
   balanceProcessExited,
 } from '../../../store/features/balanceSlice';
-import { CliLog } from '../../../models/swapModel';
+import { CliLog } from '../../../models/cliModel';
 
 function onProcExit(code: number | null, signal: NodeJS.Signals | null) {
   store.dispatch(

@@ -1,35 +1,10 @@
-import {
-  Box,
-  DialogContentText,
-  LinearProgress,
-  Link,
-  makeStyles,
-  Paper,
-  Typography,
-} from '@material-ui/core';
+import { Box, DialogContentText } from '@material-ui/core';
 import React from 'react';
 import { SwapStateBtcLockInMempool } from '../../../../../models/storeModel';
 import BitcoinIcon from '../../../icons/BitcoinIcon';
 import { isTestnet } from '../../../../../store/config';
 import { getBitcoinTxExplorerUrl } from '../../../../../utils/currencyUtils';
-
-const useStyles = makeStyles((theme) => ({
-  depositAddressOuter: {
-    padding: theme.spacing(1.5),
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-  },
-  depositAddress: {
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(1),
-    alignItems: 'center',
-    display: 'flex',
-    gap: theme.spacing(0.25),
-  },
-  depositStatusText: {
-    paddingTop: theme.spacing(0.5),
-  },
-}));
+import TransactionInfoBox from '../TransactionInfoBox';
 
 type BitcoinLockTxInMempoolPageProps = {
   state: SwapStateBtcLockInMempool;
@@ -38,35 +13,32 @@ type BitcoinLockTxInMempoolPageProps = {
 export default function BitcoinLockTxInMempoolPage({
   state,
 }: BitcoinLockTxInMempoolPageProps) {
-  const classes = useStyles();
+  const explorerUrl = getBitcoinTxExplorerUrl(
+    state.bobBtcLockTxId,
+    isTestnet()
+  );
 
   return (
     <Box>
       <DialogContentText>
-        The Bitcoin lock transaction has been published. The swap will continue
-        automatically once the transaction is confirmed.
+        The Bitcoin lock transaction has been published. The swap will proceed
+        once the transaction is confirmed and the swap provider locks their
+        Monero.
       </DialogContentText>
-      <Paper variant="outlined" className={classes.depositAddressOuter}>
-        <Typography variant="subtitle1">BTC Lock Transaction</Typography>
-        <Box className={classes.depositAddress}>
-          <BitcoinIcon />
-          <Typography variant="h5">{state.bobBtcLockTxId}</Typography>
-        </Box>
-        <LinearProgress variant="indeterminate" />
-        <Typography variant="subtitle2" className={classes.depositStatusText}>
-          Most swap providers require 2 confirmations
-          <br />
-          Confirmations: {state.bobBtcLockTxConfirmations}
-        </Typography>
-        <Typography variant="body1">
-          <Link
-            href={getBitcoinTxExplorerUrl(state.bobBtcLockTxId, isTestnet())}
-            target="_blank"
-          >
-            View on explorer
-          </Link>
-        </Typography>
-      </Paper>
+      <TransactionInfoBox
+        title="BTC Lock Transaction"
+        txId={state.bobBtcLockTxId}
+        explorerUrl={explorerUrl}
+        icon={<BitcoinIcon />}
+        loading
+        additionalText={
+          <>
+            Most swap providers require 2 confirmations
+            <br />
+            Confirmations: {state.bobBtcLockTxConfirmations}
+          </>
+        }
+      />
     </Box>
   );
 }
