@@ -1,11 +1,24 @@
-import { Box, CircularProgress, Typography } from '@material-ui/core';
+import {
+  Box,
+  CircularProgress,
+  makeStyles,
+  Typography,
+} from '@material-ui/core';
 import React from 'react';
+
+const useStyles = makeStyles((theme) => ({
+  subtitle: {
+    paddingTop: theme.spacing(1),
+  },
+}));
 
 export default function CircularProgressWithSubtitle({
   description,
 }: {
   description: string;
 }) {
+  const classes = useStyles();
+
   return (
     <Box
       display="flex"
@@ -14,7 +27,9 @@ export default function CircularProgressWithSubtitle({
       flexDirection="column"
     >
       <CircularProgress size={50} />
-      <Typography variant="subtitle2">{description}</Typography>
+      <Typography variant="subtitle2" className={classes.subtitle}>
+        {description}
+      </Typography>
     </Box>
   );
 }
