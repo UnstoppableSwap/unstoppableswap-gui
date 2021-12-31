@@ -29,7 +29,7 @@ export default function MoneroAddressTextField({
 
   useEffect(() => {
     onAddressValidityChange(!errorText);
-  }, [address]);
+  }, [address, getAddressError, onAddressValidityChange]);
 
   return (
     <TextField

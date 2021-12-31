@@ -64,6 +64,7 @@ function HasProviderSwapWidget({
 }) {
   const classes = useStyles();
 
+  const forceShowDialog = useAppSelector((state) => state.swap.state !== null);
   const [showDialog, setShowDialog] = useState(false);
   const [btcFieldValue, setBtcFieldValue] = useState('0.02');
   const [xmrFieldValue, setXmrFieldValue] = useState(1);
@@ -150,7 +151,10 @@ function HasProviderSwapWidget({
         <SwapHorizIcon className={classes.swapIcon} />
         Swap
       </Fab>
-      <SwapDialog open={showDialog} onClose={() => setShowDialog(false)} />
+      <SwapDialog
+        open={showDialog || forceShowDialog}
+        onClose={() => setShowDialog(false)}
+      />
     </Box>
   );
 }

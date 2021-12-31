@@ -3,11 +3,13 @@ import {
   spawn as spawnProc,
 } from 'child_process';
 import psList from 'ps-list';
+import PQueue from 'p-queue';
 import downloadSwapBinary from './downloader';
 import { isTestnet } from '../../store/config';
 import { isCliLog, CliLog } from '../../models/cliModel';
 import { getAppDataDir, getCliDataBaseDir } from './dirs';
 
+const queue = new PQueue({ concurrency: 1 });
 let cli: ChildProcessWithoutNullStreams | null = null;
 
 async function getSpawnArgs(
@@ -62,63 +64,95 @@ export async function spawnSubcommand(
   onExit: (code: number | null, signal: NodeJS.Signals | null) => void,
   onStdOut: (data: string) => void
 ): Promise<ChildProcessWithoutNullStreams> {
-  if (cli) {
-    throw new Error(
-      `Can't spawn cli with subcommand ${subCommand} because other cli process is running Arguments: ${cli.spawnargs.join(
-        ' '
-      )}`
-    );
-  }
-  const appDataPath = await getAppDataDir();
-  const binaryInfo = await downloadSwapBinary();
-  const spawnArgs = await getSpawnArgs(subCommand, options);
+  /*
+  This looks bad, I know
+  Two things are happening here:
+    - It returns a promise that resolves as soon as the process is spawned
+    - and it adds a function to the queue that is called as soon as no other cli process is running and which returns a promise that resolves as soon as the process exits
 
-  await killMoneroWalletRpc();
+  This prevents multiple subcommands from being spawned at the same time and causing issues
+   */
+  return new Promise<ChildProcessWithoutNullStreams>(
+    (resolveSpawn, rejectSpawn) => {
+      queue.add(
+        () =>
+          new Promise<void>(async (resolveRunning) => {
+            try {
+              const [appDataPath, binaryInfo, spawnArgs] = await Promise.all([
+                getAppDataDir(),
+                downloadSwapBinary(),
+                getSpawnArgs(subCommand, options),
+                killMoneroWalletRpc(),
+              ]);
 
-  cli = spawnProc(`./${binaryInfo.name}`, spawnArgs, {
-    cwd: appDataPath,
-  });
+              cli = spawnProc(`./${binaryInfo.name}`, spawnArgs, {
+                cwd: appDataPath,
+              });
 
-  console.log(
-    `Spawned cli Arguments: ${cli.spawnargs.join(' ')} in folder ${appDataPath}`
-  );
+              // Added in: Node v15.1.0, v14.17.0
+              cli.on('spawn', () => {
+                if (cli) {
+                  console.log(
+                    `Spawned CLI Arguments: ${cli.spawnargs.join(
+                      ' '
+                    )} in folder ${appDataPath} with PID ${cli.pid}`
+                  );
 
-  [cli.stderr, cli.stdout].forEach((stream) => {
-    stream.setEncoding('utf8');
-    stream.on('data', (data) => {
-      onStdOut(data);
+                  [cli.stderr, cli.stdout].forEach((stream) => {
+                    stream.setEncoding('utf8');
+                    stream.on('data', (data) => {
+                      onStdOut(data);
 
-      data
-        .toString()
-        .split(/(\r?\n)/g)
-        .filter((s: string) => s.length > 2)
-        .forEach((logText: string) => {
-          console.log(`[${subCommand}] ${logText.trim()}`);
+                      data
+                        .toString()
+                        .split(/(\r?\n)/g)
+                        .filter((s: string) => s.length > 2)
+                        .forEach((logText: string) => {
+                          console.log(`[${subCommand}] ${logText.trim()}`);
 
-          try {
-            const log = JSON.parse(logText);
-            if (isCliLog(log)) {
-              onLog(log);
-            } else {
-              throw new Error('Required properties are missing');
+                          try {
+                            const log = JSON.parse(logText);
+                            if (isCliLog(log)) {
+                              onLog(log);
+                            } else {
+                              throw new Error(
+                                'Required properties are missing'
+                              );
+                            }
+                          } catch (e) {
+                            console.log(
+                              `[${subCommand}] Failed to parse cli log. Log text: ${logText} Error: ${e}`
+                            );
+                          }
+                        });
+                    });
+                  });
+
+                  resolveSpawn(cli);
+                }
+              });
+
+              cli.on('error', (e) => {
+                cli = null;
+                rejectSpawn(e);
+                resolveRunning();
+              });
+
+              cli.on('exit', async (code, signal) => {
+                console.log(
+                  `[${subCommand}] CLI excited with code: ${code} and signal: ${signal}`
+                );
+
+                cli = null;
+                onExit(code, signal);
+                resolveRunning();
+              });
+            } catch (e) {
+              rejectSpawn(e);
+              resolveRunning();
             }
-          } catch (e) {
-            console.log(
-              `[${subCommand}] Failed to parse cli log. Log text: ${logText} Error: ${e.message}`
-            );
-          }
-        });
-    });
-  });
-
-  cli.on('exit', async (code, signal) => {
-    console.log(
-      `[${subCommand}] Cli excited with code: ${code} and signal: ${signal}`
-    );
-
-    cli = null;
-    onExit(code, signal);
-  });
-
-  return cli;
+          })
+      );
+    }
+  );
 }

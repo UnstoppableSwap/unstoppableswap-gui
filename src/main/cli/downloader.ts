@@ -101,7 +101,7 @@ export default async function downloadSwapBinary(): Promise<BinaryInfo> {
 
       store.dispatch(cliDownloadEnd(null));
     } catch (e) {
-      store.dispatch(cliDownloadEnd(e.toString()));
+      store.dispatch(cliDownloadEnd((e as Error).toString()));
       throw e;
     }
 

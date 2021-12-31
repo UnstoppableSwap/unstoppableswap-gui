@@ -100,7 +100,7 @@ const createWindow = async () => {
     }
 
     await watchDatabase();
-    spawnBalanceCheck();
+    await spawnBalanceCheck();
   });
 
   mainWindow.on('closed', () => {
@@ -136,9 +136,9 @@ app.on('activate', () => {
 
 app.on('will-quit', stopCli);
 
-ipcMain.handle('stop-cli', () => stopCli());
+ipcMain.handle('stop-cli', stopCli);
 
-ipcMain.handle('spawn-balance-check', () => spawnBalanceCheck());
+ipcMain.handle('spawn-balance-check', spawnBalanceCheck);
 
 ipcMain.handle(
   'spawn-buy-xmr',
@@ -152,4 +152,4 @@ ipcMain.handle('spawn-withdraw-btc', (_event, address) =>
   spawnWithdrawBtc(address)
 );
 
-ipcMain.handle('initiate-downloader', () => downloadSwapBinary());
+ipcMain.handle('initiate-downloader', downloadSwapBinary);
