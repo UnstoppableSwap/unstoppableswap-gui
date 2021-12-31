@@ -6,7 +6,6 @@ import {
   DialogContentText,
   DialogTitle,
 } from '@material-ui/core';
-import React from 'react';
 import { ipcRenderer } from 'electron';
 
 type SwapCancelAlertProps = {

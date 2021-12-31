@@ -14,7 +14,7 @@ import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import RedditIcon from '@material-ui/icons/Reddit';
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import LinkIconButton from './icons/LinkIconButton';
 
 export const drawerWidth = 240;
@@ -50,10 +50,10 @@ function RouteListItemIconButton({
   route: string;
   children: React.ReactNode;
 }) {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   return (
-    <ListItem button onClick={() => history.push(route)} key={name}>
+    <ListItem button onClick={() => navigate(route)} key={name}>
       <ListItemIcon>{children}</ListItemIcon>
       <ListItemText primary={name} />
     </ListItem>

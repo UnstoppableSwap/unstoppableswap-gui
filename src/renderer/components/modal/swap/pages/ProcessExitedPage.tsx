@@ -5,7 +5,6 @@ import {
   Paper,
   Typography,
 } from '@material-ui/core';
-import React from 'react';
 import { SwapStateProcessExited } from '../../../../../models/storeModel';
 import { useAppSelector } from '../../../../../store/hooks';
 

@@ -15,7 +15,7 @@ yarn
 ## Start development environment
 
 ```bash
-TESTNET=true yarn start
+TESTNET=true npm start
 ```
 
 ## Packaging for Production
@@ -23,7 +23,7 @@ TESTNET=true yarn start
 To package apps for the local platform:
 
 ```bash
-yarn package
+npm run package
 ```
 
 ## Overview of architecture

@@ -1,4 +1,3 @@
-import React from 'react';
 import CircularProgressWithSubtitle from '../CircularProgressWithSubtitle';
 import { useAppSelector } from '../../../../../store/hooks';
 
