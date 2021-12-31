@@ -1,27 +1,25 @@
 {
   "compilerOptions": {
-    "target": "ES2018",
-    "module": "CommonJS",
+    "target": "es2021",
+    "module": "commonjs",
     "lib": ["dom", "esnext"],
     "declaration": true,
     "declarationMap": true,
-    "noEmit": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "strict": true,
     "pretty": true,
     "sourceMap": true,
     "baseUrl": "./src",
-    /* Additional Checks */
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    /* Module Resolution Options */
     "moduleResolution": "node",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "allowJs": true
+    "allowJs": true,
+    "outDir": "release/app/dist"
   },
-  "exclude": ["test", "build/release", "build/app/dist", ".erb/dll"]
+  "exclude": ["test", "release/build", "release/app/dist", ".erb/dll"]
 }

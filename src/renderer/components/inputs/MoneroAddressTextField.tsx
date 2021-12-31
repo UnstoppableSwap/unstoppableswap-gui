@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { TextField } from '@material-ui/core';
 import { TextFieldProps } from '@material-ui/core/TextField/TextField';
 import { isXmrAddressValid } from '../../../utils/currencyUtils';
@@ -17,19 +17,13 @@ export default function MoneroAddressTextField({
   helperText: string;
 } & TextFieldProps) {
   const placeholder = isTestnet() ? '59McWTPGc745...' : '888tNkZrPN6J...';
-
-  function getAddressError() {
-    if (isXmrAddressValid(address, isTestnet())) {
-      return null;
-    }
-    return 'Not a valid monero address';
-  }
-
-  const errorText = getAddressError();
+  const errorText = isXmrAddressValid(address, isTestnet())
+    ? null
+    : 'Not a valid monero address';
 
   useEffect(() => {
     onAddressValidityChange(!errorText);
-  }, [address, getAddressError, onAddressValidityChange]);
+  }, [address, onAddressValidityChange, errorText]);
 
   return (
     <TextField

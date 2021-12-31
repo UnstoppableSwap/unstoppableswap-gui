@@ -1,5 +1,4 @@
 import { Box, DialogContentText } from '@material-ui/core';
-import React from 'react';
 import { SwapStateXmrRedeemInMempool } from '../../../../../models/storeModel';
 import { isTestnet } from '../../../../../store/config';
 import {

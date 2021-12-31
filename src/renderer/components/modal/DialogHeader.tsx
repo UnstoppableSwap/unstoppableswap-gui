@@ -1,4 +1,3 @@
-import React from 'react';
 import { DialogTitle, makeStyles, Typography } from '@material-ui/core';
 
 const useStyles = makeStyles({

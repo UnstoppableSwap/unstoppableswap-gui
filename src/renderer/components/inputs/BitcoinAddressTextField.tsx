@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { TextField } from '@material-ui/core';
 import { TextFieldProps } from '@material-ui/core/TextField/TextField';
 import { isBtcAddressValid } from '../../../utils/currencyUtils';
@@ -31,7 +31,7 @@ export default function BitcoinAddressTextField({
 
   useEffect(() => {
     onAddressValidityChange(!errorText);
-  }, [address]);
+  }, [address, errorText, onAddressValidityChange]);
 
   return (
     <TextField

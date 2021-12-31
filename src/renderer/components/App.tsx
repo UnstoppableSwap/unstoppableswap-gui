@@ -1,13 +1,7 @@
-import React from 'react';
 import { Box, makeStyles, CssBaseline } from '@material-ui/core';
 import { createTheme, ThemeProvider } from '@material-ui/core/styles';
 import { indigo } from '@material-ui/core/colors';
-import {
-  MemoryRouter as Router,
-  Switch,
-  Route,
-  Redirect,
-} from 'react-router-dom';
+import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import Navigation, { drawerWidth } from './Navigation';
 import HistoryPage from './pages/history/HistoryPage';
 import SwapPage from './pages/swap/SwapPage';
@@ -36,19 +30,14 @@ const theme = createTheme({
 function InnerContent() {
   const classes = useStyles();
 
-  const routes = {
-    '/swap': SwapPage,
-    '/history': HistoryPage,
-    '/wallet': WalletPage,
-  };
-
   return (
     <Box className={classes.innerContent}>
-      <Switch>
-        {Object.entries(routes).map(([route, page]) => (
-          <Route key={route} path={route} component={page} />
-        ))}
-      </Switch>
+      <Routes>
+        <Route path="/swap" element={<SwapPage />} />
+        <Route path="/history" element={<HistoryPage />} />
+        <Route path="/wallet" element={<WalletPage />} />
+        <Route path="/" element={<SwapPage />} />
+      </Routes>
     </Box>
   );
 }
@@ -60,7 +49,6 @@ export default function App() {
       <Router>
         <Navigation />
         <InnerContent />
-        <Redirect exact from="/" to="/swap" />
       </Router>
       <DownloaderDialog />
     </ThemeProvider>

@@ -1,5 +1,4 @@
 import { Step, StepLabel, Stepper } from '@material-ui/core';
-import React from 'react';
 import { useAppSelector } from '../../../../store/hooks';
 import {
   isWithdrawStateInitiated,

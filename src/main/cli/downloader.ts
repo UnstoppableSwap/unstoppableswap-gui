@@ -1,7 +1,7 @@
-import path from 'path';
 import { promises as fs } from 'fs';
 import download from 'download';
 import { BinaryInfo } from 'models/downloaderModel';
+import path from 'path';
 import { checkFileExists, getFileSha256Sum } from '../../utils/fileUtils';
 import { store } from '../../store/store';
 import {
@@ -23,7 +23,7 @@ function getSwapBinaryInfo(): BinaryInfo {
       return {
         url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/0.10.2/swap_0.10.2_Linux_x86_64.tar',
         sha256sum:
-          '3d3d701fd17a6c335bd80938204528c0c5a930041751fb66ff47a71893f1e5f1',
+          '72e6025680ce43d01d03270670d06d53514319d2b0a4e616209ef4b7da6f4664',
         name: 'swap',
       };
     default:
