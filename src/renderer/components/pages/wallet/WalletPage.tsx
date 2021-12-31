@@ -1,5 +1,4 @@
 import { Typography } from '@material-ui/core';
-import React from 'react';
 import WithdrawWidget from './WithdrawWidget';
 
 export default function WalletPage() {

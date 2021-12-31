@@ -8,7 +8,6 @@ import {
   TableContainer,
   TableRow,
 } from '@material-ui/core';
-import React from 'react';
 import { MergedDbState } from '../../../../models/databaseModel';
 import {
   getSwapBtcAmount,

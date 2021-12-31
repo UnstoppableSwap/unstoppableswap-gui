@@ -1,5 +1,5 @@
 import { Box, Button, makeStyles, Paper, Typography } from '@material-ui/core';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import SendIcon from '@material-ui/icons/Send';
 import { useAppSelector } from '../../../../store/hooks';
 import BitcoinIcon from '../../icons/BitcoinIcon';

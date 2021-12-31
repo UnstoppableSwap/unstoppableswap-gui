@@ -8,26 +8,27 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
+        os: [macos-11, windows-latest, ubuntu-latest]
 
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v1
 
-      - name: Install Node.js, NPM and Yarn
-        uses: actions/setup-node@v1
+      - name: Install Node.js and NPM
+        uses: actions/setup-node@v2
         with:
           node-version: 16
+          cache: npm
 
-      - name: yarn install
+      - name: npm install
         run: |
-          yarn install --frozen-lockfile --network-timeout 300000
+          npm install
 
-      - name: yarn test
+      - name: npm test
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          yarn package
-          yarn lint
-          yarn tsc
-          yarn test
+          npm run package
+          npm run lint
+          npm exec tsc
+          npm test

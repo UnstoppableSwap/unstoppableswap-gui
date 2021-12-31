@@ -1,5 +1,4 @@
 import { Typography } from '@material-ui/core';
-import React from 'react';
 import HistoryTable from './HistoryTable';
 import SwapDialog from '../../modal/swap/SwapDialog';
 import { useAppSelector } from '../../../../store/hooks';

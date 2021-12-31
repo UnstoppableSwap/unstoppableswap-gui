@@ -6,7 +6,7 @@ import {
   Box,
 } from '@material-ui/core';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import ProviderInfo from './ProviderInfo';
 import ProviderSelectDialog from './ProviderSelectDialog';
 import ProviderSubmitDialog from './ProviderSubmitDialog';

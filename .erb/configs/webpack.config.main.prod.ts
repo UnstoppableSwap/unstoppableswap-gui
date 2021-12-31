@@ -8,7 +8,7 @@ import { merge } from 'webpack-merge';
 import TerserPlugin from 'terser-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import baseConfig from './webpack.config.base';
-import webpackPaths from './webpack.paths.js';
+import webpackPaths from './webpack.paths';
 import checkNodeEnv from '../scripts/check-node-env';
 import deleteSourceMaps from '../scripts/delete-source-maps';
 
@@ -22,7 +22,7 @@ const devtoolsConfig =
       }
     : {};
 
-export default merge(baseConfig, {
+const configuration: webpack.Configuration = {
   ...devtoolsConfig,
 
   mode: 'production',
@@ -48,9 +48,7 @@ export default merge(baseConfig, {
 
   plugins: [
     new BundleAnalyzerPlugin({
-      analyzerMode:
-        process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',
-      openAnalyzer: process.env.OPEN_ANALYZER === 'true',
+      analyzerMode: process.env.ANALYZE === 'true' ? 'server' : 'disabled',
     }),
 
     /**
@@ -78,4 +76,6 @@ export default merge(baseConfig, {
     __dirname: false,
     __filename: false,
   },
-});
+};
+
+export default merge(baseConfig, configuration);
