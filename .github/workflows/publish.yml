@@ -45,4 +45,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           EP_GH_IGNORE_TIME: true
         run: |
-          yarn postinstall && yarn build && yarn electron-builder --publish always --linux --win --mac
+          yarn postinstall && yarn build && yarn electron-builder --publish always --linux --win --armv7l --ia32 --x64 --arm64
