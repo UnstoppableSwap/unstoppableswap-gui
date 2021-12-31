@@ -9,9 +9,11 @@ import CliStopAlert from '../CliStopAlert';
 import { isWithdrawState } from '../../../../models/storeModel';
 
 function InnerContent({ onCancel }: { onCancel: () => void }) {
-  const withdraw = useAppSelector((state) => state.withdraw.state);
+  const isRunning = useAppSelector((state) =>
+    isWithdrawState(state.withdraw.state)
+  );
 
-  if (isWithdrawState(withdraw)) {
+  if (isRunning) {
     return <RunningPage onCancel={onCancel} />;
   }
   return <AddressInputPage onCancel={onCancel} />;
@@ -40,7 +42,7 @@ export default function WithdrawDialog({
   }
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={onCancel} maxWidth="sm" fullWidth>
       <DialogHeader title="Withdraw Bitcoin" />
       <InnerContent onCancel={onCancel} />
       <CliStopAlert

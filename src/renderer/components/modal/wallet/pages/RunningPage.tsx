@@ -1,6 +1,5 @@
 import {
   Button,
-  CircularProgress,
   DialogActions,
   DialogContent,
   DialogContentText,
@@ -17,14 +16,14 @@ import {
   WithdrawStateProcessExited,
   WithdrawStateWithdrawTxInMempool,
 } from '../../../../../models/storeModel';
+import CircularProgressWithSubtitle from '../../swap/CircularProgressWithSubtitle';
+import TransactionInfoBox from '../../swap/TransactionInfoBox';
+import { getBitcoinTxExplorerUrl } from '../../../../../utils/currencyUtils';
+import { isTestnet } from '../../../../../store/config';
+import BitcoinIcon from '../../../icons/BitcoinIcon';
 
 function InitiatedPageContent() {
-  return (
-    <DialogContentText>
-      <Typography>Withdrawing Bitcoin...</Typography>
-      <CircularProgress />
-    </DialogContentText>
-  );
+  return <CircularProgressWithSubtitle description="Withdrawing Bitcoin" />;
 }
 
 function BtcTxInMempoolPageContent({
@@ -32,10 +31,23 @@ function BtcTxInMempoolPageContent({
 }: {
   state: WithdrawStateWithdrawTxInMempool;
 }) {
+  const explorerUrl = getBitcoinTxExplorerUrl(state.txid, isTestnet());
+
   return (
-    <DialogContentText>
-      <Typography>Bitcoin has been withdrawn! Txid: {state.txid}</Typography>
-    </DialogContentText>
+    <>
+      <DialogContentText>
+        All funds of the internal Bitcoin wallet have been transferred to your
+        withdraw address.
+      </DialogContentText>
+      <TransactionInfoBox
+        txId={state.txid}
+        explorerUrl={explorerUrl}
+        icon={<BitcoinIcon />}
+        loading={false}
+        title="Bitcoin Withdraw Transaction"
+        additionalText={null}
+      />
+    </>
   );
 }
 
