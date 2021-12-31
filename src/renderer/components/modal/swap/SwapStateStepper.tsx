@@ -4,7 +4,6 @@ import {
   SwapState,
   SwapStateType,
 } from 'models/storeModel';
-import React from 'react';
 import { useAppSelector } from '../../../../store/hooks';
 
 function getActiveStep(swapState: SwapState | null) {
