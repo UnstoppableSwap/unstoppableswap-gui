@@ -1,7 +1,6 @@
 import { CircularProgress, IconButton } from '@material-ui/core';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import { ipcRenderer } from 'electron';
-import React from 'react';
 import { useAppSelector } from '../../../../store/hooks';
 
 export default function WalletRefreshButton() {

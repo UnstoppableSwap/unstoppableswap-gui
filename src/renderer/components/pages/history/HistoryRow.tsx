@@ -6,7 +6,7 @@ import {
   TableCell,
   TableRow,
 } from '@material-ui/core';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';

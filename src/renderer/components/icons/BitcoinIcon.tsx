@@ -1,6 +1,5 @@
 import { SvgIcon } from '@material-ui/core';
 import { SvgIconProps } from '@material-ui/core/SvgIcon/SvgIcon';
-import React from 'react';
 
 export default function BitcoinIcon(props: SvgIconProps) {
   return (

@@ -6,7 +6,6 @@ import {
   Paper,
   Typography,
 } from '@material-ui/core';
-import React from 'react';
 import { useAppSelector } from '../../../../../store/hooks';
 import WithdrawStepper from '../WithdrawStepper';
 import {

@@ -1,0 +1,17 @@
+{
+  "name": "unstoppableswap-gui",
+  "version": "0.1.2",
+  "description": "Graphical User Interface for XMR<>BTC Atomic Swaps",
+  "main": "./dist/main/main.js",
+  "scripts": {
+    "electron-rebuild": "node -r ts-node/register ../../.erb/scripts/electron-rebuild.js",
+    "link-modules": "node -r ts-node/register ../../.erb/scripts/link-modules.ts",
+    "postinstall": "npm run electron-rebuild && npm run link-modules"
+  },
+  "dependencies": {
+    "better-sqlite3": "^7.4.6",
+    "download": "^8.0.0",
+    "ps-list": "^7.2.0"
+  },
+  "license": "MIT"
+}

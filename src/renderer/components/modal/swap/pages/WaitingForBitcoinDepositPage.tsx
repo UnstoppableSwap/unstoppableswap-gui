@@ -6,7 +6,6 @@ import {
   Paper,
   Typography,
 } from '@material-ui/core';
-import React from 'react';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 import { clipboard } from 'electron';
 import BitcoinIcon from 'renderer/components/icons/BitcoinIcon';
