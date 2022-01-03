@@ -16,7 +16,10 @@ export default function XmrLockTxInMempoolPage({
     state.aliceXmrLockTxId,
     isTestnet()
   );
-  const additionalText = `Confirmations: ${state.aliceXmrLockTxConfirmations}/10`;
+  const estimatedTimeRemainingMin =
+    (state.aliceXmrLockTxNeededConfirmations -
+      state.aliceXmrLockTxSeenConfirmations) *
+    2;
 
   return (
     <Box>
@@ -29,7 +32,15 @@ export default function XmrLockTxInMempoolPage({
         title="Monero Lock Transaction"
         txId={state.aliceXmrLockTxId}
         explorerUrl={explorerUrl}
-        additionalText={additionalText}
+        additionalText={
+          <>
+            Confirmations: {state.aliceXmrLockTxSeenConfirmations}/
+            {state.aliceXmrLockTxNeededConfirmations}
+            <br />
+            Approximately {estimatedTimeRemainingMin}min remaining until the
+            transaction is fully confirmed
+          </>
+        }
         icon={<MoneroIcon />}
         loading
       />

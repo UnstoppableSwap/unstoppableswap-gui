@@ -208,7 +208,8 @@ test('should infer correct states from happy-path logs', () => {
       type: SwapStateType.XMR_LOCK_TX_IN_MEMPOOL,
       aliceXmrLockTxId:
         'cb46ad562ffc868a7c2d8c72cecd9090cca7b6f102199db6a6cbef65afeb09d1',
-      aliceXmrLockTxConfirmations: 0,
+      aliceXmrLockTxNeededConfirmations: 10,
+      aliceXmrLockTxSeenConfirmations: 0,
     },
     provider: exampleProvider,
     stdOut: '',
@@ -234,7 +235,8 @@ test('should infer correct states from happy-path logs', () => {
       type: SwapStateType.XMR_LOCK_TX_IN_MEMPOOL,
       aliceXmrLockTxId:
         'cb46ad562ffc868a7c2d8c72cecd9090cca7b6f102199db6a6cbef65afeb09d1',
-      aliceXmrLockTxConfirmations: 1,
+      aliceXmrLockTxNeededConfirmations: 10,
+      aliceXmrLockTxSeenConfirmations: 1,
     },
     provider: exampleProvider,
     stdOut: '',
