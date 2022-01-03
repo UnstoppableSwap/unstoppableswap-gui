@@ -4,7 +4,7 @@ Graphical User Interface (GUI) For Trustless Cross-Chain Atomic Swaps for XMR<>B
 
 ## Installation
 
-Use [yarn](https://yarnpkg.com) to install all dependencies.
+Use npm to install all dependencies.
 
 ```bash
 git clone --branch main https://github.com/binarybaron/unstoppableswap-gui
