@@ -2,6 +2,8 @@
 
 Graphical User Interface (GUI) For Trustless Cross-Chain Atomic Swaps for XMR<>BTC
 
+⚠️ THIS IS UNFINISHED, EXPERIMENTAL SOFTWARE. YOU WILL LOSE YOUR MONEY IF YOU TRY IT ON MAINNET ⚠️
+
 ## Installation
 
 Use npm to install all dependencies.
