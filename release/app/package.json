@@ -8,6 +8,10 @@
     "link-modules": "node -r ts-node/register ../../.erb/scripts/link-modules.ts",
     "postinstall": "npm run electron-rebuild && npm run link-modules"
   },
+  "author": {
+    "name": "binarybaron",
+    "url": "https://unstoppableswap.net"
+  },
   "dependencies": {
     "better-sqlite3": "^7.4.6",
     "download": "^8.0.0",
