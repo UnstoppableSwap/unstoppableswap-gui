@@ -92,7 +92,7 @@
       "provider": "github",
       "owner": "UnstoppableSwap",
       "repo": "unstoppableswap-gui",
-      "releaseType": "draft"
+      "releaseType": "prerelease"
     }
   },
   "repository": {
