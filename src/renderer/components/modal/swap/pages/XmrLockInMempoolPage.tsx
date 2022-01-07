@@ -36,9 +36,13 @@ export default function XmrLockTxInMempoolPage({
           <>
             Confirmations: {state.aliceXmrLockTxSeenConfirmations}/
             {state.aliceXmrLockTxNeededConfirmations}
-            <br />
-            Approximately {estimatedTimeRemainingMin}min remaining until the
-            transaction is fully confirmed
+            {estimatedTimeRemainingMin <= 0 ? (
+              <>
+                <br />
+                Approximately {estimatedTimeRemainingMin}min remaining until the
+                transaction is fully confirmed
+              </>
+            ) : null}
           </>
         }
         icon={<MoneroIcon />}
