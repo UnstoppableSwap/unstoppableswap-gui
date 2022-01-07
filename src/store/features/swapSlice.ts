@@ -146,15 +146,20 @@ export const swapSlice = createSlice({
         const nextState: SwapStateXmrLockInMempool = {
           type: SwapStateType.XMR_LOCK_TX_IN_MEMPOOL,
           aliceXmrLockTxId: log.fields.txid,
-          aliceXmrLockTxConfirmations: 0,
+          aliceXmrLockTxSeenConfirmations: 0,
+          aliceXmrLockTxNeededConfirmations: 10,
         };
 
         slice.state = nextState;
       } else if (isCliLogReceivedXmrLockTxConfirmation(log)) {
         if (isSwapStateXmrLockInMempool(slice.state)) {
           if (slice.state.aliceXmrLockTxId === log.fields.txid) {
-            slice.state.aliceXmrLockTxConfirmations = Number.parseInt(
+            slice.state.aliceXmrLockTxSeenConfirmations = Number.parseInt(
               log.fields.seen_confirmations,
+              10
+            );
+            slice.state.aliceXmrLockTxNeededConfirmations = Number.parseInt(
+              log.fields.needed_confirmations,
               10
             );
           }

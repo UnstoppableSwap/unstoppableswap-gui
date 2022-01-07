@@ -5,16 +5,14 @@ import {
   Paper,
   Typography,
   TextField,
-  LinearProgress,
   Fab,
-  Button,
 } from '@material-ui/core';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
+import { Skeleton } from '@material-ui/lab';
 import ProviderSelect from '../../modal/provider/ProviderSelect';
 import { satsToBtc } from '../../../../utils/currencyUtils';
-import ProviderSubmitDialog from '../../modal/provider/ProviderSubmitDialog';
 import SwapDialog from '../../modal/swap/SwapDialog';
 import { useAppSelector } from '../../../../store/hooks';
 import { ExtendedProvider } from '../../../../models/storeModel';
@@ -65,7 +63,7 @@ function HasProviderSwapWidget({
   const classes = useStyles();
 
   const forceShowDialog = useAppSelector((state) => state.swap.state !== null);
-  const [showDialog, setShowDialog] = useState(false);
+  const [optionalShowDialog, setOptionalShowDialog] = useState(false);
   const [btcFieldValue, setBtcFieldValue] = useState('0.02');
   const [xmrFieldValue, setXmrFieldValue] = useState(1);
 
@@ -103,9 +101,7 @@ function HasProviderSwapWidget({
   }
 
   function handleGuideDialogOpen() {
-    if (!getBtcFieldError()) {
-      setShowDialog(true);
-    }
+    setOptionalShowDialog(true);
   }
 
   useEffect(updateXmrValue, [btcFieldValue, selectedProvider]);
@@ -152,8 +148,8 @@ function HasProviderSwapWidget({
         Swap
       </Fab>
       <SwapDialog
-        open={showDialog || forceShowDialog}
-        onClose={() => setShowDialog(false)}
+        open={optionalShowDialog || forceShowDialog}
+        onClose={() => setOptionalShowDialog(false)}
       />
     </Box>
   );
@@ -161,24 +157,25 @@ function HasProviderSwapWidget({
 
 function HasNoProviderSwapWidget() {
   const classes = useStyles();
-
-  const [showSubmitProviderDialog, setShowSubmitProviderDialog] =
-    useState(false);
+  const showDialog = useAppSelector((state) => state.swap.state !== null);
 
   return (
     // 'elevation' prop can't be passed down (type def issue)
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    <Box className={classes.inner} component={Paper} elevation={15}>
+    <Box className={classes.inner} component={Paper} elevation={5}>
       <Title />
-      <LinearProgress />
-      <Button onClick={() => setShowSubmitProviderDialog(true)} size="small">
-        Submit swap provider
-      </Button>
-      <ProviderSubmitDialog
-        open={showSubmitProviderDialog}
-        onClose={() => setShowSubmitProviderDialog(false)}
-      />
+      <Skeleton variant="rect" width="100%" height={56} />
+      <Box className={classes.swapIconOuter}>
+        <ArrowDownwardIcon fontSize="small" />
+      </Box>
+      <Skeleton variant="rect" width="100%" height={56} />
+      <Skeleton variant="rect" width="100%" height={230} />
+      <Fab variant="extended" color="primary" disabled>
+        <SwapHorizIcon className={classes.swapIcon} />
+        Swap
+      </Fab>
+      <SwapDialog open={showDialog} onClose={() => {}} />
     </Box>
   );
 }

@@ -108,7 +108,8 @@ export function isSwapStateBtcLockInMempool(
 export interface SwapStateXmrLockInMempool extends SwapState {
   type: SwapStateType.XMR_LOCK_TX_IN_MEMPOOL;
   aliceXmrLockTxId: string;
-  aliceXmrLockTxConfirmations: number;
+  aliceXmrLockTxSeenConfirmations: number;
+  aliceXmrLockTxNeededConfirmations: number; // Most likely always 10
 }
 
 export function isSwapStateXmrLockInMempool(
