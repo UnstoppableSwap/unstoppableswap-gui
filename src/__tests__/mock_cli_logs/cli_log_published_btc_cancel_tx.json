@@ -1,0 +1,9 @@
+{
+    "timestamp":"2021-09-05 03:41:07",
+    "level":"INFO",
+    "fields":{
+        "message":"Published Bitcoin transaction",
+        "txid":"4b4f379f34e88084d0443886942d4f059a1ae1cc91102adae5654f4b3ea980f7",
+        "kind":"cancel"
+    }
+}

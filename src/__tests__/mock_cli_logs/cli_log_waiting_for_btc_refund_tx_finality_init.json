@@ -1,0 +1,9 @@
+{
+    "timestamp":"2021-09-05 03:41:07",
+    "level":"INFO",
+    "fields":{
+        "message":"Waiting for Bitcoin transaction finality",
+        "txid":"4dfb63a139d5f00d31b55beeabcf229647f18d6f68c44e09d7750ee185a6b1f2",
+        "required_confirmation":"2"
+    }
+}
