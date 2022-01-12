@@ -124,6 +124,32 @@ export function isCliLogReceivedXmrLockTxConfirmation(
   return log.fields.message === 'Received new confirmation for Monero lock tx';
 }
 
+export interface CliLogAdvancingState extends CliLog {
+  fields: {
+    message: 'Advancing state';
+    state:
+      | 'quote has been requested'
+      | 'execution setup done'
+      | 'btc is locked'
+      | 'XMR lock transaction transfer proof received'
+      | 'xmr is locked'
+      | 'encrypted signature is sent'
+      | 'btc is redeemed'
+      | 'cancel timelock is expired'
+      | 'btc is cancelled'
+      | 'btc is refunded'
+      | 'xmr is redeemed'
+      | 'btc is punished'
+      | 'safely aborted';
+  };
+}
+
+export function isCliLogAdvancingState(
+  log: CliLog
+): log is CliLogAdvancingState {
+  return log.fields.message === 'Advancing state';
+}
+
 export interface CliLogRedeemedXmr extends CliLog {
   fields: {
     message: 'Successfully transferred XMR to wallet';
