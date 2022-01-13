@@ -1,4 +1,3 @@
-import path from 'path';
 import Database, { Database as DatabaseT } from 'better-sqlite3';
 import fs from 'fs';
 import { merge } from 'lodash';
@@ -12,22 +11,7 @@ import { store } from '../../store/store';
 import { databaseStateChanged } from '../../store/features/historySlice';
 import { Provider } from '../../models/storeModel';
 import { isTestnet } from '../../store/config';
-import { getCliDataDir } from './dirs';
-
-async function getSqliteDbFiles() {
-  const cliDataDir = await getCliDataDir();
-
-  const primary = path.join(cliDataDir, 'sqlite');
-  const shm = path.join(cliDataDir, 'sqlite-shm');
-  const wal = path.join(cliDataDir, 'sqlite-wal');
-
-  return {
-    folder: cliDataDir,
-    primaryFile: primary,
-    shmFile: shm,
-    walFile: wal,
-  };
-}
+import { getSqliteDbFiles } from './dirs';
 
 function parseStateString(str: string): DbState {
   return JSON.parse(str) as DbState;
@@ -35,7 +19,12 @@ function parseStateString(str: string): DbState {
 
 function getAllStatesForSwap(db: DatabaseT, swapId: string): DbState[] {
   return db
-    .prepare('SELECT state FROM swap_states WHERE swap_id = ?;')
+    .prepare(
+      `SELECT state
+    FROM swap_states
+    WHERE swap_id = ?
+    ORDER BY id ASC;`
+    )
     .all([swapId])
     .map(({ state }) => parseStateString(state));
 }
@@ -94,18 +83,21 @@ function getMergedStateForEachSwap(db: DatabaseT): MergedDbState[] {
   return getDistinctSwapIds(db)
     .map((swapId) => {
       const states = getAllStatesForSwap(db, swapId);
-      const latestState = getLatestStateForSwap(db, swapId);
-      const latestStateType = getTypeOfDbState(latestState);
-      const mergedState = merge({}, ...states);
-      const provider = getProviderForSwap(db, swapId);
+      const latestState = states.at(-1);
 
-      if (isExecutionSetupDoneDbState(mergedState)) {
-        return {
-          swapId,
-          type: latestStateType,
-          state: mergedState,
-          provider,
-        };
+      if (latestState) {
+        const latestStateType = getTypeOfDbState(latestState);
+        const mergedState = merge({}, ...states);
+        const provider = getProviderForSwap(db, swapId);
+
+        if (isExecutionSetupDoneDbState(mergedState)) {
+          return {
+            swapId,
+            type: latestStateType,
+            state: mergedState,
+            provider,
+          };
+        }
       }
       console.error(
         `There is no execution setup done state saved for swap ${swapId}. Removing from store, database might be corrupted!`
@@ -115,21 +107,28 @@ function getMergedStateForEachSwap(db: DatabaseT): MergedDbState[] {
     .filter((s): s is MergedDbState => s !== null);
 }
 
-export default async function watchDatabase() {
-  const { primaryFile, walFile, shmFile } = await getSqliteDbFiles();
+let database: DatabaseT | null = null;
 
-  function readFromDatabaseAndUpdateState() {
-    try {
-      const db = new Database(primaryFile, {
+export async function readFromDatabaseAndUpdateState() {
+  console.time('read database');
+  try {
+    if (!database) {
+      const { primaryFile } = await getSqliteDbFiles();
+      database = new Database(primaryFile, {
         readonly: true,
       });
-
-      const states = getMergedStateForEachSwap(db);
-      store.dispatch(databaseStateChanged(states));
-    } catch (e) {
-      console.error(`Failed to read database Error: ${e}`);
     }
+
+    const states = getMergedStateForEachSwap(database);
+    store.dispatch(databaseStateChanged(states));
+  } catch (e) {
+    console.error(`Failed to read database Error: ${e}`);
   }
+  console.timeEnd('read database');
+}
+
+export default async function watchDatabase() {
+  const { primaryFile, walFile, shmFile } = await getSqliteDbFiles();
 
   function watchFiles() {
     [primaryFile, walFile, shmFile].forEach((file) => {
@@ -138,6 +137,6 @@ export default async function watchDatabase() {
     });
   }
 
-  readFromDatabaseAndUpdateState();
+  await readFromDatabaseAndUpdateState();
   watchFiles();
 }

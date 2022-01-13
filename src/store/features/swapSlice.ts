@@ -6,13 +6,17 @@ import {
   isSwapStateXmrLockInMempool,
   Provider,
   SwapSlice,
+  SwapStateBtcCancelled,
   SwapStateBtcLockInMempool,
+  SwapStateBtcRedemeed,
+  SwapStateBtcRefunded,
   SwapStateInitiated,
   SwapStateProcessExited,
   SwapStateReceivedQuote,
   SwapStateStarted,
   SwapStateType,
   SwapStateWaitingForBtcDeposit,
+  SwapStateXmrLocked,
   SwapStateXmrLockInMempool,
   SwapStateXmrRedeemInMempool,
 } from '../../models/storeModel';
@@ -27,6 +31,7 @@ import {
   isCliLogStartedSwap,
   isCliLogWaitingForBtcDeposit,
   CliLog,
+  isCliLogAdvancingState,
 } from '../../models/cliModel';
 
 const initialState: SwapSlice = {
@@ -126,6 +131,20 @@ export const swapSlice = createSlice({
           };
 
           slice.state = nextState;
+        } else if (log.fields.kind === 'cancel') {
+          const nextState: SwapStateBtcCancelled = {
+            type: SwapStateType.BTC_CANCELLED,
+            btcCancelTxId: log.fields.txid,
+          };
+
+          slice.state = nextState;
+        } else if (log.fields.kind === 'refund') {
+          const nextState: SwapStateBtcRefunded = {
+            type: SwapStateType.BTC_REFUNDED,
+            bobBtcRefundTxId: log.fields.txid,
+          };
+
+          slice.state = nextState;
         }
       } else if (isCliLogBtcTxStatusChanged(log)) {
         if (isSwapStateBtcLockInMempool(slice.state)) {
@@ -158,6 +177,20 @@ export const swapSlice = createSlice({
               10
             );
           }
+        }
+      } else if (isCliLogAdvancingState(log)) {
+        if (log.fields.state === 'xmr is locked') {
+          const nextState: SwapStateXmrLocked = {
+            type: SwapStateType.XMR_LOCKED,
+          };
+
+          slice.state = nextState;
+        } else if (log.fields.state === 'btc is redeemed') {
+          const nextState: SwapStateBtcRedemeed = {
+            type: SwapStateType.BTC_REDEEMED,
+          };
+
+          slice.state = nextState;
         }
       } else if (isCliLogRedeemedXmr(log)) {
         const nextState: SwapStateXmrRedeemInMempool = {

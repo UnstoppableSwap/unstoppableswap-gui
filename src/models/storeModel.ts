@@ -37,8 +37,12 @@ export enum SwapStateType {
   STARTED = 'started',
   BTC_LOCK_TX_IN_MEMPOOL = 'btc lock tx is in mempool',
   XMR_LOCK_TX_IN_MEMPOOL = 'xmr lock tx is in mempool',
+  XMR_LOCKED = 'xmr is locked',
+  BTC_REDEEMED = 'btc redeemed',
   XMR_REDEEM_IN_MEMPOOL = 'xmr redeem tx is in mempool',
   PROCESS_EXITED = 'process exited',
+  BTC_CANCELLED = 'btc cancelled',
+  BTC_REFUNDED = 'btc refunded',
 }
 
 export function isSwapState(state?: SwapState | null): state is SwapState {
@@ -117,6 +121,26 @@ export function isSwapStateXmrLockInMempool(
   return state?.type === SwapStateType.XMR_LOCK_TX_IN_MEMPOOL;
 }
 
+export interface SwapStateXmrLocked extends SwapState {
+  type: SwapStateType.XMR_LOCKED;
+}
+
+export function isSwapStateXmrLocked(
+  state?: SwapState | null
+): state is SwapStateXmrLocked {
+  return state?.type === SwapStateType.XMR_LOCKED;
+}
+
+export interface SwapStateBtcRedemeed extends SwapState {
+  type: SwapStateType.BTC_REDEEMED;
+}
+
+export function isSwapStateBtcRedemeed(
+  state?: SwapState | null
+): state is SwapStateBtcRedemeed {
+  return state?.type === SwapStateType.BTC_REDEEMED;
+}
+
 export interface SwapStateXmrRedeemInMempool extends SwapState {
   type: SwapStateType.XMR_REDEEM_IN_MEMPOOL;
   bobXmrRedeemTxId: string;
@@ -127,6 +151,22 @@ export function isSwapStateXmrRedeemInMempool(
   state?: SwapState | null
 ): state is SwapStateXmrRedeemInMempool {
   return state?.type === SwapStateType.XMR_REDEEM_IN_MEMPOOL;
+}
+
+export interface SwapStateBtcCancelled extends SwapState {
+  type: SwapStateType.BTC_CANCELLED;
+  btcCancelTxId: string;
+}
+
+export function isSwapStateBtcCancelled(
+  state?: SwapState | null
+): state is SwapStateBtcCancelled {
+  return state?.type === SwapStateType.BTC_CANCELLED;
+}
+
+export interface SwapStateBtcRefunded extends SwapState {
+  type: SwapStateType.BTC_REFUNDED;
+  bobBtcRefundTxId: string;
 }
 
 export interface SwapStateProcessExited extends SwapState {

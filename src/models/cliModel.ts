@@ -72,7 +72,7 @@ export interface CliLogPublishedBtcTx extends CliLog {
   fields: {
     message: 'Published Bitcoin transaction';
     txid: string;
-    kind: 'lock' | 'cancel' | 'withdraw';
+    kind: 'lock' | 'cancel' | 'withdraw' | 'refund';
   };
 }
 

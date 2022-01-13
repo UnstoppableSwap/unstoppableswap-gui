@@ -1,6 +1,12 @@
 import { AnyAction } from '@reduxjs/toolkit';
-import { Provider, SwapSlice, SwapStateType } from '../../models/storeModel';
 import {
+  Provider,
+  SwapSlice,
+  SwapStateBtcLockInMempool,
+  SwapStateType,
+} from '../../models/storeModel';
+import {
+  CliLog,
   CliLogAliceLockedXmr,
   CliLogBtcTxStatusChanged,
   CliLogPublishedBtcTx,
@@ -26,7 +32,12 @@ const mPublishedBtcLockTxLog: CliLogPublishedBtcTx = require('../mock_cli_logs/c
 const mBobBtcTxLockStatusChanged: CliLogBtcTxStatusChanged = require('../mock_cli_logs/cli_log_bitcoin_transaction_status_changed.json');
 const mAliceLockedXmrLog: CliLogAliceLockedXmr = require('../mock_cli_logs/cli_log_alice_locked_monero.json');
 const mAliceXmrLockTxConfirmationUpdateLog: CliLogReceivedXmrLockTxConfirmation = require('../mock_cli_logs/cli_log_received_new_conf_for_monero_lock_tx.json');
+const mAdvancingStateXmrIsLockedLog: CliLog = require('../mock_cli_logs/cli_log_advancing_state_xmr_is_locked.json');
+const mAdvancingStateBtcRedeemedLog: CliLog = require('../mock_cli_logs/cli_log_advancing_state_btc_redeemed.json');
 const mXmrRedeemSuccessfulLog: CliLogRedeemedXmr = require('../mock_cli_logs/cli_log_redeemed_xmr.json');
+
+const mPublishedBtcCancelTxLog: CliLog = require('../mock_cli_logs/cli_log_published_btc_cancel_tx.json');
+const mPublishedBtcRefundTxLog: CliLog = require('../mock_cli_logs/cli_log_published_btc_refund_tx.json');
 
 const initialSwapState = {
   state: null,
@@ -242,6 +253,55 @@ test('should infer correct states from happy-path logs', () => {
     swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
   });
 
+  swap = reducer(swap, swapAddLog(mAdvancingStateXmrIsLockedLog));
+
+  expect(swap).toStrictEqual({
+    processRunning: true,
+    logs: [
+      mReceivedQuoteLog,
+      mWaitingForBtcDepositLog,
+      mReceivedNewBtcLog,
+      mStartedCliLog,
+      mPublishedBtcLockTxLog,
+      mBobBtcTxLockStatusChanged,
+      mAliceLockedXmrLog,
+      mAliceXmrLockTxConfirmationUpdateLog,
+      mAdvancingStateXmrIsLockedLog,
+    ],
+    state: {
+      type: SwapStateType.XMR_LOCKED,
+    },
+    provider: exampleProvider,
+    stdOut: '',
+    resume: false,
+    swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
+  });
+
+  swap = reducer(swap, swapAddLog(mAdvancingStateBtcRedeemedLog));
+
+  expect(swap).toStrictEqual({
+    processRunning: true,
+    logs: [
+      mReceivedQuoteLog,
+      mWaitingForBtcDepositLog,
+      mReceivedNewBtcLog,
+      mStartedCliLog,
+      mPublishedBtcLockTxLog,
+      mBobBtcTxLockStatusChanged,
+      mAliceLockedXmrLog,
+      mAliceXmrLockTxConfirmationUpdateLog,
+      mAdvancingStateXmrIsLockedLog,
+      mAdvancingStateBtcRedeemedLog,
+    ],
+    state: {
+      type: SwapStateType.BTC_REDEEMED,
+    },
+    provider: exampleProvider,
+    stdOut: '',
+    resume: false,
+    swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
+  });
+
   swap = reducer(swap, swapAddLog(mXmrRedeemSuccessfulLog));
 
   expect(swap).toStrictEqual({
@@ -255,6 +315,8 @@ test('should infer correct states from happy-path logs', () => {
       mBobBtcTxLockStatusChanged,
       mAliceLockedXmrLog,
       mAliceXmrLockTxConfirmationUpdateLog,
+      mAdvancingStateXmrIsLockedLog,
+      mAdvancingStateBtcRedeemedLog,
       mXmrRedeemSuccessfulLog,
     ],
     state: {
@@ -289,6 +351,8 @@ test('should infer correct states from happy-path logs', () => {
       mBobBtcTxLockStatusChanged,
       mAliceLockedXmrLog,
       mAliceXmrLockTxConfirmationUpdateLog,
+      mAdvancingStateXmrIsLockedLog,
+      mAdvancingStateBtcRedeemedLog,
       mXmrRedeemSuccessfulLog,
     ],
     state: {
@@ -302,6 +366,79 @@ test('should infer correct states from happy-path logs', () => {
         bobXmrRedeemAddress:
           '59McWTPGc745SRWrSMoh8oTjoXoQq6sPUgKZ66dQWXuKFQ2q19h9gvhJNZcFTizcnT12r63NFgHiGd6gBCjabzmzHAMoyD6',
       },
+    },
+    provider: exampleProvider,
+    stdOut: '',
+    resume: false,
+    swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
+  });
+});
+
+test('should infer correct states from refund-path', () => {
+  let swap: SwapSlice = {
+    processRunning: true,
+    logs: [
+      mReceivedQuoteLog,
+      mWaitingForBtcDepositLog,
+      mReceivedNewBtcLog,
+      mStartedCliLog,
+      mPublishedBtcLockTxLog,
+      mBobBtcTxLockStatusChanged,
+    ],
+    state: <SwapStateBtcLockInMempool>{
+      type: SwapStateType.BTC_LOCK_TX_IN_MEMPOOL,
+      bobBtcLockTxId:
+        '6297106e3fb91cfb94e5b069af03248ebfdc63087db4a19c833f76df1b9aff51',
+      bobBtcLockTxConfirmations: 3,
+    },
+    provider: exampleProvider,
+    stdOut: '',
+    resume: false,
+    swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
+  };
+
+  swap = reducer(swap, swapAddLog(mPublishedBtcCancelTxLog));
+
+  expect(swap).toStrictEqual({
+    processRunning: true,
+    logs: [
+      mReceivedQuoteLog,
+      mWaitingForBtcDepositLog,
+      mReceivedNewBtcLog,
+      mStartedCliLog,
+      mPublishedBtcLockTxLog,
+      mBobBtcTxLockStatusChanged,
+      mPublishedBtcCancelTxLog,
+    ],
+    state: {
+      type: SwapStateType.BTC_CANCELLED,
+      btcCancelTxId:
+        '4b4f379f34e88084d0443886942d4f059a1ae1cc91102adae5654f4b3ea980f7',
+    },
+    provider: exampleProvider,
+    stdOut: '',
+    resume: false,
+    swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
+  });
+
+  swap = reducer(swap, swapAddLog(mPublishedBtcRefundTxLog));
+
+  expect(swap).toStrictEqual({
+    processRunning: true,
+    logs: [
+      mReceivedQuoteLog,
+      mWaitingForBtcDepositLog,
+      mReceivedNewBtcLog,
+      mStartedCliLog,
+      mPublishedBtcLockTxLog,
+      mBobBtcTxLockStatusChanged,
+      mPublishedBtcCancelTxLog,
+      mPublishedBtcRefundTxLog,
+    ],
+    state: {
+      type: SwapStateType.BTC_REFUNDED,
+      bobBtcRefundTxId:
+        '4dfb63a139d5f00d31b55beeabcf229647f18d6f68c44e09d7750ee185a6b1f2',
     },
     provider: exampleProvider,
     stdOut: '',

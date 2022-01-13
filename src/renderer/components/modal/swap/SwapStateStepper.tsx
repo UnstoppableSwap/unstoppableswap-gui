@@ -1,45 +1,64 @@
 import { Step, StepLabel, Stepper, Typography } from '@material-ui/core';
 import {
-  isSwapStateProcessExited,
-  SwapState,
-  SwapStateType,
-} from 'models/storeModel';
-import { useAppSelector } from '../../../../store/hooks';
+  isMergedBtcLockedDbState,
+  isMergedBtcRedeemedDbState,
+  isMergedCancelTimelockExpiredDbState,
+  isMergedDoneBtcPunishedDbState,
+  isMergedDoneBtcRefundedDbState,
+  isMergedDoneXmrRedeemedDbState,
+  isMergedEncSigSentDbState,
+  isMergedExecutionSetupDoneDbState,
+  isMergedXmrLockedDbState,
+  isMergedXmrLockProofReceivedDbState,
+  MergedDbState,
+} from 'models/databaseModel';
+import { useActiveDbState, useAppSelector } from '../../../../store/hooks';
 
-function getActiveStep(swapState: SwapState | null) {
-  if (swapState === null) {
-    return 0;
-  }
+function getActiveStep(
+  dbState: MergedDbState | undefined,
+  processExited: boolean
+): [number, boolean] {
+  if (dbState) {
+    if (isMergedExecutionSetupDoneDbState(dbState)) {
+      return [0, processExited];
+    }
+    if (isMergedBtcLockedDbState(dbState)) {
+      return [0, processExited];
+    }
+    if (isMergedXmrLockProofReceivedDbState(dbState)) {
+      return [1, processExited];
+    }
+    if (isMergedXmrLockedDbState(dbState)) {
+      return [2, processExited];
+    }
+    if (isMergedEncSigSentDbState(dbState)) {
+      return [2, processExited];
+    }
+    if (isMergedBtcRedeemedDbState(dbState)) {
+      return [3, processExited];
+    }
+    if (isMergedDoneXmrRedeemedDbState(dbState)) {
+      return [4, false];
+    }
 
-  switch (swapState.type) {
-    case SwapStateType.INITIATED:
-      return 0;
-    case SwapStateType.RECEIVED_QUOTE:
-      return 0;
-    case SwapStateType.WAITING_FOR_BTC_DEPOSIT:
-      return 0;
-    case SwapStateType.STARTED:
-      return 0;
-    case SwapStateType.BTC_LOCK_TX_IN_MEMPOOL:
-      return 0;
-    case SwapStateType.XMR_LOCK_TX_IN_MEMPOOL:
-      return 1;
-    case SwapStateType.XMR_REDEEM_IN_MEMPOOL:
-      return 4;
-    default:
-      return 0;
+    // TODO: displays punish and refund as "Redeeming your XMR"
+    if (isMergedDoneBtcRefundedDbState(dbState)) {
+      return [4, true];
+    }
+    if (isMergedDoneBtcPunishedDbState(dbState)) {
+      return [4, true];
+    }
+    if (isMergedCancelTimelockExpiredDbState(dbState)) {
+      return [4, true];
+    }
   }
+  return [0, false];
 }
 
 export default function SwapStateStepper() {
-  const activeStep = useAppSelector((s) =>
-    isSwapStateProcessExited(s.swap.state)
-      ? getActiveStep(s.swap.state.prevState)
-      : getActiveStep(s.swap.state)
-  );
-  const error = useAppSelector(
-    (s) => isSwapStateProcessExited(s.swap.state) && s.swap.state.exitCode !== 0
-  );
+  const dbState = useActiveDbState();
+  const processExited = useAppSelector((s) => !s.swap.processRunning);
+  const [activeStep, error] = getActiveStep(dbState, processExited);
 
   return (
     <Stepper activeStep={activeStep}>
@@ -62,7 +81,7 @@ export default function SwapStateStepper() {
       <Step key={2}>
         <StepLabel
           optional={<Typography variant="caption">~2min</Typography>}
-          /* error={ error && activeStep === 2 } */
+          error={error && activeStep === 2}
         >
           They redeem the BTC
         </StepLabel>
@@ -70,7 +89,7 @@ export default function SwapStateStepper() {
       <Step key={3}>
         <StepLabel
           optional={<Typography variant="caption">~2min</Typography>}
-          error={false /* error && activeStep === 3 */}
+          error={error && activeStep === 3}
         >
           Redeeming your XMR
         </StepLabel>
