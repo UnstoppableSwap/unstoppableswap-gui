@@ -104,7 +104,7 @@ export async function spawnSubcommand(
                     stream.on('data', (data: string) => {
                       onStdOut(data);
 
-                      const logs = data
+                      data
                         .toString()
                         .split(/(\r?\n)/g)
                         .forEach((logText: string) => {

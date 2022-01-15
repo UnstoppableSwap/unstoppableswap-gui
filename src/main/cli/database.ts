@@ -41,21 +41,6 @@ function getDistinctSwapIds(db: DatabaseT): string[] {
   ).map(({ swap_id }) => swap_id);
 }
 
-function getLatestStateForSwap(db: DatabaseT, swapId: string): DbState {
-  type ResponseFormat = {
-    id: number;
-    state: string;
-  };
-
-  const response = db
-    .prepare(`SELECT max(id), state FROM swap_states WHERE swap_id = ?;`)
-    .get([swapId]) as ResponseFormat;
-
-  const state = parseStateString(response.state);
-
-  return state;
-}
-
 function getProviderForSwap(db: DatabaseT, swapId: string): Provider {
   type ResponseFormat = {
     swap_id: string;
