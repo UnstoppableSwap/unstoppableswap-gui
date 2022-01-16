@@ -1,3 +1,4 @@
+import { Box } from '@material-ui/core';
 import {
   isSwapStateBtcLockInMempool,
   isSwapStateBtcRedemeed,
@@ -21,8 +22,16 @@ import XmrRedeemInMempoolPage from './pages/XmrRedeemInMempoolPage';
 import ReceivedQuotePage from './pages/ReceivedQuotePage';
 import WatingForBtcRedeemPage from './pages/WaitingForBtcRedeemPage';
 import BitcoinRedeemedPage from './pages/BitcoinRedeemedPage';
+import SwapInitPage from './pages/SwapInitPage';
 
-export default function SwapStatePage({ swapState }: { swapState: SwapState }) {
+export default function SwapStatePage({
+  swapState,
+}: {
+  swapState: SwapState | null;
+}) {
+  if (swapState === null) {
+    return <SwapInitPage />;
+  }
   if (isSwapStateInitiated(swapState)) {
     return <InitiatedPage />;
   }
@@ -63,5 +72,5 @@ export default function SwapStatePage({ swapState }: { swapState: SwapState }) {
       4
     )}`
   );
-  return null;
+  return <Box>No information to display</Box>;
 }

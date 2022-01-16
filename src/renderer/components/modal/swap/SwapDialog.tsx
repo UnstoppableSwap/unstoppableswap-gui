@@ -6,8 +6,6 @@ import {
   DialogContent,
   makeStyles,
 } from '@material-ui/core';
-import SwapInitPage from './pages/SwapInitPage';
-import { isSwapState } from '../../../../models/storeModel';
 import DialogTitle from '../DialogHeader';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import SwapStatePage from './SwapStatePage';
@@ -51,11 +49,7 @@ export default function SwapDialog({
       <DialogTitle title="Swap Bitcoin for Monero" />
 
       <DialogContent dividers className={classes.content}>
-        {isSwapState(swap.state) ? (
-          <SwapStatePage swapState={swap.state} />
-        ) : (
-          <SwapInitPage />
-        )}
+        <SwapStatePage swapState={swap.state} />
         <SwapStateStepper />
       </DialogContent>
 
