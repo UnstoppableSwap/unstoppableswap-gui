@@ -66,7 +66,9 @@ function HasProviderSwapWidget({
 
   const forceShowDialog = useAppSelector((state) => state.swap.state !== null);
   const [showDialog, setShowDialog] = useState(false);
-  const [btcFieldValue, setBtcFieldValue] = useState('0.02');
+  const [btcFieldValue, setBtcFieldValue] = useState<number | string>(
+    satsToBtc(selectedProvider.minSwapAmount)
+  );
   const [xmrFieldValue, setXmrFieldValue] = useState(1);
 
   function onBtcAmountChange(event: ChangeEvent<HTMLInputElement>) {
