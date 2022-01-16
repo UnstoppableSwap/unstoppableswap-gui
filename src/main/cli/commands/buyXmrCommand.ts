@@ -1,5 +1,6 @@
 import fs from 'fs/promises';
 import { ChildProcessWithoutNullStreams } from 'child_process';
+import { batchActions } from 'redux-batched-actions';
 import { CliLog } from '../../../models/cliModel';
 import { store } from '../../../store/store';
 import {
@@ -13,8 +14,8 @@ import { spawnSubcommand } from '../cli';
 import spawnBalanceCheck from './balanceCommand';
 import { getCliLogFile } from '../dirs';
 
-async function onCliLog(log: CliLog) {
-  store.dispatch(swapAddLog(log));
+async function onCliLog(logs: CliLog[]) {
+  store.dispatch(swapAddLog(logs));
 }
 
 function onProcExit(code: number | null, signal: NodeJS.Signals | null) {

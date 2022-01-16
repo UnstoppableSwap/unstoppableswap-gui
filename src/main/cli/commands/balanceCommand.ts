@@ -29,7 +29,13 @@ export default async function spawnBalanceCheck() {
   try {
     store.dispatch(balanceInitiate());
 
-    await spawnSubcommand('balance', {}, onAddLog, onProcExit, onStdOut);
+    await spawnSubcommand(
+      'balance',
+      {},
+      (logs) => logs.forEach(onAddLog),
+      onProcExit,
+      onStdOut
+    );
   } catch (e) {
     console.error(`Failed to spawn balance check Error: ${e}`);
     onProcExit(null, null);

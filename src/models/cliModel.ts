@@ -8,12 +8,15 @@ export interface CliLog {
 }
 
 export function isCliLog(log: unknown): log is CliLog {
-  return (
-    'timestamp' in (log as CliLog) &&
-    'level' in (log as CliLog) &&
-    'fields' in (log as CliLog) &&
-    typeof (log as CliLog).fields?.message === 'string'
-  );
+  if (log) {
+    return (
+      'timestamp' in (log as CliLog) &&
+      'level' in (log as CliLog) &&
+      'fields' in (log as CliLog) &&
+      typeof (log as CliLog).fields?.message === 'string'
+    );
+  }
+  return false;
 }
 
 export interface CliLogReceivedQuote extends CliLog {

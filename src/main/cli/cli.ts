@@ -61,7 +61,7 @@ export async function stopCli() {
 export async function spawnSubcommand(
   subCommand: string,
   options: { [option: string]: string },
-  onLog: (log: CliLog) => void,
+  onLog: (log: CliLog[]) => void,
   onExit: (code: number | null, signal: NodeJS.Signals | null) => void,
   onStdOut: (data: string) => void
 ): Promise<ChildProcessWithoutNullStreams> {
@@ -104,16 +104,16 @@ export async function spawnSubcommand(
                     stream.on('data', (data: string) => {
                       onStdOut(data);
 
-                      data
+                      const logs = data
                         .toString()
                         .split(/(\r?\n)/g)
-                        .forEach((logText: string) => {
+                        .map((logText: string) => {
                           console.log(`[${subCommand}] ${data.trim()}`);
 
                           try {
                             const log = JSON.parse(logText);
                             if (isCliLog(log)) {
-                              onLog(log);
+                              return log;
                             }
                             throw new Error('Required properties are missing');
                           } catch (e) {
@@ -121,7 +121,10 @@ export async function spawnSubcommand(
                               `[${subCommand}] Failed to parse cli log. Log text: ${logText} Error: ${e}`
                             );
                           }
-                        });
+                        })
+                        .filter(isCliLog);
+
+                      onLog(logs);
 
                       readFromDatabaseAndUpdateState();
                     });

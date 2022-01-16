@@ -82,7 +82,7 @@ test('should infer correct states from happy-path logs', () => {
     swapId: null,
   });
 
-  swap = reducer(swap, swapAddLog(mReceivedQuoteLog));
+  swap = reducer(swap, swapAddLog([mReceivedQuoteLog]));
 
   expect(swap).toStrictEqual({
     processRunning: true,
@@ -99,7 +99,7 @@ test('should infer correct states from happy-path logs', () => {
     swapId: null,
   });
 
-  swap = reducer(swap, swapAddLog(mWaitingForBtcDepositLog));
+  swap = reducer(swap, swapAddLog([mWaitingForBtcDepositLog]));
 
   expect(swap).toStrictEqual({
     processRunning: true,
@@ -117,7 +117,7 @@ test('should infer correct states from happy-path logs', () => {
     swapId: null,
   });
 
-  swap = reducer(swap, swapAddLog(mReceivedNewBtcLog));
+  swap = reducer(swap, swapAddLog([mReceivedNewBtcLog]));
 
   expect(swap).toStrictEqual({
     processRunning: true,
@@ -135,7 +135,7 @@ test('should infer correct states from happy-path logs', () => {
     swapId: null,
   });
 
-  swap = reducer(swap, swapAddLog(mStartedCliLog));
+  swap = reducer(swap, swapAddLog([mStartedCliLog]));
 
   expect(swap).toStrictEqual({
     processRunning: true,
@@ -155,7 +155,7 @@ test('should infer correct states from happy-path logs', () => {
     swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
   });
 
-  swap = reducer(swap, swapAddLog(mPublishedBtcLockTxLog));
+  swap = reducer(swap, swapAddLog([mPublishedBtcLockTxLog]));
 
   expect(swap).toStrictEqual({
     processRunning: true,
@@ -178,7 +178,7 @@ test('should infer correct states from happy-path logs', () => {
     swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
   });
 
-  swap = reducer(swap, swapAddLog(mBobBtcTxLockStatusChanged));
+  swap = reducer(swap, swapAddLog([mBobBtcTxLockStatusChanged]));
 
   expect(swap).toStrictEqual({
     processRunning: true,
@@ -202,7 +202,7 @@ test('should infer correct states from happy-path logs', () => {
     swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
   });
 
-  swap = reducer(swap, swapAddLog(mAliceLockedXmrLog));
+  swap = reducer(swap, swapAddLog([mAliceLockedXmrLog]));
 
   expect(swap).toStrictEqual({
     processRunning: true,
@@ -227,7 +227,7 @@ test('should infer correct states from happy-path logs', () => {
     swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
   });
 
-  swap = reducer(swap, swapAddLog(mAliceXmrLockTxConfirmationUpdateLog));
+  swap = reducer(swap, swapAddLog([mAliceXmrLockTxConfirmationUpdateLog]));
 
   expect(swap).toStrictEqual({
     processRunning: true,
@@ -253,7 +253,7 @@ test('should infer correct states from happy-path logs', () => {
     swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
   });
 
-  swap = reducer(swap, swapAddLog(mAdvancingStateXmrIsLockedLog));
+  swap = reducer(swap, swapAddLog([mAdvancingStateXmrIsLockedLog]));
 
   expect(swap).toStrictEqual({
     processRunning: true,
@@ -277,7 +277,7 @@ test('should infer correct states from happy-path logs', () => {
     swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
   });
 
-  swap = reducer(swap, swapAddLog(mAdvancingStateBtcRedeemedLog));
+  swap = reducer(swap, swapAddLog([mAdvancingStateBtcRedeemedLog]));
 
   expect(swap).toStrictEqual({
     processRunning: true,
@@ -302,7 +302,7 @@ test('should infer correct states from happy-path logs', () => {
     swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
   });
 
-  swap = reducer(swap, swapAddLog(mXmrRedeemSuccessfulLog));
+  swap = reducer(swap, swapAddLog([mXmrRedeemSuccessfulLog]));
 
   expect(swap).toStrictEqual({
     processRunning: true,
@@ -397,7 +397,7 @@ test('should infer correct states from refund-path', () => {
     swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
   };
 
-  swap = reducer(swap, swapAddLog(mPublishedBtcCancelTxLog));
+  swap = reducer(swap, swapAddLog([mPublishedBtcCancelTxLog]));
 
   expect(swap).toStrictEqual({
     processRunning: true,
@@ -421,7 +421,7 @@ test('should infer correct states from refund-path', () => {
     swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
   });
 
-  swap = reducer(swap, swapAddLog(mPublishedBtcRefundTxLog));
+  swap = reducer(swap, swapAddLog([mPublishedBtcRefundTxLog]));
 
   expect(swap).toStrictEqual({
     processRunning: true,
