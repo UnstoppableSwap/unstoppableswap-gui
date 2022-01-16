@@ -16,21 +16,21 @@ function getSwapBinaryInfo(): BinaryInfo {
       return {
         url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/preview/swap_preview_Darwin_x86_64.tar',
         sha256sum:
-          'a179ae3d5bd8a69203ac473dc3c7b64a458b14fb16a967b4f280cf9621b3626b',
+          '7c73053f10be1a2f4da898f3f3fa7f4673e9da698081ceb7b2795b62c11b10a3',
         name: 'swap',
       };
     case 'linux':
       return {
         url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/preview/swap_preview_Linux_x86_64.tar',
         sha256sum:
-          '22435abfb0d08f78459a12aacabaa4e39b5e5d1ce08a0ff3712eb2139206796c',
+          '47b8eb4a4efe6df0798f01bf24c7d5b7213cbcb1a55a441ef4d87b69c515cf24',
         name: 'swap',
       };
     default:
       return {
         url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/preview/swap_preview_Windows_x86_64.zip',
         sha256sum:
-          '9030faf7925d117aa1ae7dc6bf64ec91dcd06268e4df6b5fc139bd406c30f2df',
+          '885a64488e65da2412169c9d9f08451493d8e61389e400d509c046dd82a8073a',
         name: 'swap.exe',
       };
   }
