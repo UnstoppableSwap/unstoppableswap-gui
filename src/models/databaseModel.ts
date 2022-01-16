@@ -1,3 +1,4 @@
+import { satsToBtc, pionerosToXmr } from '../utils/currencyUtils';
 import { TxLock } from './bitcoinModel';
 import { Provider } from './storeModel';
 
@@ -34,6 +35,7 @@ export interface ExecutionSetupDoneDbState extends DbState {
         refund_address: string;
         redeem_address: string;
         punish_address: string;
+        tx_lock: TxLock;
         min_monero_confirmations: number;
         tx_redeem_fee: number;
         tx_punish_fee: number;
@@ -252,6 +254,11 @@ export enum DbStateType {
   BTC_CANCELLED = 'BtcCancelled',
   DONE_BTC_REFUNDED = 'BtcRefunded',
   DONE_BTC_PUNISHED = 'BtcPunished',
+}
+
+export enum DbStatePathType {
+  HAPPY_PATH = 'happy path',
+  UNHAPPY_PATH = 'unhappy path',
 }
 
 export interface MergedDbState {
@@ -480,4 +487,97 @@ export function isMergedDoneBtcPunishedDbState(
     isDoneBtcPunishedDbState(dbState.state) &&
     dbState.type === DbStateType.DONE_BTC_PUNISHED
   );
+}
+
+export function getSwapTxFees(dbState: MergedDbState): number {
+  const tx = dbState.state.Bob.ExecutionSetupDone.state2.tx_lock;
+
+  const sumInput = tx.inner.inputs
+    .map((input) => input.witness_utxo.value)
+    .reduce((prev, next) => prev + next);
+
+  const sumOutput = tx.inner.global.unsigned_tx.output
+    .map((output) => output.value)
+    .reduce((prev, next) => prev + next);
+
+  return satsToBtc(sumInput - sumOutput);
+}
+
+export function getSwapBtcAmount(dbState: MergedDbState): number {
+  return satsToBtc(
+    dbState.state.Bob.ExecutionSetupDone.state2.tx_lock.inner.global.unsigned_tx
+      .output[0]?.value
+  );
+}
+
+export function getSwapXmrAmount(dbState: MergedDbState): number {
+  return pionerosToXmr(dbState.state.Bob.ExecutionSetupDone.state2.xmr);
+}
+
+export function getSwapExchangeRate(dbState: MergedDbState): number {
+  const btcAmount = getSwapBtcAmount(dbState);
+  const xmrAmount = getSwapXmrAmount(dbState);
+
+  return btcAmount / xmrAmount;
+}
+
+export function isSwapResumable(dbState: MergedDbState): boolean {
+  return true;
+  return (
+    isMergedExecutionSetupDoneDbState(dbState) ||
+    isMergedBtcLockedDbState(dbState) ||
+    isMergedXmrLockProofReceivedDbState(dbState) ||
+    isMergedXmrLockedDbState(dbState) ||
+    isMergedEncSigSentDbState(dbState) ||
+    isMergedBtcRedeemedDbState(dbState)
+  );
+}
+
+export function isSwapCancellable(dbState: MergedDbState): boolean {
+  return (
+    isBtcLockedDbState(dbState.state) &&
+    !isBtcRedeemedDbState(dbState.state) &&
+    !isBtcCancelledDbState(dbState.state)
+  );
+}
+
+export function isSwapRefundable(dbState: MergedDbState): boolean {
+  return (
+    isBtcLockedDbState(dbState.state) &&
+    isBtcCancelledDbState(dbState.state) &&
+    !isDoneBtcRefundedDbState(dbState.state) &&
+    !isDoneBtcPunishedDbState(dbState.state)
+  );
+}
+
+export function isHappyPathSwap(dbState: MergedDbState): boolean {
+  return (
+    isMergedExecutionSetupDoneDbState(dbState) ||
+    isMergedBtcLockedDbState(dbState) ||
+    isMergedXmrLockProofReceivedDbState(dbState) ||
+    isMergedXmrLockedDbState(dbState) ||
+    isMergedEncSigSentDbState(dbState) ||
+    isMergedBtcRedeemedDbState(dbState) ||
+    isMergedDoneXmrRedeemedDbState(dbState)
+  );
+}
+
+export function isUnhappyPathSwap(dbState: MergedDbState): boolean {
+  return (
+    isMergedCancelTimelockExpiredDbState(dbState) ||
+    isMergedBtcCancelledDbState(dbState) ||
+    isMergedDoneBtcRefundedDbState(dbState) ||
+    isMergedDoneBtcPunishedDbState(dbState)
+  );
+}
+
+export function getTypeOfPathDbState(dbState: MergedDbState): DbStatePathType {
+  if (isHappyPathSwap(dbState)) {
+    return DbStatePathType.HAPPY_PATH;
+  }
+  if (isUnhappyPathSwap(dbState)) {
+    return DbStatePathType.UNHAPPY_PATH;
+  }
+  console.error('Unknown path type. Assumung happy path. DbState:', dbState);
+  return DbStatePathType.HAPPY_PATH;
 }

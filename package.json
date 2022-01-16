@@ -127,7 +127,8 @@
       "release/app/node_modules"
     ],
     "testPathIgnorePatterns": [
-      "release/app/dist"
+      "release/app/dist",
+      "/__utils__/"
     ],
     "setupFiles": [
       "./.erb/scripts/check-build-exists.ts"

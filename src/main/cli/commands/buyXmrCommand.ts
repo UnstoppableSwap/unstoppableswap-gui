@@ -1,6 +1,5 @@
 import fs from 'fs/promises';
 import { ChildProcessWithoutNullStreams } from 'child_process';
-import { batchActions } from 'redux-batched-actions';
 import { CliLog } from '../../../models/cliModel';
 import { store } from '../../../store/store';
 import {

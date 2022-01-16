@@ -10,13 +10,13 @@ import { useState } from 'react';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
-import { MergedDbState } from '../../../../models/databaseModel';
-import HistoryRowActions from './HistoryRowActions';
-import HistoryRowExpanded from './HistoryRowExpanded';
 import {
+  MergedDbState,
   getSwapBtcAmount,
   getSwapXmrAmount,
-} from '../../../../utils/parseUtils';
+} from '../../../../models/databaseModel';
+import HistoryRowActions from './HistoryRowActions';
+import HistoryRowExpanded from './HistoryRowExpanded';
 
 type HistoryRowProps = {
   dbState: MergedDbState;
@@ -35,15 +35,15 @@ function AmountTransfer({
   xmrAmount,
 }: {
   xmrAmount: number;
-  btcAmount: number | null;
+  btcAmount: number;
 }) {
   const classes = useStyles();
 
   return (
     <Box className={classes.amountTransferContainer}>
-      {btcAmount ? `${btcAmount.toFixed(6)} BTC` : '?'}
+      {btcAmount.toFixed(6)} BTC
       <ArrowForwardIcon />
-      {`${xmrAmount.toFixed(6)} XMR`}
+      {xmrAmount.toFixed(6)} XMR
     </Box>
   );
 }

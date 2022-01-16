@@ -1,11 +1,11 @@
 import { Button } from '@material-ui/core';
 import { ipcRenderer } from 'electron';
 import { ButtonProps } from '@material-ui/core/Button/Button';
-import { MergedDbState } from '../../../../models/databaseModel';
 import {
+  MergedDbState,
   isSwapRefundable,
   isSwapResumable,
-} from '../../../../utils/parseUtils';
+} from '../../../../models/databaseModel';
 
 export function SwapResumeButton({
   dbState,

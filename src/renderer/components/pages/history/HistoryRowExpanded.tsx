@@ -8,13 +8,13 @@ import {
   TableContainer,
   TableRow,
 } from '@material-ui/core';
-import { MergedDbState } from '../../../../models/databaseModel';
 import {
+  MergedDbState,
   getSwapBtcAmount,
   getSwapExchangeRate,
   getSwapTxFees,
   getSwapXmrAmount,
-} from '../../../../utils/parseUtils';
+} from '../../../../models/databaseModel';
 import { SwapCancelRefundButton, SwapResumeButton } from './HistoryRowActions';
 
 const useStyles = makeStyles((theme) => ({
@@ -81,9 +81,7 @@ export default function HistoryRowExpanded({
             </TableRow>
             <TableRow>
               <TableCell>Exchange Rate</TableCell>
-              <TableCell>
-                {exchangeRate ? `${exchangeRate.toPrecision(6)} XMR/BTC` : '?'}
-              </TableCell>
+              <TableCell>{exchangeRate.toPrecision(6)} XMR/BTC</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>Bitcoin Network Fees</TableCell>
