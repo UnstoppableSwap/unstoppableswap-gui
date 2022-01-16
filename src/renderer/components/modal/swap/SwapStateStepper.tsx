@@ -1,5 +1,7 @@
 import { Step, StepLabel, Stepper, Typography } from '@material-ui/core';
 import {
+  DbStatePathType,
+  isMergedBtcCancelledDbState,
   isMergedBtcLockedDbState,
   isMergedBtcRedeemedDbState,
   isMergedCancelTimelockExpiredDbState,
@@ -11,55 +13,65 @@ import {
   isMergedXmrLockedDbState,
   isMergedXmrLockProofReceivedDbState,
   MergedDbState,
+  getTypeOfPathDbState,
 } from 'models/databaseModel';
 import { useActiveDbState, useAppSelector } from '../../../../store/hooks';
 
 function getActiveStep(
   dbState: MergedDbState | undefined,
   processExited: boolean
-): [number, boolean] {
+): [DbStatePathType, number, boolean] {
   if (dbState) {
-    if (isMergedExecutionSetupDoneDbState(dbState)) {
-      return [0, processExited];
-    }
-    if (isMergedBtcLockedDbState(dbState)) {
-      return [0, processExited];
-    }
-    if (isMergedXmrLockProofReceivedDbState(dbState)) {
-      return [1, processExited];
-    }
-    if (isMergedXmrLockedDbState(dbState)) {
-      return [2, processExited];
-    }
-    if (isMergedEncSigSentDbState(dbState)) {
-      return [2, processExited];
-    }
-    if (isMergedBtcRedeemedDbState(dbState)) {
-      return [3, processExited];
-    }
-    if (isMergedDoneXmrRedeemedDbState(dbState)) {
-      return [4, false];
-    }
+    const pathType = getTypeOfPathDbState(dbState);
 
-    // TODO: displays punish and refund as "Redeeming your XMR"
-    if (isMergedDoneBtcRefundedDbState(dbState)) {
-      return [4, true];
+    if (pathType === DbStatePathType.HAPPY_PATH) {
+      if (isMergedExecutionSetupDoneDbState(dbState)) {
+        return [pathType, 0, processExited];
+      }
+      if (isMergedBtcLockedDbState(dbState)) {
+        return [pathType, 0, processExited];
+      }
+      if (isMergedXmrLockProofReceivedDbState(dbState)) {
+        return [pathType, 1, processExited];
+      }
+      if (isMergedXmrLockedDbState(dbState)) {
+        return [pathType, 2, processExited];
+      }
+      if (isMergedEncSigSentDbState(dbState)) {
+        return [pathType, 2, processExited];
+      }
+      if (isMergedBtcRedeemedDbState(dbState)) {
+        return [pathType, 3, processExited];
+      }
+      if (isMergedDoneXmrRedeemedDbState(dbState)) {
+        return [pathType, 4, false];
+      }
+    } else {
+      if (isMergedCancelTimelockExpiredDbState(dbState)) {
+        return [pathType, 0, processExited];
+      }
+      if (isMergedBtcCancelledDbState(dbState)) {
+        return [pathType, 1, processExited];
+      }
+      if (isMergedDoneBtcRefundedDbState(dbState)) {
+        return [pathType, 2, false];
+      }
+      if (isMergedDoneBtcPunishedDbState(dbState)) {
+        return [pathType, 1, true];
+      }
     }
-    if (isMergedDoneBtcPunishedDbState(dbState)) {
-      return [4, true];
-    }
-    if (isMergedCancelTimelockExpiredDbState(dbState)) {
-      return [4, true];
-    }
+    return [pathType, 0, false];
   }
-  return [0, false];
+  return [DbStatePathType.HAPPY_PATH, 0, false];
 }
 
-export default function SwapStateStepper() {
-  const dbState = useActiveDbState();
-  const processExited = useAppSelector((s) => !s.swap.processRunning);
-  const [activeStep, error] = getActiveStep(dbState, processExited);
-
+function HappyPathStepper({
+  activeStep,
+  error,
+}: {
+  activeStep: number;
+  error: boolean;
+}) {
   return (
     <Stepper activeStep={activeStep}>
       <Step key={0}>
@@ -96,4 +108,44 @@ export default function SwapStateStepper() {
       </Step>
     </Stepper>
   );
+}
+
+function UnhappyPathStepper({
+  activeStep,
+  error,
+}: {
+  activeStep: number;
+  error: boolean;
+}) {
+  return (
+    <Stepper activeStep={activeStep}>
+      <Step key={0}>
+        <StepLabel
+          optional={<Typography variant="caption">~20min</Typography>}
+          error={error && activeStep === 0}
+        >
+          Cancelling swap
+        </StepLabel>
+      </Step>
+      <Step key={1}>
+        <StepLabel
+          optional={<Typography variant="caption">~20min</Typography>}
+          error={error && activeStep === 1}
+        >
+          Refunding your BTC
+        </StepLabel>
+      </Step>
+    </Stepper>
+  );
+}
+
+export default function SwapStateStepper() {
+  const dbState = useActiveDbState();
+  const processExited = useAppSelector((s) => !s.swap.processRunning);
+  const [pathType, activeStep, error] = getActiveStep(dbState, processExited);
+
+  if (pathType === DbStatePathType.HAPPY_PATH) {
+    return <HappyPathStepper activeStep={activeStep} error={error} />;
+  }
+  return <UnhappyPathStepper activeStep={activeStep} error={error} />;
 }
