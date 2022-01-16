@@ -121,6 +121,8 @@ export async function spawnSubcommand(
                               `[${subCommand}] Failed to parse cli log. Log text: ${logText} Error: ${e}`
                             );
                           }
+
+                          return null;
                         })
                         .filter(isCliLog);
 

@@ -1,3 +1,4 @@
+import { isObject } from 'lodash';
 import { satsToBtc, pionerosToXmr } from '../utils/currencyUtils';
 import { TxLock } from './bitcoinModel';
 import { Provider } from './storeModel';
@@ -6,6 +7,10 @@ export interface DbState {
   Bob: {
     [stateName: string]: unknown;
   };
+}
+
+export function isDbState(dbState: unknown): dbState is DbState {
+  return isObject(dbState) && 'Bob' in dbState;
 }
 
 export interface DbStateDone extends DbState {
@@ -266,6 +271,16 @@ export interface MergedDbState {
   type: DbStateType;
   state: ExecutionSetupDoneDbState; // Only ExecutionSetupDone states or more are saved
   provider: Provider;
+}
+
+export function isMergedDbState(dbState: unknown): dbState is MergedDbState {
+  return (
+    isObject(dbState) &&
+    'swapId' in dbState &&
+    'type' in dbState &&
+    'state' in dbState &&
+    'provider' in dbState
+  );
 }
 
 export interface MergedExecutionSetupDoneDbState extends MergedDbState {

@@ -8,7 +8,7 @@
     "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir release/app",
     "lint": "cross-env NODE_ENV=development eslint . --cache --ext .js,.jsx,.ts,.tsx",
     "package": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder build --publish never",
-    "postinstall": "ts-node .erb/scripts/check-native-dep.js && cross-env npm_config_build_from_source=true electron-builder install-app-deps && cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.ts && opencollective-postinstall",
+    "postinstall": "ts-node .erb/scripts/check-native-dep.js && electron-builder install-app-deps && cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.ts && opencollective-postinstall",
     "start": "ts-node ./.erb/scripts/check-port-in-use.js && npm run start:renderer",
     "start:main": "cross-env NODE_ENV=development electron -r ts-node/register/transpile-only ./src/main/main.ts",
     "start:renderer": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
@@ -30,7 +30,6 @@
     ]
   },
   "build": {
-    "buildDependenciesFromSource": true,
     "productName": "UnstoppableSwap",
     "appId": "net.unstoppableswap.gui",
     "asar": true,
@@ -140,6 +139,7 @@
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@types/better-sqlite3": "^7.4.2",
+    "@types/blocked-at": "^1.0.1",
     "@types/download": "^8.0.1",
     "@types/jest": "^27.0.3",
     "@types/lodash": "^4.14.178",
@@ -211,6 +211,7 @@
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.60",
     "@reduxjs/toolkit": "^1.7.1",
+    "blocked-at": "^1.2.0",
     "electron-debug": "^3.2.0",
     "electron-log": "^4.4.4",
     "electron-redux": "2.0.0-alpha.8",
@@ -224,7 +225,8 @@
     "react-redux": "^7.2.6",
     "react-router-dom": "^6.2.1",
     "regenerator-runtime": "^0.13.9",
-    "socket.io-client": "^4.4.0"
+    "socket.io-client": "^4.4.0",
+    "sqlite": "^4.0.23"
   },
   "devEngines": {
     "node": ">=14.x",

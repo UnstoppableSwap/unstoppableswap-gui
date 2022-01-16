@@ -13,6 +13,7 @@ import 'regenerator-runtime/runtime';
 import path from 'path';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import log from 'electron-log';
+import blocked from 'blocked-at';
 import { resolveHtmlPath } from './util';
 import watchDatabase from './cli/database';
 import { stopCli } from './cli/cli';
@@ -39,6 +40,13 @@ const isDevelopment =
 
 if (isDevelopment) {
   require('electron-debug')();
+
+  blocked((time, stack) => {
+    console.log(
+      `Main thread has been blocked for ${time}ms, operation started here:`,
+      stack
+    );
+  });
 }
 
 const installExtensions = async () => {
