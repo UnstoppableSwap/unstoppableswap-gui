@@ -38,3 +38,18 @@ export async function getCliLogFile(swapId: string): Promise<string> {
   });
   return path.join(logsDir, `swap-${swapId}.log`);
 }
+
+export async function getSqliteDbFiles() {
+  const cliDataDir = await getCliDataDir();
+
+  const primary = path.join(cliDataDir, 'sqlite');
+  const shm = path.join(cliDataDir, 'sqlite-shm');
+  const wal = path.join(cliDataDir, 'sqlite-wal');
+
+  return {
+    folder: cliDataDir,
+    primaryFile: primary,
+    shmFile: shm,
+    walFile: wal,
+  };
+}

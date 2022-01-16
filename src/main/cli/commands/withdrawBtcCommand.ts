@@ -37,7 +37,7 @@ export default async function spawnWithdrawBtc(address: string) {
       {
         address,
       },
-      onCliLog,
+      (logs) => logs.forEach(onCliLog),
       onProcExit,
       onStdOut
     );

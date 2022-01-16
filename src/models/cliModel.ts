@@ -8,12 +8,15 @@ export interface CliLog {
 }
 
 export function isCliLog(log: unknown): log is CliLog {
-  return (
-    'timestamp' in (log as CliLog) &&
-    'level' in (log as CliLog) &&
-    'fields' in (log as CliLog) &&
-    typeof (log as CliLog).fields?.message === 'string'
-  );
+  if (log) {
+    return (
+      'timestamp' in (log as CliLog) &&
+      'level' in (log as CliLog) &&
+      'fields' in (log as CliLog) &&
+      typeof (log as CliLog).fields?.message === 'string'
+    );
+  }
+  return false;
 }
 
 export interface CliLogReceivedQuote extends CliLog {
@@ -72,7 +75,7 @@ export interface CliLogPublishedBtcTx extends CliLog {
   fields: {
     message: 'Published Bitcoin transaction';
     txid: string;
-    kind: 'lock' | 'cancel' | 'withdraw';
+    kind: 'lock' | 'cancel' | 'withdraw' | 'refund';
   };
 }
 
@@ -122,6 +125,32 @@ export function isCliLogReceivedXmrLockTxConfirmation(
   log: CliLog
 ): log is CliLogReceivedXmrLockTxConfirmation {
   return log.fields.message === 'Received new confirmation for Monero lock tx';
+}
+
+export interface CliLogAdvancingState extends CliLog {
+  fields: {
+    message: 'Advancing state';
+    state:
+      | 'quote has been requested'
+      | 'execution setup done'
+      | 'btc is locked'
+      | 'XMR lock transaction transfer proof received'
+      | 'xmr is locked'
+      | 'encrypted signature is sent'
+      | 'btc is redeemed'
+      | 'cancel timelock is expired'
+      | 'btc is cancelled'
+      | 'btc is refunded'
+      | 'xmr is redeemed'
+      | 'btc is punished'
+      | 'safely aborted';
+  };
+}
+
+export function isCliLogAdvancingState(
+  log: CliLog
+): log is CliLogAdvancingState {
+  return log.fields.message === 'Advancing state';
 }
 
 export interface CliLogRedeemedXmr extends CliLog {

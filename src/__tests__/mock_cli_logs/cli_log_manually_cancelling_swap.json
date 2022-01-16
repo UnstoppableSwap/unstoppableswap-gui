@@ -1,0 +1,8 @@
+{
+  "timestamp":"2021-09-05 03:41:07",
+  "level":"INFO",
+  "fields":{
+    "message":"Manually cancelling swap",
+    "swap_id":"2a034c59-72bc-4b7b-839f-d32522099bcc"
+  }
+}

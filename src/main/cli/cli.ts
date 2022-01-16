@@ -2,12 +2,13 @@ import {
   ChildProcessWithoutNullStreams,
   spawn as spawnProc,
 } from 'child_process';
-import psList from 'ps-list';
 import PQueue from 'p-queue';
+import psList from 'ps-list';
 import downloadSwapBinary from './downloader';
 import { isTestnet } from '../../store/config';
 import { isCliLog, CliLog } from '../../models/cliModel';
 import { getAppDataDir, getCliDataBaseDir } from './dirs';
+import { readFromDatabaseAndUpdateState } from './database';
 
 const queue = new PQueue({ concurrency: 1 });
 let cli: ChildProcessWithoutNullStreams | null = null;
@@ -60,7 +61,7 @@ export async function stopCli() {
 export async function spawnSubcommand(
   subCommand: string,
   options: { [option: string]: string },
-  onLog: (log: CliLog) => void,
+  onLog: (log: CliLog[]) => void,
   onExit: (code: number | null, signal: NodeJS.Signals | null) => void,
   onStdOut: (data: string) => void
 ): Promise<ChildProcessWithoutNullStreams> {
@@ -100,31 +101,34 @@ export async function spawnSubcommand(
 
                   [cli.stderr, cli.stdout].forEach((stream) => {
                     stream.setEncoding('utf8');
-                    stream.on('data', (data) => {
+                    stream.on('data', (data: string) => {
                       onStdOut(data);
 
-                      data
+                      const logs = data
                         .toString()
                         .split(/(\r?\n)/g)
-                        .filter((s: string) => s.length > 2)
-                        .forEach((logText: string) => {
-                          console.log(`[${subCommand}] ${logText.trim()}`);
+                        .map((logText: string) => {
+                          console.log(`[${subCommand}] ${data.trim()}`);
 
                           try {
                             const log = JSON.parse(logText);
                             if (isCliLog(log)) {
-                              onLog(log);
-                            } else {
-                              throw new Error(
-                                'Required properties are missing'
-                              );
+                              return log;
                             }
+                            throw new Error('Required properties are missing');
                           } catch (e) {
                             console.log(
                               `[${subCommand}] Failed to parse cli log. Log text: ${logText} Error: ${e}`
                             );
                           }
-                        });
+
+                          return null;
+                        })
+                        .filter(isCliLog);
+
+                      onLog(logs);
+
+                      readFromDatabaseAndUpdateState();
                     });
                   });
 
@@ -144,8 +148,13 @@ export async function spawnSubcommand(
                 );
 
                 cli = null;
-                onExit(code, signal);
-                resolveRunning();
+
+                try {
+                  await readFromDatabaseAndUpdateState();
+                } finally {
+                  onExit(code, signal);
+                  resolveRunning();
+                }
               });
             } catch (e) {
               rejectSpawn(e);

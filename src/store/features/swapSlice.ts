@@ -6,13 +6,17 @@ import {
   isSwapStateXmrLockInMempool,
   Provider,
   SwapSlice,
+  SwapStateBtcCancelled,
   SwapStateBtcLockInMempool,
+  SwapStateBtcRedemeed,
+  SwapStateBtcRefunded,
   SwapStateInitiated,
   SwapStateProcessExited,
   SwapStateReceivedQuote,
   SwapStateStarted,
   SwapStateType,
   SwapStateWaitingForBtcDeposit,
+  SwapStateXmrLocked,
   SwapStateXmrLockInMempool,
   SwapStateXmrRedeemInMempool,
 } from '../../models/storeModel';
@@ -27,6 +31,7 @@ import {
   isCliLogStartedSwap,
   isCliLogWaitingForBtcDeposit,
   CliLog,
+  isCliLogAdvancingState,
 } from '../../models/cliModel';
 
 const initialState: SwapSlice = {
@@ -43,135 +48,165 @@ export const swapSlice = createSlice({
   name: 'swap',
   initialState,
   reducers: {
-    swapAddLog(slice, action: PayloadAction<CliLog>) {
-      const log = action.payload;
-      slice.logs.push(log);
+    swapAddLog(slice, action: PayloadAction<CliLog[]>) {
+      const logs = action.payload;
+      slice.logs.push(...logs);
 
-      if (isCliLogReceivedQuote(log)) {
-        const price = extractAmountFromUnitString(log.fields.price);
-        const minimumSwapAmount = extractAmountFromUnitString(
-          log.fields.minimum_amount
-        );
-        const maximumSwapAmount = extractAmountFromUnitString(
-          log.fields.maximum_amount
-        );
+      logs.forEach((log) => {
+        if (isCliLogReceivedQuote(log)) {
+          const price = extractAmountFromUnitString(log.fields.price);
+          const minimumSwapAmount = extractAmountFromUnitString(
+            log.fields.minimum_amount
+          );
+          const maximumSwapAmount = extractAmountFromUnitString(
+            log.fields.maximum_amount
+          );
 
-        if (
-          price != null &&
-          minimumSwapAmount != null &&
-          maximumSwapAmount != null
-        ) {
-          const nextState: SwapStateReceivedQuote = {
-            type: SwapStateType.RECEIVED_QUOTE,
-            price,
-            minimumSwapAmount,
-            maximumSwapAmount,
+          if (
+            price != null &&
+            minimumSwapAmount != null &&
+            maximumSwapAmount != null
+          ) {
+            const nextState: SwapStateReceivedQuote = {
+              type: SwapStateType.RECEIVED_QUOTE,
+              price,
+              minimumSwapAmount,
+              maximumSwapAmount,
+            };
+
+            slice.state = nextState;
+          }
+        } else if (isCliLogWaitingForBtcDeposit(log)) {
+          const maxGiveable = extractAmountFromUnitString(
+            log.fields.max_giveable
+          );
+          const minimumAmount = extractAmountFromUnitString(
+            log.fields.minimum_amount
+          );
+          const maximumAmount = extractAmountFromUnitString(
+            log.fields.maximum_amount
+          );
+
+          const depositAddress = log.fields.deposit_address;
+
+          if (
+            maxGiveable != null &&
+            minimumAmount != null &&
+            maximumAmount != null
+          ) {
+            const nextState: SwapStateWaitingForBtcDeposit = {
+              type: SwapStateType.WAITING_FOR_BTC_DEPOSIT,
+              depositAddress,
+              maxGiveable,
+              minimumAmount,
+              maximumAmount,
+            };
+
+            slice.state = nextState;
+          }
+        } else if (isCliLogReceivedBtc(log)) {
+          const maxGiveable = extractAmountFromUnitString(
+            log.fields.max_giveable
+          );
+
+          if (
+            isSwapStateWaitingForBtcDeposit(slice.state) &&
+            maxGiveable != null
+          ) {
+            slice.state.maxGiveable = maxGiveable;
+          }
+        } else if (isCliLogStartedSwap(log)) {
+          const nextState: SwapStateStarted = {
+            type: SwapStateType.STARTED,
+            id: log.fields.swap_id,
           };
 
           slice.state = nextState;
-        }
-      } else if (isCliLogWaitingForBtcDeposit(log)) {
-        const maxGiveable = extractAmountFromUnitString(
-          log.fields.max_giveable
-        );
-        const minimumAmount = extractAmountFromUnitString(
-          log.fields.minimum_amount
-        );
-        const maximumAmount = extractAmountFromUnitString(
-          log.fields.maximum_amount
-        );
+          slice.swapId = log.fields.swap_id;
+        } else if (isCliLogPublishedBtcTx(log)) {
+          if (log.fields.kind === 'lock') {
+            const nextState: SwapStateBtcLockInMempool = {
+              type: SwapStateType.BTC_LOCK_TX_IN_MEMPOOL,
+              bobBtcLockTxId: log.fields.txid,
+              bobBtcLockTxConfirmations: 0,
+            };
 
-        const depositAddress = log.fields.deposit_address;
+            slice.state = nextState;
+          } else if (log.fields.kind === 'cancel') {
+            const nextState: SwapStateBtcCancelled = {
+              type: SwapStateType.BTC_CANCELLED,
+              btcCancelTxId: log.fields.txid,
+            };
 
-        if (
-          maxGiveable != null &&
-          minimumAmount != null &&
-          maximumAmount != null
-        ) {
-          const nextState: SwapStateWaitingForBtcDeposit = {
-            type: SwapStateType.WAITING_FOR_BTC_DEPOSIT,
-            depositAddress,
-            maxGiveable,
-            minimumAmount,
-            maximumAmount,
-          };
+            slice.state = nextState;
+          } else if (log.fields.kind === 'refund') {
+            const nextState: SwapStateBtcRefunded = {
+              type: SwapStateType.BTC_REFUNDED,
+              bobBtcRefundTxId: log.fields.txid,
+            };
 
-          slice.state = nextState;
-        }
-      } else if (isCliLogReceivedBtc(log)) {
-        const maxGiveable = extractAmountFromUnitString(
-          log.fields.max_giveable
-        );
+            slice.state = nextState;
+          }
+        } else if (isCliLogBtcTxStatusChanged(log)) {
+          if (isSwapStateBtcLockInMempool(slice.state)) {
+            if (slice.state.bobBtcLockTxId === log.fields.txid) {
+              const newStatusText = log.fields.new_status;
 
-        if (
-          isSwapStateWaitingForBtcDeposit(slice.state) &&
-          maxGiveable != null
-        ) {
-          slice.state.maxGiveable = maxGiveable;
-        }
-      } else if (isCliLogStartedSwap(log)) {
-        const nextState: SwapStateStarted = {
-          type: SwapStateType.STARTED,
-          id: log.fields.swap_id,
-        };
+              if (newStatusText.startsWith('confirmed with')) {
+                const confirmations = Number.parseInt(
+                  newStatusText.split(' ')[2],
+                  10
+                );
 
-        slice.state = nextState;
-        slice.swapId = log.fields.swap_id;
-      } else if (isCliLogPublishedBtcTx(log)) {
-        if (log.fields.kind === 'lock') {
-          const nextState: SwapStateBtcLockInMempool = {
-            type: SwapStateType.BTC_LOCK_TX_IN_MEMPOOL,
-            bobBtcLockTxId: log.fields.txid,
-            bobBtcLockTxConfirmations: 0,
-          };
-
-          slice.state = nextState;
-        }
-      } else if (isCliLogBtcTxStatusChanged(log)) {
-        if (isSwapStateBtcLockInMempool(slice.state)) {
-          if (slice.state.bobBtcLockTxId === log.fields.txid) {
-            const newStatusText = log.fields.new_status;
-
-            if (newStatusText.startsWith('confirmed with')) {
-              const confirmations = Number.parseInt(
-                newStatusText.split(' ')[2],
-                10
-              );
-
-              slice.state.bobBtcLockTxConfirmations = confirmations;
+                slice.state.bobBtcLockTxConfirmations = confirmations;
+              }
             }
           }
-        }
-      } else if (isCliLogAliceLockedXmr(log)) {
-        const nextState: SwapStateXmrLockInMempool = {
-          type: SwapStateType.XMR_LOCK_TX_IN_MEMPOOL,
-          aliceXmrLockTxId: log.fields.txid,
-          aliceXmrLockTxConfirmations: 0,
-        };
+        } else if (isCliLogAliceLockedXmr(log)) {
+          const nextState: SwapStateXmrLockInMempool = {
+            type: SwapStateType.XMR_LOCK_TX_IN_MEMPOOL,
+            aliceXmrLockTxId: log.fields.txid,
+            aliceXmrLockTxConfirmations: 0,
+          };
 
-        slice.state = nextState;
-      } else if (isCliLogReceivedXmrLockTxConfirmation(log)) {
-        if (isSwapStateXmrLockInMempool(slice.state)) {
-          if (slice.state.aliceXmrLockTxId === log.fields.txid) {
-            slice.state.aliceXmrLockTxConfirmations = Number.parseInt(
-              log.fields.seen_confirmations,
-              10
-            );
+          slice.state = nextState;
+        } else if (isCliLogReceivedXmrLockTxConfirmation(log)) {
+          if (isSwapStateXmrLockInMempool(slice.state)) {
+            if (slice.state.aliceXmrLockTxId === log.fields.txid) {
+              slice.state.aliceXmrLockTxConfirmations = Number.parseInt(
+                log.fields.seen_confirmations,
+                10
+              );
+            }
           }
-        }
-      } else if (isCliLogRedeemedXmr(log)) {
-        const nextState: SwapStateXmrRedeemInMempool = {
-          type: SwapStateType.XMR_REDEEM_IN_MEMPOOL,
-          bobXmrRedeemTxId: log.fields.txid,
-          bobXmrRedeemAddress: log.fields.monero_receive_address,
-        };
+        } else if (isCliLogAdvancingState(log)) {
+          if (log.fields.state === 'xmr is locked') {
+            const nextState: SwapStateXmrLocked = {
+              type: SwapStateType.XMR_LOCKED,
+            };
 
-        slice.state = nextState;
-      } else {
-        console.debug(
-          `Swap log was not reduced Log: ${JSON.stringify(log, null, 4)}`
-        );
-      }
+            slice.state = nextState;
+          } else if (log.fields.state === 'btc is redeemed') {
+            const nextState: SwapStateBtcRedemeed = {
+              type: SwapStateType.BTC_REDEEMED,
+            };
+
+            slice.state = nextState;
+          }
+        } else if (isCliLogRedeemedXmr(log)) {
+          const nextState: SwapStateXmrRedeemInMempool = {
+            type: SwapStateType.XMR_REDEEM_IN_MEMPOOL,
+            bobXmrRedeemTxId: log.fields.txid,
+            bobXmrRedeemAddress: log.fields.monero_receive_address,
+          };
+
+          slice.state = nextState;
+        } else {
+          console.debug(
+            `Swap log was not reduced Log: ${JSON.stringify(log, null, 4)}`
+          );
+        }
+      });
     },
     swapAppendStdOut(slice, action: PayloadAction<string>) {
       slice.stdOut += action.payload;

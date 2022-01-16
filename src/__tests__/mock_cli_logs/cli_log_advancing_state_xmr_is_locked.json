@@ -1,0 +1,8 @@
+{
+  "timestamp":"Jan 09 14:20:53.479",
+  "level":"DEBUG",
+  "fields":{
+     "message":"Advancing state",
+     "state":"xmr is locked"
+  }
+}

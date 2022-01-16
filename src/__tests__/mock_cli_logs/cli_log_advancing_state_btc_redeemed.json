@@ -1,0 +1,8 @@
+{
+  "timestamp":"Jan 09 14:21:59.387",
+  "level":"DEBUG",
+  "fields":{
+     "message":"Advancing state",
+     "state":"btc is redeemed"
+  }
+}

@@ -13,8 +13,8 @@ import { spawnSubcommand } from '../cli';
 import spawnBalanceCheck from './balanceCommand';
 import { getCliLogFile } from '../dirs';
 
-async function onCliLog(log: CliLog) {
-  store.dispatch(swapAddLog(log));
+async function onCliLog(logs: CliLog[]) {
+  store.dispatch(swapAddLog(logs));
 }
 
 function onProcExit(code: number | null, signal: NodeJS.Signals | null) {
