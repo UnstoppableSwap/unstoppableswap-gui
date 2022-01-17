@@ -12,44 +12,21 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
-import log from 'electron-log';
 import blocked from 'blocked-at';
 import { resolveHtmlPath } from './util';
-import watchDatabase from './cli/database';
 import { stopCli } from './cli/cli';
 import spawnBalanceCheck from './cli/commands/balanceCommand';
-import { spawnBuyXmr, resumeBuyXmr } from './cli/commands/buyXmrCommand';
+import { resumeBuyXmr, spawnBuyXmr } from './cli/commands/buyXmrCommand';
 import spawnWithdrawBtc from './cli/commands/withdrawBtcCommand';
 import downloadSwapBinary from './cli/downloader';
-
-export default class AppUpdater {
-  constructor() {
-    log.transports.file.level = 'info';
-  }
-}
+import watchDatabase from './cli/database';
 
 let mainWindow: BrowserWindow | null = null;
-
-if (process.env.NODE_ENV === 'production') {
-  const sourceMapSupport = require('source-map-support');
-  sourceMapSupport.install();
-}
 
 const isDevelopment =
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
-if (isDevelopment) {
-  require('electron-debug')();
-
-  blocked((time, stack) => {
-    console.log(
-      `Main thread has been blocked for ${time}ms, operation started here:`,
-      stack
-    );
-  });
-}
-
-const installExtensions = async () => {
+async function installExtensions() {
   const installer = require('electron-devtools-installer');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
   const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'];
@@ -59,14 +36,11 @@ const installExtensions = async () => {
       extensions.map((name) => installer[name]),
       forceDownload
     )
-    .catch(console.log);
-};
+    .catch(console.error);
+}
 
-const createWindow = async () => {
-  if (
-    process.env.NODE_ENV === 'development' ||
-    process.env.DEBUG_PROD === 'true'
-  ) {
+async function createWindow() {
+  if (isDevelopment) {
     await installExtensions();
   }
 
@@ -84,12 +58,13 @@ const createWindow = async () => {
     height: 728,
     minHeight: 728,
     minWidth: 1024,
-    resizable: true,
+    resizable: isDevelopment,
     icon: getAssetPath('icon.png'),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
     },
+    autoHideMenuBar: true,
   });
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
@@ -106,9 +81,6 @@ const createWindow = async () => {
       mainWindow.show();
       mainWindow.focus();
     }
-
-    await watchDatabase();
-    await spawnBalanceCheck();
   });
 
   mainWindow.on('closed', () => {
@@ -120,29 +92,61 @@ const createWindow = async () => {
     event.preventDefault();
     shell.openExternal(url);
   });
-};
+}
 
-/**
- * Add event listeners...
- */
+const gotTheLock = app.requestSingleInstanceLock();
 
-app.on('window-all-closed', () => {
-  // Respect the OSX convention of having the application in memory even
-  // after all windows have been closed
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-});
+if (gotTheLock) {
+  /**
+   * Add event listeners...
+   */
 
-app.whenReady().then(createWindow).catch(console.log);
+  app.on('window-all-closed', () => {
+    // Respect the OSX convention of having the application in memory even
+    // after all windows have been closed
+    if (process.platform !== 'darwin') {
+      app.quit();
+    }
+  });
 
-app.on('activate', () => {
-  // On macOS it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) createWindow();
-});
+  app.on('activate', () => {
+    // On macOS it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (mainWindow === null) createWindow();
+  });
 
-app.on('will-quit', stopCli);
+  app.on('will-quit', async () => {
+    await stopCli();
+  });
+
+  app
+    .whenReady()
+    .then(async () => {
+      await createWindow();
+      await watchDatabase();
+      await spawnBalanceCheck();
+
+      return 0;
+    })
+    .catch(console.error);
+} else {
+  console.log('Failed to acquire lock! Exiting...');
+  app.quit();
+}
+
+if (isDevelopment) {
+  require('electron-debug')();
+
+  blocked((time, stack) => {
+    console.log(
+      `Main thread has been blocked for ${time}ms, operation started here:`,
+      stack
+    );
+  });
+} else {
+  const sourceMapSupport = require('source-map-support');
+  sourceMapSupport.install();
+}
 
 ipcMain.handle('stop-cli', stopCli);
 
