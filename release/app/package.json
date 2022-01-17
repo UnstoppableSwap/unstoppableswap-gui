@@ -14,7 +14,6 @@
   },
   "dependencies": {
     "download": "^8.0.0",
-    "ps-list": "^7.2.0",
     "sqlite3": "^5.0.2"
   },
   "license": "MIT"
