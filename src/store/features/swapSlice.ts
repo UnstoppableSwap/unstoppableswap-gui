@@ -202,9 +202,7 @@ export const swapSlice = createSlice({
 
           slice.state = nextState;
         } else {
-          console.debug(
-            `Swap log was not reduced Log: ${JSON.stringify(log, null, 4)}`
-          );
+          console.debug(`Swap log was not reduced Log: ${log.fields.message}`);
         }
       });
     },

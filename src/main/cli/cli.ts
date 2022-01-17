@@ -107,8 +107,9 @@ export async function spawnSubcommand(
                       const logs = data
                         .toString()
                         .split(/(\r?\n)/g)
+                        .filter((s) => s.length > 2)
                         .map((logText: string) => {
-                          console.log(`[${subCommand}] ${data.trim()}`);
+                          console.log(`[${subCommand}] ${logText.trim()}`);
 
                           try {
                             const log = JSON.parse(logText);
