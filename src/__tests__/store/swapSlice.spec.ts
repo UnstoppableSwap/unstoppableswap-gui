@@ -67,6 +67,7 @@ test('should infer correct states from happy-path logs', () => {
     swapInitiate({
       provider: exampleProvider,
       resume: false,
+      swapId: null,
     })
   );
 

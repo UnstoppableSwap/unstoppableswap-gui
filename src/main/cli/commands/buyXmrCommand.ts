@@ -1,5 +1,4 @@
 import fs from 'fs/promises';
-import { ChildProcessWithoutNullStreams } from 'child_process';
 import { CliLog } from '../../../models/cliModel';
 import { store } from '../../../store/store';
 import {
@@ -44,6 +43,7 @@ export async function spawnBuyXmr(
       swapInitiate({
         provider,
         resume: false,
+        swapId: null,
       })
     );
 
@@ -58,13 +58,6 @@ export async function spawnBuyXmr(
       onProcExit,
       onStdOut
     );
-
-    store.dispatch(
-      swapInitiate({
-        provider,
-        resume: false,
-      })
-    );
   } catch (e) {
     console.log(
       `Failed to spawn swap Provider: ${provider.peerId} RedeemAddress: ${redeemAddress} RefundAddress: ${refundAddress} Error: ${e}`
@@ -73,19 +66,16 @@ export async function spawnBuyXmr(
   }
 }
 
-async function tryReplayCliLogs(
-  cli: ChildProcessWithoutNullStreams,
-  swapId: string
-) {
+async function getCliLogStdOut(swapId: string): Promise<string> {
   try {
     const logFile = await getCliLogFile(swapId);
     const prevLogData = await fs.readFile(logFile, {
       encoding: 'utf8',
     });
-    cli.stderr.push(prevLogData);
+    return prevLogData;
   } catch (e) {
-    console.error(
-      `Failed to read and replay swap log file! SwapID: ${swapId} Error: ${e}`
+    throw new Error(
+      `Failed to read swap log file! SwapID: ${swapId} Error: ${e}`
     );
   }
 }
@@ -101,9 +91,11 @@ export async function resumeBuyXmr(swapId: string) {
         swapInitiate({
           provider,
           resume: true,
+          swapId,
         })
       );
 
+      const stdOut = await getCliLogStdOut(swapId);
       const cli = await spawnSubcommand(
         'resume',
         {
@@ -114,14 +106,7 @@ export async function resumeBuyXmr(swapId: string) {
         onStdOut
       );
 
-      store.dispatch(
-        swapInitiate({
-          provider,
-          resume: true,
-        })
-      );
-
-      await tryReplayCliLogs(cli, swapId);
+      cli.stderr.push(stdOut);
     } else {
       throw new Error('Could not find swap in database');
     }

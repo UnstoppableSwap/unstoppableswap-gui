@@ -41,8 +41,6 @@ export default async function spawnWithdrawBtc(address: string) {
       onProcExit,
       onStdOut
     );
-
-    store.dispatch(withdrawInitiate());
   } catch (e) {
     console.error(`Failed to withdraw funds Error: ${e}`);
     onProcExit(null, null);
