@@ -217,6 +217,7 @@ export const swapSlice = createSlice({
       action: PayloadAction<{
         provider: Provider | null;
         resume: boolean;
+        swapId: string | null;
       }>
     ) {
       const nextState: SwapStateInitiated = {
@@ -228,6 +229,7 @@ export const swapSlice = createSlice({
       swap.logs = [];
       swap.provider = action.payload.provider;
       swap.resume = action.payload.resume;
+      swap.swapId = action.payload.swapId;
     },
     swapProcessExited(
       swap,
