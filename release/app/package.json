@@ -14,7 +14,8 @@
   },
   "dependencies": {
     "download": "^8.0.0",
-    "sqlite3": "^5.0.2"
+    "sqlite3": "^5.0.2",
+    "ps-list": "github:UnstoppableSwap/ps-list#esm-revert"
   },
   "license": "MIT"
 }
