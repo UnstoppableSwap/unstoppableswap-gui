@@ -8,14 +8,20 @@ import {
 import {
   isMergedDoneBtcPunishedDbState,
   isMergedDoneBtcRefundedDbState,
+  isMergedDoneXmrRedeemedDbState,
   MergedDbState,
 } from 'models/databaseModel';
 import {
+  isSwapStateBtcRefunded,
   isSwapStateXmrRedeemInMempool,
   SwapStateProcessExited,
 } from '../../../../../models/storeModel';
 import { useActiveDbState, useAppSelector } from '../../../../../store/hooks';
-import XmrRedeemInMempoolPage from './XmrRedeemInMempoolPage';
+import XmrRedeemInMempoolPage from './done/XmrRedeemInMempoolPage';
+import BitcoinPunishedPage from './done/BitcoinPunishedPage';
+// eslint-disable-next-line import/no-cycle
+import SwapStatePage from '../SwapStatePage';
+import BitcoinRefundedPage from './done/BitcoinRefundedPage';
 
 const useStyles = makeStyles((theme) => ({
   leftButton: {
@@ -33,27 +39,6 @@ const useStyles = makeStyles((theme) => ({
 type ProcessExitedPageProps = {
   state: SwapStateProcessExited;
 };
-
-function DbStatePunished() {
-  return (
-    <Box>
-      <DialogContentText>
-        You have been punished for not refunding in time. It is not possible to
-        recover the Monero or the Bitcoin.
-      </DialogContentText>
-    </Box>
-  );
-}
-
-function DbStateRefunded() {
-  return (
-    <Box>
-      <DialogContentText>
-        The swap has been cancelled and your Bitcoin have been refunded.
-      </DialogContentText>
-    </Box>
-  );
-}
 
 function DbStateNotDone({
   state,
@@ -89,16 +74,23 @@ function DbStateNotDone({
 export default function ProcessExitedPage({ state }: ProcessExitedPageProps) {
   const dbState = useActiveDbState();
 
+  if (
+    isSwapStateXmrRedeemInMempool(state.prevState) ||
+    isSwapStateBtcRefunded(state.prevState)
+  ) {
+    return <SwapStatePage swapState={state.prevState} />;
+  }
+
   if (dbState) {
-    if (isMergedDoneBtcPunishedDbState(dbState)) {
-      return <DbStatePunished />;
+    if (isMergedDoneXmrRedeemedDbState(dbState)) {
+      return <XmrRedeemInMempoolPage state={null} />;
     }
     if (isMergedDoneBtcRefundedDbState(dbState)) {
-      return <DbStateRefunded />;
+      return <BitcoinRefundedPage state={null} />;
     }
-  }
-  if (isSwapStateXmrRedeemInMempool(state.prevState)) {
-    return <XmrRedeemInMempoolPage state={state.prevState} />;
+    if (isMergedDoneBtcPunishedDbState(dbState)) {
+      return <BitcoinPunishedPage />;
+    }
   }
 
   return <DbStateNotDone state={state} dbState={dbState} />;

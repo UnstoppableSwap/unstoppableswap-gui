@@ -1,9 +1,6 @@
 import { Box, DialogContentText } from '@material-ui/core';
 import { SwapStateBtcLockInMempool } from '../../../../../models/storeModel';
-import BitcoinIcon from '../../../icons/BitcoinIcon';
-import { isTestnet } from '../../../../../store/config';
-import { getBitcoinTxExplorerUrl } from '../../../../../utils/currencyUtils';
-import TransactionInfoBox from '../TransactionInfoBox';
+import BitcoinTransactionInfoBox from '../transaction/BitcoinTransactionInfoBox';
 
 type BitcoinLockTxInMempoolPageProps = {
   state: SwapStateBtcLockInMempool;
@@ -12,11 +9,6 @@ type BitcoinLockTxInMempoolPageProps = {
 export default function BitcoinLockTxInMempoolPage({
   state,
 }: BitcoinLockTxInMempoolPageProps) {
-  const explorerUrl = getBitcoinTxExplorerUrl(
-    state.bobBtcLockTxId,
-    isTestnet()
-  );
-
   return (
     <Box>
       <DialogContentText>
@@ -24,11 +16,9 @@ export default function BitcoinLockTxInMempoolPage({
         once the transaction is confirmed and the swap provider locks their
         Monero.
       </DialogContentText>
-      <TransactionInfoBox
+      <BitcoinTransactionInfoBox
         title="BTC Lock Transaction"
         txId={state.bobBtcLockTxId}
-        explorerUrl={explorerUrl}
-        icon={<BitcoinIcon />}
         loading
         additionalText={
           <>

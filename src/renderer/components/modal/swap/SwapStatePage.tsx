@@ -1,7 +1,9 @@
 import { Box } from '@material-ui/core';
 import {
+  isSwapStateBtcCancelled,
   isSwapStateBtcLockInMempool,
   isSwapStateBtcRedemeed,
+  isSwapStateBtcRefunded,
   isSwapStateInitiated,
   isSwapStateProcessExited,
   isSwapStateReceivedQuote,
@@ -12,17 +14,20 @@ import {
   isSwapStateXmrRedeemInMempool,
   SwapState,
 } from '../../../../models/storeModel';
-import InitiatedPage from './pages/InitiatedPage';
+import InitiatedPage from './pages/init/InitiatedPage';
 import WaitingForBitcoinDepositPage from './pages/WaitingForBitcoinDepositPage';
 import StartedPage from './pages/StartedPage';
 import BitcoinLockTxInMempoolPage from './pages/BitcoinLockTxInMempoolPage';
 import XmrLockTxInMempoolPage from './pages/XmrLockInMempoolPage';
+// eslint-disable-next-line import/no-cycle
 import ProcessExitedPage from './pages/ProcessExitedPage';
-import XmrRedeemInMempoolPage from './pages/XmrRedeemInMempoolPage';
+import XmrRedeemInMempoolPage from './pages/done/XmrRedeemInMempoolPage';
 import ReceivedQuotePage from './pages/ReceivedQuotePage';
-import WatingForBtcRedeemPage from './pages/WaitingForBtcRedeemPage';
 import BitcoinRedeemedPage from './pages/BitcoinRedeemedPage';
-import InitPage from './pages/InitPage';
+import SwapInitPage from './pages/init/InitPage';
+import XmrLockedPage from './pages/XmrLockedPage';
+import BitcoinCancelledPage from './pages/BitcoinCancelledPage';
+import BitcoinRefundedPage from './pages/done/BitcoinRefundedPage';
 
 export default function SwapStatePage({
   swapState,
@@ -30,7 +35,7 @@ export default function SwapStatePage({
   swapState: SwapState | null;
 }) {
   if (swapState === null) {
-    return <InitPage />;
+    return <SwapInitPage />;
   }
   if (isSwapStateInitiated(swapState)) {
     return <InitiatedPage />;
@@ -54,13 +59,19 @@ export default function SwapStatePage({
     return <XmrLockTxInMempoolPage state={swapState} />;
   }
   if (isSwapStateXmrLocked(swapState)) {
-    return <WatingForBtcRedeemPage />;
+    return <XmrLockedPage />;
   }
   if (isSwapStateBtcRedemeed(swapState)) {
     return <BitcoinRedeemedPage />;
   }
   if (isSwapStateXmrRedeemInMempool(swapState)) {
     return <XmrRedeemInMempoolPage state={swapState} />;
+  }
+  if (isSwapStateBtcCancelled(swapState)) {
+    return <BitcoinCancelledPage />;
+  }
+  if (isSwapStateBtcRefunded(swapState)) {
+    return <BitcoinRefundedPage state={swapState} />;
   }
   if (isSwapStateProcessExited(swapState)) {
     return <ProcessExitedPage state={swapState} />;
@@ -72,5 +83,11 @@ export default function SwapStatePage({
       4
     )}`
   );
-  return <Box>No information to display</Box>;
+  return (
+    <Box>
+      No information to display
+      <br />
+      State: ${JSON.stringify(swapState, null, 4)}
+    </Box>
+  );
 }

@@ -16,7 +16,7 @@ import {
   WithdrawStateWithdrawTxInMempool,
 } from '../../../../../models/storeModel';
 import CircularProgressWithSubtitle from '../../swap/CircularProgressWithSubtitle';
-import TransactionInfoBox from '../../swap/TransactionInfoBox';
+import TransactionInfoBox from '../../swap/transaction/TransactionInfoBox';
 import { getBitcoinTxExplorerUrl } from '../../../../../utils/currencyUtils';
 import { isTestnet } from '../../../../../store/config';
 import BitcoinIcon from '../../../icons/BitcoinIcon';

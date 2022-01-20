@@ -1,10 +1,10 @@
 import { Box, Button, DialogContentText, makeStyles } from '@material-ui/core';
 import { useState } from 'react';
 import { ipcRenderer } from 'electron';
-import MoneroAddressTextField from '../../../inputs/MoneroAddressTextField';
-import BitcoinAddressTextField from '../../../inputs/BitcoinAddressTextField';
-import { useAppSelector } from '../../../../../store/hooks';
-import { isTestnet } from '../../../../../store/config';
+import BitcoinAddressTextField from 'renderer/components/inputs/BitcoinAddressTextField';
+import MoneroAddressTextField from 'renderer/components/inputs/MoneroAddressTextField';
+import { useAppSelector } from 'store/hooks';
+import { isTestnet } from '../../../../../../store/config';
 
 const useStyles = makeStyles((theme) => ({
   initButton: {
