@@ -1,9 +1,6 @@
 import { Box, DialogContentText } from '@material-ui/core';
-import { SwapStateXmrLockInMempool } from '../../../../../models/storeModel';
-import MoneroIcon from '../../../icons/MoneroIcon';
-import { isTestnet } from '../../../../../store/config';
-import { getMoneroTxExplorerUrl } from '../../../../../utils/currencyUtils';
-import TransactionInfoBox from '../TransactionInfoBox';
+import { SwapStateXmrLockInMempool } from '../../../../../../models/storeModel';
+import MoneroTransactionInfoBox from '../../transaction/MoneroTransactionInfoBox';
 
 type XmrLockTxInMempoolPageProps = {
   state: SwapStateXmrLockInMempool;
@@ -12,10 +9,6 @@ type XmrLockTxInMempoolPageProps = {
 export default function XmrLockTxInMempoolPage({
   state,
 }: XmrLockTxInMempoolPageProps) {
-  const explorerUrl = getMoneroTxExplorerUrl(
-    state.aliceXmrLockTxId,
-    isTestnet()
-  );
   const additionalText = `Confirmations: ${state.aliceXmrLockTxConfirmations}/10`;
 
   return (
@@ -25,12 +18,10 @@ export default function XmrLockTxInMempoolPage({
         will proceed once the transaction has been confirmed.
       </DialogContentText>
 
-      <TransactionInfoBox
+      <MoneroTransactionInfoBox
         title="Monero Lock Transaction"
         txId={state.aliceXmrLockTxId}
-        explorerUrl={explorerUrl}
         additionalText={additionalText}
-        icon={<MoneroIcon />}
         loading
       />
     </Box>
