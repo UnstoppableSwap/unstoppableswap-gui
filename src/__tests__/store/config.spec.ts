@@ -14,5 +14,5 @@ test('should detect testnet environment', () => {
   expect(isTestnet()).toBe(false);
 
   process.env.TESTNET = undefined;
-  expect(isTestnet()).toBe(false);
+  expect(isTestnet()).toBe(true);
 });
