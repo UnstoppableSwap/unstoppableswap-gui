@@ -64,7 +64,9 @@ function HasProviderSwapWidget({
 }) {
   const classes = useStyles();
 
-  const forceShowDialog = useAppSelector((state) => isSwapState(state.swap.state));
+  const forceShowDialog = useAppSelector((state) =>
+    isSwapState(state.swap.state)
+  );
   const [showDialog, setShowDialog] = useState(false);
   const [btcFieldValue, setBtcFieldValue] = useState<number | string>(
     satsToBtc(selectedProvider.minSwapAmount)
