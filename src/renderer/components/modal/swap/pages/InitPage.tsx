@@ -4,6 +4,7 @@ import { ipcRenderer } from 'electron';
 import MoneroAddressTextField from '../../../inputs/MoneroAddressTextField';
 import BitcoinAddressTextField from '../../../inputs/BitcoinAddressTextField';
 import { useAppSelector } from '../../../../../store/hooks';
+import { isTestnet } from '../../../../../store/config';
 
 const useStyles = makeStyles((theme) => ({
   initButton: {
@@ -11,15 +12,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SwapInitPage() {
+export default function InitPage() {
   const classes = useStyles();
   const [redeemAddress, setRedeemAddress] = useState(
-    '59McWTPGc745SRWrSMoh8oTjoXoQq6sPUgKZ66dQWXuKFQ2q19h9gvhJNZcFTizcnT12r63NFgHiGd6gBCjabzmzHAMoyD6'
+    isTestnet() && process.env.TESTNET_PREFILL_XMR_ADDRESS
+      ? process.env.TESTNET_PREFILL_XMR_ADDRESS
+      : ''
+  );
+  const [refundAddress, setRefundAddress] = useState(
+    isTestnet() && process.env.TESTNET_PREFILL_BTC_ADDRESS
+      ? process.env.TESTNET_PREFILL_BTC_ADDRESS
+      : ''
   );
   const [redeemAddressValid, setRedeemAddressValid] = useState(false);
-  const [refundAddress, setRefundAddress] = useState(
-    'tb1qw508d6qejxtdg4y5r3zarvary0c5xw7kxpjzsx'
-  );
   const [refundAddressValid, setRefundAddressValid] = useState(false);
   const selectedProvider = useAppSelector(
     (state) => state.providers.selectedProvider

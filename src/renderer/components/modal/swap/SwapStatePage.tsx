@@ -22,7 +22,7 @@ import XmrRedeemInMempoolPage from './pages/XmrRedeemInMempoolPage';
 import ReceivedQuotePage from './pages/ReceivedQuotePage';
 import WatingForBtcRedeemPage from './pages/WaitingForBtcRedeemPage';
 import BitcoinRedeemedPage from './pages/BitcoinRedeemedPage';
-import SwapInitPage from './pages/SwapInitPage';
+import InitPage from './pages/InitPage';
 
 export default function SwapStatePage({
   swapState,
@@ -30,7 +30,7 @@ export default function SwapStatePage({
   swapState: SwapState | null;
 }) {
   if (swapState === null) {
-    return <SwapInitPage />;
+    return <InitPage />;
   }
   if (isSwapStateInitiated(swapState)) {
     return <InitiatedPage />;

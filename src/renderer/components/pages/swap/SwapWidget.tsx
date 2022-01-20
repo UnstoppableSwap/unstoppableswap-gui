@@ -17,7 +17,7 @@ import { satsToBtc } from '../../../../utils/currencyUtils';
 import ProviderSubmitDialog from '../../modal/provider/ProviderSubmitDialog';
 import SwapDialog from '../../modal/swap/SwapDialog';
 import { useAppSelector } from '../../../../store/hooks';
-import { ExtendedProvider } from '../../../../models/storeModel';
+import { ExtendedProvider, isSwapState } from '../../../../models/storeModel';
 
 const useStyles = makeStyles((theme) => ({
   inner: {
@@ -64,7 +64,7 @@ function HasProviderSwapWidget({
 }) {
   const classes = useStyles();
 
-  const forceShowDialog = useAppSelector((state) => state.swap.state !== null);
+  const forceShowDialog = useAppSelector((state) => isSwapState(state.swap.state));
   const [showDialog, setShowDialog] = useState(false);
   const [btcFieldValue, setBtcFieldValue] = useState<number | string>(
     satsToBtc(selectedProvider.minSwapAmount)
