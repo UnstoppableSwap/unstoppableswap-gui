@@ -169,6 +169,12 @@ export interface SwapStateBtcRefunded extends SwapState {
   bobBtcRefundTxId: string;
 }
 
+export function isSwapStateBtcRefunded(
+  state?: SwapState | null
+): state is SwapStateBtcRefunded {
+  return state?.type === SwapStateType.BTC_REFUNDED;
+}
+
 export interface SwapStateProcessExited extends SwapState {
   type: SwapStateType.PROCESS_EXITED;
   exitCode: number | null;

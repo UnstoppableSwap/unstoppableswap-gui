@@ -1,5 +1,5 @@
-import CircularProgressWithSubtitle from '../CircularProgressWithSubtitle';
-import { useAppSelector } from '../../../../../store/hooks';
+import CircularProgressWithSubtitle from '../../CircularProgressWithSubtitle';
+import { useAppSelector } from '../../../../../../store/hooks';
 
 export default function InitiatedPage() {
   const description = useAppSelector((s) =>

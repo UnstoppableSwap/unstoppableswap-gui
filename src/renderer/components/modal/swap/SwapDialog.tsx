@@ -8,7 +8,7 @@ import {
 } from '@material-ui/core';
 import DialogTitle from '../DialogHeader';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
-import SwapStatePage from './SwapStatePage';
+import SwapStatePage from './pages/SwapStatePage';
 import SwapStateStepper from './SwapStateStepper';
 import CliStopAlert from '../CliStopAlert';
 import { swapReset } from '../../../../store/features/swapSlice';

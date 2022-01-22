@@ -1,10 +1,10 @@
 import { Box, Button, DialogContentText, makeStyles } from '@material-ui/core';
 import { useState } from 'react';
 import { ipcRenderer } from 'electron';
-import MoneroAddressTextField from '../../../inputs/MoneroAddressTextField';
-import BitcoinAddressTextField from '../../../inputs/BitcoinAddressTextField';
-import { useAppSelector } from '../../../../../store/hooks';
-import { isTestnet } from '../../../../../store/config';
+import BitcoinAddressTextField from 'renderer/components/inputs/BitcoinAddressTextField';
+import MoneroAddressTextField from 'renderer/components/inputs/MoneroAddressTextField';
+import { useAppSelector } from 'store/hooks';
+import { isTestnet } from '../../../../../../store/config';
 
 const useStyles = makeStyles((theme) => ({
   initButton: {
@@ -15,13 +15,13 @@ const useStyles = makeStyles((theme) => ({
 export default function InitPage() {
   const classes = useStyles();
   const [redeemAddress, setRedeemAddress] = useState(
-    isTestnet() && process.env.TESTNET_PREFILL_XMR_ADDRESS
-      ? process.env.TESTNET_PREFILL_XMR_ADDRESS
+    isTestnet() && process.env.TESTNET_AUTOFILL_XMR_ADDRESS
+      ? process.env.TESTNET_AUTOFILL_XMR_ADDRESS
       : ''
   );
   const [refundAddress, setRefundAddress] = useState(
-    isTestnet() && process.env.TESTNET_PREFILL_BTC_ADDRESS
-      ? process.env.TESTNET_PREFILL_BTC_ADDRESS
+    isTestnet() && process.env.TESTNET_AUTOFILL_BTC_ADDRESS
+      ? process.env.TESTNET_AUTOFILL_BTC_ADDRESS
       : ''
   );
   const [redeemAddressValid, setRedeemAddressValid] = useState(false);
@@ -48,8 +48,9 @@ export default function InitPage() {
   return (
     <Box>
       <DialogContentText>
-        Fill in your Monero and Bitcoin addresses. They will be used only for
-        this swap.
+        Please specify the address to which the Monero should be sent upon
+        completion of the swap and the address for receiving a Bitcoin refund if
+        the swap fails.
       </DialogContentText>
 
       <MoneroAddressTextField

@@ -6,9 +6,10 @@ export const useAppDispatch = () => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 export function useDbState(swapId?: string | null) {
-  const dbState = useAppSelector((s) =>
-    s.history.find((h) => h.swapId === swapId && swapId)
-  );
+  const dbState =
+    useAppSelector((s) =>
+      s.history.find((h) => h.swapId === swapId && swapId)
+    ) || null;
 
   return dbState;
 }

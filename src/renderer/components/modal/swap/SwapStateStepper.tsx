@@ -18,7 +18,7 @@ import {
 import { useActiveDbState, useAppSelector } from '../../../../store/hooks';
 
 function getActiveStep(
-  dbState: MergedDbState | undefined,
+  dbState: MergedDbState | null,
   processExited: boolean
 ): [DbStatePathType, number, boolean] {
   if (dbState) {
