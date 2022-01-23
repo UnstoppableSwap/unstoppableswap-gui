@@ -1,7 +1,12 @@
 import { app } from 'electron';
 import path from 'path';
 import { promises as fs } from 'fs';
-import { isTestnet } from '../../store/config';
+import { getPlatform, isTestnet } from '../../store/config';
+import { BinaryInfo } from '../../models/downloaderModel';
+
+export const RESOURCES_PATH = app.isPackaged
+  ? path.join(process.resourcesPath, 'assets')
+  : path.join(__dirname, '../../../assets');
 
 export async function getAppDataDir(): Promise<string> {
   const appDataPath = app.getPath('appData');
@@ -52,4 +57,28 @@ export async function getSqliteDbFiles() {
     shmFile: shm,
     walFile: wal,
   };
+}
+
+export function getSwapBinary(): BinaryInfo {
+  const platform = getPlatform();
+  const dirPath = path.join(RESOURCES_PATH, 'bin', platform);
+
+  switch (getPlatform()) {
+    case 'mac':
+      return {
+        dirPath,
+        fileName: 'swap',
+      };
+    case 'linux':
+      return {
+        dirPath,
+        fileName: 'swap',
+      };
+    case 'win':
+    default:
+      return {
+        dirPath,
+        fileName: 'swap.exe',
+      };
+  }
 }

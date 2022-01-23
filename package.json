@@ -39,6 +39,13 @@
       "node_modules",
       "package.json"
     ],
+    "extraFiles": [
+      {
+        "from": "assets/bin/${os}",
+        "to": "Resources/bin",
+        "filter": ["**/*"]
+      }
+    ],
     "afterSign": ".erb/scripts/notarize.js",
     "mac": {
       "target": {

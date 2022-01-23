@@ -4,10 +4,10 @@ import {
 } from 'child_process';
 import PQueue from 'p-queue';
 import psList from 'ps-list';
-import downloadSwapBinary from './downloader';
+import { BinaryInfo } from 'models/downloaderModel';
 import { isTestnet } from '../../store/config';
 import { isCliLog, CliLog } from '../../models/cliModel';
-import { getAppDataDir, getCliDataBaseDir } from './dirs';
+import { getAppDataDir, getCliDataBaseDir, getSwapBinary } from './dirs';
 import { readFromDatabaseAndUpdateState } from './database';
 
 const queue = new PQueue({ concurrency: 1 });
@@ -78,16 +78,17 @@ export async function spawnSubcommand(
       queue.add(
         () =>
           new Promise<void>(async (resolveRunning) => {
+            let binary: BinaryInfo | null = null;
+
             try {
-              const [appDataPath, binaryInfo, spawnArgs] = await Promise.all([
-                getAppDataDir(),
-                downloadSwapBinary(),
+              binary = getSwapBinary();
+              const [spawnArgs] = await Promise.all([
                 getSpawnArgs(subCommand, options),
                 killMoneroWalletRpc(),
               ]);
 
-              cli = spawnProc(`./${binaryInfo.name}`, spawnArgs, {
-                cwd: appDataPath,
+              cli = spawnProc(`./${binary.fileName}`, spawnArgs, {
+                cwd: binary.dirPath,
               });
 
               // Added in: Node v15.1.0, v14.17.0
@@ -96,7 +97,7 @@ export async function spawnSubcommand(
                   console.log(
                     `Spawned CLI Arguments: ${cli.spawnargs.join(
                       ' '
-                    )} in folder ${appDataPath} with PID ${cli.pid}`
+                    )} in folder ${binary?.dirPath} with PID ${cli.pid}`
                   );
 
                   [cli.stderr, cli.stdout].forEach((stream) => {
@@ -139,7 +140,15 @@ export async function spawnSubcommand(
 
               cli.on('error', (e) => {
                 cli = null;
-                rejectSpawn(e);
+                rejectSpawn(
+                  new Error(
+                    `Failed to spawn ${subCommand} Binary: ${
+                      binary
+                        ? `Dir: ${binary.dirPath} File: ${binary.fileName}`
+                        : 'null'
+                    } Error: ${e}`
+                  )
+                );
                 resolveRunning();
               });
 
@@ -158,7 +167,15 @@ export async function spawnSubcommand(
                 }
               });
             } catch (e) {
-              rejectSpawn(e);
+              rejectSpawn(
+                new Error(
+                  `Failed to spawn ${subCommand} Binary: ${
+                    binary
+                      ? `Dir: ${binary.dirPath} File: ${binary.fileName}`
+                      : 'null'
+                  } Error: ${e}`
+                )
+              );
               resolveRunning();
             }
           })
