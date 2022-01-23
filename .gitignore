@@ -1,3 +1,6 @@
+# swap binary directory
+build/bin/**
+
 # Logs
 logs
 *.log

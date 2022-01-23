@@ -6,7 +6,6 @@ import Navigation, { drawerWidth } from './Navigation';
 import HistoryPage from './pages/history/HistoryPage';
 import SwapPage from './pages/swap/SwapPage';
 import WalletPage from './pages/wallet/WalletPage';
-import DownloaderDialog from './modal/downloader/DownloaderDialog';
 
 const useStyles = makeStyles((theme) => ({
   innerContent: {
@@ -50,7 +49,6 @@ export default function App() {
         <Navigation />
         <InnerContent />
       </Router>
-      <DownloaderDialog />
     </ThemeProvider>
   );
 }

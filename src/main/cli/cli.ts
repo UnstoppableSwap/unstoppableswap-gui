@@ -4,10 +4,9 @@ import {
 } from 'child_process';
 import PQueue from 'p-queue';
 import psList from 'ps-list';
-import downloadSwapBinary from './downloader';
 import { isTestnet } from '../../store/config';
 import { isCliLog, CliLog } from '../../models/cliModel';
-import { getAppDataDir, getCliDataBaseDir } from './dirs';
+import { getCliDataBaseDir, getSwapBinary } from './dirs';
 import { readFromDatabaseAndUpdateState } from './database';
 
 const queue = new PQueue({ concurrency: 1 });
@@ -79,15 +78,14 @@ export async function spawnSubcommand(
         () =>
           new Promise<void>(async (resolveRunning) => {
             try {
-              const [appDataPath, binaryInfo, spawnArgs] = await Promise.all([
-                getAppDataDir(),
-                downloadSwapBinary(),
+              const [spawnArgs] = await Promise.all([
                 getSpawnArgs(subCommand, options),
                 killMoneroWalletRpc(),
               ]);
+              const binary = getSwapBinary();
 
-              cli = spawnProc(`./${binaryInfo.name}`, spawnArgs, {
-                cwd: appDataPath,
+              cli = spawnProc(`./${binary.fileName}`, spawnArgs, {
+                cwd: binary.dirPath,
               });
 
               // Added in: Node v15.1.0, v14.17.0
@@ -96,42 +94,8 @@ export async function spawnSubcommand(
                   console.log(
                     `Spawned CLI Arguments: ${cli.spawnargs.join(
                       ' '
-                    )} in folder ${appDataPath} with PID ${cli.pid}`
+                    )} in folder ${binary.dirPath} with PID ${cli.pid}`
                   );
-
-                  [cli.stderr, cli.stdout].forEach((stream) => {
-                    stream.setEncoding('utf8');
-                    stream.on('data', (data: string) => {
-                      onStdOut(data);
-
-                      const logs = data
-                        .toString()
-                        .split(/(\r?\n)/g)
-                        .filter((s) => s.length > 2)
-                        .map((logText: string) => {
-                          console.log(`[${subCommand}] ${logText.trim()}`);
-
-                          try {
-                            const log = JSON.parse(logText);
-                            if (isCliLog(log)) {
-                              return log;
-                            }
-                            throw new Error('Required properties are missing');
-                          } catch (e) {
-                            console.log(
-                              `[${subCommand}] Failed to parse cli log. Log text: ${logText} Error: ${e}`
-                            );
-                          }
-
-                          return null;
-                        })
-                        .filter(isCliLog);
-
-                      onLog(logs);
-
-                      readFromDatabaseAndUpdateState();
-                    });
-                  });
 
                   resolveSpawn(cli);
                 }
@@ -139,7 +103,11 @@ export async function spawnSubcommand(
 
               cli.on('error', (e) => {
                 cli = null;
-                rejectSpawn(e);
+                rejectSpawn(
+                  new Error(
+                    `Failed to spawn ${subCommand} Cwd: ${binary.dirPath} Binary: ${binary.fileName} Error: ${e}`
+                  )
+                );
                 resolveRunning();
               });
 
@@ -157,8 +125,44 @@ export async function spawnSubcommand(
                   resolveRunning();
                 }
               });
+
+              [cli.stderr, cli.stdout].forEach((stream) => {
+                stream.setEncoding('utf8');
+                stream.on('data', (data: string) => {
+                  onStdOut(data);
+
+                  const logs = data
+                    .toString()
+                    .split(/(\r?\n)/g)
+                    .filter((s) => s.length > 2)
+                    .map((logText: string) => {
+                      console.log(`[${subCommand}] ${logText.trim()}`);
+
+                      try {
+                        const log = JSON.parse(logText);
+                        if (isCliLog(log)) {
+                          return log;
+                        }
+                        throw new Error('Required properties are missing');
+                      } catch (e) {
+                        console.log(
+                          `[${subCommand}] Failed to parse cli log. Log text: ${logText} Error: ${e}`
+                        );
+                      }
+
+                      return null;
+                    })
+                    .filter(isCliLog);
+
+                  onLog(logs);
+
+                  readFromDatabaseAndUpdateState();
+                });
+              });
             } catch (e) {
-              rejectSpawn(e);
+              rejectSpawn(
+                new Error(`Failed to spawn ${subCommand} Error: ${e}`)
+              );
               resolveRunning();
             }
           })
