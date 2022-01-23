@@ -4,10 +4,9 @@ import {
 } from 'child_process';
 import PQueue from 'p-queue';
 import psList from 'ps-list';
-import downloadSwapBinary from './downloader';
 import { isTestnet } from '../../store/config';
 import { isCliLog, CliLog } from '../../models/cliModel';
-import { getAppDataDir, getCliDataBaseDir } from './dirs';
+import { getAppDataDir, getCliDataBaseDir, getSwapBinary } from './dirs';
 import { readFromDatabaseAndUpdateState } from './database';
 
 const queue = new PQueue({ concurrency: 1 });
@@ -79,15 +78,15 @@ export async function spawnSubcommand(
         () =>
           new Promise<void>(async (resolveRunning) => {
             try {
-              const [appDataPath, binaryInfo, spawnArgs] = await Promise.all([
+              const [appDataPath, spawnArgs] = await Promise.all([
                 getAppDataDir(),
-                downloadSwapBinary(),
                 getSpawnArgs(subCommand, options),
                 killMoneroWalletRpc(),
               ]);
+              const binary = getSwapBinary();
 
-              cli = spawnProc(`./${binaryInfo.name}`, spawnArgs, {
-                cwd: appDataPath,
+              cli = spawnProc(`./${binary.fileName}`, spawnArgs, {
+                cwd: binary.dirPath,
               });
 
               // Added in: Node v15.1.0, v14.17.0

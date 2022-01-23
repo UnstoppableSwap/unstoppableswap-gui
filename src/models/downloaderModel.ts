@@ -1,9 +1,8 @@
 import { isNumber } from 'lodash';
 
 export interface BinaryInfo {
-  url: string;
-  sha256sum: string;
-  name: string;
+  dirPath: string; // Path without filename appended
+  fileName: string;
 }
 
 export interface BinaryDownloadStatus {

@@ -5,7 +5,6 @@ import historyReducer from './features/historySlice';
 import balanceReducer from './features/balanceSlice';
 import withdrawReducer from './features/withdrawSlice';
 import providersSlice from './features/providersSlice';
-import downloaderSlice from './features/downloaderSlice';
 
 export const store = configureStore({
   reducer: {
@@ -14,7 +13,6 @@ export const store = configureStore({
     balance: balanceReducer,
     withdraw: withdrawReducer,
     providers: providersSlice,
-    downloader: downloaderSlice,
   },
   enhancers: [stateSyncEnhancer()],
 });

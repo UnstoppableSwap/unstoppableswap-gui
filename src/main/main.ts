@@ -18,13 +18,11 @@ import { stopCli } from './cli/cli';
 import spawnBalanceCheck from './cli/commands/balanceCommand';
 import { resumeBuyXmr, spawnBuyXmr } from './cli/commands/buyXmrCommand';
 import spawnWithdrawBtc from './cli/commands/withdrawBtcCommand';
-import downloadSwapBinary from './cli/downloader';
 import watchDatabase from './cli/database';
+import { isDevelopment } from '../store/config';
+import { RESOURCES_PATH } from './cli/dirs';
 
 let mainWindow: BrowserWindow | null = null;
-
-const isDevelopment =
-  process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
 async function installExtensions() {
   const installer = require('electron-devtools-installer');
@@ -43,10 +41,6 @@ async function createWindow() {
   if (isDevelopment) {
     await installExtensions();
   }
-
-  const RESOURCES_PATH = app.isPackaged
-    ? path.join(process.resourcesPath, 'assets')
-    : path.join(__dirname, '../../assets');
 
   const getAssetPath = (...paths: string[]): string => {
     return path.join(RESOURCES_PATH, ...paths);
@@ -163,5 +157,3 @@ ipcMain.handle('resume-buy-xmr', (_event, swapId) => resumeBuyXmr(swapId));
 ipcMain.handle('spawn-withdraw-btc', (_event, address) =>
   spawnWithdrawBtc(address)
 );
-
-ipcMain.handle('initiate-downloader', downloadSwapBinary);
