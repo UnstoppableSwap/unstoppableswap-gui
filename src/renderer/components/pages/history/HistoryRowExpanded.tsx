@@ -15,7 +15,6 @@ import {
   getSwapTxFees,
   getSwapXmrAmount,
 } from '../../../../models/databaseModel';
-import { SwapCancelRefundButton, SwapResumeButton } from './HistoryRowActions';
 
 const useStyles = makeStyles((theme) => ({
   outer: {
@@ -30,20 +29,6 @@ const useStyles = makeStyles((theme) => ({
     gap: theme.spacing(1),
   },
 }));
-
-function ActionBar({ dbState }: { dbState: MergedDbState }) {
-  const classes = useStyles();
-  return (
-    <Box className={classes.outerActionBar}>
-      <SwapResumeButton dbState={dbState} size="small" variant="outlined" />
-      <SwapCancelRefundButton
-        dbState={dbState}
-        size="small"
-        variant="outlined"
-      />
-    </Box>
-  );
-}
 
 export default function HistoryRowExpanded({
   dbState,
@@ -94,8 +79,6 @@ export default function HistoryRowExpanded({
           </TableBody>
         </Table>
       </TableContainer>
-
-      <ActionBar dbState={dbState} />
     </Box>
   );
 }

@@ -537,7 +537,6 @@ export function getSwapExchangeRate(dbState: MergedDbState): number {
 }
 
 export function isSwapResumable(dbState: MergedDbState): boolean {
-  return true;
   return (
     isMergedExecutionSetupDoneDbState(dbState) ||
     isMergedBtcLockedDbState(dbState) ||
@@ -593,6 +592,6 @@ export function getTypeOfPathDbState(dbState: MergedDbState): DbStatePathType {
   if (isUnhappyPathSwap(dbState)) {
     return DbStatePathType.UNHAPPY_PATH;
   }
-  console.error('Unknown path type. Assumung happy path. DbState:', dbState);
+  console.error('Unknown path type. Assuming happy path. DbState:', dbState);
   return DbStatePathType.HAPPY_PATH;
 }

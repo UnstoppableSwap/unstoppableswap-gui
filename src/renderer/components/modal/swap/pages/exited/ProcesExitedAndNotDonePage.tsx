@@ -1,25 +1,8 @@
-import {
-  Box,
-  DialogContentText,
-  makeStyles,
-  Paper,
-  Typography,
-} from '@material-ui/core';
+import { Box, DialogContentText } from '@material-ui/core';
 import { SwapStateProcessExited } from '../../../../../../models/storeModel';
 import { MergedDbState } from '../../../../../../models/databaseModel';
 import { useAppSelector } from '../../../../../../store/hooks';
-
-const useStyles = makeStyles((theme) => ({
-  leftButton: {
-    marginRight: theme.spacing(1),
-  },
-  logsOuter: {
-    overflow: 'auto',
-    padding: theme.spacing(1),
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-  },
-}));
+import LogsBox from '../../../LogsBox';
 
 type Props = {
   state: SwapStateProcessExited;
@@ -27,7 +10,6 @@ type Props = {
 };
 
 export default function ProcesExitedAndNotDonePage({ state, dbState }: Props) {
-  const classes = useStyles();
   const stdOut = useAppSelector((s) => s.swap.stdOut);
 
   return (
@@ -41,12 +23,8 @@ export default function ProcesExitedAndNotDonePage({ state, dbState }: Props) {
         {dbState ? `The current state is ${dbState.type}.` : null} Please check
         the logs displayed below for more information. You might have to
         manually take some action.
+        <LogsBox stdOut={stdOut} />
       </DialogContentText>
-      <Paper className={classes.logsOuter} variant="outlined">
-        <Typography component="pre" variant="body2">
-          {stdOut}
-        </Typography>
-      </Paper>
     </Box>
   );
 }
