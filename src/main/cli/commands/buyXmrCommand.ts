@@ -1,4 +1,5 @@
 import fs from 'fs/promises';
+import { dialog } from 'electron';
 import { CliLog } from '../../../models/cliModel';
 import { store } from '../../../store/store';
 import {
@@ -59,9 +60,13 @@ export async function spawnBuyXmr(
       onStdOut
     );
   } catch (e) {
-    console.log(
-      `Failed to spawn swap Provider: ${provider.peerId} RedeemAddress: ${redeemAddress} RefundAddress: ${refundAddress} Error: ${e}`
-    );
+    const error = `Failed to spawn swap Provider: ${provider.peerId} RedeemAddress: ${redeemAddress} RefundAddress: ${refundAddress} Error: ${e}`;
+    console.error(error);
+    dialog.showMessageBoxSync({
+      title: 'Failed to spawn command',
+      message: error,
+      type: 'error',
+    });
     onProcExit(null, null);
   }
 }
@@ -111,7 +116,13 @@ export async function resumeBuyXmr(swapId: string) {
       throw new Error('Could not find swap in database');
     }
   } catch (e) {
-    console.log(`Failed to spawn swap resume SwapID: ${swapId} Error: ${e}`);
+    const error = `Failed to spawn swap resume SwapID: ${swapId} Error: ${e}`;
+    console.error(error);
+    dialog.showMessageBoxSync({
+      title: 'Failed to spawn command',
+      message: error,
+      type: 'error',
+    });
     onProcExit(null, null);
   }
 }
