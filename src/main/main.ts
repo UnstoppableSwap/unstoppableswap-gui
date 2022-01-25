@@ -48,6 +48,7 @@ async function createWindow() {
   };
 
   mainWindow = new BrowserWindow({
+    title: `${app.getName()} ${app.getVersion()}`,
     show: false,
     width: 1024,
     height: 728,
@@ -117,11 +118,10 @@ if (gotTheLock) {
   app
     .whenReady()
     .then(async () => {
+      createWindow();
       initSocket();
-      await createWindow();
-      await watchDatabase();
-      await spawnBalanceCheck();
-
+      watchDatabase();
+      spawnBalanceCheck();
       return 0;
     })
     .catch(console.error);
