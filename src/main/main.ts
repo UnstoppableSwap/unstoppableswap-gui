@@ -22,6 +22,10 @@ import watchDatabase from './cli/database';
 import { isDevelopment } from '../store/config';
 import { ASSETS_PATH } from './cli/dirs';
 import initSocket from './socket';
+import {
+  getOnlineElectrumRemoteDaemon,
+  getOnlineMoneroRemoteDaemon,
+} from '../utils/electrum';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -118,6 +122,10 @@ if (gotTheLock) {
     .whenReady()
     .then(async () => {
       initSocket();
+
+      console.log(await getOnlineMoneroRemoteDaemon());
+      console.log(await getOnlineElectrumRemoteDaemon());
+
       await createWindow();
       await watchDatabase();
       await spawnBalanceCheck();
