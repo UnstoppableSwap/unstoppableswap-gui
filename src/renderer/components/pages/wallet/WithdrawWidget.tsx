@@ -5,6 +5,7 @@ import { useAppSelector } from '../../../../store/hooks';
 import BitcoinIcon from '../../icons/BitcoinIcon';
 import WithdrawDialog from '../../modal/wallet/WithdrawDialog';
 import WalletRefreshButton from './WalletRefreshButton';
+import { isWithdrawState } from '../../../../models/storeModel';
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -31,6 +32,10 @@ export default function WithdrawWidget() {
   const walletBalance = useAppSelector((state) => state.balance.balanceValue);
   const checkingBalance = useAppSelector(
     (state) => state.balance.processRunning
+  );
+
+  const forceShowDialog = useAppSelector((s) =>
+    isWithdrawState(s.withdraw.state)
   );
   const [showDialog, setShowDialog] = useState(false);
 
@@ -64,7 +69,10 @@ export default function WithdrawWidget() {
           Withdraw
         </Button>
       </Paper>
-      <WithdrawDialog open={showDialog} onClose={() => setShowDialog(false)} />
+      <WithdrawDialog
+        open={showDialog || forceShowDialog}
+        onClose={() => setShowDialog(false)}
+      />
     </>
   );
 }

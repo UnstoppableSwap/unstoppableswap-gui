@@ -43,7 +43,9 @@
       {
         "from": "build/bin/${os}",
         "to": "Resources/bin",
-        "filter": ["**/*"]
+        "filter": [
+          "**/*"
+        ]
       }
     ],
     "afterSign": ".erb/scripts/notarize.js",

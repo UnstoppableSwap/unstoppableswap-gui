@@ -54,8 +54,20 @@ export default function SwapDialog({
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onCancel} variant="text">
+        <Button
+          onClick={onCancel}
+          variant="text"
+          disabled={!(swap.processRunning || swap.state === null)}
+        >
           Cancel
+        </Button>
+        <Button
+          color="primary"
+          variant="contained"
+          onClick={onCancel}
+          disabled={!(swap.state !== null && !swap.processRunning)}
+        >
+          Done
         </Button>
       </DialogActions>
 
