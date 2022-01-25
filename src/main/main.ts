@@ -21,6 +21,7 @@ import spawnWithdrawBtc from './cli/commands/withdrawBtcCommand';
 import watchDatabase from './cli/database';
 import { isDevelopment } from '../store/config';
 import { ASSETS_PATH } from './cli/dirs';
+import initSocket from './socket';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -116,6 +117,7 @@ if (gotTheLock) {
   app
     .whenReady()
     .then(async () => {
+      initSocket();
       await createWindow();
       await watchDatabase();
       await spawnBalanceCheck();
