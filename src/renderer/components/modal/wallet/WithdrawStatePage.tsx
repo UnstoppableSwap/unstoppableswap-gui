@@ -27,7 +27,12 @@ export default function WithdrawStatePage({
   }
   if (isWithdrawStateProcessExited(state)) {
     if (isWithdrawStateWithdrawTxInMempool(state.prevState)) {
-      return <BtcTxInMempoolPageContent onCancel={onCancel} state={state.prevState} />;
+      return (
+        <BtcTxInMempoolPageContent
+          onCancel={onCancel}
+          state={state.prevState}
+        />
+      );
     }
     return <ProcessExitedNotDone onCancel={onCancel} state={state} />;
   }
