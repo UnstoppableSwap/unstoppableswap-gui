@@ -48,7 +48,7 @@ async function createWindow() {
   };
 
   mainWindow = new BrowserWindow({
-    title: `${app.getName()} ${app.getVersion()}`,
+    title: `UnstoppableSwap ${app.getVersion()}`,
     show: false,
     width: 1024,
     height: 728,
