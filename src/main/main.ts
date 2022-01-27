@@ -10,7 +10,6 @@
  */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
-import path from 'path';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import blocked from 'blocked-at';
 import { resolveHtmlPath } from './util';
@@ -19,8 +18,8 @@ import spawnBalanceCheck from './cli/commands/balanceCommand';
 import { resumeBuyXmr, spawnBuyXmr } from './cli/commands/buyXmrCommand';
 import spawnWithdrawBtc from './cli/commands/withdrawBtcCommand';
 import watchDatabase from './cli/database';
-import { isDevelopment } from '../store/config';
-import { ASSETS_PATH } from './cli/dirs';
+import { getPlatform, isDevelopment } from '../store/config';
+import { getAssetPath, fixAppDataPath } from './cli/dirs';
 import initSocket from './socket';
 
 let mainWindow: BrowserWindow | null = null;
@@ -39,14 +38,6 @@ async function installExtensions() {
 }
 
 async function createWindow() {
-  if (isDevelopment) {
-    await installExtensions();
-  }
-
-  const getAssetPath = (...paths: string[]): string => {
-    return path.join(ASSETS_PATH, ...paths);
-  };
-
   mainWindow = new BrowserWindow({
     title: `UnstoppableSwap ${app.getVersion()}`,
     show: false,
@@ -90,29 +81,27 @@ async function createWindow() {
   });
 }
 
+fixAppDataPath();
+
+app.on('will-quit', async () => {
+  await stopCli();
+});
+
+app.on('window-all-closed', () => {
+  // Respect the OSX convention of having the application in memory even
+  // after all windows have been closed
+  if (getPlatform() !== 'mac') {
+    app.quit();
+  }
+});
+
 const gotTheLock = app.requestSingleInstanceLock();
 
 if (gotTheLock) {
-  /**
-   * Add event listeners...
-   */
-
-  app.on('window-all-closed', () => {
-    // Respect the OSX convention of having the application in memory even
-    // after all windows have been closed
-    if (process.platform !== 'darwin') {
-      app.quit();
-    }
-  });
-
   app.on('activate', () => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (mainWindow === null) createWindow();
-  });
-
-  app.on('will-quit', async () => {
-    await stopCli();
   });
 
   app
@@ -131,14 +120,19 @@ if (gotTheLock) {
 }
 
 if (isDevelopment) {
+  installExtensions();
   require('electron-debug')();
-
-  blocked((time, stack) => {
-    console.log(
-      `Main thread has been blocked for ${time}ms, operation started here:`,
-      stack
-    );
-  });
+  blocked(
+    (time, stack) => {
+      console.log(
+        `Main thread has been blocked for ${time}ms, operation started here:`,
+        stack
+      );
+    },
+    {
+      threshold: 50,
+    }
+  );
 } else {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
