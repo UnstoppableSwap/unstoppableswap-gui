@@ -19,7 +19,7 @@ export default function MoneroAddressTextField({
   const placeholder = isTestnet() ? '59McWTPGc745...' : '888tNkZrPN6J...';
   const errorText = isXmrAddressValid(address, isTestnet())
     ? null
-    : 'Not a valid monero address';
+    : 'Not a valid Monero address';
 
   useEffect(() => {
     onAddressValidityChange(!errorText);

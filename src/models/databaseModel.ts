@@ -261,6 +261,36 @@ export enum DbStateType {
   DONE_BTC_PUNISHED = 'BtcPunished',
 }
 
+// See https://github.com/comit-network/xmr-btc-swap/blob/50ae54141255e03dba3d2b09036b1caa4a63e5a3/swap/src/protocol/bob/state.rs#L55
+export function getHumanReadableDbStateType(type: DbStateType): string {
+  switch (type) {
+    case DbStateType.EXECUTION_SETUP_DONE:
+      return 'Swap has been initiated';
+    case DbStateType.BTC_LOCKED:
+      return 'Bitcoin has been locked';
+    case DbStateType.XMR_LOCK_PROOF_RECEIVED:
+      return 'Monero lock transaction transfer proof has been received';
+    case DbStateType.XMR_LOCKED:
+      return 'Monero has been locked';
+    case DbStateType.ENC_SIG_SENT:
+      return 'Encrypted signature has been sent';
+    case DbStateType.BTC_REDEEMED:
+      return 'Bitcoin has been redeemed';
+    case DbStateType.CANCEL_TIMELOCK_EXPIRED:
+      return 'Cancel timelock has expired';
+    case DbStateType.BTC_CANCELLED:
+      return 'Swap has been cancelled';
+    case DbStateType.DONE_BTC_REFUNDED:
+      return 'Bitcoin has been refunded';
+    case DbStateType.DONE_XMR_REDEEMED:
+      return 'Monero has been redeemed';
+    case DbStateType.DONE_BTC_PUNISHED:
+      return 'Bitcoin has been punished';
+    default:
+      return 'unknown';
+  }
+}
+
 export enum DbStatePathType {
   HAPPY_PATH = 'happy path',
   UNHAPPY_PATH = 'unhappy path',
@@ -536,14 +566,13 @@ export function getSwapExchangeRate(dbState: MergedDbState): number {
   return btcAmount / xmrAmount;
 }
 
+// See https://github.com/comit-network/xmr-btc-swap/blob/50ae54141255e03dba3d2b09036b1caa4a63e5a3/swap/src/protocol/bob/swap.rs#L11
 export function isSwapResumable(dbState: MergedDbState): boolean {
-  return (
-    isMergedExecutionSetupDoneDbState(dbState) ||
-    isMergedBtcLockedDbState(dbState) ||
-    isMergedXmrLockProofReceivedDbState(dbState) ||
-    isMergedXmrLockedDbState(dbState) ||
-    isMergedEncSigSentDbState(dbState) ||
-    isMergedBtcRedeemedDbState(dbState)
+  // Add SafelyAborted db state
+  return !(
+    isMergedDoneBtcRefundedDbState(dbState) ||
+    isMergedDoneXmrRedeemedDbState(dbState) ||
+    isMergedDoneBtcPunishedDbState(dbState)
   );
 }
 

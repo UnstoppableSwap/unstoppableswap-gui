@@ -17,10 +17,10 @@ export default function BitcoinLockTxInMempoolPage({
         Monero.
       </DialogContentText>
       <BitcoinTransactionInfoBox
-        title="BTC Lock Transaction"
+        title="Bitcoin Lock Transaction"
         txId={state.bobBtcLockTxId}
         loading
-        additionalText={
+        additionalContent={
           <>
             Most swap providers require 2 confirmations
             <br />

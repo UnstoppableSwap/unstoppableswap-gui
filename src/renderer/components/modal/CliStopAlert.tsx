@@ -21,18 +21,19 @@ export default function CliStopAlert({ open, onClose }: SwapCancelAlertProps) {
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Stop swap?</DialogTitle>
+      <DialogTitle>Force stop running operation?</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          Are you sure you want to force stop the running operation?
+          Are you sure you want to force stop the running operation? This might
+          have unintended consequences.
         </DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="primary">
-          Cancel
+          No
         </Button>
-        <Button onClick={handleSwapCancel} color="primary" autoFocus>
-          Stop swap
+        <Button onClick={handleSwapCancel} color="primary">
+          Force stop
         </Button>
       </DialogActions>
     </Dialog>

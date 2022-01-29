@@ -38,6 +38,10 @@ async function installExtensions() {
 }
 
 async function createWindow() {
+  if (isDevelopment) {
+    await installExtensions();
+  }
+
   mainWindow = new BrowserWindow({
     title: `UnstoppableSwap ${app.getVersion()}`,
     show: false,
@@ -50,6 +54,7 @@ async function createWindow() {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
+      webSecurity: false, // Temporary fix for CORS issues
     },
     autoHideMenuBar: true,
   });
@@ -83,9 +88,7 @@ async function createWindow() {
 
 fixAppDataPath();
 
-app.on('will-quit', async () => {
-  await stopCli();
-});
+app.on('will-quit', stopCli);
 
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
@@ -120,8 +123,6 @@ if (gotTheLock) {
 }
 
 if (isDevelopment) {
-  installExtensions();
-  require('electron-debug')();
   blocked(
     (time, stack) => {
       console.log(
@@ -133,9 +134,6 @@ if (isDevelopment) {
       threshold: 50,
     }
   );
-} else {
-  const sourceMapSupport = require('source-map-support');
-  sourceMapSupport.install();
 }
 
 ipcMain.handle('stop-cli', stopCli);

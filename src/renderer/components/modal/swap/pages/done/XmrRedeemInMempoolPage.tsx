@@ -12,7 +12,7 @@ export default function XmrRedeemInMempoolPage({
   state,
 }: XmrRedeemInMempoolPageProps) {
   const xmrAmount = useActiveDbState()?.state.Bob.ExecutionSetupDone.state2.xmr;
-  const additionalText = xmrAmount
+  const additionalContent = xmrAmount
     ? `This transaction transfers ${pionerosToXmr(xmrAmount).toFixed(
         6
       )} XMR to ${state?.bobXmrRedeemAddress}`
@@ -21,14 +21,14 @@ export default function XmrRedeemInMempoolPage({
   return (
     <Box>
       <DialogContentText>
-        The moneroj has been sent to your redeem address. You may exit the
-        application now.
+        The swap was successful and the Monero has been sent to the address you
+        specified. The swap is completed and you may exit the application now.
       </DialogContentText>
       {state && (
         <MoneroTransactionInfoBox
           title="Monero Redeem Transaction"
           txId={state.bobXmrRedeemTxId}
-          additionalText={additionalText}
+          additionalContent={additionalContent}
           loading={false}
         />
       )}

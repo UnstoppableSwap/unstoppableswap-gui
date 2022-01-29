@@ -14,6 +14,7 @@ import {
   MergedDbState,
   getSwapBtcAmount,
   getSwapXmrAmount,
+  getHumanReadableDbStateType,
 } from '../../../../models/databaseModel';
 import HistoryRowActions from './HistoryRowActions';
 import HistoryRowExpanded from './HistoryRowExpanded';
@@ -53,6 +54,7 @@ export default function HistoryRow({ dbState }: HistoryRowProps) {
   const xmrAmount = getSwapXmrAmount(dbState);
 
   const [expanded, setExpanded] = useState(false);
+  const humanReadableStateType = getHumanReadableDbStateType(dbState.type);
 
   return (
     <>
@@ -66,15 +68,15 @@ export default function HistoryRow({ dbState }: HistoryRowProps) {
         <TableCell>
           <AmountTransfer xmrAmount={xmrAmount} btcAmount={btcAmount} />
         </TableCell>
-        <TableCell>{dbState.type}</TableCell>
+        <TableCell>{humanReadableStateType}</TableCell>
         <TableCell>
           <HistoryRowActions dbState={dbState} />
         </TableCell>
       </TableRow>
 
       <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Collapse in={expanded} timeout="auto" unmountOnExit>
+        <TableCell style={{ padding: 0 }} colSpan={6}>
+          <Collapse in={expanded} timeout="auto">
             <HistoryRowExpanded dbState={dbState} />
           </Collapse>
         </TableCell>

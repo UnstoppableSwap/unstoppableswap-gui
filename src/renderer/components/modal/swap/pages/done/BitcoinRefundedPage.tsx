@@ -10,23 +10,24 @@ export default function BitcoinRefundedPage({
 }) {
   const refundAddress =
     useActiveDbState()?.state.Bob.ExecutionSetupDone.state2.refund_address;
-  const additionalText = refundAddress
+  const additionalContent = refundAddress
     ? `Refund address: ${refundAddress}`
     : null;
 
   return (
     <Box>
       <DialogContentText>
-        Unfortunately the swap was not successful. The Bitcoin refund
-        transaction has been published. All Bitcoin have been refunded to the
-        Bitcoin address you provided. You may exit the application now.
+        Unfortunately, the swap was unsuccessful and the Bitcoin refund
+        transaction was published. All Bitcoin have been refunded to the Bitcoin
+        address you specified. The swap is completed and you may exit the
+        application now.
       </DialogContentText>
       {state && (
         <BitcoinTransactionInfoBox
-          title="BTC Refund Transaction"
+          title="Bitcoin Refund Transaction"
           txId={state.bobBtcRefundTxId}
           loading={false}
-          additionalText={additionalText}
+          additionalContent={additionalContent}
         />
       )}
     </Box>

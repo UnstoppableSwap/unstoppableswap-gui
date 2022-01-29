@@ -9,8 +9,6 @@ import {
   DialogActions,
   Button,
   Switch,
-  useTheme,
-  useMediaQuery,
 } from '@material-ui/core';
 import { Multiaddr } from 'multiaddr';
 
@@ -27,12 +25,9 @@ export default function ProviderSubmitDialog({
   const [peerId, setPeerId] = useState('');
   const [testnet, setTestnet] = useState(true);
 
-  const theme = useTheme();
-  const smallDevice = useMediaQuery(theme.breakpoints.down('sm'));
-
   async function handleProviderSubmit() {
     if (multiAddr && peerId) {
-      await fetch('/api/submit-provider', {
+      await fetch('https://api.unstoppableswap.net/api/submit-provider', {
         method: 'post',
         headers: {
           'Content-Type': 'application/json',
@@ -79,7 +74,7 @@ export default function ProviderSubmitDialog({
   }
 
   return (
-    <Dialog onClose={onClose} open={open} fullScreen={smallDevice}>
+    <Dialog onClose={onClose} open={open}>
       <DialogTitle>Submit a swap provider</DialogTitle>
       <DialogContent dividers>
         <DialogContentText>
