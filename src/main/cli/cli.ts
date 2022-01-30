@@ -3,7 +3,7 @@ import {
   spawn as spawnProc,
 } from 'child_process';
 import PQueue from 'p-queue';
-import psList from 'ps-list';
+import pidtree from 'pidtree';
 import { isTestnet } from '../../store/config';
 import { isCliLog, CliLog } from '../../models/cliModel';
 import { getCliDataBaseDir, getSwapBinary } from './dirs';
@@ -31,30 +31,16 @@ async function getSpawnArgs(
   return [...flagsArray, subCommand, ...optionsArray];
 }
 
-async function killMoneroWalletRpc() {
-  const list = await psList();
-  const pid = list.find(
-    (p) =>
-      p.name.match(/monero(.*)wallet(.*)rpc/gim) ||
-      p.cmd?.match(/monero(.*)wallet(.*)rpc/gim)
-  )?.pid;
-
-  if (pid) {
-    try {
-      process.kill(pid);
-      console.debug(`Successfully killed monero-wallet-rpc PID: ${pid}`);
-    } catch (e) {
-      console.error(`Failed to kill monero-wallet-rpc PID: ${pid} Error: ${e}`);
-    }
-  } else {
-    console.debug(
-      `monero-wallet-rpc was not killed because process could not be found`
+export async function stopCli() {
+  const rootPid = cli?.pid;
+  if (rootPid) {
+    const childrenPids = await pidtree(rootPid);
+    childrenPids.forEach((childPid) => process.kill(childPid));
+    process.kill(rootPid);
+    console.log(
+      `Force killed cli with root pid ${rootPid} and child pids ${childrenPids}`
     );
   }
-}
-
-export async function stopCli() {
-  cli?.kill('SIGINT');
 }
 
 export async function spawnSubcommand(
@@ -78,10 +64,7 @@ export async function spawnSubcommand(
         () =>
           new Promise<void>(async (resolveRunning) => {
             try {
-              const [spawnArgs] = await Promise.all([
-                getSpawnArgs(subCommand, options),
-                killMoneroWalletRpc(),
-              ]);
+              const spawnArgs = await getSpawnArgs(subCommand, options);
               const binary = getSwapBinary();
 
               cli = spawnProc(`./${binary.fileName}`, spawnArgs, {
