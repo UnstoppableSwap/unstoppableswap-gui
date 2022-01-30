@@ -13,8 +13,7 @@
     "url": "https://unstoppableswap.net"
   },
   "dependencies": {
-    "sqlite3": "^5.0.2",
-    "ps-list": "github:UnstoppableSwap/ps-list#esm-revert"
+    "sqlite3": "^5.0.2"
   },
   "license": "MIT"
 }
