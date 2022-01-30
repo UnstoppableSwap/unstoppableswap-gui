@@ -1,19 +1,17 @@
 import { isTestnet } from 'store/config';
 import { getMoneroTxExplorerUrl } from 'utils/currencyUtils';
 import MoneroIcon from 'renderer/components/icons/MoneroIcon';
+import { ReactNode } from 'react';
 import TransactionInfoBox from './TransactionInfoBox';
 
-type MoneroTransactionInfoBoxProps = {
+type Props = {
   title: string;
   txId: string;
-  additionalText: string | null | JSX.Element;
+  additionalContent: ReactNode;
   loading: boolean;
 };
 
-export default function MoneroTransactionInfoBox({
-  txId,
-  ...props
-}: MoneroTransactionInfoBoxProps) {
+export default function MoneroTransactionInfoBox({ txId, ...props }: Props) {
   const explorerUrl = getMoneroTxExplorerUrl(txId, isTestnet());
 
   return (

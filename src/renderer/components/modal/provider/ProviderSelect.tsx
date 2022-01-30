@@ -37,22 +37,22 @@ export default function ProviderSelect() {
 
   if (!selectedProvider) return <>No provider selected</>;
 
-  const handleSelectDialogClose = () => {
+  function handleSelectDialogClose() {
     setSelectDialogOpen(false);
-  };
+  }
 
-  const handleSelectDialogOpen = () => {
+  function handleSelectDialogOpen() {
     setSelectDialogOpen(true);
-  };
+  }
 
-  const handleSubmitDialogClose = () => {
+  function handleSubmitDialogClose() {
     setSubmitDialogOpen(false);
-  };
+  }
 
-  const handleSubmitDialogOpen = () => {
+  function handleSubmitDialogOpen() {
     setSubmitDialogOpen(true);
     setSelectDialogOpen(false);
-  };
+  }
 
   return (
     <Box>
@@ -65,7 +65,6 @@ export default function ProviderSelect() {
         open={submitDialogOpen}
         onClose={handleSubmitDialogClose}
       />
-
       <ButtonBase className={classes.inner} onClick={handleSelectDialogOpen}>
         <Card variant="outlined" className={classes.providerCard}>
           <CardContent className={classes.providerCardContent}>

@@ -2,6 +2,6 @@ import CircularProgressWithSubtitle from '../../CircularProgressWithSubtitle';
 
 export default function XmrLockedPage() {
   return (
-    <CircularProgressWithSubtitle description="Waiting for swap partner to redeem Bitcoin" />
+    <CircularProgressWithSubtitle description="Waiting for them to redeem the Bitcoin" />
   );
 }

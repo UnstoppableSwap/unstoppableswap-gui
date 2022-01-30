@@ -23,8 +23,8 @@ export default function ProcesExitedAndNotDonePage({ state, dbState }: Props) {
         {dbState ? `The current state is ${dbState.type}.` : null} Please check
         the logs displayed below for more information. You might have to
         manually take some action.
-        <LogsBox stdOut={stdOut} />
       </DialogContentText>
+      <LogsBox stdOut={stdOut} />
     </Box>
   );
 }

@@ -3,12 +3,6 @@ import { satsToBtc } from '../../../../utils/currencyUtils';
 import { ExtendedProvider } from '../../../../models/storeModel';
 
 const useStyles = makeStyles((theme) => ({
-  title: {
-    fontSize: 14,
-  },
-  pos: {
-    marginBottom: theme.spacing(1),
-  },
   content: {
     flex: 1,
     '& *': {
@@ -36,16 +30,16 @@ export default function ProviderInfo({
 
   return (
     <Box className={classes.content}>
-      <Typography className={classes.title} color="textSecondary" gutterBottom>
+      <Typography color="textSecondary" gutterBottom>
         Swap Provider
       </Typography>
       <Typography variant="h5" component="h2">
         {provider.multiAddr}
       </Typography>
-      <Typography className={classes.pos} color="textSecondary">
+      <Typography color="textSecondary" gutterBottom>
         {provider.peerId.substring(0, 12)}...
       </Typography>
-      <Typography variant="caption" component="p">
+      <Typography variant="caption">
         Exchange rate: {satsToBtc(provider.price)} BTC/XMR
         <br />
         Minimum swap amount: {satsToBtc(provider.minSwapAmount)} BTC

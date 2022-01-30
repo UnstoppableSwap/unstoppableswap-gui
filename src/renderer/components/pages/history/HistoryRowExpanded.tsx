@@ -1,7 +1,6 @@
 import {
   Box,
   makeStyles,
-  Paper,
   Table,
   TableBody,
   TableCell,
@@ -20,9 +19,7 @@ const useStyles = makeStyles((theme) => ({
   outer: {
     display: 'grid',
     flexDirection: 'column',
-    gap: theme.spacing(1),
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(1),
+    padding: theme.spacing(1),
   },
   outerActionBar: {
     display: 'flex',
@@ -45,7 +42,7 @@ export default function HistoryRowExpanded({
 
   return (
     <Box className={classes.outer}>
-      <TableContainer component={Paper} variant="outlined">
+      <TableContainer>
         <Table>
           <TableBody>
             <TableRow>

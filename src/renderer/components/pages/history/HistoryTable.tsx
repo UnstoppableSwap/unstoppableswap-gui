@@ -33,7 +33,7 @@ export default function HistoryTable() {
               <TableCell>ID</TableCell>
               <TableCell>Amount</TableCell>
               <TableCell>State</TableCell>
-              <TableCell>Action</TableCell>
+              <TableCell />
             </TableRow>
           </TableHead>
           <TableBody>

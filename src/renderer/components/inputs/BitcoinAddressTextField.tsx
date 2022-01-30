@@ -17,17 +17,11 @@ export default function BitcoinAddressTextField({
   helperText: string;
 } & TextFieldProps) {
   const placeholder = isTestnet() ? 'tb1q4aelwalu...' : 'bc18ociqZ9mZ...';
-
-  function getAddressError() {
-    if (isBtcAddressValid(address, isTestnet())) {
-      return null;
-    }
-    return `Only bech32 addresses are supported. They begin with "${
-      isTestnet() ? 'tb1' : 'bc1'
-    }"`;
-  }
-
-  const errorText = getAddressError();
+  const errorText = isBtcAddressValid(address, isTestnet())
+    ? null
+    : `Only bech32 addresses are supported. They begin with "${
+        isTestnet() ? 'tb1' : 'bc1'
+      }"`;
 
   useEffect(() => {
     onAddressValidityChange(!errorText);

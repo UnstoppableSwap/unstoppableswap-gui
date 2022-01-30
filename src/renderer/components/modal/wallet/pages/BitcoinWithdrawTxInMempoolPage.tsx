@@ -30,8 +30,8 @@ export default function BtcTxInMempoolPageContent({
           <BitcoinTransactionInfoBox
             txId={state.txid}
             loading={false}
-            title="BTC Withdraw Transaction"
-            additionalText={null}
+            title="Bitcoin Withdraw Transaction"
+            additionalContent={null}
           />
         </Box>
         <WithdrawStepper />

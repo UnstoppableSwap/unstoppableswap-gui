@@ -1,30 +1,16 @@
 import {
   Box,
-  Button,
   DialogContentText,
   makeStyles,
-  Paper,
   Typography,
 } from '@material-ui/core';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
-import { clipboard } from 'electron';
-import BitcoinIcon from 'renderer/components/icons/BitcoinIcon';
 import { SwapStateWaitingForBtcDeposit } from '../../../../../../models/storeModel';
+import DepositAddressInfoBox from '../../transaction/DepositAddressInfoBox';
+import ClipboardIconButton from '../../ClipbiardIconButton';
+import BitcoinIcon from '../../../../icons/BitcoinIcon';
 
 const useStyles = makeStyles((theme) => ({
-  depositAddressOuter: {
-    padding: theme.spacing(1.5),
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-  },
-  depositAddress: {
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(1),
-    alignItems: 'center',
-    display: 'flex',
-    gap: theme.spacing(0.25),
-    '-webkit-user-select': 'text',
-  },
   depositStatusText: {
     paddingTop: theme.spacing(0.5),
   },
@@ -39,10 +25,6 @@ export default function WaitingForBtcDepositPage({
 }: WaitingForBtcDepositPageProps) {
   const classes = useStyles();
 
-  function handleDepositAddressCopy() {
-    clipboard.writeText(state.depositAddress);
-  }
-
   // TODO: Account for BTC lock tx fees
   return (
     <Box>
@@ -52,29 +34,31 @@ export default function WaitingForBtcDepositPage({
         entirety.
       </DialogContentText>
 
-      <Paper variant="outlined" className={classes.depositAddressOuter}>
-        <Typography variant="subtitle1">Bitcoin Deposit Address</Typography>
-        <Box className={classes.depositAddress}>
-          <BitcoinIcon />
-          <Typography variant="h5" className={classes.depositAddress}>
-            {state.depositAddress}
-          </Typography>
-        </Box>
-        <Button
-          variant="contained"
-          color="primary"
-          endIcon={<FileCopyOutlinedIcon />}
-          onClick={handleDepositAddressCopy}
-          size="large"
-        >
-          Copy
-        </Button>
-        <Typography variant="subtitle2" className={classes.depositStatusText}>
-          Send any amount between {state.minimumAmount} BTC and{' '}
-          {state.maximumAmount} BTC. You have deposited enough Bitcoin to swap{' '}
-          {state.maxGiveable} BTC
-        </Typography>
-      </Paper>
+      <DepositAddressInfoBox
+        title="Bitcoin Deposit Address"
+        address={state.depositAddress}
+        additionalContent={
+          <>
+            <ClipboardIconButton
+              text={state.depositAddress}
+              endIcon={<FileCopyOutlinedIcon />}
+              color="primary"
+              variant="contained"
+              size="large"
+            />
+            <Typography
+              variant="subtitle2"
+              className={classes.depositStatusText}
+            >
+              Send any amount between {state.minimumAmount} BTC (and some more
+              for network fees) and {state.maximumAmount} BTC to the address
+              above. You have deposited enough Bitcoin to swap{' '}
+              {state.maxGiveable} BTC
+            </Typography>
+          </>
+        }
+        icon={<BitcoinIcon />}
+      />
     </Box>
   );
 }
