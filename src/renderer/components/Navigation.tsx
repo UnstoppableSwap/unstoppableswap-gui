@@ -16,10 +16,16 @@ import RedditIcon from '@material-ui/icons/Reddit';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import LinkIconButton from './icons/LinkIconButton';
+import Icon from '../../../assets/icon.svg';
 
 export const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
+  iconOuter: {
+    display: 'flex',
+    justifyContent: 'center',
+    padding: theme.spacing(1),
+  },
   drawer: {
     width: drawerWidth,
     flexShrink: 0,
@@ -73,6 +79,9 @@ export default function Navigation() {
     >
       <Box className={classes.drawerContainer}>
         <Box>
+          <Box className={classes.iconOuter}>
+            <img src={Icon} alt="UnstoppableSwap" width="75px" />
+          </Box>
           <List>
             <RouteListItemIconButton name="Swap" route="/swap">
               <SwapHorizOutlinedIcon />

@@ -35,8 +35,22 @@ export async function stopCli() {
   const rootPid = cli?.pid;
   if (rootPid) {
     const childrenPids = await pidtree(rootPid);
-    childrenPids.forEach((childPid) => process.kill(childPid));
-    process.kill(rootPid);
+    childrenPids.forEach((childPid) => {
+      try {
+        process.kill(childPid);
+      } catch (e) {
+        console.error(
+          `Failed to kill child process of cli PID: ${childPid} Error: ${e}`
+        );
+      }
+    });
+    try {
+      process.kill(rootPid);
+    } catch (e) {
+      console.error(
+        `Failed to kill root cli process PID: ${rootPid} Error: ${e}`
+      );
+    }
     console.log(
       `Force killed cli with root pid ${rootPid} and child pids ${childrenPids}`
     );
