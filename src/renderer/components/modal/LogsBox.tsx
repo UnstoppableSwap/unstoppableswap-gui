@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1),
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
-    maxHeight: '15rem',
+    maxHeight: '10rem',
   },
   copyButton: {
     marginTop: theme.spacing(1),
