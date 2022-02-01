@@ -4,6 +4,7 @@ import { ipcRenderer } from 'electron';
 import BitcoinAddressTextField from 'renderer/components/inputs/BitcoinAddressTextField';
 import MoneroAddressTextField from 'renderer/components/inputs/MoneroAddressTextField';
 import { useAppSelector } from 'store/hooks';
+import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import { isTestnet } from '../../../../../../store/config';
 
 const useStyles = makeStyles((theme) => ({
@@ -78,6 +79,7 @@ export default function InitPage() {
         color="primary"
         size="large"
         className={classes.initButton}
+        endIcon={<PlayArrowIcon />}
       >
         Start swap
       </Button>
