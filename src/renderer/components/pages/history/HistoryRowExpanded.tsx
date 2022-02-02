@@ -14,15 +14,13 @@ import {
   getSwapTxFees,
   getSwapXmrAmount,
 } from '../../../../models/databaseModel';
+import SwapLogFileOpenButton from './SwapLogFileOpenButton';
 
 const useStyles = makeStyles((theme) => ({
   outer: {
     display: 'grid',
     flexDirection: 'column',
     padding: theme.spacing(1),
-  },
-  outerActionBar: {
-    display: 'flex',
     gap: theme.spacing(1),
   },
 }));
@@ -76,6 +74,13 @@ export default function HistoryRowExpanded({
           </TableBody>
         </Table>
       </TableContainer>
+      <Box>
+        <SwapLogFileOpenButton
+          swapId={dbState.swapId}
+          variant="outlined"
+          size="small"
+        />
+      </Box>
     </Box>
   );
 }

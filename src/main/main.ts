@@ -19,7 +19,7 @@ import { resumeBuyXmr, spawnBuyXmr } from './cli/commands/buyXmrCommand';
 import spawnWithdrawBtc from './cli/commands/withdrawBtcCommand';
 import watchDatabase from './cli/database';
 import { getPlatform, isDevelopment } from '../store/config';
-import { getAssetPath, fixAppDataPath } from './cli/dirs';
+import { getAssetPath, fixAppDataPath, getCliLogFile } from './cli/dirs';
 import initSocket from './socket';
 
 let mainWindow: BrowserWindow | null = null;
@@ -151,3 +151,5 @@ ipcMain.handle('resume-buy-xmr', (_event, swapId) => resumeBuyXmr(swapId));
 ipcMain.handle('spawn-withdraw-btc', (_event, address) =>
   spawnWithdrawBtc(address)
 );
+
+ipcMain.handle('get-cli-log-path', (_event, swapId) => getCliLogFile(swapId));
