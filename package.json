@@ -220,6 +220,7 @@
   "dependencies": {
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.2",
+    "@material-ui/lab": "^4.0.0-alpha.60",
     "@reduxjs/toolkit": "^1.7.1",
     "blocked-at": "^1.2.0",
     "electron-redux": "2.0.0-alpha.8",

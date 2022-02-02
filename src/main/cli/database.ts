@@ -111,7 +111,9 @@ async function getMergedStateForEachSwap(
         return null;
       })
     )
-  ).filter(isMergedDbState);
+  )
+    .filter(isMergedDbState)
+    .reverse();
 }
 
 let database: Database | null = null;

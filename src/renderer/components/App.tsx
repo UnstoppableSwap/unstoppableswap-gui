@@ -2,7 +2,7 @@ import { Box, makeStyles, CssBaseline } from '@material-ui/core';
 import { createTheme, ThemeProvider } from '@material-ui/core/styles';
 import { indigo } from '@material-ui/core/colors';
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
-import Navigation, { drawerWidth } from './Navigation';
+import Navigation, { drawerWidth } from './navigation/Navigation';
 import HistoryPage from './pages/history/HistoryPage';
 import SwapPage from './pages/swap/SwapPage';
 import WalletPage from './pages/wallet/WalletPage';
