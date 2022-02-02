@@ -39,6 +39,7 @@ export const mergedExecutionSetupDoneState: MergedExecutionSetupDoneDbState = {
   type: DbStateType.EXECUTION_SETUP_DONE,
   state: merge({}, executionSetupDoneState),
   provider: exampleProvider,
+  firstEnteredDate: 1640784359640,
 };
 
 export const mergedBtcLockedState: MergedBtcLockedDbState = {
@@ -46,6 +47,7 @@ export const mergedBtcLockedState: MergedBtcLockedDbState = {
   type: DbStateType.BTC_LOCKED,
   state: merge({}, executionSetupDoneState, btcLockedState),
   provider: exampleProvider,
+  firstEnteredDate: 1640784359640,
 };
 
 export const mergedXmrLockProofReceivedState: MergedXmrLockProofReceivedDbState =
@@ -59,6 +61,7 @@ export const mergedXmrLockProofReceivedState: MergedXmrLockProofReceivedDbState 
       xmrLockProofReceivedState
     ),
     provider: exampleProvider,
+    firstEnteredDate: 1640784359640,
   };
 
 export const mergedXmrLockedState: MergedXmrLockedDbState = {
@@ -72,6 +75,7 @@ export const mergedXmrLockedState: MergedXmrLockedDbState = {
     xmrLockedState
   ),
   provider: exampleProvider,
+  firstEnteredDate: 1640784359640,
 };
 
 export const mergedEncSigSentState: MergedEncSigSentDbState = {
@@ -86,6 +90,7 @@ export const mergedEncSigSentState: MergedEncSigSentDbState = {
     encSigSentState
   ),
   provider: exampleProvider,
+  firstEnteredDate: 1640784359640,
 };
 
 export const mergedBtcRedeemedState: MergedBtcRedeemedDbState = {
@@ -101,6 +106,7 @@ export const mergedBtcRedeemedState: MergedBtcRedeemedDbState = {
     btcRedeemedState
   ),
   provider: exampleProvider,
+  firstEnteredDate: 1640784359640,
 };
 
 export const mergedXmrRedeemedState: MergedDoneXmrRedeemedDbState = {
@@ -117,6 +123,7 @@ export const mergedXmrRedeemedState: MergedDoneXmrRedeemedDbState = {
     doneXmrRedeemedState
   ),
   provider: exampleProvider,
+  firstEnteredDate: 1640784359640,
 };
 
 export const mergedTimelockExpiredState: MergedCancelTimelockExpiredDbState = {
@@ -129,6 +136,7 @@ export const mergedTimelockExpiredState: MergedCancelTimelockExpiredDbState = {
     cancelTimelockExpiredState
   ),
   provider: exampleProvider,
+  firstEnteredDate: 1640784359640,
 };
 
 export const mergedBtcCancelled: MergedBtcCancelledDbState = {
@@ -142,6 +150,7 @@ export const mergedBtcCancelled: MergedBtcCancelledDbState = {
     btcCancelledState
   ),
   provider: exampleProvider,
+  firstEnteredDate: 1640784359640,
 };
 
 export const mergedBtcRefunded: MergedDoneBtcRefundedDbState = {
@@ -156,6 +165,7 @@ export const mergedBtcRefunded: MergedDoneBtcRefundedDbState = {
     doneBtcRefunded
   ),
   provider: exampleProvider,
+  firstEnteredDate: 1640784359640,
 };
 
 export const mergedBtcPunished: MergedDoneBtcPunishedDbState = {
@@ -170,4 +180,5 @@ export const mergedBtcPunished: MergedDoneBtcPunishedDbState = {
     doneBtcPunished
   ),
   provider: exampleProvider,
+  firstEnteredDate: 1640784359640,
 };

@@ -15,6 +15,7 @@ import {
   getSwapXmrAmount,
 } from '../../../../models/databaseModel';
 import SwapLogFileOpenButton from './SwapLogFileOpenButton';
+import DateFormatted from './DateFormatted';
 
 const useStyles = makeStyles((theme) => ({
   outer: {
@@ -36,6 +37,7 @@ export default function HistoryRowExpanded({
   const xmrAmount = getSwapXmrAmount(dbState);
   const txFees = getSwapTxFees(dbState);
   const exchangeRate = getSwapExchangeRate(dbState);
+  const firstEnteredAt = new Date(dbState.firstEnteredDate);
   const { provider } = dbState;
 
   return (
@@ -43,6 +45,12 @@ export default function HistoryRowExpanded({
       <TableContainer>
         <Table>
           <TableBody>
+            <TableRow>
+              <TableCell>Started on</TableCell>
+              <TableCell>
+                <DateFormatted date={firstEnteredAt} />
+              </TableCell>
+            </TableRow>
             <TableRow>
               <TableCell>Swap ID</TableCell>
               <TableCell>{dbState.swapId}</TableCell>
