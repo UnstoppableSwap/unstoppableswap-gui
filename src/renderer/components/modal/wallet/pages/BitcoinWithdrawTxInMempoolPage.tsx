@@ -1,14 +1,8 @@
-import {
-  Box,
-  Button,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-} from '@material-ui/core';
+import { Button, DialogActions, DialogContentText } from '@material-ui/core';
 import { WithdrawStateWithdrawTxInMempool } from '../../../../../models/storeModel';
 import BitcoinTransactionInfoBox from '../../swap/transaction/BitcoinTransactionInfoBox';
-import WithdrawStepper from '../WithdrawStepper';
 import { useAppSelector } from '../../../../../store/hooks';
+import WithdrawDialogContent from '../WithdrawDialogContent';
 
 export default function BtcTxInMempoolPageContent({
   state,
@@ -21,21 +15,18 @@ export default function BtcTxInMempoolPageContent({
 
   return (
     <>
-      <DialogContent dividers>
-        <Box>
-          <DialogContentText>
-            All funds of the internal Bitcoin wallet have been transferred to
-            your withdraw address.
-          </DialogContentText>
-          <BitcoinTransactionInfoBox
-            txId={state.txid}
-            loading={false}
-            title="Bitcoin Withdraw Transaction"
-            additionalContent={null}
-          />
-        </Box>
-        <WithdrawStepper />
-      </DialogContent>
+      <WithdrawDialogContent>
+        <DialogContentText>
+          All funds of the internal Bitcoin wallet have been transferred to your
+          withdraw address.
+        </DialogContentText>
+        <BitcoinTransactionInfoBox
+          txId={state.txid}
+          loading={false}
+          title="Bitcoin Withdraw Transaction"
+          additionalContent={null}
+        />
+      </WithdrawDialogContent>
       <DialogActions>
         <Button onClick={onCancel} variant="text">
           Cancel

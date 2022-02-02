@@ -1,14 +1,13 @@
-import { Button, DialogActions, DialogContent } from '@material-ui/core';
+import { Button, DialogActions } from '@material-ui/core';
 import CircularProgressWithSubtitle from '../../swap/CircularProgressWithSubtitle';
-import WithdrawStepper from '../WithdrawStepper';
+import WithdrawDialogContent from '../WithdrawDialogContent';
 
 export default function InitiatedPage({ onCancel }: { onCancel: () => void }) {
   return (
     <>
-      <DialogContent dividers>
+      <WithdrawDialogContent>
         <CircularProgressWithSubtitle description="Withdrawing Bitcoin" />
-        <WithdrawStepper />
-      </DialogContent>
+      </WithdrawDialogContent>
       <DialogActions>
         <Button onClick={onCancel} variant="text">
           Cancel

@@ -1,13 +1,8 @@
 import { useState } from 'react';
-import {
-  Button,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-} from '@material-ui/core';
+import { Button, DialogActions, DialogContentText } from '@material-ui/core';
 import { ipcRenderer } from 'electron';
 import BitcoinAddressTextField from '../../../inputs/BitcoinAddressTextField';
-import WithdrawStepper from '../WithdrawStepper';
+import WithdrawDialogContent from '../WithdrawDialogContent';
 
 export default function AddressInputPage({
   onCancel,
@@ -23,7 +18,7 @@ export default function AddressInputPage({
 
   return (
     <>
-      <DialogContent dividers>
+      <WithdrawDialogContent>
         <DialogContentText>
           To withdraw the BTC of the internal wallet, please enter an address.
           All funds will be sent to that address.
@@ -36,9 +31,7 @@ export default function AddressInputPage({
           helperText="All Bitcoin of the internal wallet will be transferred to this address"
           fullWidth
         />
-
-        <WithdrawStepper />
-      </DialogContent>
+      </WithdrawDialogContent>
 
       <DialogActions>
         <Button onClick={onCancel} variant="text">
@@ -50,7 +43,7 @@ export default function AddressInputPage({
           color="primary"
           variant="contained"
         >
-          Next
+          Withdraw
         </Button>
       </DialogActions>
     </>
