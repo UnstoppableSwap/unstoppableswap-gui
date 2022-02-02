@@ -24,6 +24,13 @@ function parseStateString(str: string): DbState {
   throw new Error(`State string is not a valid db state: ${str}`);
 }
 
+// E.g 2021-12-29 14:25:59.64082 +00:00:00
+function parseDateString(str: string): number {
+  const parts = str.split(' ').slice(0, -1);
+  const wholeString = parts.join(' ');
+  return Date.parse(wholeString);
+}
+
 async function getAllStatesForSwap(
   db: Database,
   swapId: string
@@ -41,6 +48,28 @@ async function getAllStatesForSwap(
   )) as ResponseFormat;
 
   return response.map(({ state }) => parseStateString(state));
+}
+
+async function getFirstEnteredDateForSwap(
+  db: Database,
+  swapId: string
+): Promise<number> {
+  type ResponseFormat = {
+    entered_at: string;
+  };
+
+  const response = (await db.get(
+    `SELECT entered_at
+    FROM swap_states
+    WHERE swap_id = ? AND id = (
+        SELECT min(id)
+        FROM swap_states
+        WHERE swap_id = ?
+    )`,
+    [swapId, swapId]
+  )) as ResponseFormat;
+
+  return parseDateString(response.entered_at);
 }
 
 async function getDistinctSwapIds(db: Database): Promise<string[]> {
@@ -89,6 +118,7 @@ async function getMergedStateForEachSwap(
     await Promise.all(
       distinctSwapIds.map(async (swapId) => {
         const states = await getAllStatesForSwap(db, swapId);
+        const firstEnteredDate = await getFirstEnteredDateForSwap(db, swapId);
         const latestState = states.at(-1);
 
         if (latestState) {
@@ -102,6 +132,7 @@ async function getMergedStateForEachSwap(
               type: latestStateType,
               state: mergedState,
               provider,
+              firstEnteredDate,
             };
           }
         }
@@ -111,7 +142,9 @@ async function getMergedStateForEachSwap(
         return null;
       })
     )
-  ).filter(isMergedDbState);
+  )
+    .filter(isMergedDbState)
+    .sort((a, b) => (a.firstEnteredDate > b.firstEnteredDate ? -1 : 1));
 }
 
 let database: Database | null = null;

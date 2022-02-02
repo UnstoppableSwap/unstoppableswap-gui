@@ -36,6 +36,7 @@ export default function HistoryRowExpanded({
   const xmrAmount = getSwapXmrAmount(dbState);
   const txFees = getSwapTxFees(dbState);
   const exchangeRate = getSwapExchangeRate(dbState);
+  const firstEnteredAt = new Date(dbState.firstEnteredDate);
   const { provider } = dbState;
 
   return (
@@ -43,6 +44,12 @@ export default function HistoryRowExpanded({
       <TableContainer>
         <Table>
           <TableBody>
+            <TableRow>
+              <TableCell>Started on</TableCell>
+              <TableCell>
+                {firstEnteredAt.toDateString()} {firstEnteredAt.toTimeString()}
+              </TableCell>
+            </TableRow>
             <TableRow>
               <TableCell>Swap ID</TableCell>
               <TableCell>{dbState.swapId}</TableCell>

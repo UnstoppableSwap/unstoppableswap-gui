@@ -301,6 +301,7 @@ export interface MergedDbState {
   type: DbStateType;
   state: ExecutionSetupDoneDbState; // Only ExecutionSetupDone states or more are saved
   provider: Provider;
+  firstEnteredDate: number;
 }
 
 export function isMergedDbState(dbState: unknown): dbState is MergedDbState {
@@ -309,7 +310,8 @@ export function isMergedDbState(dbState: unknown): dbState is MergedDbState {
     'swapId' in dbState &&
     'type' in dbState &&
     'state' in dbState &&
-    'provider' in dbState
+    'provider' in dbState &&
+    'firstEnteredDate' in dbState
   );
 }
 
