@@ -16,6 +16,13 @@ import { isTestnet } from '../../store/config';
 import { getSqliteDbFiles } from './dirs';
 import { parseDateString, parseStateString } from '../../utils/parseUtils';
 
+// E.g 2021-12-29 14:25:59.64082 +00:00:00
+function parseDateString(str: string): number {
+  const parts = str.split(' ').slice(0, -1);
+  const wholeString = parts.join(' ');
+  return Date.parse(wholeString);
+}
+
 async function getAllStatesForSwap(
   db: Database,
   swapId: string
