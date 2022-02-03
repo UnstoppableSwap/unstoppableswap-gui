@@ -7,7 +7,6 @@ import {
   MergedDbState,
   getTypeOfDbState,
   isExecutionSetupDoneDbState,
-  isDbState,
   isMergedDbState,
 } from '../../models/databaseModel';
 import { store } from '../../store/store';
@@ -15,14 +14,7 @@ import { databaseStateChanged } from '../../store/features/historySlice';
 import { Provider } from '../../models/storeModel';
 import { isTestnet } from '../../store/config';
 import { getSqliteDbFiles } from './dirs';
-
-function parseStateString(str: string): DbState {
-  const dbState = JSON.parse(str) as DbState;
-  if (isDbState(dbState)) {
-    return dbState;
-  }
-  throw new Error(`State string is not a valid db state: ${str}`);
-}
+import { parseDateString, parseStateString } from '../../utils/parseUtils';
 
 async function getAllStatesForSwap(
   db: Database,
@@ -41,6 +33,28 @@ async function getAllStatesForSwap(
   )) as ResponseFormat;
 
   return response.map(({ state }) => parseStateString(state));
+}
+
+async function getFirstEnteredDateForSwap(
+  db: Database,
+  swapId: string
+): Promise<number> {
+  type ResponseFormat = {
+    entered_at: string;
+  };
+
+  const response = (await db.get(
+    `SELECT entered_at
+    FROM swap_states
+    WHERE swap_id = ? AND id = (
+        SELECT min(id)
+        FROM swap_states
+        WHERE swap_id = ?
+    )`,
+    [swapId, swapId]
+  )) as ResponseFormat;
+
+  return parseDateString(response.entered_at);
 }
 
 async function getDistinctSwapIds(db: Database): Promise<string[]> {
@@ -89,6 +103,7 @@ async function getMergedStateForEachSwap(
     await Promise.all(
       distinctSwapIds.map(async (swapId) => {
         const states = await getAllStatesForSwap(db, swapId);
+        const firstEnteredDate = await getFirstEnteredDateForSwap(db, swapId);
         const latestState = states.at(-1);
 
         if (latestState) {
@@ -102,6 +117,7 @@ async function getMergedStateForEachSwap(
               type: latestStateType,
               state: mergedState,
               provider,
+              firstEnteredDate,
             };
           }
         }
@@ -113,7 +129,7 @@ async function getMergedStateForEachSwap(
     )
   )
     .filter(isMergedDbState)
-    .reverse();
+    .sort((a, b) => (a.firstEnteredDate > b.firstEnteredDate ? -1 : 1));
 }
 
 let database: Database | null = null;
