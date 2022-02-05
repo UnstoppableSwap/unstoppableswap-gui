@@ -6,6 +6,7 @@ import Navigation, { drawerWidth } from './navigation/Navigation';
 import HistoryPage from './pages/history/HistoryPage';
 import SwapPage from './pages/swap/SwapPage';
 import WalletPage from './pages/wallet/WalletPage';
+import HelpPage from './pages/help/HelpPage';
 
 const useStyles = makeStyles((theme) => ({
   innerContent: {
@@ -35,6 +36,7 @@ function InnerContent() {
         <Route path="/swap" element={<SwapPage />} />
         <Route path="/history" element={<HistoryPage />} />
         <Route path="/wallet" element={<WalletPage />} />
+        <Route path="/help" element={<HelpPage />} />
         <Route path="/" element={<SwapPage />} />
       </Routes>
     </Box>
