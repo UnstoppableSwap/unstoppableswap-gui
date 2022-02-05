@@ -31,7 +31,9 @@
 
 ## About The Project
 
-![Screen Shot](docs/images/swap_screen.png)
+![main screen](https://user-images.githubusercontent.com/86064887/152649852-4c8c6c3f-0568-4347-89d1-c291c17f2d30.png)
+
+
 
 Atomic swaps between BTC and XMR have been one of the most discussed and anticipated developments in the field for quite some time. 
 
