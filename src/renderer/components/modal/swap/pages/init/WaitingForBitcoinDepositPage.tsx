@@ -4,10 +4,8 @@ import {
   makeStyles,
   Typography,
 } from '@material-ui/core';
-import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 import { SwapStateWaitingForBtcDeposit } from '../../../../../../models/storeModel';
 import DepositAddressInfoBox from '../../transaction/DepositAddressInfoBox';
-import ClipboardIconButton from '../../ClipbiardIconButton';
 import BitcoinIcon from '../../../../icons/BitcoinIcon';
 
 const useStyles = makeStyles((theme) => ({
@@ -39,13 +37,6 @@ export default function WaitingForBtcDepositPage({
         address={state.depositAddress}
         additionalContent={
           <>
-            <ClipboardIconButton
-              text={state.depositAddress}
-              endIcon={<FileCopyOutlinedIcon />}
-              color="primary"
-              variant="contained"
-              size="large"
-            />
             <Typography
               variant="subtitle2"
               className={classes.depositStatusText}
