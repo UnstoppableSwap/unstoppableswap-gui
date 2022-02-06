@@ -6,7 +6,7 @@
     Graphical User Interface (GUI) For Trustless Cross-Chain XMR<>BTC Atomic Swaps 
     <br/>
     <br/>
-    <a href="https://github.com/UnstoppableSwap/unstoppableswap-gui">View Demo</a>
+    <a href="https://github.com/UnstoppableSwap/unstoppableswap-gui/releases">Download</a>
     .
     <a href="https://github.com/UnstoppableSwap/unstoppableswap-gui/issues">Report Bug</a>
     .
