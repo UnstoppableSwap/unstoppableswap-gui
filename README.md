@@ -20,20 +20,19 @@
 
 * [About the Project](#about-the-project)
 * [Built With](#built-with)
+* [Documentation](#documentation)
 * [Getting Started](#getting-started)
+* [Development](#development)
   * [Prerequisites](#prerequisites)
   * [Installation](#installation)
 * [Roadmap](#roadmap)
 * [Contributing](#contributing)
 * [License](#license)
-* [Authors](#authors)
 * [Acknowledgements](#acknowledgements)
 
 ## About The Project
 
 ![main screen](https://user-images.githubusercontent.com/86064887/152649852-4c8c6c3f-0568-4347-89d1-c291c17f2d30.png)
-
-
 
 Atomic swaps between BTC and XMR have been one of the most discussed and anticipated developments in the field for quite some time. 
 
@@ -42,6 +41,8 @@ However, for atomic swaps to gain widespread and adopted, the user experience ne
 
 *Make atomic swaps accessible to all!*
 
+## Documentation
+* [How to swap on testnet](/docs/SWAP_STAGENET.md)
 
 ## Built With
 
@@ -52,6 +53,10 @@ However, for atomic swaps to gain widespread and adopted, the user experience ne
 - [Material UI](https://mui.com)
 
 ## Getting Started
+
+Please download the GUI from the [release page](https://github.com/UnstoppableSwap/unstoppableswap-gui/releases). Choose your respective version (.dmg for Mac, .AppImage for Linux and .exe for Windows). You may need to [manually allow the opening](https://support.apple.com/en-us/HT202491) of the GUI on Mac OS.
+
+## Development
 
 To get a local copy up and running follow these simple steps.
 
