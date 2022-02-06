@@ -55,3 +55,11 @@ Please download the GUI from the [GitHub release page](https://github.com/Unstop
 ![Bildschirmfoto 2022-02-06 um 12 27 57](https://user-images.githubusercontent.com/86064887/152678743-b86f395e-01dc-43c5-ba71-b27962a4a6ba.png)
 
 ### Please consider [giving some feedback](https://unstoppableswap.aidaform.com/feedback), it is truly valuable for us to improve the overall usability of this project
+
+## Donate
+We rely on generous donors like you to keep development moving forward. To bring Atomic Swaps to life, we need resources. If you have the possibility, please consider making a donation to the project. All funds will be used to support contributors and critical infrastructure.
+
+```
+XMR: 87jS4C7ngk9EHdqFFuxGFgg8AyH63dRUoULshWDybFJaP75UA89qsutG5B1L1QTc4w228nsqsv8EjhL7bz8fB3611Mh98mg
+BTC: bc1q8hj4aq59fucrhz59rxpqnwgy8y6spxxvq4wcj2
+```
