@@ -1,8 +1,8 @@
 
 # Swap on Testnet/Stagenet
-The GUI is currently defaulting to testnet until we feel it is safe enough to use on mainnet. This means that `testnet3` bitcoin will be swapped for `stagenet` Monero. This means you will need to set up two wallets to perform a swap:
-- Testnet3 Electrum Wallet (Bitcoin)
-- Stagenet Monero GUI Wallet
+The GUI is currently defaulting to testnet until we feel it is safe enough to use on mainnet. This means that `testnet3` bitcoin will be swapped for `stagenet` Monero. You will need to set up two wallets to perform a swap:
+- A Testnet3 Electrum Wallet (Bitcoin)
+- A Stagenet Monero GUI Wallet
 
 ## Electrum
 Download Electrum from the official [site](https://electrum.org/#download) and then start the wallet with the `--testnet` flag.
