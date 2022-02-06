@@ -56,6 +56,15 @@ However, for atomic swaps to gain widespread and adopted, the user experience ne
 
 Please download the GUI from the [release page](https://github.com/UnstoppableSwap/unstoppableswap-gui/releases). Choose your respective version (.dmg for Mac, .AppImage for Linux and .exe for Windows). You may need to [manually allow the opening](https://support.apple.com/en-us/HT202491) of the GUI on Mac OS.
 
+## Donate
+We rely on generous donors like you to keep development moving forward. To bring Atomic Swaps to life, we need resources. If you have the possibility, please consider making a donation to the project. All funds will be used to support contributors and critical infrastructure.
+
+```
+XMR: 87jS4C7ngk9EHdqFFuxGFgg8AyH63dRUoULshWDybFJaP75UA89qsutG5B1L1QTc4w228nsqsv8EjhL7bz8fB3611Mh98mg
+BTC: bc1q8hj4aq59fucrhz59rxpqnwgy8y6spxxvq4wcj2
+```
+
+
 ## Development
 
 To get a local copy up and running follow these simple steps.
