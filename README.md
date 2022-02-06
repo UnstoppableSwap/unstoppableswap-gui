@@ -42,7 +42,7 @@ However, for atomic swaps to gain widespread and adopted, the user experience ne
 *Make atomic swaps accessible to all!*
 
 ## Documentation
-* [How to swap on testnet](/docs/SWAP_STAGENET.md)
+* [How to swap on testnet](/docs/SWAP_TESTNET.md)
 
 ## Built With
 
