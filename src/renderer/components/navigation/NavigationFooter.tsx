@@ -3,6 +3,7 @@ import GitHubIcon from '@material-ui/icons/GitHub';
 import { Box, makeStyles } from '@material-ui/core';
 import LinkIconButton from '../icons/LinkIconButton';
 import UnfinishedSwapsAlert from './UnfinishedSwapsAlert';
+import FundsLeftInWalletAlert from './FundsLeftInWalletAlert';
 
 const useStyles = makeStyles((theme) => ({
   outer: {
@@ -22,6 +23,7 @@ export default function NavigationFooter() {
 
   return (
     <Box className={classes.outer}>
+      <FundsLeftInWalletAlert />
       <UnfinishedSwapsAlert />
       <Box className={classes.linksOuter}>
         <LinkIconButton url="https://reddit.com/r/unstoppableswap">
