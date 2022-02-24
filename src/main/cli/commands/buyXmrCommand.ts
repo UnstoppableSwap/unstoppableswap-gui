@@ -12,6 +12,7 @@ import { Provider } from '../../../models/storeModel';
 import { spawnSubcommand } from '../cli';
 import spawnBalanceCheck from './balanceCommand';
 import { getCliLogFile } from '../dirs';
+import logger from '../../../utils/logger';
 
 async function onCliLog(logs: CliLog[]) {
   store.dispatch(swapAddLog(logs));
@@ -60,8 +61,17 @@ export async function spawnBuyXmr(
       onStdOut
     );
   } catch (e) {
+    logger.error(
+      {
+        provider,
+        redeemAddress,
+        refundAddress,
+        error: (e as Error).toString(),
+      },
+      'Failed to spawn swap'
+    );
+
     const error = `Failed to spawn swap Provider: ${provider.peerId} RedeemAddress: ${redeemAddress} RefundAddress: ${refundAddress} Error: ${e}`;
-    console.error(error);
     dialog.showMessageBoxSync({
       title: 'Failed to spawn command',
       message: error,
@@ -116,8 +126,12 @@ export async function resumeBuyXmr(swapId: string) {
       throw new Error('Could not find swap in database');
     }
   } catch (e) {
+    logger.error(
+      { swapId, error: (e as Error).toString() },
+      'Failed to spawn swap resume'
+    );
+
     const error = `Failed to spawn swap resume SwapID: ${swapId} Error: ${e}`;
-    console.error(error);
     dialog.showMessageBoxSync({
       title: 'Failed to spawn command',
       message: error,

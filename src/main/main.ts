@@ -21,6 +21,7 @@ import watchDatabase from './cli/database';
 import { getPlatform, isDevelopment } from '../store/config';
 import { getAssetPath, fixAppDataPath, getCliLogFile } from './cli/dirs';
 import initSocket from './socket';
+import logger from '../utils/logger';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -34,7 +35,12 @@ async function installExtensions() {
       extensions.map((name) => installer[name]),
       forceDownload
     )
-    .catch(console.error);
+    .catch((e: any) =>
+      logger.error(
+        { error: e.toString() },
+        'Failed to install browser extensions'
+      )
+    );
 }
 
 async function createWindow() {
@@ -116,19 +122,21 @@ if (gotTheLock) {
       spawnBalanceCheck();
       return 0;
     })
-    .catch(console.error);
+    .catch((e) =>
+      logger.error(
+        { error: (e as Error).toString() },
+        'Failed to fully initiate app'
+      )
+    );
 } else {
-  console.log('Failed to acquire lock! Exiting...');
+  logger.error('Failed to acquire lock! Exiting...');
   app.quit();
 }
 
 if (isDevelopment) {
   blocked(
     (time, stack) => {
-      console.log(
-        `Main thread has been blocked for ${time}ms, operation started here:`,
-        stack
-      );
+      logger.trace({ time, stack }, `Main thread has been blocked`);
     },
     {
       threshold: 50,

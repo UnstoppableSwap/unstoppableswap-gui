@@ -2,6 +2,7 @@ import { io } from 'socket.io-client';
 import { ExtendedProvider } from 'models/storeModel';
 import { store } from '../store/store';
 import { setProviders } from '../store/features/providersSlice';
+import logger from '../utils/logger';
 
 export default function initSocket() {
   const socket = io('https://api.unstoppableswap.net', {
@@ -11,7 +12,11 @@ export default function initSocket() {
   socket.on('provider-refresh', (providerList: ExtendedProvider[]) => {
     store.dispatch(setProviders(providerList));
   });
-  console.log(
-    `Connected to UnstoppableSwap API websocket at ${socket.io.opts.hostname} (${socket.io.opts.path})`
+  logger.info(
+    {
+      host: socket.io.opts.hostname,
+      path: socket.io.opts.path,
+    },
+    `Connected to UnstoppableSwap API websocket`
   );
 }
