@@ -48,7 +48,7 @@ export async function stopCli() {
     });
     try {
       process.kill(rootPid);
-      logger.error({ rootPid, childrenPids }, `Force killed cli`);
+      logger.info({ rootPid, childrenPids }, `Force killed cli`);
     } catch (e) {
       logger.error(
         { pid: rootPid, error: (e as Error).toString() },
