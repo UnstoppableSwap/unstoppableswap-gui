@@ -1,20 +1,5 @@
 import { CliLog } from './cliModel';
-
-export interface Provider {
-  multiAddr: string;
-  peerId: string;
-  testnet: boolean;
-}
-
-export interface ExtendedProvider extends Provider {
-  price: number;
-  minSwapAmount: number;
-  maxSwapAmount: number;
-  uptimeSeconds: number;
-  downtimeSeconds: number;
-  age: number;
-  relevancy: number;
-}
+import { Provider } from './apiModel';
 
 export interface SwapSlice {
   state: SwapState | null;

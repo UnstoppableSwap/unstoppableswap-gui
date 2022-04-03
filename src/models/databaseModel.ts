@@ -1,7 +1,8 @@
 import { isObject } from 'lodash';
-import { satsToBtc, pionerosToXmr } from '../utils/currencyUtils';
+import { satsToBtc, pionerosToXmr } from '../utils/conversionUtils';
 import { TxLock } from './bitcoinModel';
 import { Provider } from './storeModel';
+import logger from '../utils/logger';
 
 export interface DbState {
   Bob: {
@@ -623,6 +624,6 @@ export function getTypeOfPathDbState(dbState: MergedDbState): DbStatePathType {
   if (isUnhappyPathSwap(dbState)) {
     return DbStatePathType.UNHAPPY_PATH;
   }
-  console.error('Unknown path type. Assuming happy path. DbState:', dbState);
+  logger.error({ dbState }, 'Unknown path type. Assuming happy path');
   return DbStatePathType.HAPPY_PATH;
 }

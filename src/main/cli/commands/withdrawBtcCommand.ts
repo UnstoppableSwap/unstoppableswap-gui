@@ -8,6 +8,7 @@ import {
 } from '../../../store/features/withdrawSlice';
 import { CliLog } from '../../../models/cliModel';
 import spawnBalanceCheck from './balanceCommand';
+import logger from '../../../utils/logger';
 
 function onProcExit(code: number | null, signal: NodeJS.Signals | null) {
   store.dispatch(
@@ -42,7 +43,10 @@ export default async function spawnWithdrawBtc(address: string) {
       onStdOut
     );
   } catch (e) {
-    console.error(`Failed to withdraw funds Error: ${e}`);
+    logger.error(
+      { address, error: (e as Error).toString() },
+      `Failed to withdraw funds`
+    );
     onProcExit(null, null);
   }
 }

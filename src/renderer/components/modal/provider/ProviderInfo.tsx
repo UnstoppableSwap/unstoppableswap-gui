@@ -1,6 +1,7 @@
 import { makeStyles, Box, Typography, Chip } from '@material-ui/core';
-import { satsToBtc } from '../../../../utils/currencyUtils';
-import { ExtendedProvider } from '../../../../models/storeModel';
+import { satsToBtc, secondsToDays } from '../../../../utils/conversionUtils';
+import { ExtendedProvider } from '../../../../models/apiModel';
+import { splitMultiAddress } from '../../../../utils/multiAddrUtils';
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -22,11 +23,9 @@ export default function ProviderInfo({
   provider: ExtendedProvider;
 }) {
   const classes = useStyles();
-  const uptime = Math.round(
-    (provider.uptimeSeconds /
-      (provider.downtimeSeconds + provider.uptimeSeconds)) *
-      100
-  );
+  const uptime = Math.round(provider.uptime * 100);
+  const [peerId, multiAddr] = splitMultiAddress(provider.multiAddr);
+  const age = Math.round(secondsToDays(provider.age));
 
   return (
     <Box className={classes.content}>
@@ -34,10 +33,10 @@ export default function ProviderInfo({
         Swap Provider
       </Typography>
       <Typography variant="h5" component="h2">
-        {provider.multiAddr}
+        {multiAddr}
       </Typography>
       <Typography color="textSecondary" gutterBottom>
-        {provider.peerId.substring(0, 12)}...
+        {peerId.substring(0, 12)}...
       </Typography>
       <Typography variant="caption">
         Exchange rate: {satsToBtc(provider.price)} BTC/XMR
@@ -49,11 +48,7 @@ export default function ProviderInfo({
       <Box className={classes.chipsOuter}>
         <Chip label={provider.testnet ? 'Testnet' : 'Mainnet'} />
         <Chip label={`${uptime} % uptime`} />
-        <Chip
-          label={`Went online ${provider.age} ${
-            provider.age === 1 ? 'day' : 'days'
-          } ago`}
-        />
+        <Chip label={`Went online ${age} ${age === 1 ? 'day' : 'days'} ago`} />
       </Box>
     </Box>
   );

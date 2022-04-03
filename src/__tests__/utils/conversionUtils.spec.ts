@@ -6,7 +6,8 @@ import {
   isXmrAddressValid,
   pionerosToXmr,
   satsToBtc,
-} from '../../utils/currencyUtils';
+  secondsToDays,
+} from '../../utils/conversionUtils';
 
 test('should convert sats to btc', () => {
   expect(satsToBtc(1350000000)).toBe(13.5);
@@ -18,6 +19,10 @@ test('should convert btc to sats', () => {
 
 test('should convert piconeros to xmr', () => {
   expect(pionerosToXmr(1)).toBe(0.000000000001);
+});
+
+test('should seconds to days', () => {
+  expect(secondsToDays(86400)).toBe(1);
 });
 
 test('should compute correct btc mainnet txid blockexplorer url', () => {

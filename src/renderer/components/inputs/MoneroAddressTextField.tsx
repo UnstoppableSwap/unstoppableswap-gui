@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { TextField } from '@material-ui/core';
 import { TextFieldProps } from '@material-ui/core/TextField/TextField';
-import { isXmrAddressValid } from '../../../utils/currencyUtils';
+import { isXmrAddressValid } from '../../../utils/conversionUtils';
 import { isTestnet } from '../../../store/config';
 
 export default function MoneroAddressTextField({

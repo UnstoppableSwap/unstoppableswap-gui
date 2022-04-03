@@ -36,3 +36,7 @@ export function getMoneroTxExplorerUrl(txid: string, stagenet: boolean) {
   }
   return `https://xmrchain.net/tx/${txid}`;
 }
+
+export function secondsToDays(seconds: number): number {
+  return seconds / 86400;
+}

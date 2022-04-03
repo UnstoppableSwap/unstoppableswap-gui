@@ -8,10 +8,11 @@ import {
   swapInitiate,
   swapProcessExited,
 } from '../../../store/features/swapSlice';
-import { Provider } from '../../../models/storeModel';
+import { Provider } from '../../../models/apiModel';
 import { spawnSubcommand } from '../cli';
 import spawnBalanceCheck from './balanceCommand';
 import { getCliLogFile } from '../dirs';
+import logger from '../../../utils/logger';
 
 async function onCliLog(logs: CliLog[]) {
   store.dispatch(swapAddLog(logs));
@@ -38,8 +39,6 @@ export async function spawnBuyXmr(
   refundAddress: string
 ) {
   try {
-    const sellerIdentifier = `${provider.multiAddr}/p2p/${provider.peerId}`;
-
     store.dispatch(
       swapInitiate({
         provider,
@@ -53,15 +52,24 @@ export async function spawnBuyXmr(
       {
         'change-address': refundAddress,
         'receive-address': redeemAddress,
-        seller: sellerIdentifier,
+        seller: provider.multiAddr,
       },
       onCliLog,
       onProcExit,
       onStdOut
     );
   } catch (e) {
-    const error = `Failed to spawn swap Provider: ${provider.peerId} RedeemAddress: ${redeemAddress} RefundAddress: ${refundAddress} Error: ${e}`;
-    console.error(error);
+    const error = `Failed to spawn swap Provider: ${provider.multiAddr} RedeemAddress: ${redeemAddress} RefundAddress: ${refundAddress} Error: ${e}`;
+    logger.error(
+      {
+        provider,
+        redeemAddress,
+        refundAddress,
+        error: (e as Error).toString(),
+      },
+      'Failed to spawn swap'
+    );
+
     dialog.showMessageBoxSync({
       title: 'Failed to spawn command',
       message: error,
@@ -116,8 +124,12 @@ export async function resumeBuyXmr(swapId: string) {
       throw new Error('Could not find swap in database');
     }
   } catch (e) {
+    logger.error(
+      { swapId, error: (e as Error).toString() },
+      'Failed to spawn swap resume'
+    );
+
     const error = `Failed to spawn swap resume SwapID: ${swapId} Error: ${e}`;
-    console.error(error);
     dialog.showMessageBoxSync({
       title: 'Failed to spawn command',
       message: error,

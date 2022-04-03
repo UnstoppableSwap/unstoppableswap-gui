@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { TextField } from '@material-ui/core';
 import { TextFieldProps } from '@material-ui/core/TextField/TextField';
-import { isBtcAddressValid } from '../../../utils/currencyUtils';
+import { isBtcAddressValid } from '../../../utils/conversionUtils';
 import { isTestnet } from '../../../store/config';
 
 export default function BitcoinAddressTextField({

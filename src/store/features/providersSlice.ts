@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { sortProviderList } from '../../utils/sortUtils';
-import { ExtendedProvider } from '../../models/storeModel';
+import { ExtendedProvider } from '../../models/apiModel';
 import { isTestnet } from '../config';
 
 export interface ProvidersSlice {
@@ -24,19 +24,20 @@ export const providersSlice = createSlice({
       slice.providers = providers;
 
       const newSelectedProvider = providers.find(
-        (prov) => prov.peerId === slice.selectedProvider?.peerId
+        (prov) => prov.multiAddr === slice.selectedProvider?.multiAddr
       );
       slice.selectedProvider = newSelectedProvider || providers[0] || null;
     },
     setSelectedProvider(
       slice,
       action: PayloadAction<{
-        peerId: string;
+        multiAddr: string;
       }>
     ) {
       slice.selectedProvider =
-        slice.providers.find((prov) => prov.peerId === action.payload.peerId) ||
-        null;
+        slice.providers.find(
+          (prov) => prov.multiAddr === action.payload.multiAddr
+        ) || null;
     },
   },
 });

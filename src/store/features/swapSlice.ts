@@ -33,6 +33,7 @@ import {
   CliLog,
   isCliLogAdvancingState,
 } from '../../models/cliModel';
+import logger from '../../utils/logger';
 
 const initialState: SwapSlice = {
   state: null,
@@ -202,7 +203,7 @@ export const swapSlice = createSlice({
 
           slice.state = nextState;
         } else {
-          console.debug(`Swap log was not reduced Log: ${log.fields.message}`);
+          logger.debug({ log }, `Swap log was not reduced`);
         }
       });
     },

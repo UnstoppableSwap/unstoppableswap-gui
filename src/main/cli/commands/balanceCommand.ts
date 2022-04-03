@@ -7,6 +7,7 @@ import {
   balanceProcessExited,
 } from '../../../store/features/balanceSlice';
 import { CliLog } from '../../../models/cliModel';
+import logger from '../../../utils/logger';
 
 function onProcExit(code: number | null, signal: NodeJS.Signals | null) {
   store.dispatch(
@@ -37,7 +38,10 @@ export default async function spawnBalanceCheck() {
       onStdOut
     );
   } catch (e) {
-    console.error(`Failed to spawn balance check Error: ${e}`);
+    logger.error(
+      { error: (e as Error).toString() },
+      `Failed to spawn balance check`
+    );
     onProcExit(null, null);
   }
 }

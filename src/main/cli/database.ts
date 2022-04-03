@@ -15,6 +15,7 @@ import { Provider } from '../../models/storeModel';
 import { isTestnet } from '../../store/config';
 import { getSqliteDbFiles } from './dirs';
 import { parseDateString, parseStateString } from '../../utils/parseUtils';
+import logger from '../../utils/logger';
 
 async function getAllStatesForSwap(
   db: Database,
@@ -121,8 +122,9 @@ async function getMergedStateForEachSwap(
             };
           }
         }
-        console.error(
-          `There is no execution setup done state saved for swap ${swapId}. Database might be corrupted!`
+        logger.error(
+          { swapId },
+          `There is no execution setup done state saved for swap. Database might be corrupted!`
         );
         return null;
       })
@@ -151,7 +153,7 @@ export async function readFromDatabaseAndUpdateState() {
     const states = await getMergedStateForEachSwap(database);
     store.dispatch(databaseStateChanged(states));
   } catch (e) {
-    console.error(`Failed to read database Error: ${e}`);
+    logger.error({ error: (e as Error).toString() }, `Failed to read database`);
   }
   console.timeEnd(`read database ${id}`);
 }
@@ -162,7 +164,7 @@ export default async function watchDatabase() {
   function watchFiles() {
     [primaryFile, walFile, shmFile].forEach((file) => {
       fs.watchFile(file, readFromDatabaseAndUpdateState);
-      console.log(`Watching database file ${file}`);
+      logger.info({ file }, `Watching database file`);
     });
   }
 

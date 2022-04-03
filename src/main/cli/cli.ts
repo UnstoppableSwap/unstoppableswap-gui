@@ -5,9 +5,10 @@ import {
 import PQueue from 'p-queue';
 import pidtree from 'pidtree';
 import { isTestnet } from '../../store/config';
-import { isCliLog, CliLog } from '../../models/cliModel';
+import { CliLog, isCliLog } from '../../models/cliModel';
 import { getCliDataBaseDir, getSwapBinary } from './dirs';
 import { readFromDatabaseAndUpdateState } from './database';
+import logger from '../../utils/logger';
 
 const queue = new PQueue({ concurrency: 1 });
 let cli: ChildProcessWithoutNullStreams | null = null;
@@ -39,21 +40,21 @@ export async function stopCli() {
       try {
         process.kill(childPid);
       } catch (e) {
-        console.error(
-          `Failed to kill child process of cli PID: ${childPid} Error: ${e}`
+        logger.error(
+          { pid: childPid, error: (e as Error).toString() },
+          `Failed to kill children cli process`
         );
       }
     });
     try {
       process.kill(rootPid);
+      logger.info({ rootPid, childrenPids }, `Force killed cli`);
     } catch (e) {
-      console.error(
-        `Failed to kill root cli process PID: ${rootPid} Error: ${e}`
+      logger.error(
+        { pid: rootPid, error: (e as Error).toString() },
+        `Failed to kill root cli process`
       );
     }
-    console.log(
-      `Force killed cli with root pid ${rootPid} and child pids ${childrenPids}`
-    );
   }
 }
 
@@ -88,10 +89,14 @@ export async function spawnSubcommand(
               // Added in: Node v15.1.0, v14.17.0
               cli.on('spawn', () => {
                 if (cli) {
-                  console.log(
-                    `Spawned CLI Arguments: ${cli.spawnargs.join(
-                      ' '
-                    )} in folder ${binary.dirPath} with PID ${cli.pid}`
+                  logger.info(
+                    {
+                      args: cli.spawnargs,
+                      cwd: binary.dirPath,
+                      pid: cli.pid,
+                      subCommand,
+                    },
+                    'Spawned CLI process'
                   );
 
                   resolveSpawn(cli);
@@ -109,9 +114,7 @@ export async function spawnSubcommand(
               });
 
               cli.on('exit', async (code, signal) => {
-                console.log(
-                  `[${subCommand}] CLI excited with code: ${code} and signal: ${signal}`
-                );
+                logger.info({ subCommand, code, signal }, `CLI excited`);
 
                 cli = null;
 
@@ -132,21 +135,24 @@ export async function spawnSubcommand(
                     .toString()
                     .split(/(\r?\n)/g)
                     .filter((s) => s.length > 2)
-                    .map((logText: string) => {
-                      console.log(`[${subCommand}] ${logText.trim()}`);
+                    .map((logText) => {
+                      logger.debug(
+                        { subCommand, logText: logText.trim() },
+                        'Received stdout from cli process'
+                      );
 
                       try {
-                        const log = JSON.parse(logText);
-                        if (isCliLog(log)) {
-                          return log;
-                        }
-                        throw new Error('Required properties are missing');
+                        return JSON.parse(logText);
                       } catch (e) {
-                        console.log(
-                          `[${subCommand}] Failed to parse cli log. Log text: ${logText} Error: ${e}`
+                        logger.debug(
+                          {
+                            subCommand,
+                            logText,
+                            error: (e as Error).toString(),
+                          },
+                          'Failed to parse CLI log'
                         );
                       }
-
                       return null;
                     })
                     .filter(isCliLog);
