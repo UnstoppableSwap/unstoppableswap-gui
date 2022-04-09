@@ -1,12 +1,9 @@
 import { Multiaddr } from 'multiaddr';
+import { Provider } from '../models/apiModel';
 
 // eslint-disable-next-line import/prefer-default-export
-export function splitMultiAddress(address: string): [string, string] {
-  let multiAddr = new Multiaddr(address);
-  const peerId = multiAddr.getPeerId();
-  if (peerId) {
-    multiAddr = multiAddr.decapsulateCode(421);
-    return [peerId, multiAddr.toString()];
-  }
-  throw new Error(`No peer id present in multi address ${address}`);
+export function providerToConcatenatedMultiAddr(provider: Provider) {
+  return new Multiaddr(provider.multiAddr)
+    .encapsulate(`/p2p/${provider.peerId}`)
+    .toString();
 }

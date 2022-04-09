@@ -4,7 +4,6 @@ import {
   isSwapStateBtcLockInMempool,
   isSwapStateWaitingForBtcDeposit,
   isSwapStateXmrLockInMempool,
-  Provider,
   SwapSlice,
   SwapStateBtcCancelled,
   SwapStateBtcLockInMempool,
@@ -34,6 +33,7 @@ import {
   isCliLogAdvancingState,
 } from '../../models/cliModel';
 import logger from '../../utils/logger';
+import { Provider } from '../../models/apiModel';
 
 const initialState: SwapSlice = {
   state: null,

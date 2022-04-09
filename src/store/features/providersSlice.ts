@@ -24,20 +24,19 @@ export const providersSlice = createSlice({
       slice.providers = providers;
 
       const newSelectedProvider = providers.find(
-        (prov) => prov.multiAddr === slice.selectedProvider?.multiAddr
+        (prov) => prov.peerId === slice.selectedProvider?.peerId
       );
       slice.selectedProvider = newSelectedProvider || providers[0] || null;
     },
     setSelectedProvider(
       slice,
       action: PayloadAction<{
-        multiAddr: string;
+        peerId: string;
       }>
     ) {
       slice.selectedProvider =
-        slice.providers.find(
-          (prov) => prov.multiAddr === action.payload.multiAddr
-        ) || null;
+        slice.providers.find((prov) => prov.peerId === action.payload.peerId) ||
+        null;
     },
   },
 });

@@ -13,6 +13,7 @@ import { spawnSubcommand } from '../cli';
 import spawnBalanceCheck from './balanceCommand';
 import { getCliLogFile } from '../dirs';
 import logger from '../../../utils/logger';
+import { providerToConcatenatedMultiAddr } from '../../../utils/multiAddrUtils';
 
 async function onCliLog(logs: CliLog[]) {
   store.dispatch(swapAddLog(logs));
@@ -38,6 +39,8 @@ export async function spawnBuyXmr(
   redeemAddress: string,
   refundAddress: string
 ) {
+  const concatenatedMultiAddr = providerToConcatenatedMultiAddr(provider);
+
   try {
     store.dispatch(
       swapInitiate({
@@ -52,14 +55,14 @@ export async function spawnBuyXmr(
       {
         'change-address': refundAddress,
         'receive-address': redeemAddress,
-        seller: provider.multiAddr,
+        seller: concatenatedMultiAddr,
       },
       onCliLog,
       onProcExit,
       onStdOut
     );
   } catch (e) {
-    const error = `Failed to spawn swap Provider: ${provider.multiAddr} RedeemAddress: ${redeemAddress} RefundAddress: ${refundAddress} Error: ${e}`;
+    const error = `Failed to spawn swap Provider: ${concatenatedMultiAddr} RedeemAddress: ${redeemAddress} RefundAddress: ${refundAddress} Error: ${e}`;
     logger.error(
       {
         provider,

@@ -6,7 +6,7 @@ import {
 } from '@material-ui/core';
 import { useAppSelector } from '../../../../../store/hooks';
 import WithdrawStepper from '../WithdrawStepper';
-import LogsBox from '../../LogsBox';
+import PaperTextBox from '../../PaperTextBox';
 import { WithdrawStateProcessExited } from '../../../../../models/storeModel';
 
 export default function ProcessExitedNotDone({
@@ -29,7 +29,7 @@ export default function ProcessExitedNotDone({
           but the funds have not been withdrawn yet. Please check the logs
           displayed below for more information.
         </DialogContentText>
-        <LogsBox stdOut={stdOut} />
+        <PaperTextBox stdOut={stdOut} />
         <WithdrawStepper />
       </DialogContent>
       <DialogActions>

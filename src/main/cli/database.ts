@@ -11,11 +11,11 @@ import {
 } from '../../models/databaseModel';
 import { store } from '../../store/store';
 import { databaseStateChanged } from '../../store/features/historySlice';
-import { Provider } from '../../models/storeModel';
 import { isTestnet } from '../../store/config';
 import { getSqliteDbFiles } from './dirs';
 import { parseDateString, parseStateString } from '../../utils/parseUtils';
 import logger from '../../utils/logger';
+import { Provider } from '../../models/apiModel';
 
 async function getAllStatesForSwap(
   db: Database,
@@ -137,8 +137,6 @@ async function getMergedStateForEachSwap(
 let database: Database | null = null;
 
 export async function readFromDatabaseAndUpdateState() {
-  const id = Math.random();
-  console.time(`read database ${id}`);
   try {
     if (!database) {
       const { primaryFile } = await getSqliteDbFiles();
@@ -155,7 +153,6 @@ export async function readFromDatabaseAndUpdateState() {
   } catch (e) {
     logger.error({ error: (e as Error).toString() }, `Failed to read database`);
   }
-  console.timeEnd(`read database ${id}`);
 }
 
 export default async function watchDatabase() {

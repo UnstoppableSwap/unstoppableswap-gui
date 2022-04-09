@@ -2,7 +2,7 @@ import { Box, DialogContentText } from '@material-ui/core';
 import { SwapStateProcessExited } from '../../../../../../models/storeModel';
 import { MergedDbState } from '../../../../../../models/databaseModel';
 import { useAppSelector } from '../../../../../../store/hooks';
-import LogsBox from '../../../LogsBox';
+import PaperTextBox from '../../../PaperTextBox';
 
 type Props = {
   state: SwapStateProcessExited;
@@ -24,7 +24,7 @@ export default function ProcesExitedAndNotDonePage({ state, dbState }: Props) {
         the logs displayed below for more information. You might have to
         manually take some action.
       </DialogContentText>
-      <LogsBox stdOut={stdOut} />
+      <PaperTextBox stdOut={stdOut} />
     </Box>
   );
 }

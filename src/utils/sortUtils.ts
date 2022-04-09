@@ -1,4 +1,4 @@
-import { ExtendedProvider } from '../models/storeModel';
+import { ExtendedProvider } from '../models/apiModel';
 
 // eslint-disable-next-line import/prefer-default-export
 export function sortProviderList(list: ExtendedProvider[]) {

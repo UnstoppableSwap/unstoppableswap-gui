@@ -13,7 +13,7 @@ import {
   MergedDoneBtcRefundedDbState,
   MergedDoneBtcPunishedDbState,
 } from '../../models/databaseModel';
-import { Provider } from '../../models/storeModel';
+import { Provider } from '../../models/apiModel';
 
 import executionSetupDoneState from '../mock_db_states/db_state_execution_setup_done.json';
 import btcLockedState from '../mock_db_states/db_state_btc_locked.json';

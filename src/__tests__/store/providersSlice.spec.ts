@@ -1,14 +1,13 @@
 import { AnyAction } from '@reduxjs/toolkit';
 import reducer, { setProviders } from '../../store/features/providersSlice';
-import { ExtendedProvider } from '../../models/storeModel';
+import { ExtendedProvider } from '../../models/apiModel';
 
 const exampleTestnetProvider: ExtendedProvider = {
   multiAddr: '/dnsaddr/t.xmr.example',
   peerId: '12394294389438924',
   testnet: true,
   age: 5,
-  downtimeSeconds: 100,
-  uptimeSeconds: 1000,
+  uptime: 0.99,
   maxSwapAmount: 1,
   minSwapAmount: 0.1,
   price: 0.1,
@@ -20,8 +19,7 @@ const exampleMainnetProvider: ExtendedProvider = {
   peerId: '32394294389438924',
   testnet: false,
   age: 5,
-  downtimeSeconds: 100,
-  uptimeSeconds: 1000,
+  uptime: 0.99,
   maxSwapAmount: 1,
   minSwapAmount: 0.1,
   price: 0.1,

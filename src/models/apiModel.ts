@@ -10,4 +10,5 @@ export interface ExtendedProvider extends Provider {
 export interface Provider {
   multiAddr: string;
   testnet: boolean;
+  peerId: string;
 }

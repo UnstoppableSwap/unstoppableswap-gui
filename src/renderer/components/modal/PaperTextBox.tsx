@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function LogsBox({ stdOut }: { stdOut: string }) {
+export default function PaperTextBox({ stdOut }: { stdOut: string }) {
   const classes = useStyles();
 
   function handleCopyLogs() {

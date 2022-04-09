@@ -1,6 +1,5 @@
 import { AnyAction } from '@reduxjs/toolkit';
 import {
-  Provider,
   SwapSlice,
   SwapStateBtcLockInMempool,
   SwapStateType,
@@ -23,6 +22,7 @@ import reducer, {
   swapInitiate,
   swapProcessExited,
 } from '../../store/features/swapSlice';
+import { Provider } from '../../models/apiModel';
 
 const mWaitingForBtcDepositLog: CliLogWaitingForBtcDeposit = require('../mock_cli_logs/cli_log_waiting_for_bitcoin_deposit.json');
 const mReceivedNewBtcLog: CliLogReceivedBtc = require('../mock_cli_logs/cli_log_received_bitcoin.json');

@@ -6,12 +6,13 @@ import {
   DialogContent,
   makeStyles,
 } from '@material-ui/core';
-import DialogTitle from '../DialogHeader';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import SwapStatePage from './pages/SwapStatePage';
 import SwapStateStepper from './SwapStateStepper';
 import CliStopAlert from '../CliStopAlert';
 import { swapReset } from '../../../../store/features/swapSlice';
+import SwapDialogTitle from './SwapDialogTitle';
+import DebugPage from './pages/DebugPage';
 
 const useStyles = makeStyles({
   content: {
@@ -31,7 +32,7 @@ export default function SwapDialog({
 }) {
   const classes = useStyles();
   const swap = useAppSelector((state) => state.swap);
-
+  const [debug, setDebug] = useState(false);
   const [openCancelAlert, setOpenCancelAlert] = useState(false);
   const dispatch = useAppDispatch();
 
@@ -46,11 +47,21 @@ export default function SwapDialog({
 
   return (
     <Dialog open={open} onClose={onCancel} maxWidth="md" fullWidth>
-      <DialogTitle title="Swap Bitcoin for Monero" />
+      <SwapDialogTitle
+        debug={debug}
+        setDebug={setDebug}
+        title="Swap Bitcoin for Monero"
+      />
 
       <DialogContent dividers className={classes.content}>
-        <SwapStatePage swapState={swap.state} />
-        <SwapStateStepper />
+        {debug ? (
+          <DebugPage />
+        ) : (
+          <>
+            <SwapStatePage swapState={swap.state} />
+            <SwapStateStepper />
+          </>
+        )}
       </DialogContent>
 
       <DialogActions>

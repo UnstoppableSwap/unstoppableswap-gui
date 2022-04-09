@@ -1,7 +1,7 @@
 import { isObject } from 'lodash';
 import { satsToBtc, pionerosToXmr } from '../utils/conversionUtils';
 import { TxLock } from './bitcoinModel';
-import { Provider } from './storeModel';
+import { Provider } from './apiModel';
 import logger from '../utils/logger';
 
 export interface DbState {

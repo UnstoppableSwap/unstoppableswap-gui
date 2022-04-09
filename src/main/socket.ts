@@ -5,7 +5,7 @@ import { ExtendedProvider } from '../models/apiModel';
 import logger from '../utils/logger';
 
 export default function initSocket() {
-  const socket = io('https://asb.unstoppableswap.net', {
+  const socket = io('https://api.unstoppableswap.net', {
     path: '/api/socket.io',
   });
 

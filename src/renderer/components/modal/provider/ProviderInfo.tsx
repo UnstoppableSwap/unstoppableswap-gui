@@ -1,7 +1,6 @@
 import { makeStyles, Box, Typography, Chip } from '@material-ui/core';
 import { satsToBtc, secondsToDays } from '../../../../utils/conversionUtils';
 import { ExtendedProvider } from '../../../../models/apiModel';
-import { splitMultiAddress } from '../../../../utils/multiAddrUtils';
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -24,7 +23,6 @@ export default function ProviderInfo({
 }) {
   const classes = useStyles();
   const uptime = Math.round(provider.uptime * 100);
-  const [peerId, multiAddr] = splitMultiAddress(provider.multiAddr);
   const age = Math.round(secondsToDays(provider.age));
 
   return (
@@ -33,10 +31,10 @@ export default function ProviderInfo({
         Swap Provider
       </Typography>
       <Typography variant="h5" component="h2">
-        {multiAddr}
+        {provider.multiAddr}
       </Typography>
       <Typography color="textSecondary" gutterBottom>
-        {peerId.substring(0, 12)}...
+        {provider.peerId.substring(0, 8)}...{provider.peerId.slice(-8)}
       </Typography>
       <Typography variant="caption">
         Exchange rate: {satsToBtc(provider.price)} BTC/XMR
