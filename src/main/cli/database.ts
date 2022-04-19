@@ -1,7 +1,7 @@
-import fs from 'fs';
 import { merge } from 'lodash';
 import sqlite3 from 'sqlite3';
 import { Database, open } from 'sqlite';
+import chokidar from 'chokidar';
 import {
   DbState,
   MergedDbState,
@@ -137,6 +137,8 @@ async function getMergedStateForEachSwap(
 let database: Database | null = null;
 
 export async function readFromDatabaseAndUpdateState() {
+  logger.debug('Reading database');
+
   try {
     if (!database) {
       const { primaryFile } = await getSqliteDbFiles();
@@ -159,10 +161,20 @@ export default async function watchDatabase() {
   const { primaryFile, walFile, shmFile } = await getSqliteDbFiles();
 
   function watchFiles() {
-    [primaryFile, walFile, shmFile].forEach((file) => {
-      fs.watchFile(file, readFromDatabaseAndUpdateState);
-      logger.info({ file }, `Watching database file`);
-    });
+    chokidar
+      .watch([primaryFile, walFile, shmFile], {
+        ignoreInitial: false,
+        awaitWriteFinish: {
+          stabilityThreshold: 200,
+          pollInterval: 50,
+        },
+        usePolling: true,
+        interval: 100,
+      })
+      .on('all', () => {
+        readFromDatabaseAndUpdateState();
+      });
+    logger.info({ primaryFile, walFile, shmFile }, `Watching database files`);
   }
 
   await readFromDatabaseAndUpdateState();
