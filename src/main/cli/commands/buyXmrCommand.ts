@@ -1,4 +1,3 @@
-import fs from 'fs/promises';
 import { dialog } from 'electron';
 import { CliLog } from '../../../models/cliModel';
 import { store } from '../../../store/store';
@@ -11,9 +10,9 @@ import {
 import { Provider } from '../../../models/apiModel';
 import { spawnSubcommand } from '../cli';
 import spawnBalanceCheck from './balanceCommand';
-import { getCliLogFile } from '../dirs';
 import logger from '../../../utils/logger';
 import { providerToConcatenatedMultiAddr } from '../../../utils/multiAddrUtils';
+import { getCliLogStdOut } from '../dirs';
 
 async function onCliLog(logs: CliLog[]) {
   store.dispatch(swapAddLog(logs));
@@ -61,14 +60,14 @@ export async function spawnBuyXmr(
       onProcExit,
       onStdOut
     );
-  } catch (e) {
-    const error = `Failed to spawn swap Provider: ${concatenatedMultiAddr} RedeemAddress: ${redeemAddress} RefundAddress: ${refundAddress} Error: ${e}`;
+  } catch (err) {
+    const error = `Failed to spawn swap Provider: ${concatenatedMultiAddr} RedeemAddress: ${redeemAddress} RefundAddress: ${refundAddress} Error: ${err}`;
     logger.error(
       {
         provider,
         redeemAddress,
         refundAddress,
-        error: (e as Error).toString(),
+        err,
       },
       'Failed to spawn swap'
     );
@@ -79,20 +78,6 @@ export async function spawnBuyXmr(
       type: 'error',
     });
     onProcExit(null, null);
-  }
-}
-
-async function getCliLogStdOut(swapId: string): Promise<string> {
-  try {
-    const logFile = await getCliLogFile(swapId);
-    const prevLogData = await fs.readFile(logFile, {
-      encoding: 'utf8',
-    });
-    return prevLogData;
-  } catch (e) {
-    throw new Error(
-      `Failed to read swap log file! SwapID: ${swapId} Error: ${e}`
-    );
   }
 }
 
@@ -126,13 +111,10 @@ export async function resumeBuyXmr(swapId: string) {
     } else {
       throw new Error('Could not find swap in database');
     }
-  } catch (e) {
-    logger.error(
-      { swapId, error: (e as Error).toString() },
-      'Failed to spawn swap resume'
-    );
+  } catch (err) {
+    logger.error({ swapId, err }, 'Failed to spawn swap resume');
 
-    const error = `Failed to spawn swap resume SwapID: ${swapId} Error: ${e}`;
+    const error = `Failed to spawn swap resume SwapID: ${swapId} Error: ${err}`;
     dialog.showMessageBoxSync({
       title: 'Failed to spawn command',
       message: error,

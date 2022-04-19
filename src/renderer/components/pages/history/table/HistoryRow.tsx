@@ -15,7 +15,7 @@ import {
   getSwapBtcAmount,
   getSwapXmrAmount,
   getHumanReadableDbStateType,
-} from '../../../../models/databaseModel';
+} from '../../../../../models/databaseModel';
 import HistoryRowActions from './HistoryRowActions';
 import HistoryRowExpanded from './HistoryRowExpanded';
 

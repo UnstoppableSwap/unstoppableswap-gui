@@ -5,7 +5,9 @@ E.g: "0.00100000 BTC"
 Output: 0.001
  */
 
+import path from 'path';
 import { DbState, isDbState } from '../models/databaseModel';
+import { TimelockStatus, TimelockStatusType } from '../models/storeModel';
 
 export function extractAmountFromUnitString(text: string): number | null {
   if (text != null) {
@@ -46,4 +48,59 @@ export function parseDateString(str: string): number {
     );
   }
   return date;
+}
+
+export function getLinesOfString(data: string): string[] {
+  return data
+    .toString()
+    .replace('\r\n', '\n')
+    .replace('\r', '\n')
+    .split('\n')
+    .filter((l) => l.length > 0);
+}
+
+/*
+E.g /Users/test/Library/Application Support/xmr-btc-swap/cli/testnet/logs/swap-0dba95a3-4b59-4b5b-bf69-40e7a0d6fbd3.log
+=> 0dba95a3-4b59-4b5b-bf69-40e7a0d6fbd3
+*/
+export function logFilePathToSwapId(logFilePath: string): string {
+  if (logFilePath.includes('swap-') && logFilePath.endsWith('.log')) {
+    const fileName = path.basename(logFilePath);
+    const fileNameWithoutExtension = fileName.split('.')[0];
+    const swapId = fileNameWithoutExtension.substring(5);
+    return swapId;
+  }
+  throw new Error(`Log file path does not contain swap id ${logFilePath}`);
+}
+
+export function getTimelockStatus(
+  refundTimelock: number,
+  punishTimelock: number,
+  confirmations: number | undefined
+): TimelockStatus {
+  if (confirmations === undefined) {
+    return { type: TimelockStatusType.UNKNOWN };
+  }
+  const blocksUntilRefund = refundTimelock - confirmations;
+  const blocksUntilPunish = refundTimelock + punishTimelock - confirmations;
+
+  if (blocksUntilRefund > 0 && blocksUntilPunish > 0) {
+    return {
+      blocksUntilPunish,
+      blocksUntilRefund,
+      type: TimelockStatusType.NONE,
+    };
+  }
+  if (blocksUntilRefund <= 0 && blocksUntilPunish > 0) {
+    return {
+      blocksUntilPunish,
+      type: TimelockStatusType.REFUND_EXPIRED,
+    };
+  }
+  if (blocksUntilPunish <= 0) {
+    return {
+      type: TimelockStatusType.PUNISH_EXPIRED,
+    };
+  }
+  return { type: TimelockStatusType.UNKNOWN };
 }

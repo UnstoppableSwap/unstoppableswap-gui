@@ -17,7 +17,8 @@ import { satsToBtc } from '../../../../utils/conversionUtils';
 import ProviderSubmitDialog from '../../modal/provider/ProviderSubmitDialog';
 import SwapDialog from '../../modal/swap/SwapDialog';
 import { useAppSelector } from '../../../../store/hooks';
-import { ExtendedProvider, isSwapState } from '../../../../models/storeModel';
+import { ExtendedProvider } from '../../../../models/apiModel';
+import { isSwapState } from '../../../../models/storeModel';
 
 const useStyles = makeStyles((theme) => ({
   inner: {

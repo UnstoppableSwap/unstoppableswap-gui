@@ -9,7 +9,7 @@ import {
   TableHead,
   TableRow,
 } from '@material-ui/core';
-import { useAppSelector } from '../../../../store/hooks';
+import { useAppSelector } from '../../../../../store/hooks';
 import HistoryRow from './HistoryRow';
 
 const useStyles = makeStyles((theme) => ({

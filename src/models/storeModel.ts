@@ -234,3 +234,27 @@ export function isWithdrawStateProcessExited(
     isWithdrawState(state) && state.type === WithdrawStateType.PROCESS_EXITED
   );
 }
+
+export enum TimelockStatusType {
+  NONE = 'none',
+  REFUND_EXPIRED = 'cancelExpired',
+  PUNISH_EXPIRED = 'punishExpired',
+  UNKNOWN = 'unknown',
+}
+
+export type TimelockStatus =
+  | {
+      blocksUntilRefund: number;
+      blocksUntilPunish: number;
+      type: TimelockStatusType.NONE;
+    }
+  | {
+      blocksUntilPunish: number;
+      type: TimelockStatusType.REFUND_EXPIRED;
+    }
+  | {
+      type: TimelockStatusType.PUNISH_EXPIRED;
+    }
+  | {
+      type: TimelockStatusType.UNKNOWN;
+    };

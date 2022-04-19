@@ -13,7 +13,7 @@ import {
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import ProviderInfo from './ProviderInfo';
-import { ExtendedProvider } from '../../../../models/storeModel';
+import { ExtendedProvider } from '../../../../models/apiModel';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { setSelectedProvider } from '../../../../store/features/providersSlice';
 

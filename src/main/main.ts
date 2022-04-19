@@ -22,6 +22,8 @@ import { getPlatform, isDevelopment } from '../store/config';
 import { getAssetPath, fixAppDataPath, getCliLogFile } from './cli/dirs';
 import initSocket from './socket';
 import logger from '../utils/logger';
+import watchElectrumTransactions from './blockchain/electrum';
+import watchLogs from './cli/log';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -120,6 +122,8 @@ if (gotTheLock) {
       initSocket();
       watchDatabase();
       spawnBalanceCheck();
+      watchElectrumTransactions();
+      watchLogs();
       return 0;
     })
     .catch((e) =>
@@ -139,7 +143,7 @@ if (isDevelopment) {
       logger.trace({ time, stack }, `Main thread has been blocked`);
     },
     {
-      threshold: 50,
+      threshold: 250,
     }
   );
 }

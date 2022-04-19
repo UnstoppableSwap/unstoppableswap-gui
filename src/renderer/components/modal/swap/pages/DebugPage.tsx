@@ -8,6 +8,13 @@ export default function DebugPage() {
     JSON.stringify(s.swap, null, '\t')
   );
   const dbStateString = JSON.stringify(useActiveDbState(), null, '\t');
+  const relevantTransactions = useAppSelector((s) =>
+    JSON.stringify(
+      s.electrum.filter((tx) => tx.transaction.swapId === s.swap.swapId),
+      null,
+      '\t'
+    )
+  );
 
   return (
     <Box>
@@ -18,6 +25,8 @@ export default function DebugPage() {
         <PaperTextBox stdOut={fullSwapStateString} />
         <Typography>Database state</Typography>
         <PaperTextBox stdOut={dbStateString} />
+        <Typography>Blockchain transactions</Typography>
+        <PaperTextBox stdOut={relevantTransactions} />
       </DialogContentText>
     </Box>
   );

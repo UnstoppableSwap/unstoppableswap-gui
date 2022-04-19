@@ -13,9 +13,9 @@ import {
   getSwapExchangeRate,
   getSwapTxFees,
   getSwapXmrAmount,
-} from '../../../../models/databaseModel';
+} from '../../../../../models/databaseModel';
 import SwapLogFileOpenButton from './SwapLogFileOpenButton';
-import DateFormatted from './DateFormatted';
+import DateFormatted from '../../../other/DateFormatted';
 
 const useStyles = makeStyles((theme) => ({
   outer: {
@@ -77,7 +77,9 @@ export default function HistoryRowExpanded({
             </TableRow>
             <TableRow>
               <TableCell>Provider Address</TableCell>
-              <TableCell>{provider.multiAddr}</TableCell>
+              <TableCell>
+                <Box>{provider.multiAddr}</Box>
+              </TableCell>
             </TableRow>
           </TableBody>
         </Table>

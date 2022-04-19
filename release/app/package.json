@@ -13,7 +13,8 @@
     "url": "https://unstoppableswap.net"
   },
   "dependencies": {
-    "sqlite3": "^5.0.2"
+    "sqlite3": "^5.0.2",
+    "chokidar": "^3.5.3"
   },
   "license": "MIT"
 }
