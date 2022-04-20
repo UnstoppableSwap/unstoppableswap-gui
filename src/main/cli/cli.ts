@@ -9,6 +9,7 @@ import { CliLog, isCliLog } from '../../models/cliModel';
 import { getCliDataBaseDir, getSwapBinary } from './dirs';
 import { readFromDatabaseAndUpdateState } from './database';
 import logger from '../../utils/logger';
+import { getLinesOfString } from '../../utils/parseUtils';
 
 const queue = new PQueue({ concurrency: 1 });
 let cli: ChildProcessWithoutNullStreams | null = null;
@@ -39,9 +40,9 @@ export async function stopCli() {
     childrenPids.forEach((childPid) => {
       try {
         process.kill(childPid);
-      } catch (e) {
+      } catch (err) {
         logger.error(
-          { pid: childPid, error: (e as Error).toString() },
+          { pid: childPid, err },
           `Failed to kill children cli process`
         );
       }
@@ -49,11 +50,8 @@ export async function stopCli() {
     try {
       process.kill(rootPid);
       logger.info({ rootPid, childrenPids }, `Force killed cli`);
-    } catch (e) {
-      logger.error(
-        { pid: rootPid, error: (e as Error).toString() },
-        `Failed to kill root cli process`
-      );
+    } catch (err) {
+      logger.error({ pid: rootPid, err }, `Failed to kill root cli process`);
     }
   }
 }
@@ -131,10 +129,7 @@ export async function spawnSubcommand(
                 stream.on('data', (data: string) => {
                   onStdOut(data);
 
-                  const logs = data
-                    .toString()
-                    .split(/(\r?\n)/g)
-                    .filter((s) => s.length > 2)
+                  const logs = getLinesOfString(data)
                     .map((logText) => {
                       logger.debug(
                         { subCommand, logText: logText.trim() },
@@ -143,12 +138,12 @@ export async function spawnSubcommand(
 
                       try {
                         return JSON.parse(logText);
-                      } catch (e) {
+                      } catch (err) {
                         logger.debug(
                           {
                             subCommand,
                             logText,
-                            error: (e as Error).toString(),
+                            err,
                           },
                           'Failed to parse CLI log'
                         );

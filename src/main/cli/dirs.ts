@@ -45,12 +45,17 @@ export async function getCliDataDir(): Promise<string> {
   return dataDir;
 }
 
-export async function getCliLogFile(swapId: string): Promise<string> {
+export async function getCliLogsDir(): Promise<string> {
   const baseDir = await getCliDataDir();
   const logsDir = path.join(baseDir, 'logs');
   await fs.mkdir(logsDir, {
     recursive: true,
   });
+  return logsDir;
+}
+
+export async function getCliLogFile(swapId: string): Promise<string> {
+  const logsDir = await getCliLogsDir();
   return path.join(logsDir, `swap-${swapId}.log`);
 }
 
@@ -93,4 +98,21 @@ export function getSwapBinary(): Binary {
         fileName: 'swap.exe',
       };
   }
+}
+
+export async function getFileData(file: string): Promise<string> {
+  try {
+    const prevLogData = await fs.readFile(file, {
+      encoding: 'utf8',
+    });
+    return prevLogData;
+  } catch (e) {
+    throw new Error(`Failed to read file! Path: ${file} Error: ${e}`);
+  }
+}
+
+export async function getCliLogStdOut(swapId: string): Promise<string> {
+  const logFile = await getCliLogFile(swapId);
+  const logData = await getFileData(logFile);
+  return logData;
 }

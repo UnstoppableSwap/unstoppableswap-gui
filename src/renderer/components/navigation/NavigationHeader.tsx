@@ -4,6 +4,7 @@ import HistoryOutlinedIcon from '@material-ui/icons/HistoryOutlined';
 import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
 import RouteListItemIconButton from './RouteListItemIconButton';
+import UnfinishedSwapsBadge from './UnfinishedSwapsCountBadge';
 
 export default function NavigationHeader() {
   return (
@@ -13,7 +14,9 @@ export default function NavigationHeader() {
           <SwapHorizOutlinedIcon />
         </RouteListItemIconButton>
         <RouteListItemIconButton name="History" route="/history">
-          <HistoryOutlinedIcon />
+          <UnfinishedSwapsBadge>
+            <HistoryOutlinedIcon />
+          </UnfinishedSwapsBadge>
         </RouteListItemIconButton>
         <RouteListItemIconButton name="Wallet" route="/wallet">
           <AccountBalanceWalletIcon />

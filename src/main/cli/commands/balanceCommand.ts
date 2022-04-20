@@ -37,11 +37,8 @@ export default async function spawnBalanceCheck() {
       onProcExit,
       onStdOut
     );
-  } catch (e) {
-    logger.error(
-      { error: (e as Error).toString() },
-      `Failed to spawn balance check`
-    );
+  } catch (err) {
+    logger.error({ err }, `Failed to spawn balance check`);
     onProcExit(null, null);
   }
 }

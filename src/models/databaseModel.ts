@@ -571,7 +571,7 @@ export function getSwapExchangeRate(dbState: MergedDbState): number {
 
 // See https://github.com/comit-network/xmr-btc-swap/blob/50ae54141255e03dba3d2b09036b1caa4a63e5a3/swap/src/protocol/bob/swap.rs#L11
 export function isSwapResumable(dbState: MergedDbState): boolean {
-  // Add SafelyAborted db state
+  // TODO: Add SafelyAborted db state
   return !(
     isMergedDoneBtcRefundedDbState(dbState) ||
     isMergedDoneXmrRedeemedDbState(dbState) ||

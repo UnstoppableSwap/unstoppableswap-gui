@@ -11,7 +11,7 @@ import {
   isMergedDoneXmrRedeemedDbState,
   isMergedDoneBtcRefundedDbState,
   isMergedDoneBtcPunishedDbState,
-} from '../../../../models/databaseModel';
+} from '../../../../../models/databaseModel';
 
 export function SwapResumeButton({
   dbState,

@@ -224,6 +224,7 @@
     "@reduxjs/toolkit": "^1.7.1",
     "blocked-at": "^1.2.0",
     "electron-redux": "2.0.0-alpha.8",
+    "electrum-cash": "^2.0.10",
     "multiaddr": "^10.0.1",
     "p-queue": "^6.6.2",
     "path-browserify": "^1.0.1",

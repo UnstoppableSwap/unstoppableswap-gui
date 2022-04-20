@@ -1,9 +1,13 @@
 import {
   extractAmountFromUnitString,
+  getLinesOfString,
+  getTimelockStatus,
+  logFilePathToSwapId,
   parseDateString,
   parseStateString,
 } from '../../utils/parseUtils';
 import dbStateCancelled from '../mock_db_states/db_state_btc_cancelled.json';
+import { TimelockStatusType } from '../../models/storeModel';
 
 test('should parse btc amount string correctly', () => {
   expect(extractAmountFromUnitString('0.1 BTC')).toBe(0.1);
@@ -52,4 +56,60 @@ test('should throw error when parsing invalid state string', () => {
       })
     )
   ).toThrow();
+});
+
+test('should extract swap id from log file path', () => {
+  expect(
+    logFilePathToSwapId(
+      '/Users/test/Library/Application Support/xmr-btc-swap/cli/testnet/logs/swap-0dba95a3-4b59-4b5b-bf69-40e7a0d6fbd3.log'
+    )
+  ).toBe('0dba95a3-4b59-4b5b-bf69-40e7a0d6fbd3');
+});
+
+test('should throw error when extracting swap id from invalid log file path', () => {
+  expect(() =>
+    logFilePathToSwapId(
+      '/Users/test/Library/Application Support/xmr-btc-swap/cli/testnet/logs/abc'
+    )
+  ).toThrow();
+});
+
+test('should extract lines from string and ignore empty oness', () => {
+  expect(getLinesOfString(`hello\nworld`)).toStrictEqual(['hello', 'world']);
+  expect(getLinesOfString(`hello\r\nworld`)).toStrictEqual(['hello', 'world']);
+  expect(
+    getLinesOfString(`hello
+world`)
+  ).toStrictEqual(['hello', 'world']);
+  expect(
+    getLinesOfString(`hello
+
+world`)
+  ).toStrictEqual(['hello', 'world']);
+});
+
+describe('getTimelockStatus', () => {
+  test('should parse not cancellable timelock', () => {
+    expect(getTimelockStatus(6, 12, 4)).toStrictEqual({
+      blocksUntilRefund: 2,
+      blocksUntilPunish: 14,
+      type: TimelockStatusType.NONE,
+    });
+  });
+  test('should parse refundable timelock', () => {
+    expect(getTimelockStatus(6, 12, 7)).toStrictEqual({
+      blocksUntilPunish: 11,
+      type: TimelockStatusType.REFUND_EXPIRED,
+    });
+  });
+  test('should parse punishable timelock', () => {
+    expect(getTimelockStatus(6, 12, 19)).toStrictEqual({
+      type: TimelockStatusType.PUNISH_EXPIRED,
+    });
+  });
+  test('should parse unknown timelock', () => {
+    expect(getTimelockStatus(6, 12, undefined)).toStrictEqual({
+      type: TimelockStatusType.UNKNOWN,
+    });
+  });
 });

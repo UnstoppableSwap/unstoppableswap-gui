@@ -1,16 +1,13 @@
 import { Button } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import { useNavigate } from 'react-router-dom';
-import { useAppSelector } from '../../../store/hooks';
-import { isSwapResumable } from '../../../models/databaseModel';
+import { useResumeableSwapsCount } from '../../../store/hooks';
 
 export default function UnfinishedSwapsAlert() {
-  const countResumeableSwaps = useAppSelector(
-    (state) => state.history.filter(isSwapResumable).length
-  );
+  const resumableSwapsCount = useResumeableSwapsCount();
   const navigate = useNavigate();
 
-  if (countResumeableSwaps > 0) {
+  if (resumableSwapsCount > 0) {
     return (
       <Alert
         severity="warning"
@@ -24,7 +21,7 @@ export default function UnfinishedSwapsAlert() {
           </Button>
         }
       >
-        You have {countResumeableSwaps} unfinished swaps
+        You have {resumableSwapsCount} unfinished swaps
       </Alert>
     );
   }

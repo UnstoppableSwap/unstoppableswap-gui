@@ -15,7 +15,7 @@ import {
   getSwapBtcAmount,
   getSwapXmrAmount,
   getHumanReadableDbStateType,
-} from '../../../../models/databaseModel';
+} from '../../../../../models/databaseModel';
 import HistoryRowActions from './HistoryRowActions';
 import HistoryRowExpanded from './HistoryRowExpanded';
 
@@ -77,7 +77,7 @@ export default function HistoryRow({ dbState }: HistoryRowProps) {
       <TableRow>
         <TableCell style={{ padding: 0 }} colSpan={6}>
           <Collapse in={expanded} timeout="auto">
-            <HistoryRowExpanded dbState={dbState} />
+            {expanded && <HistoryRowExpanded dbState={dbState} />}
           </Collapse>
         </TableCell>
       </TableRow>
