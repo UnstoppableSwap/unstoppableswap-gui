@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
   fieldsOuter: {
     display: 'flex',
     flexDirection: 'column',
-    gap: theme.spacing(1.5),
+    gap: theme.spacing(2),
   },
 }));
 
