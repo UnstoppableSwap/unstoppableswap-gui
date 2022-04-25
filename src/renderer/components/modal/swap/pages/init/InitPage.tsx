@@ -11,6 +11,11 @@ const useStyles = makeStyles((theme) => ({
   initButton: {
     marginTop: theme.spacing(1),
   },
+  fieldsOuter: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: theme.spacing(1.5),
+  },
 }));
 
 export default function InitPage() {
@@ -54,21 +59,25 @@ export default function InitPage() {
         the swap fails.
       </DialogContentText>
 
-      <MoneroAddressTextField
-        address={redeemAddress}
-        onAddressChange={setRedeemAddress}
-        onAddressValidityChange={setRedeemAddressValid}
-        helperText="The monero will be sent to this address"
-        fullWidth
-      />
+      <Box className={classes.fieldsOuter}>
+        <MoneroAddressTextField
+          label="Monero redeem address"
+          address={redeemAddress}
+          onAddressChange={setRedeemAddress}
+          onAddressValidityChange={setRedeemAddressValid}
+          helperText="The monero will be sent to this address"
+          fullWidth
+        />
 
-      <BitcoinAddressTextField
-        address={refundAddress}
-        onAddressChange={setRefundAddress}
-        onAddressValidityChange={setRefundAddressValid}
-        helperText="In case something goes terribly wrong, all Bitcoin will be refunded to this address"
-        fullWidth
-      />
+        <BitcoinAddressTextField
+          label="Bitcoin refund address"
+          address={refundAddress}
+          onAddressChange={setRefundAddress}
+          onAddressValidityChange={setRefundAddressValid}
+          helperText="In case something goes terribly wrong, all Bitcoin will be refunded to this address"
+          fullWidth
+        />
+      </Box>
 
       <Button
         disabled={
