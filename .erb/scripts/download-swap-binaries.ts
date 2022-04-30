@@ -1,19 +1,20 @@
 import path from 'path';
 import download from 'download';
-import { emptyDirSync, ensureDirSync } from 'fs-extra';
+import { emptyDir, ensureDir } from 'fs-extra';
 
-const binDir = path.join(__dirname, '../../build/bin');
+const swapBinDir = path.join(__dirname, '../../build/bin/swap');
+
 const binaries = [
   {
-    dest: path.join(binDir, 'linux'),
+    dest: path.join(swapBinDir, 'linux'),
     url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/preview/swap_preview_Linux_x86_64.tar',
   },
   {
-    dest: path.join(binDir, 'mac'),
+    dest: path.join(swapBinDir, 'mac'),
     url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/preview/swap_preview_Darwin_x86_64.tar',
   },
   {
-    dest: path.join(binDir, 'win'),
+    dest: path.join(swapBinDir, 'win'),
     url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/preview/swap_preview_Windows_x86_64.zip',
   },
 ];
@@ -22,8 +23,8 @@ console.log(`Downloading ${binaries.length} swap binaries...`);
 Promise.all(
   binaries.map(async (binary) => {
     console.log(`Downloading and extracting ${binary.url} to ${binary.dest}`);
-    ensureDirSync(binary.dest);
-    emptyDirSync(binary.dest);
+    await ensureDir(binary.dest);
+    await emptyDir(binary.dest);
     await download(binary.url, binary.dest, {
       extract: true,
     });
