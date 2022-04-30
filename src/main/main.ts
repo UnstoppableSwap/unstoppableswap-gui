@@ -24,6 +24,7 @@ import initSocket from './socket';
 import logger from '../utils/logger';
 import watchElectrumTransactions from './blockchain/electrum';
 import watchLogs from './cli/log';
+import { spawnTor, stopTor } from './tor';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -96,7 +97,10 @@ async function createWindow() {
 
 fixAppDataPath();
 
-app.on('will-quit', stopCli);
+app.on('will-quit', async () => {
+  await stopCli();
+  stopTor();
+});
 
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
@@ -165,3 +169,7 @@ ipcMain.handle('spawn-withdraw-btc', (_event, address) =>
 );
 
 ipcMain.handle('get-cli-log-path', (_event, swapId) => getCliLogFile(swapId));
+
+ipcMain.handle('spawn-tor', spawnTor);
+
+ipcMain.handle('stop-tor', stopTor);

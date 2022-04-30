@@ -12,6 +12,10 @@ export function useResumeableSwapsCount() {
   );
 }
 
+export function useIsSwapRunning() {
+  return useAppSelector((state) => state.swap.state !== null);
+}
+
 export function useDbState(swapId?: string | null) {
   const dbState =
     useAppSelector((s) =>
