@@ -43,8 +43,11 @@ export default function WaitingForBtcDepositPage({
             >
               Send any amount between {state.minimumAmount} BTC (and some more
               for network fees) and {state.maximumAmount} BTC to the address
-              above. You have deposited enough Bitcoin to swap{' '}
-              {state.maxGiveable} BTC
+              above. All Bitcoin sent to this this address will converted into
+              Monero at an exchance rate of {state.price || 'unknown'} BTC/XMR.
+            </Typography>
+            <Typography variant="subtitle2">
+              You have deposited enough Bitcoin to swap {state.maxGiveable} BTC
             </Typography>
           </>
         }

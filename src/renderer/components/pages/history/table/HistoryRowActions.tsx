@@ -1,5 +1,4 @@
-import { Button, Tooltip } from '@material-ui/core';
-import { ipcRenderer } from 'electron';
+import { Tooltip } from '@material-ui/core';
 import { ButtonProps } from '@material-ui/core/Button/Button';
 import DoneIcon from '@material-ui/icons/Done';
 import ErrorIcon from '@material-ui/icons/Error';
@@ -12,6 +11,7 @@ import {
   isMergedDoneBtcRefundedDbState,
   isMergedDoneBtcPunishedDbState,
 } from '../../../../../models/databaseModel';
+import IpcInvokeButton from '../../../IpcInvokeButton';
 
 export function SwapResumeButton({
   dbState,
@@ -19,21 +19,18 @@ export function SwapResumeButton({
 }: { dbState: MergedDbState } & ButtonProps) {
   const resumable = isSwapResumable(dbState);
 
-  async function resume() {
-    await ipcRenderer.invoke('resume-buy-xmr', dbState.swapId);
-  }
-
   return (
-    <Button
+    <IpcInvokeButton
       variant="contained"
       color="primary"
-      onClick={resume}
       disabled={!resumable}
-      {...props}
+      ipcChannel="resume-buy-xmr"
+      ipcArgs={[dbState.swapId]}
       endIcon={<PlayArrowIcon />}
+      {...props}
     >
       Resume
-    </Button>
+    </IpcInvokeButton>
   );
 }
 

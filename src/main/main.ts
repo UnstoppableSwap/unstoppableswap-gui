@@ -24,6 +24,7 @@ import initSocket from './socket';
 import logger from '../utils/logger';
 import watchElectrumTransactions from './blockchain/electrum';
 import watchLogs from './cli/log';
+import { spawnTor, stopTor } from './tor';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -165,3 +166,7 @@ ipcMain.handle('spawn-withdraw-btc', (_event, address) =>
 );
 
 ipcMain.handle('get-cli-log-path', (_event, swapId) => getCliLogFile(swapId));
+
+ipcMain.handle('spawn-tor', spawnTor);
+
+ipcMain.handle('stop-tor', stopTor);
