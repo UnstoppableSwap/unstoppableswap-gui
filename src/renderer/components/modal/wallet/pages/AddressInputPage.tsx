@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Button, DialogActions, DialogContentText } from '@material-ui/core';
-import { ipcRenderer } from 'electron';
 import BitcoinAddressTextField from '../../../inputs/BitcoinAddressTextField';
 import WithdrawDialogContent from '../WithdrawDialogContent';
+import IpcInvokeButton from '../../../IpcInvokeButton';
 
 export default function AddressInputPage({
   onCancel,
@@ -11,10 +11,6 @@ export default function AddressInputPage({
 }) {
   const [withdrawAddressValid, setWithdrawAddressValid] = useState(false);
   const [withdrawAddress, setWithdrawAddress] = useState('');
-
-  async function spawnWithdraw() {
-    await ipcRenderer.invoke('spawn-withdraw-btc', withdrawAddress);
-  }
 
   return (
     <>
@@ -37,14 +33,15 @@ export default function AddressInputPage({
         <Button onClick={onCancel} variant="text">
           Cancel
         </Button>
-        <Button
+        <IpcInvokeButton
           disabled={!withdrawAddressValid}
-          onClick={spawnWithdraw}
+          ipcChannel="spawn-withdraw-btc"
+          ipcArgs={[withdrawAddress]}
           color="primary"
           variant="contained"
         >
           Withdraw
-        </Button>
+        </IpcInvokeButton>
       </DialogActions>
     </>
   );

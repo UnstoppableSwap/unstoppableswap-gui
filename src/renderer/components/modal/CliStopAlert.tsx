@@ -6,7 +6,7 @@ import {
   DialogContentText,
   DialogTitle,
 } from '@material-ui/core';
-import { ipcRenderer } from 'electron';
+import IpcInvokeButton from '../IpcInvokeButton';
 
 type SwapCancelAlertProps = {
   open: boolean;
@@ -14,11 +14,6 @@ type SwapCancelAlertProps = {
 };
 
 export default function CliStopAlert({ open, onClose }: SwapCancelAlertProps) {
-  async function handleSwapCancel() {
-    await ipcRenderer.invoke('stop-cli');
-    onClose();
-  }
-
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Force stop running operation?</DialogTitle>
@@ -32,9 +27,14 @@ export default function CliStopAlert({ open, onClose }: SwapCancelAlertProps) {
         <Button onClick={onClose} color="primary">
           No
         </Button>
-        <Button onClick={handleSwapCancel} color="primary">
+        <IpcInvokeButton
+          ipcChannel="stop-cli"
+          ipcArgs={[]}
+          color="primary"
+          onSuccess={onClose}
+        >
           Force stop
-        </Button>
+        </IpcInvokeButton>
       </DialogActions>
     </Dialog>
   );

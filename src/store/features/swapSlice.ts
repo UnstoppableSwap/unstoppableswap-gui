@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { extractAmountFromUnitString } from '../../utils/parseUtils';
 import {
   isSwapStateBtcLockInMempool,
+  isSwapStateReceivedQuote,
   isSwapStateWaitingForBtcDeposit,
   isSwapStateXmrLockInMempool,
   SwapSlice,
@@ -89,6 +90,9 @@ export const swapSlice = createSlice({
           );
 
           const depositAddress = log.fields.deposit_address;
+          const price = isSwapStateReceivedQuote(slice.state)
+            ? slice.state.price
+            : null;
 
           if (
             maxGiveable != null &&
@@ -101,6 +105,7 @@ export const swapSlice = createSlice({
               maxGiveable,
               minimumAmount,
               maximumAmount,
+              price,
             };
 
             slice.state = nextState;
