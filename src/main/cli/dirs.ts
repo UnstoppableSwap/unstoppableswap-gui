@@ -77,8 +77,8 @@ export async function getSqliteDbFiles() {
 export function getSwapBinary(): Binary {
   const platform = getPlatform();
   const dirPath = app.isPackaged
-    ? path.join(BINARIES_PATH)
-    : path.join(BINARIES_PATH, platform);
+    ? BINARIES_PATH
+    : path.join(BINARIES_PATH, 'swap', platform);
 
   switch (platform) {
     case 'mac':
@@ -96,6 +96,32 @@ export function getSwapBinary(): Binary {
       return {
         dirPath,
         fileName: 'swap.exe',
+      };
+  }
+}
+
+export function getTorBinary(): Binary {
+  const platform = getPlatform();
+  const dirPath = app.isPackaged
+    ? BINARIES_PATH
+    : path.join(BINARIES_PATH, 'tor', platform);
+
+  switch (platform) {
+    case 'mac':
+      return {
+        dirPath,
+        fileName: 'tor',
+      };
+    case 'linux':
+      return {
+        dirPath,
+        fileName: 'tor',
+      };
+    case 'win':
+    default:
+      return {
+        dirPath,
+        fileName: 'tor.exe',
       };
   }
 }

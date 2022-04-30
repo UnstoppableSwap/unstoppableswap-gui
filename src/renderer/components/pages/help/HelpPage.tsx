@@ -2,6 +2,7 @@ import { Box, makeStyles } from '@material-ui/core';
 import ContactInfoBox from './ContactInfoBox';
 import FeedbackInfoBox from './FeedbackInfoBox';
 import DonateInfoBox from './DonateInfoBox';
+import TorInfoBox from './TorInfoBox';
 
 const useStyles = makeStyles((theme) => ({
   outer: {
@@ -16,6 +17,7 @@ export default function HelpPage() {
 
   return (
     <Box className={classes.outer}>
+      <TorInfoBox />
       <FeedbackInfoBox />
       <ContactInfoBox />
       <DonateInfoBox />
