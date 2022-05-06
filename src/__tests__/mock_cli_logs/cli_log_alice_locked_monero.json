@@ -1,8 +1,8 @@
 {
-  "timestamp":"2021-09-05 03:56:52",
-  "level":"INFO",
-  "fields":{
-    "message":"Alice locked Monero",
-    "txid":"cb46ad562ffc868a7c2d8c72cecd9090cca7b6f102199db6a6cbef65afeb09d1"
+  "timestamp": "2021-09-05 03:56:52",
+  "level": "INFO",
+  "fields": {
+    "message": "Alice locked Monero",
+    "txid": "cb46ad562ffc868a7c2d8c72cecd9090cca7b6f102199db6a6cbef65afeb09d1"
   }
 }
