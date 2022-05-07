@@ -9,7 +9,7 @@ import {
 } from '../store/features/torSlice';
 import { store } from '../store/store';
 import logger from '../utils/logger';
-import { getTorBinary } from './cli/dirs';
+import { getTorBinary, makeFileExecutable } from './cli/dirs';
 
 let torProc: ChildProcessWithoutNullStreams | null = null;
 
@@ -19,12 +19,13 @@ export function stopTor() {
 }
 
 export async function spawnTor(): Promise<void> {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     if (torProc) {
       stopTor();
     }
 
     const torBinary = getTorBinary();
+    await makeFileExecutable(torBinary);
     torProc = spawnProc(`./${torBinary.fileName}`, {
       cwd: torBinary.dirPath,
     });

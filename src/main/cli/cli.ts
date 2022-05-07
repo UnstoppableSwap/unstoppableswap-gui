@@ -6,7 +6,7 @@ import PQueue from 'p-queue';
 import pidtree from 'pidtree';
 import { isTestnet } from '../../store/config';
 import { CliLog, isCliLog } from '../../models/cliModel';
-import { getCliDataBaseDir, getSwapBinary } from './dirs';
+import { getCliDataBaseDir, getSwapBinary, makeFileExecutable } from './dirs';
 import { readFromDatabaseAndUpdateState } from './database';
 import logger from '../../utils/logger';
 import { getLinesOfString } from '../../utils/parseUtils';
@@ -80,6 +80,7 @@ export async function spawnSubcommand(
               const spawnArgs = await getSpawnArgs(subCommand, options);
               const binary = getSwapBinary();
 
+              await makeFileExecutable(binary);
               cli = spawnProc(`./${binary.fileName}`, spawnArgs, {
                 cwd: binary.dirPath,
               });

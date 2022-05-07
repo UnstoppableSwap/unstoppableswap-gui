@@ -1,6 +1,7 @@
 import { app } from 'electron';
 import path from 'path';
-import { promises as fs } from 'fs';
+import { constants, promises as fs } from 'fs';
+import { chmod, stat } from 'fs/promises';
 import { getPlatform, isTestnet } from '../../store/config';
 import { Binary } from '../../models/downloaderModel';
 
@@ -141,4 +142,14 @@ export async function getCliLogStdOut(swapId: string): Promise<string> {
   const logFile = await getCliLogFile(swapId);
   const logData = await getFileData(logFile);
   return logData;
+}
+
+export async function makeFileExecutable(binary: Binary) {
+  const fullPath = path.join(binary.dirPath, binary.fileName);
+  const { mode } = await stat(fullPath);
+  await chmod(
+    fullPath,
+    // eslint-disable-next-line no-bitwise
+    mode | constants.S_IXUSR | constants.S_IXGRP | constants.S_IXOTH
+  );
 }
