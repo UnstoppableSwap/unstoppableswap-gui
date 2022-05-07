@@ -8,8 +8,7 @@ import {
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import { useState } from 'react';
 import ProviderInfo from './ProviderInfo';
-import ProviderSelectDialog from './ProviderSelectDialog';
-import ProviderSubmitDialog from './ProviderSubmitDialog';
+import ProviderListDialog from './ProviderListDialog';
 import { useAppSelector } from '../../../../store/hooks';
 
 const useStyles = makeStyles({
@@ -30,7 +29,6 @@ const useStyles = makeStyles({
 export default function ProviderSelect() {
   const classes = useStyles();
   const [selectDialogOpen, setSelectDialogOpen] = useState(false);
-  const [submitDialogOpen, setSubmitDialogOpen] = useState(false);
   const selectedProvider = useAppSelector(
     (state) => state.providers.selectedProvider
   );
@@ -45,25 +43,11 @@ export default function ProviderSelect() {
     setSelectDialogOpen(true);
   }
 
-  function handleSubmitDialogClose() {
-    setSubmitDialogOpen(false);
-  }
-
-  function handleSubmitDialogOpen() {
-    setSubmitDialogOpen(true);
-    setSelectDialogOpen(false);
-  }
-
   return (
     <Box>
-      <ProviderSelectDialog
+      <ProviderListDialog
         open={selectDialogOpen}
         onClose={handleSelectDialogClose}
-        onSubmitDialogOpen={handleSubmitDialogOpen}
-      />
-      <ProviderSubmitDialog
-        open={submitDialogOpen}
-        onClose={handleSubmitDialogClose}
       />
       <ButtonBase className={classes.inner} onClick={handleSelectDialogOpen}>
         <Card variant="outlined" className={classes.providerCard}>
