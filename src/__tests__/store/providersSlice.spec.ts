@@ -1,8 +1,8 @@
 import { AnyAction } from '@reduxjs/toolkit';
 import reducer, { setProviders } from '../../store/features/providersSlice';
-import { ExtendedProvider } from '../../models/apiModel';
+import { ExtendedProviderStatus } from '../../models/apiModel';
 
-const exampleTestnetProvider: ExtendedProvider = {
+const exampleTestnetProvider: ExtendedProviderStatus = {
   multiAddr: '/dnsaddr/t.xmr.example',
   peerId: '12394294389438924',
   testnet: true,
@@ -14,7 +14,7 @@ const exampleTestnetProvider: ExtendedProvider = {
   relevancy: 1,
 };
 
-const exampleMainnetProvider: ExtendedProvider = {
+const exampleMainnetProvider: ExtendedProviderStatus = {
   multiAddr: '/dnsaddr/xmr.example',
   peerId: '32394294389438924',
   testnet: false,
