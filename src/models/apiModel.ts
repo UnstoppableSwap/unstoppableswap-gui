@@ -1,10 +1,15 @@
-export interface ExtendedProvider extends Provider {
+export interface ExtendedProviderStatus extends ProviderStatus {
+  uptime?: number;
+  age?: number;
+  relevancy?: number;
+}
+
+export interface ProviderStatus extends ProviderQuote, Provider {}
+
+export interface ProviderQuote {
   price: number;
   minSwapAmount: number;
   maxSwapAmount: number;
-  uptime: number;
-  age: number;
-  relevancy: number;
 }
 
 export interface Provider {
