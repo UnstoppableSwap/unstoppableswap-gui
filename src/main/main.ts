@@ -24,6 +24,7 @@ import initSocket from './socket';
 import logger from '../utils/logger';
 import watchElectrumTransactions from './blockchain/electrum';
 import watchLogs from './cli/log';
+import spawnListSellersCommand from './cli/commands/listSellersCommand';
 import { spawnTor, stopTor } from './tor';
 
 let mainWindow: BrowserWindow | null = null;
@@ -163,6 +164,10 @@ ipcMain.handle('resume-buy-xmr', (_event, swapId) => resumeBuyXmr(swapId));
 
 ipcMain.handle('spawn-withdraw-btc', (_event, address) =>
   spawnWithdrawBtc(address)
+);
+
+ipcMain.handle('spawn-list-sellers', (_event, rendezvousPointAddress) =>
+  spawnListSellersCommand(rendezvousPointAddress)
 );
 
 ipcMain.handle('get-cli-log-path', (_event, swapId) => getCliLogFile(swapId));

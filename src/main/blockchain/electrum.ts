@@ -126,7 +126,10 @@ async function updateTransactions(electrum: ElectrumClient) {
       );
 
       if (isElectrumTransactionData(status)) {
-        logger.debug({ transaction, status }, 'Received status of transaction');
+        logger.debug(
+          { transaction, confirmations: status.confirmations },
+          'Received status of transaction'
+        );
         statuses.push({ transaction, status });
       } else {
         logger.warn(

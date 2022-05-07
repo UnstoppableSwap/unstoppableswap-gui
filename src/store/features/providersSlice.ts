@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { sortProviderList } from '../../utils/sortUtils';
-import { ExtendedProvider } from '../../models/apiModel';
+import { ExtendedProviderStatus } from '../../models/apiModel';
 import { isTestnet } from '../config';
 
 export interface ProvidersSlice {
-  providers: ExtendedProvider[];
-  selectedProvider: ExtendedProvider | null;
+  providers: ExtendedProviderStatus[];
+  selectedProvider: ExtendedProviderStatus | null;
 }
 
 const initialState: ProvidersSlice = {
@@ -17,7 +17,7 @@ export const providersSlice = createSlice({
   name: 'providers',
   initialState,
   reducers: {
-    setProviders(slice, action: PayloadAction<ExtendedProvider[]>) {
+    setProviders(slice, action: PayloadAction<ExtendedProviderStatus[]>) {
       const providers = sortProviderList(action.payload).filter(
         (provider) => provider.testnet === isTestnet()
       );

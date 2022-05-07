@@ -7,6 +7,7 @@ import withdrawReducer from './features/withdrawSlice';
 import providersSlice from './features/providersSlice';
 import electrumSlice from './features/electrumSlice';
 import logSlice from './features/logSlice';
+import listSellersSlice from './features/listSellersSlice';
 import torSlice from './features/torSlice';
 
 export const store = configureStore({
@@ -18,6 +19,7 @@ export const store = configureStore({
     providers: providersSlice,
     electrum: electrumSlice,
     log: logSlice,
+    listSellers: listSellersSlice,
     tor: torSlice,
   },
   enhancers: [stateSyncEnhancer()],

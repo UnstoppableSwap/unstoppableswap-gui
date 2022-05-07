@@ -17,7 +17,7 @@ import { satsToBtc } from '../../../../utils/conversionUtils';
 import ProviderSubmitDialog from '../../modal/provider/ProviderSubmitDialog';
 import SwapDialog from '../../modal/swap/SwapDialog';
 import { useAppSelector } from '../../../../store/hooks';
-import { ExtendedProvider } from '../../../../models/apiModel';
+import { ExtendedProviderStatus } from '../../../../models/apiModel';
 import { isSwapState } from '../../../../models/storeModel';
 
 const useStyles = makeStyles((theme) => ({
@@ -61,7 +61,7 @@ function Title() {
 function HasProviderSwapWidget({
   selectedProvider,
 }: {
-  selectedProvider: ExtendedProvider;
+  selectedProvider: ExtendedProviderStatus;
 }) {
   const classes = useStyles();
 

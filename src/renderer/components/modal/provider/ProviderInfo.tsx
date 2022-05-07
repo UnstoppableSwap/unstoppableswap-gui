@@ -1,6 +1,6 @@
 import { makeStyles, Box, Typography, Chip } from '@material-ui/core';
 import { satsToBtc, secondsToDays } from '../../../../utils/conversionUtils';
-import { ExtendedProvider } from '../../../../models/apiModel';
+import { ExtendedProviderStatus } from '../../../../models/apiModel';
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -19,11 +19,9 @@ const useStyles = makeStyles((theme) => ({
 export default function ProviderInfo({
   provider,
 }: {
-  provider: ExtendedProvider;
+  provider: ExtendedProviderStatus;
 }) {
   const classes = useStyles();
-  const uptime = Math.round(provider.uptime * 100);
-  const age = Math.round(secondsToDays(provider.age));
 
   return (
     <Box className={classes.content}>
@@ -45,8 +43,18 @@ export default function ProviderInfo({
       </Typography>
       <Box className={classes.chipsOuter}>
         <Chip label={provider.testnet ? 'Testnet' : 'Mainnet'} />
-        <Chip label={`${uptime} % uptime`} />
-        <Chip label={`Went online ${age} ${age === 1 ? 'day' : 'days'} ago`} />
+        {provider.uptime && (
+          <Chip label={`${Math.round(provider.uptime * 100)} % uptime`} />
+        )}
+        {provider.age ? (
+          <Chip
+            label={`Went online ${Math.round(secondsToDays(provider.age))} ${
+              provider.age === 1 ? 'day' : 'days'
+            } ago`}
+          />
+        ) : (
+          <Chip label="Discovered via rendezvous point" />
+        )}
       </Box>
     </Box>
   );
