@@ -1,9 +1,5 @@
 import { AnyAction } from '@reduxjs/toolkit';
-import {
-  SwapSlice,
-  SwapStateBtcLockInMempool,
-  SwapStateType,
-} from '../../models/storeModel';
+import { SwapSlice, SwapStateBtcLockInMempool, SwapStateType } from '../../models/storeModel';
 import {
   CliLog,
   CliLogAliceLockedXmr,
@@ -15,13 +11,10 @@ import {
   CliLogRedeemedXmr,
   CliLogStartedSwap,
   CliLogWaitingForBtcDeposit,
+  SwapSpawnType
 } from '../../models/cliModel';
 
-import reducer, {
-  swapAddLog,
-  swapInitiate,
-  swapProcessExited,
-} from '../../store/features/swapSlice';
+import reducer, { swapAddLog, swapInitiate, swapProcessExited } from '../../store/features/swapSlice';
 import { Provider } from '../../models/apiModel';
 
 const mWaitingForBtcDepositLog: CliLogWaitingForBtcDeposit = require('../mock_cli_logs/cli_log_waiting_for_bitcoin_deposit.json');
@@ -57,7 +50,7 @@ const initialSwapState = {
   logs: [],
   provider: null,
   stdOut: '',
-  resume: null,
+  spawnType: null,
   swapId: null,
 };
 
@@ -76,7 +69,7 @@ test('should infer correct states from happy-path logs', () => {
     [
       swapInitiate({
         provider: exampleProvider,
-        resume: false,
+        spawnType: SwapSpawnType.INIT,
         swapId: null,
       }),
       {
@@ -87,7 +80,7 @@ test('should infer correct states from happy-path logs', () => {
         },
         provider: exampleProvider,
         stdOut: '',
-        resume: false,
+        spawnType: SwapSpawnType.INIT,
         swapId: null,
       },
     ],
@@ -104,7 +97,7 @@ test('should infer correct states from happy-path logs', () => {
         },
         provider: exampleProvider,
         stdOut: '',
-        resume: false,
+        spawnType: SwapSpawnType.INIT,
         swapId: null,
       },
     ],
@@ -124,7 +117,7 @@ test('should infer correct states from happy-path logs', () => {
         },
         provider: exampleProvider,
         stdOut: '',
-        resume: false,
+        spawnType: SwapSpawnType.INIT,
         swapId: null,
       },
     ],
@@ -144,7 +137,7 @@ test('should infer correct states from happy-path logs', () => {
         },
         provider: exampleProvider,
         stdOut: '',
-        resume: false,
+        spawnType: SwapSpawnType.INIT,
         swapId: null,
       },
     ],
@@ -164,7 +157,7 @@ test('should infer correct states from happy-path logs', () => {
         },
         provider: exampleProvider,
         stdOut: '',
-        resume: false,
+        spawnType: SwapSpawnType.INIT,
         swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
       },
     ],
@@ -187,7 +180,7 @@ test('should infer correct states from happy-path logs', () => {
         },
         provider: exampleProvider,
         stdOut: '',
-        resume: false,
+        spawnType: SwapSpawnType.INIT,
         swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
       },
     ],
@@ -211,7 +204,7 @@ test('should infer correct states from happy-path logs', () => {
         },
         provider: exampleProvider,
         stdOut: '',
-        resume: false,
+        spawnType: SwapSpawnType.INIT,
         swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
       },
     ],
@@ -236,7 +229,7 @@ test('should infer correct states from happy-path logs', () => {
         },
         provider: exampleProvider,
         stdOut: '',
-        resume: false,
+        spawnType: SwapSpawnType.INIT,
         swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
       },
     ],
@@ -262,7 +255,7 @@ test('should infer correct states from happy-path logs', () => {
         },
         provider: exampleProvider,
         stdOut: '',
-        resume: false,
+        spawnType: SwapSpawnType.INIT,
         swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
       },
     ],
@@ -286,7 +279,7 @@ test('should infer correct states from happy-path logs', () => {
         },
         provider: exampleProvider,
         stdOut: '',
-        resume: false,
+        spawnType: SwapSpawnType.INIT,
         swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
       },
     ],
@@ -311,7 +304,7 @@ test('should infer correct states from happy-path logs', () => {
         },
         provider: exampleProvider,
         stdOut: '',
-        resume: false,
+        spawnType: SwapSpawnType.INIT,
         swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
       },
     ],
@@ -341,7 +334,7 @@ test('should infer correct states from happy-path logs', () => {
         },
         provider: exampleProvider,
         stdOut: '',
-        resume: false,
+        spawnType: SwapSpawnType.INIT,
         swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
       },
     ],
@@ -379,7 +372,7 @@ test('should infer correct states from happy-path logs', () => {
         },
         provider: exampleProvider,
         stdOut: '',
-        resume: false,
+        spawnType: SwapSpawnType.INIT,
         swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
       },
     ],
@@ -410,7 +403,7 @@ test('should infer correct states from refund-path', () => {
         },
         provider: exampleProvider,
         stdOut: '',
-        resume: false,
+        spawnType: SwapSpawnType.INIT,
         swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
       },
     ],
@@ -435,7 +428,7 @@ test('should infer correct states from refund-path', () => {
         },
         provider: exampleProvider,
         stdOut: '',
-        resume: false,
+        spawnType: SwapSpawnType.INIT,
         swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
       },
     ],
@@ -459,7 +452,7 @@ test('should infer correct states from refund-path', () => {
     },
     provider: exampleProvider,
     stdOut: '',
-    resume: false,
+    spawnType: SwapSpawnType.INIT,
     swapId: '2a034c59-72bc-4b7b-839f-d32522099bcc',
   };
 

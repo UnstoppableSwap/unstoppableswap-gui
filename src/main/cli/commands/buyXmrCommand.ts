@@ -44,7 +44,7 @@ export async function spawnBuyXmr(
     store.dispatch(
       swapInitiate({
         provider,
-        resume: false,
+        spawnType: 'init',
         swapId: null,
       })
     );
@@ -91,7 +91,7 @@ export async function resumeBuyXmr(swapId: string) {
       store.dispatch(
         swapInitiate({
           provider,
-          resume: true,
+          spawnType: 'resume',
           swapId,
         })
       );

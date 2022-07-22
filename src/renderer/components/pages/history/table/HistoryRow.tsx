@@ -64,7 +64,7 @@ export default function HistoryRow({ dbState }: HistoryRowProps) {
             {expanded ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell>{dbState.swapId.substr(0, 5)}...</TableCell>
+        <TableCell>{dbState.swapId.substring(0, 5)}...</TableCell>
         <TableCell>
           <AmountTransfer xmrAmount={xmrAmount} btcAmount={btcAmount} />
         </TableCell>

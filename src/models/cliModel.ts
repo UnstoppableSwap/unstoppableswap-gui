@@ -1,3 +1,5 @@
+export type SwapSpawnType = 'init' | 'resume' | 'cancel-refund';
+
 export interface CliLog {
   timestamp: string;
   level: 'DEBUG' | 'INFO' | 'WARN';

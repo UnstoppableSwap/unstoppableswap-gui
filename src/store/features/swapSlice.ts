@@ -31,7 +31,7 @@ import {
   isCliLogStartedSwap,
   isCliLogWaitingForBtcDeposit,
   CliLog,
-  isCliLogAdvancingState,
+  isCliLogAdvancingState, SwapSpawnType
 } from '../../models/cliModel';
 import logger from '../../utils/logger';
 import { Provider } from '../../models/apiModel';
@@ -43,7 +43,7 @@ const initialState: SwapSlice = {
   logs: [],
   stdOut: '',
   provider: null,
-  resume: null,
+  spawnType: null,
 };
 
 export const swapSlice = createSlice({
@@ -227,7 +227,7 @@ export const swapSlice = createSlice({
       swap,
       action: PayloadAction<{
         provider: Provider | null;
-        resume: boolean;
+        spawnType: SwapSpawnType;
         swapId: string | null;
       }>
     ) {
@@ -239,7 +239,7 @@ export const swapSlice = createSlice({
       swap.state = nextState;
       swap.logs = [];
       swap.provider = action.payload.provider;
-      swap.resume = action.payload.resume;
+      swap.spawnType = action.payload.spawnType;
       swap.swapId = action.payload.swapId;
     },
     swapProcessExited(
