@@ -1,4 +1,5 @@
 import { Box, DialogContentText, Typography } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import PaperTextBox from '../../PaperTextBox';
 import { useActiveDbState, useAppSelector } from '../../../../../store/hooks';
 
@@ -20,6 +21,11 @@ export default function DebugPage() {
   return (
     <Box>
       <DialogContentText>
+        <Alert severity="warning">
+          This page contains confidential information including private keys.
+          Keep this information to yourself. Otherwise you will lose your money!
+        </Alert>
+        <br />
         <Typography>Swap standard output</Typography>
         <PaperTextBox stdOut={swapStdOut} />
         <Typography>Swap state</Typography>
