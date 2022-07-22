@@ -17,17 +17,31 @@ function SwapAlertStatusText({
     case TimelockStatusType.NONE:
       return (
         <>
-          Resume the swap as soon as possible. You will be able to refund in{' '}
-          approx. {timelockStatus.blocksUntilRefund * 10} minutes (
-          {timelockStatus.blocksUntilRefund} blocks). If you have not refunded
-          in approx. {timelockStatus.blocksUntilPunish * 10} minutes (
-          {timelockStatus.blocksUntilPunish} blocks), you will loose your funds.
+          Resume the swap as soon as possible!
+          <ul
+            style={{
+              padding: '0px',
+              margin: '0px',
+            }}
+          >
+            <li>
+              You will be able to refund in about{' '}
+              {timelockStatus.blocksUntilRefund * 10} minutes (
+              {timelockStatus.blocksUntilRefund} blocks).
+            </li>
+            <li>
+              If you have not refunded or completed the swap in about{' '}
+              {timelockStatus.blocksUntilPunish * 10} minutes (
+              {timelockStatus.blocksUntilPunish} blocks), you will loose your
+              funds.
+            </li>
+          </ul>
         </>
       );
     case TimelockStatusType.REFUND_EXPIRED:
       return (
         <>
-          Immediately resume the swap! You only have approx.{' '}
+          Immediately resume the swap! You only have about{' '}
           {timelockStatus.blocksUntilPunish * 10}
           minutes ({timelockStatus.blocksUntilPunish} blocks) left to refund.
           After that time has passed, you will loose your funds.
@@ -36,7 +50,7 @@ function SwapAlertStatusText({
     default:
       return (
         <>
-          Immediately resume the swap. You are in danger of losing your funds.
+          Immediately resume the swap! You are in immediate danger of losing your funds.
         </>
       );
   }

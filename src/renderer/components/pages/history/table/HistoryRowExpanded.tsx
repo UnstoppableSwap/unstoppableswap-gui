@@ -16,12 +16,17 @@ import {
 } from '../../../../../models/databaseModel';
 import SwapLogFileOpenButton from './SwapLogFileOpenButton';
 import DateFormatted from '../../../other/DateFormatted';
+import { SwapCancelRefundButton } from './HistoryRowActions';
 
 const useStyles = makeStyles((theme) => ({
   outer: {
     display: 'grid',
-    flexDirection: 'column',
     padding: theme.spacing(1),
+    gap: theme.spacing(1),
+  },
+  actionsOuter: {
+    display: 'flex',
+    flexDirection: 'row',
     gap: theme.spacing(1),
   },
 }));
@@ -84,9 +89,14 @@ export default function HistoryRowExpanded({
           </TableBody>
         </Table>
       </TableContainer>
-      <Box>
+      <Box className={classes.actionsOuter}>
         <SwapLogFileOpenButton
           swapId={dbState.swapId}
+          variant="outlined"
+          size="small"
+        />
+        <SwapCancelRefundButton
+          dbState={dbState}
           variant="outlined"
           size="small"
         />
