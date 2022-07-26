@@ -50,7 +50,7 @@ export function SwapCancelRefundButton({
       ipcArgs={[dbState.swapId]}
       {...props}
     >
-      Manually Cancel & Refund
+      Attempt manual Cancel & Refund
     </IpcInvokeButton>
   );
 }
