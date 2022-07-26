@@ -3,6 +3,7 @@ import { Box, makeStyles, Typography } from '@material-ui/core';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 import InfoBox from './InfoBox';
 import ClipboardIconButton from '../ClipbiardIconButton';
+import BitcoinQrCode from './BitcoinQrCode';
 
 type Props = {
   title: string;
@@ -14,7 +15,7 @@ type Props = {
 const useStyles = makeStyles((theme) => ({
   additionalContentOuter: {
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'row',
     gap: theme.spacing(0.5),
   },
 }));
@@ -41,8 +42,9 @@ export default function DepositAddressInfoBox({
               variant="contained"
               size="medium"
             />
+            <Box>{additionalContent}</Box>
           </Box>
-          <Box>{additionalContent}</Box>
+          <BitcoinQrCode address={address} />
         </Box>
       }
       icon={icon}
