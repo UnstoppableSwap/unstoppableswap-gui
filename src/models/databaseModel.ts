@@ -579,6 +579,16 @@ export function isSwapResumable(dbState: MergedDbState): boolean {
   );
 }
 
+/*
+Checks if a swap is in a state where it can possibly be cancelled
+
+The following conditions must be met:
+ - The bitcoin must be locked
+ - The bitcoin must not be redeemed
+ - The bitcoin must not be cancelled
+
+See: https://github.com/comit-network/xmr-btc-swap/blob/7023e75bb51ab26dff4c8fcccdc855d781ca4b15/swap/src/cli/cancel.rs#L16-L35
+ */
 export function isSwapCancellable(dbState: MergedDbState): boolean {
   return (
     isBtcLockedDbState(dbState.state) &&
@@ -587,10 +597,23 @@ export function isSwapCancellable(dbState: MergedDbState): boolean {
   );
 }
 
+/*
+Checks if a swap is in a state where it can possibly be refunded (meaning it's not impossible)
+
+The following conditions must be met:
+ - The bitcoin must be locked
+ - The bitcoin must be cancelled
+ - The bitcoin must not be redeemed
+ - The bitcoin must not be refunded
+ - The bitcoin must not be punished
+
+See: https://github.com/comit-network/xmr-btc-swap/blob/7023e75bb51ab26dff4c8fcccdc855d781ca4b15/swap/src/cli/refund.rs#L16-L34
+ */
 export function isSwapRefundable(dbState: MergedDbState): boolean {
   return (
     isBtcLockedDbState(dbState.state) &&
     isBtcCancelledDbState(dbState.state) &&
+    !isBtcRedeemedDbState(dbState.state) &&
     !isDoneBtcRefundedDbState(dbState.state) &&
     !isDoneBtcPunishedDbState(dbState.state)
   );
