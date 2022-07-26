@@ -1,5 +1,6 @@
 import {
   Box,
+  Link,
   makeStyles,
   Table,
   TableBody,
@@ -17,6 +18,9 @@ import {
 import SwapLogFileOpenButton from './SwapLogFileOpenButton';
 import DateFormatted from '../../../other/DateFormatted';
 import { SwapCancelRefundButton } from './HistoryRowActions';
+import { useAppSelector } from '../../../../../store/hooks';
+import { getBitcoinTxExplorerUrl } from '../../../../../utils/conversionUtils';
+import { isTestnet } from '../../../../../store/config';
 
 const useStyles = makeStyles((theme) => ({
   outer: {
@@ -44,6 +48,14 @@ export default function HistoryRowExpanded({
   const exchangeRate = getSwapExchangeRate(dbState);
   const firstEnteredAt = new Date(dbState.firstEnteredDate);
   const { provider } = dbState;
+
+  const txLock = useAppSelector((state) => {
+    return state.electrum.find(
+      (tx) =>
+        tx.transaction.swapId === dbState.swapId &&
+        tx.transaction.kind === 'lock'
+    );
+  });
 
   return (
     <Box className={classes.outer}>
@@ -86,6 +98,23 @@ export default function HistoryRowExpanded({
                 <Box>{provider.multiAddr}</Box>
               </TableCell>
             </TableRow>
+            {txLock && (
+              <TableRow>
+                <TableCell>Bitcoin lock transaction</TableCell>
+                <TableCell>
+                  <Link
+                    href={getBitcoinTxExplorerUrl(
+                      txLock.transaction.txid,
+                      isTestnet()
+                    )}
+                    target="_blank"
+                  >
+                    {txLock.transaction.txid}
+                  </Link>{' '}
+                  ({txLock.status.confirmations} confirmations)
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>

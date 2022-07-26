@@ -1,12 +1,11 @@
 import { Alert, AlertTitle } from '@material-ui/lab/';
-import { useAppSelector } from '../../../../../store/hooks';
+import { useTimelockStatus } from '../../../../../store/hooks';
 import { MergedDbState } from '../../../../../models/databaseModel';
 import { SwapResumeButton } from '../table/HistoryRowActions';
 import {
   TimelockStatus,
   TimelockStatusType,
 } from '../../../../../models/storeModel';
-import { getTimelockStatus } from '../../../../../utils/parseUtils';
 
 function SwapAlertStatusText({
   timelockStatus,
@@ -50,7 +49,8 @@ function SwapAlertStatusText({
     default:
       return (
         <>
-          Immediately resume the swap! You are in immediate danger of losing your funds.
+          Immediately resume the swap! You are in danger of losing
+          your funds.
         </>
       );
   }
@@ -61,20 +61,7 @@ export default function SwapTxLockStatusAlert({
 }: {
   dbState: MergedDbState;
 }): JSX.Element {
-  const timelockStatus = useAppSelector((state) => {
-    const txStatus = state.electrum.find(
-      (tx) => tx.transaction.swapId === dbState.swapId
-    )?.status;
-
-    // If confirmations is null but we still have a status for the tx, we can assume that the tx is still in the mempool
-    const confirmations =
-      txStatus === undefined ? undefined : txStatus.confirmations ?? 0;
-
-    const { cancel_timelock: refundTimelock, punish_timelock: punishTimelock } =
-      dbState.state.Bob.ExecutionSetupDone.state2;
-
-    return getTimelockStatus(refundTimelock, punishTimelock, confirmations);
-  });
+  const timelockStatus = useTimelockStatus(dbState.swapId);
 
   return (
     <Alert
