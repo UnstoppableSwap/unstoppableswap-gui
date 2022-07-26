@@ -1,6 +1,8 @@
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
-import type { RootState, AppDispatch } from './store';
+import type { AppDispatch, RootState } from './store';
 import { isSwapResumable } from '../models/databaseModel';
+import { TimelockStatus, TimelockStatusType } from '../models/storeModel';
+import { getTimelockStatus } from '../utils/parseUtils';
 
 // Use throughout your app instead of plain `useDispatch` and `useSelector`
 export const useAppDispatch = () => useDispatch<AppDispatch>();
@@ -17,17 +19,41 @@ export function useIsSwapRunning() {
 }
 
 export function useDbState(swapId?: string | null) {
-  const dbState =
+  return (
     useAppSelector((s) =>
       s.history.find((h) => h.swapId === swapId && swapId)
-    ) || null;
-
-  return dbState;
+    ) || null
+  );
 }
 
 export function useActiveDbState() {
   const swapId = useAppSelector((s) => s.swap.swapId);
-  const dbState = useDbState(swapId);
+  return useDbState(swapId);
+}
 
-  return dbState;
+export function useTxLock(swapId: string) {
+  return useAppSelector((state) =>
+    state.electrum.find(
+      (tx) => tx.transaction.swapId === swapId && tx.transaction.kind === 'lock'
+    )
+  );
+}
+
+export function useTimelockStatus(swapId: string): TimelockStatus {
+  const dbState = useDbState(swapId);
+  const txLock = useTxLock(swapId);
+
+  if (dbState == null || txLock == null) {
+    return {
+      type: TimelockStatusType.UNKNOWN,
+    };
+  }
+
+  // If confirmations is null but we still have a status for the tx, we can assume that the tx is still in the mempool
+  const confirmations = txLock.status.confirmations ?? 0;
+
+  const { cancel_timelock: refundTimelock, punish_timelock: punishTimelock } =
+    dbState.state.Bob.ExecutionSetupDone.state2;
+
+  return getTimelockStatus(refundTimelock, punishTimelock, confirmations);
 }
