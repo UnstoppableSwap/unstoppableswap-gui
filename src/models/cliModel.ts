@@ -1,4 +1,8 @@
-export type SwapSpawnType = 'init' | 'resume' | 'cancel-refund';
+export enum SwapSpawnType {
+  INIT = 'init',
+  RESUME = 'resume',
+  CANCEL_REFUND = 'cancel-refund',
+}
 
 export interface CliLog {
   timestamp: string;
