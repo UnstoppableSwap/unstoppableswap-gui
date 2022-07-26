@@ -487,7 +487,6 @@ export function isMergedBtcCancelledDbState(
   return (
     isExecutionSetupDoneDbState(dbState.state) &&
     isBtcLockedDbState(dbState.state) &&
-    isCancelTimelockExpiredDbState(dbState.state) &&
     isBtcCancelledDbState(dbState.state) &&
     dbState.type === DbStateType.BTC_CANCELLED
   );
@@ -508,7 +507,6 @@ export function isMergedDoneBtcRefundedDbState(
   return (
     isExecutionSetupDoneDbState(dbState.state) &&
     isBtcLockedDbState(dbState.state) &&
-    isCancelTimelockExpiredDbState(dbState.state) &&
     isBtcCancelledDbState(dbState.state) &&
     isDoneBtcRefundedDbState(dbState.state) &&
     dbState.type === DbStateType.DONE_BTC_REFUNDED
@@ -530,7 +528,6 @@ export function isMergedDoneBtcPunishedDbState(
   return (
     isExecutionSetupDoneDbState(dbState.state) &&
     isBtcLockedDbState(dbState.state) &&
-    isCancelTimelockExpiredDbState(dbState.state) &&
     isBtcCancelledDbState(dbState.state) &&
     isDoneBtcPunishedDbState(dbState.state) &&
     dbState.type === DbStateType.DONE_BTC_PUNISHED
