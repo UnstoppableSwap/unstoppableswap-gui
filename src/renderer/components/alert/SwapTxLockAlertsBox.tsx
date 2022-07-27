@@ -1,6 +1,6 @@
 import { Box, makeStyles } from '@material-ui/core';
-import { useAppSelector } from '../../../../../store/hooks';
-import { isSwapResumable } from '../../../../../models/databaseModel';
+import { useAppSelector } from '../../../store/hooks';
+import { isSwapResumable } from '../../../models/databaseModel';
 import SwapTxLockStatusAlert from './SwapTxLockStatusAlert';
 
 const useStyles = makeStyles((theme) => ({

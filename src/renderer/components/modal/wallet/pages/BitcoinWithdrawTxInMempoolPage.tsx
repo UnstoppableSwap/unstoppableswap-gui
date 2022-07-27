@@ -1,6 +1,6 @@
 import { Button, DialogActions, DialogContentText } from '@material-ui/core';
 import { WithdrawStateWithdrawTxInMempool } from '../../../../../models/storeModel';
-import BitcoinTransactionInfoBox from '../../swap/transaction/BitcoinTransactionInfoBox';
+import BitcoinTransactionInfoBox from '../../swap/BitcoinTransactionInfoBox';
 import { useAppSelector } from '../../../../../store/hooks';
 import WithdrawDialogContent from '../WithdrawDialogContent';
 

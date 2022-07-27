@@ -1,11 +1,12 @@
 import { Alert, AlertTitle } from '@material-ui/lab/';
-import { useTimelockStatus } from '../../../../../store/hooks';
-import { MergedDbState } from '../../../../../models/databaseModel';
-import { SwapResumeButton } from '../table/HistoryRowActions';
+import { useTimelockStatus } from '../../../store/hooks';
+import { MergedDbState } from '../../../models/databaseModel';
+import { SwapResumeButton } from '../pages/history/table/HistoryRowActions';
 import {
   TimelockStatus,
   TimelockStatusType,
-} from '../../../../../models/storeModel';
+} from '../../../models/storeModel';
+import { humanizedBitcoinBlockDuration } from '../../../utils/parseUtils';
 
 function SwapAlertStatusText({
   timelockStatus,
@@ -25,14 +26,12 @@ function SwapAlertStatusText({
           >
             <li>
               You will be able to refund in about{' '}
-              {timelockStatus.blocksUntilRefund * 10} minutes (
-              {timelockStatus.blocksUntilRefund} blocks).
+              {humanizedBitcoinBlockDuration(timelockStatus.blocksUntilRefund)}
             </li>
             <li>
               If you have not refunded or completed the swap in about{' '}
-              {timelockStatus.blocksUntilPunish * 10} minutes (
-              {timelockStatus.blocksUntilPunish} blocks), you will loose your
-              funds.
+              {humanizedBitcoinBlockDuration(timelockStatus.blocksUntilPunish)},
+              you will lose your funds.
             </li>
           </ul>
         </>
@@ -41,16 +40,14 @@ function SwapAlertStatusText({
       return (
         <>
           Immediately resume the swap! You only have about{' '}
-          {timelockStatus.blocksUntilPunish * 10}
-          minutes ({timelockStatus.blocksUntilPunish} blocks) left to refund.
-          After that time has passed, you will loose your funds.
+          {humanizedBitcoinBlockDuration(timelockStatus.blocksUntilPunish)} left
+          to refund. After that time has passed, you will lose your funds.
         </>
       );
     default:
       return (
         <>
-          Immediately resume the swap! You are in danger of losing
-          your funds.
+          Immediately resume the swap! You are in danger of losing your funds.
         </>
       );
   }

@@ -6,7 +6,7 @@ import BitcoinIcon from '../../icons/BitcoinIcon';
 import WithdrawDialog from '../../modal/wallet/WithdrawDialog';
 import WalletRefreshButton from './WalletRefreshButton';
 import { isWithdrawState } from '../../../../models/storeModel';
-import InfoBox from '../../modal/swap/transaction/InfoBox';
+import InfoBox from '../../modal/swap/InfoBox';
 
 const useStyles = makeStyles((theme) => ({
   title: {

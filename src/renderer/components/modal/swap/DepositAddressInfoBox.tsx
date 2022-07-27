@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { Box, makeStyles, Typography } from '@material-ui/core';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 import InfoBox from './InfoBox';
-import ClipboardIconButton from '../ClipbiardIconButton';
+import ClipboardIconButton from './ClipbiardIconButton';
 import BitcoinQrCode from './BitcoinQrCode';
 
 type Props = {
