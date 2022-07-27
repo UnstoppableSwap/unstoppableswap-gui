@@ -5,7 +5,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import { SwapStateWaitingForBtcDeposit } from '../../../../../../models/storeModel';
-import DepositAddressInfoBox from '../../transaction/DepositAddressInfoBox';
+import DepositAddressInfoBox from '../../DepositAddressInfoBox';
 import BitcoinIcon from '../../../../icons/BitcoinIcon';
 import { btcToSats, satsToBtc } from '../../../../../../utils/conversionUtils';
 

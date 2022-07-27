@@ -1,6 +1,6 @@
 import { Box, DialogContentText } from '@material-ui/core';
 import { SwapStateBtcRefunded } from 'models/storeModel';
-import BitcoinTransactionInfoBox from '../../transaction/BitcoinTransactionInfoBox';
+import BitcoinTransactionInfoBox from '../../BitcoinTransactionInfoBox';
 import { useActiveDbState } from '../../../../../../store/hooks';
 
 export default function BitcoinRefundedPage({
