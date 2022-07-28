@@ -1,5 +1,5 @@
 import { Typography } from '@material-ui/core';
-import DepositAddressInfoBox from '../../modal/swap/transaction/DepositAddressInfoBox';
+import DepositAddressInfoBox from '../../modal/swap/DepositAddressInfoBox';
 import MoneroIcon from '../../icons/MoneroIcon';
 
 const XMR_DONATE_ADDRESS =

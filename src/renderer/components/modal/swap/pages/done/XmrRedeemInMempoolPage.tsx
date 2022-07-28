@@ -2,7 +2,7 @@ import { Box, DialogContentText } from '@material-ui/core';
 import { SwapStateXmrRedeemInMempool } from '../../../../../../models/storeModel';
 import { pionerosToXmr } from '../../../../../../utils/conversionUtils';
 import { useActiveDbState } from '../../../../../../store/hooks';
-import MoneroTransactionInfoBox from '../../transaction/MoneroTransactionInfoBox';
+import MoneroTransactionInfoBox from '../../MoneroTransactionInfoBox';
 
 type XmrRedeemInMempoolPageProps = {
   state: SwapStateXmrRedeemInMempool | null;

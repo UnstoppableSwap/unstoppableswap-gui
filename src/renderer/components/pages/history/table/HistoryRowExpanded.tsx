@@ -1,5 +1,6 @@
 import {
   Box,
+  Link,
   makeStyles,
   Table,
   TableBody,
@@ -16,12 +17,20 @@ import {
 } from '../../../../../models/databaseModel';
 import SwapLogFileOpenButton from './SwapLogFileOpenButton';
 import DateFormatted from '../../../other/DateFormatted';
+import { SwapCancelRefundButton } from './HistoryRowActions';
+import { useAppSelector } from '../../../../../store/hooks';
+import { getBitcoinTxExplorerUrl } from '../../../../../utils/conversionUtils';
+import { isTestnet } from '../../../../../store/config';
 
 const useStyles = makeStyles((theme) => ({
   outer: {
     display: 'grid',
-    flexDirection: 'column',
     padding: theme.spacing(1),
+    gap: theme.spacing(1),
+  },
+  actionsOuter: {
+    display: 'flex',
+    flexDirection: 'row',
     gap: theme.spacing(1),
   },
 }));
@@ -39,6 +48,14 @@ export default function HistoryRowExpanded({
   const exchangeRate = getSwapExchangeRate(dbState);
   const firstEnteredAt = new Date(dbState.firstEnteredDate);
   const { provider } = dbState;
+
+  const txLock = useAppSelector((state) => {
+    return state.electrum.find(
+      (tx) =>
+        tx.transaction.swapId === dbState.swapId &&
+        tx.transaction.kind === 'lock'
+    );
+  });
 
   return (
     <Box className={classes.outer}>
@@ -81,12 +98,34 @@ export default function HistoryRowExpanded({
                 <Box>{provider.multiAddr}</Box>
               </TableCell>
             </TableRow>
+            {txLock && (
+              <TableRow>
+                <TableCell>Bitcoin lock transaction</TableCell>
+                <TableCell>
+                  <Link
+                    href={getBitcoinTxExplorerUrl(
+                      txLock.transaction.txid,
+                      isTestnet()
+                    )}
+                    target="_blank"
+                  >
+                    {txLock.transaction.txid}
+                  </Link>{' '}
+                  ({txLock.status.confirmations} confirmations)
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>
-      <Box>
+      <Box className={classes.actionsOuter}>
         <SwapLogFileOpenButton
           swapId={dbState.swapId}
+          variant="outlined"
+          size="small"
+        />
+        <SwapCancelRefundButton
+          dbState={dbState}
           variant="outlined"
           size="small"
         />

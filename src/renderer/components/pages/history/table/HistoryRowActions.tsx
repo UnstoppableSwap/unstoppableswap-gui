@@ -10,6 +10,8 @@ import {
   isMergedDoneXmrRedeemedDbState,
   isMergedDoneBtcRefundedDbState,
   isMergedDoneBtcPunishedDbState,
+  isSwapCancellable,
+  isSwapRefundable,
 } from '../../../../../models/databaseModel';
 import IpcInvokeButton from '../../../IpcInvokeButton';
 
@@ -30,6 +32,25 @@ export function SwapResumeButton({
       {...props}
     >
       Resume
+    </IpcInvokeButton>
+  );
+}
+
+export function SwapCancelRefundButton({
+  dbState,
+  ...props
+}: { dbState: MergedDbState } & ButtonProps) {
+  const cancelOrRefundable =
+    isSwapCancellable(dbState) || isSwapRefundable(dbState);
+
+  return (
+    <IpcInvokeButton
+      disabled={!cancelOrRefundable}
+      ipcChannel="spawn-cancel-refund"
+      ipcArgs={[dbState.swapId]}
+      {...props}
+    >
+      Attempt manual Cancel & Refund
     </IpcInvokeButton>
   );
 }

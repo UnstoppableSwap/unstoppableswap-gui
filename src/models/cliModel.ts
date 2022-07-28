@@ -1,3 +1,9 @@
+export enum SwapSpawnType {
+  INIT = 'init',
+  RESUME = 'resume',
+  CANCEL_REFUND = 'cancel-refund',
+}
+
 export interface CliLog {
   timestamp: string;
   level: 'DEBUG' | 'INFO' | 'WARN';

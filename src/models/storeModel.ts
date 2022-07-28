@@ -1,4 +1,4 @@
-import { CliLog } from './cliModel';
+import { CliLog, SwapSpawnType } from './cliModel';
 import { Provider } from './apiModel';
 
 export interface SwapSlice {
@@ -7,7 +7,7 @@ export interface SwapSlice {
   stdOut: string;
   processRunning: boolean;
   provider: Provider | null;
-  resume: boolean | null;
+  spawnType: SwapSpawnType | null;
   swapId: string | null;
 }
 

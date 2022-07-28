@@ -6,6 +6,7 @@ Output: 0.001
  */
 
 import path from 'path';
+import humanizeDuration from 'humanize-duration';
 import { DbState, isDbState } from '../models/databaseModel';
 import { TimelockStatus, TimelockStatusType } from '../models/storeModel';
 
@@ -103,4 +104,10 @@ export function getTimelockStatus(
     };
   }
   return { type: TimelockStatusType.UNKNOWN };
+}
+
+export function humanizedBitcoinBlockDuration(blocks: number) {
+  return `${humanizeDuration(blocks * 10 * 60 * 1000, {
+    conjunction: ' and ',
+  })} (${blocks} blocks)`;
 }

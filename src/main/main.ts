@@ -26,6 +26,7 @@ import watchElectrumTransactions from './blockchain/electrum';
 import watchLogs from './cli/log';
 import spawnListSellersCommand from './cli/commands/listSellersCommand';
 import { spawnTor, stopTor } from './tor';
+import spawnCancelRefund from './cli/commands/cancelRefundCommand';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -164,6 +165,10 @@ ipcMain.handle(
 );
 
 ipcMain.handle('resume-buy-xmr', (_event, swapId) => resumeBuyXmr(swapId));
+
+ipcMain.handle('spawn-cancel-refund', (_event, swapId) =>
+  spawnCancelRefund(swapId)
+);
 
 ipcMain.handle('spawn-withdraw-btc', (_event, address) =>
   spawnWithdrawBtc(address)
