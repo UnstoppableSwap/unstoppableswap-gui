@@ -1,6 +1,8 @@
 import { Box, DialogContentText } from '@material-ui/core';
 import { SwapStateBtcLockInMempool } from '../../../../../../models/storeModel';
-import BitcoinTransactionInfoBox from '../../transaction/BitcoinTransactionInfoBox';
+import BitcoinTransactionInfoBox from '../../BitcoinTransactionInfoBox';
+import { useActiveDbState } from '../../../../../../store/hooks';
+import SwapMightBeCancelledAlert from '../../../../alert/SwapMightBeCancelledAlert';
 
 type BitcoinLockTxInMempoolPageProps = {
   state: SwapStateBtcLockInMempool;
@@ -9,8 +11,16 @@ type BitcoinLockTxInMempoolPageProps = {
 export default function BitcoinLockTxInMempoolPage({
   state,
 }: BitcoinLockTxInMempoolPageProps) {
+  const dbState = useActiveDbState();
+
   return (
     <Box>
+      {dbState && (
+        <SwapMightBeCancelledAlert
+          dbState={dbState}
+          bobBtcLockTxConfirmations={state.bobBtcLockTxConfirmations}
+        />
+      )}
       <DialogContentText>
         The Bitcoin lock transaction has been published. The swap will proceed
         once the transaction is confirmed and the swap provider locks their

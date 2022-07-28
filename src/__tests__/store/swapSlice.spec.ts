@@ -1,5 +1,9 @@
 import { AnyAction } from '@reduxjs/toolkit';
-import { SwapSlice, SwapStateBtcLockInMempool, SwapStateType } from '../../models/storeModel';
+import {
+  SwapSlice,
+  SwapStateBtcLockInMempool,
+  SwapStateType,
+} from '../../models/storeModel';
 import {
   CliLog,
   CliLogAliceLockedXmr,
@@ -11,10 +15,14 @@ import {
   CliLogRedeemedXmr,
   CliLogStartedSwap,
   CliLogWaitingForBtcDeposit,
-  SwapSpawnType
+  SwapSpawnType,
 } from '../../models/cliModel';
 
-import reducer, { swapAddLog, swapInitiate, swapProcessExited } from '../../store/features/swapSlice';
+import reducer, {
+  swapAddLog,
+  swapInitiate,
+  swapProcessExited,
+} from '../../store/features/swapSlice';
 import { Provider } from '../../models/apiModel';
 
 const mWaitingForBtcDepositLog: CliLogWaitingForBtcDeposit = require('../mock_cli_logs/cli_log_waiting_for_bitcoin_deposit.json');

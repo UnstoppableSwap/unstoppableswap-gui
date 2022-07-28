@@ -31,7 +31,8 @@ import {
   isCliLogStartedSwap,
   isCliLogWaitingForBtcDeposit,
   CliLog,
-  isCliLogAdvancingState, SwapSpawnType
+  isCliLogAdvancingState,
+  SwapSpawnType,
 } from '../../models/cliModel';
 import logger from '../../utils/logger';
 import { Provider } from '../../models/apiModel';

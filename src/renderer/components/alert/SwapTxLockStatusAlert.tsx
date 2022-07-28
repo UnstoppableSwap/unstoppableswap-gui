@@ -2,11 +2,8 @@ import { Alert, AlertTitle } from '@material-ui/lab/';
 import { useTimelockStatus } from '../../../store/hooks';
 import { MergedDbState } from '../../../models/databaseModel';
 import { SwapResumeButton } from '../pages/history/table/HistoryRowActions';
-import {
-  TimelockStatus,
-  TimelockStatusType,
-} from '../../../models/storeModel';
-import { humanizedBitcoinBlockDuration } from '../../../utils/parseUtils';
+import { TimelockStatus, TimelockStatusType } from '../../../models/storeModel';
+import HumanizedBitcoinBlockDuration from '../other/HumanizedBitcoinBlockDuration';
 
 function SwapAlertStatusText({
   timelockStatus,
@@ -26,12 +23,16 @@ function SwapAlertStatusText({
           >
             <li>
               You will be able to refund in about{' '}
-              {humanizedBitcoinBlockDuration(timelockStatus.blocksUntilRefund)}
+              <HumanizedBitcoinBlockDuration
+                blocks={timelockStatus.blocksUntilRefund}
+              />
             </li>
             <li>
-              If you have not refunded or completed the swap in about{' '}
-              {humanizedBitcoinBlockDuration(timelockStatus.blocksUntilPunish)},
-              you will lose your funds.
+              You will lose your funds, if you have not refunded or completed
+              the swap in about{' '}
+              <HumanizedBitcoinBlockDuration
+                blocks={timelockStatus.blocksUntilPunish}
+              />
             </li>
           </ul>
         </>
@@ -40,8 +41,10 @@ function SwapAlertStatusText({
       return (
         <>
           Immediately resume the swap! You only have about{' '}
-          {humanizedBitcoinBlockDuration(timelockStatus.blocksUntilPunish)} left
-          to refund. After that time has passed, you will lose your funds.
+          <HumanizedBitcoinBlockDuration
+            blocks={timelockStatus.blocksUntilPunish}
+          />{' '}
+          left to refund. After that time has passed, you will lose your funds.
         </>
       );
     default:
