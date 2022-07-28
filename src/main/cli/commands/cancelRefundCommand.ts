@@ -9,7 +9,7 @@ import {
 import { getCliLogStdOut } from '../dirs';
 import { spawnSubcommand } from '../cli';
 import logger from '../../../utils/logger';
-import { CliLog } from '../../../models/cliModel';
+import { CliLog, SwapSpawnType } from '../../../models/cliModel';
 import spawnBalanceCheck from './balanceCommand';
 
 async function onCliLog(logs: CliLog[]) {
@@ -65,16 +65,26 @@ export default async function spawnCancelRefund(swapId: string) {
       store.dispatch(
         swapInitiate({
           provider,
-          spawnType: 'cancel-refund',
+          spawnType: SwapSpawnType.CANCEL_REFUND,
           swapId,
         })
       );
 
       const stdOut = await getCliLogStdOut(swapId);
+
       let cli = await cancel(async () => {
         cli = await refund();
       });
+
       cli.stderr.push(stdOut);
+
+      store.dispatch(
+        swapInitiate({
+          provider,
+          spawnType: SwapSpawnType.CANCEL_REFUND,
+          swapId,
+        })
+      );
     } else {
       throw new Error('Could not find swap in database');
     }
