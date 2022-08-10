@@ -7,7 +7,7 @@ import { emptyDir, ensureDir } from 'fs-extra';
 
 const torBuildDir = join(__dirname, '../../build/bin/tor');
 
-const TOR_VERSION = '11.0.11';
+const TOR_VERSION = '11.5.1';
 
 const binaries: {
   platform: NodeJS.Platform;
