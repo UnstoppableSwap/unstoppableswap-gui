@@ -82,6 +82,9 @@ export const swapSlice = createSlice({
           const maxGiveable = extractAmountFromUnitString(
             log.fields.max_giveable
           );
+          const minDeposit = extractAmountFromUnitString(
+            log.fields.min_deposit
+          );
           const minimumAmount = extractAmountFromUnitString(
             log.fields.minimum_amount
           );
@@ -97,7 +100,8 @@ export const swapSlice = createSlice({
           if (
             maxGiveable != null &&
             minimumAmount != null &&
-            maximumAmount != null
+            maximumAmount != null &&
+            minDeposit != null
           ) {
             const nextState: SwapStateWaitingForBtcDeposit = {
               type: SwapStateType.WAITING_FOR_BTC_DEPOSIT,
@@ -105,6 +109,7 @@ export const swapSlice = createSlice({
               maxGiveable,
               minimumAmount,
               maximumAmount,
+              minDeposit,
               price,
             };
 

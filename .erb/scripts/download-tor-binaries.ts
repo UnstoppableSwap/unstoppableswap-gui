@@ -65,5 +65,6 @@ Promise.all(
     console.error(
       `Failed to download swap binaries! Error: ${JSON.stringify(error)}`
     );
+    console.error(error);
     process.exit(1);
   });

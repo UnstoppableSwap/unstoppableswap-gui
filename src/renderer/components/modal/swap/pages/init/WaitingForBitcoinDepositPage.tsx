@@ -7,6 +7,7 @@ import {
 import { SwapStateWaitingForBtcDeposit } from '../../../../../../models/storeModel';
 import DepositAddressInfoBox from '../../transaction/DepositAddressInfoBox';
 import BitcoinIcon from '../../../../icons/BitcoinIcon';
+import { btcToSats, satsToBtc } from '../../../../../../utils/conversionUtils';
 
 const useStyles = makeStyles((theme) => ({
   depositStatusText: {
@@ -22,6 +23,11 @@ export default function WaitingForBtcDepositPage({
   state,
 }: WaitingForBtcDepositPageProps) {
   const classes = useStyles();
+
+  // Convert to integer for accurate arithmetic operations
+  const fees = satsToBtc(
+    btcToSats(state.minDeposit) - btcToSats(state.minimumAmount)
+  );
 
   // TODO: Account for BTC lock tx fees
   return (
@@ -41,10 +47,12 @@ export default function WaitingForBtcDepositPage({
               variant="subtitle2"
               className={classes.depositStatusText}
             >
-              Send any amount between {state.minimumAmount} BTC (and some more
-              for network fees) and {state.maximumAmount} BTC to the address
-              above. All Bitcoin sent to this this address will converted into
-              Monero at an exchance rate of {state.price || 'unknown'} BTC/XMR.
+              Send any amount between {state.minDeposit} BTC and{' '}
+              {state.maximumAmount} BTC to the address above. All Bitcoin sent
+              to this this address will converted into Monero at an exchance
+              rate of {state.price || 'unknown'} BTC/XMR. The network fee of{' '}
+              {fees} BTC will automatically be deducted from the deposited
+              coins.
             </Typography>
             <Typography variant="subtitle2">
               You have deposited enough Bitcoin to swap {state.maxGiveable} BTC
