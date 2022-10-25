@@ -39,6 +39,7 @@ export interface CliLogWaitingForBtcDeposit extends CliLog {
     max_giveable: string;
     minimum_amount: string;
     maximum_amount: string;
+    min_deposit: string;
   };
 }
 

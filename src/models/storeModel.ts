@@ -63,6 +63,7 @@ export interface SwapStateWaitingForBtcDeposit extends SwapState {
   maxGiveable: number;
   minimumAmount: number;
   maximumAmount: number;
+  minDeposit: number;
   price: number | null;
 }
 
