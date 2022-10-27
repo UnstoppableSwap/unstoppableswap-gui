@@ -40,7 +40,7 @@ export default function ListSellersDialog({
 
   return (
     <Dialog onClose={onClose} open={open}>
-      <DialogTitle>Submit a swap provider</DialogTitle>
+      <DialogTitle>Discover swap providers</DialogTitle>
       <DialogContent dividers>
         <DialogContentText>
           You can manually connect to a rendezvous point to discover swap
