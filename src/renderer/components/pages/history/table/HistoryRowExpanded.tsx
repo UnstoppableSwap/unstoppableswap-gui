@@ -111,7 +111,7 @@ export default function HistoryRowExpanded({
                   >
                     {txLock.transaction.txid}
                   </Link>{' '}
-                  ({txLock.status.confirmations} confirmations)
+                  ({txLock.status.confirmations ?? 0} confirmations)
                 </TableCell>
               </TableRow>
             )}
