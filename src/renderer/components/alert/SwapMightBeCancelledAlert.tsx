@@ -28,7 +28,7 @@ export default function SwapMightBeCancelledAlert({
     bobBtcLockTxConfirmations
   );
 
-  if (bobBtcLockTxConfirmations < 5) {
+  if (bobBtcLockTxConfirmations < 3) {
     return <></>;
   }
 
@@ -46,7 +46,7 @@ export default function SwapMightBeCancelledAlert({
       <br />
       There is still hope for the swap to be successful but you have to be extra
       careful. Regardless of the reason, it is important that you refund the
-      swap within the required time period if the swap is unsuccessful. If you
+      swap within the required time period if the swap is not completed. If you
       fail to to do so, you will be punished and lose your money.
       <ul className={classes.list}>
         {timelockStatus.type === 'none' && (
