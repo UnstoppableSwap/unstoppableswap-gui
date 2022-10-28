@@ -33,6 +33,7 @@ import {
   CliLog,
   isCliLogAdvancingState,
   SwapSpawnType,
+  isCliLogBtcTxFound,
 } from '../../models/cliModel';
 import logger from '../../utils/logger';
 import { Provider } from '../../models/apiModel';
@@ -159,10 +160,12 @@ export const swapSlice = createSlice({
 
             slice.state = nextState;
           }
-        } else if (isCliLogBtcTxStatusChanged(log)) {
+        } else if (isCliLogBtcTxStatusChanged(log) || isCliLogBtcTxFound(log)) {
           if (isSwapStateBtcLockInMempool(slice.state)) {
             if (slice.state.bobBtcLockTxId === log.fields.txid) {
-              const newStatusText = log.fields.new_status;
+              const newStatusText = isCliLogBtcTxStatusChanged(log)
+                ? log.fields.new_status
+                : log.fields.status;
 
               if (newStatusText.startsWith('confirmed with')) {
                 const confirmations = Number.parseInt(

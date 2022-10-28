@@ -92,6 +92,20 @@ export function isCliLogPublishedBtcTx(
   return log.fields.message === 'Published Bitcoin transaction';
 }
 
+export interface CliLogBtcTxFound extends CliLog {
+  fields: {
+    message: 'Found relevant Bitcoin transaction';
+    txid: string;
+    status: string;
+  };
+}
+
+export function isCliLogBtcTxFound(
+  log: CliLog
+): log is CliLogBtcTxFound {
+  return log.fields.message === 'Found relevant Bitcoin transaction';
+}
+
 export interface CliLogBtcTxStatusChanged extends CliLog {
   fields: {
     message: 'Bitcoin transaction status changed';
