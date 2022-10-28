@@ -1,7 +1,10 @@
 import { Box, DialogContentText } from '@material-ui/core';
 import { SwapStateBtcLockInMempool } from '../../../../../../models/storeModel';
 import BitcoinTransactionInfoBox from '../../BitcoinTransactionInfoBox';
-import { useActiveDbState } from '../../../../../../store/hooks';
+import {
+  useActiveDbState,
+  useMaxTxLockConfirmationsActiveSwap,
+} from '../../../../../../store/hooks';
 import SwapMightBeCancelledAlert from '../../../../alert/SwapMightBeCancelledAlert';
 
 type BitcoinLockTxInMempoolPageProps = {
@@ -12,13 +15,14 @@ export default function BitcoinLockTxInMempoolPage({
   state,
 }: BitcoinLockTxInMempoolPageProps) {
   const dbState = useActiveDbState();
+  const maxTxLockConfirmations = useMaxTxLockConfirmationsActiveSwap();
 
   return (
     <Box>
       {dbState && (
         <SwapMightBeCancelledAlert
           dbState={dbState}
-          bobBtcLockTxConfirmations={state.bobBtcLockTxConfirmations}
+          bobBtcLockTxConfirmations={maxTxLockConfirmations}
         />
       )}
       <DialogContentText>
@@ -34,7 +38,7 @@ export default function BitcoinLockTxInMempoolPage({
           <>
             Most swap providers require 2 confirmations
             <br />
-            Confirmations: {state.bobBtcLockTxConfirmations}
+            Confirmations: {maxTxLockConfirmations}
           </>
         }
       />
