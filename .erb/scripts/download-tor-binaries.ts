@@ -2,12 +2,11 @@ import { join } from 'path';
 import {
   TorBrowserRelease,
   TorDownloader,
+  TorBrowserBranch,
 } from '@dreamed-atlas/tor-downloader';
 import { emptyDir, ensureDir } from 'fs-extra';
 
 const torBuildDir = join(__dirname, '../../build/bin/tor');
-
-const TOR_VERSION = '11.5.4';
 
 const binaries: {
   platform: NodeJS.Platform;
@@ -41,8 +40,9 @@ Promise.all(
     await emptyDir(binary.dest);
 
     const downloader = new TorDownloader();
-    const release = await TorBrowserRelease.fromValues(
-      TOR_VERSION,
+
+    const release = await TorBrowserRelease.fromBranch(
+      TorBrowserBranch.STABLE,
       binary.platform,
       binary.arch
     );
