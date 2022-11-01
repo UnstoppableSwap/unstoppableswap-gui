@@ -19,7 +19,7 @@ export default function BitcoinLockTxInMempoolPage({
 
   return (
     <Box>
-      {dbState && (
+      {dbState && maxTxLockConfirmations != null && (
         <SwapMightBeCancelledAlert
           dbState={dbState}
           bobBtcLockTxConfirmations={maxTxLockConfirmations}

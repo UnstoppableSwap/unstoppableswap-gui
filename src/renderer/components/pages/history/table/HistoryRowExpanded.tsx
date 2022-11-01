@@ -18,7 +18,7 @@ import {
 import SwapLogFileOpenButton from './SwapLogFileOpenButton';
 import DateFormatted from '../../../other/DateFormatted';
 import { SwapCancelRefundButton } from './HistoryRowActions';
-import { useAppSelector } from '../../../../../store/hooks';
+import { useTxLock } from '../../../../../store/hooks';
 import { getBitcoinTxExplorerUrl } from '../../../../../utils/conversionUtils';
 import { isTestnet } from '../../../../../store/config';
 
@@ -49,13 +49,7 @@ export default function HistoryRowExpanded({
   const firstEnteredAt = new Date(dbState.firstEnteredDate);
   const { provider } = dbState;
 
-  const txLock = useAppSelector((state) => {
-    return state.electrum.find(
-      (tx) =>
-        tx.transaction.swapId === dbState.swapId &&
-        tx.transaction.kind === 'lock'
-    );
-  });
+  const txLock = useTxLock(dbState.swapId);
 
   return (
     <Box className={classes.outer}>
