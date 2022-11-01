@@ -100,9 +100,7 @@ export interface CliLogBtcTxFound extends CliLog {
   };
 }
 
-export function isCliLogBtcTxFound(
-  log: CliLog
-): log is CliLogBtcTxFound {
+export function isCliLogBtcTxFound(log: CliLog): log is CliLogBtcTxFound {
   return log.fields.message === 'Found relevant Bitcoin transaction';
 }
 
