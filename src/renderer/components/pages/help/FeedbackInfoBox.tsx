@@ -1,5 +1,5 @@
 import { Button, Typography } from '@material-ui/core';
-import InfoBox from '../../modal/swap/transaction/InfoBox';
+import InfoBox from '../../modal/swap/InfoBox';
 
 const FEEDBACK_URL = 'https://unstoppableswap.aidaform.com/feedback';
 

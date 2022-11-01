@@ -3,7 +3,7 @@ import IpcInvokeButton from 'renderer/components/IpcInvokeButton';
 import { useAppSelector } from 'store/hooks';
 import StopIcon from '@material-ui/icons/Stop';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import InfoBox from '../../modal/swap/transaction/InfoBox';
+import InfoBox from '../../modal/swap/InfoBox';
 
 const useStyles = makeStyles((theme) => ({
   actionsOuter: {

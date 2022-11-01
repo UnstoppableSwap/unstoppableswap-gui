@@ -18,6 +18,23 @@ export const providersSlice = createSlice({
   initialState,
   reducers: {
     setProviders(slice, action: PayloadAction<ExtendedProviderStatus[]>) {
+      if (
+        process.env.STUB_TESTNET_PROVIDER_MULTIADDR &&
+        process.env.STUB_TESTNET_PROVIDER_PEER_ID
+      ) {
+        action.payload.push({
+          multiAddr: process.env.STUB_TESTNET_PROVIDER_MULTIADDR,
+          peerId: process.env.STUB_TESTNET_PROVIDER_PEER_ID,
+          testnet: true,
+          age: 0,
+          maxSwapAmount: 10000000,
+          minSwapAmount: 100000,
+          price: 700000,
+          relevancy: 1,
+          uptime: 1,
+        });
+      }
+
       const providers = sortProviderList(action.payload).filter(
         (provider) => provider.testnet === isTestnet()
       );

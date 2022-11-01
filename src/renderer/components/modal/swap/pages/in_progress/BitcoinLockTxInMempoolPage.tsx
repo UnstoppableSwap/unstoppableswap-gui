@@ -1,6 +1,11 @@
 import { Box, DialogContentText } from '@material-ui/core';
 import { SwapStateBtcLockInMempool } from '../../../../../../models/storeModel';
-import BitcoinTransactionInfoBox from '../../transaction/BitcoinTransactionInfoBox';
+import BitcoinTransactionInfoBox from '../../BitcoinTransactionInfoBox';
+import {
+  useActiveDbState,
+  useMaxTxLockConfirmationsActiveSwap,
+} from '../../../../../../store/hooks';
+import SwapMightBeCancelledAlert from '../../../../alert/SwapMightBeCancelledAlert';
 
 type BitcoinLockTxInMempoolPageProps = {
   state: SwapStateBtcLockInMempool;
@@ -9,8 +14,17 @@ type BitcoinLockTxInMempoolPageProps = {
 export default function BitcoinLockTxInMempoolPage({
   state,
 }: BitcoinLockTxInMempoolPageProps) {
+  const dbState = useActiveDbState();
+  const maxTxLockConfirmations = useMaxTxLockConfirmationsActiveSwap();
+
   return (
     <Box>
+      {dbState && maxTxLockConfirmations != null && (
+        <SwapMightBeCancelledAlert
+          dbState={dbState}
+          bobBtcLockTxConfirmations={maxTxLockConfirmations}
+        />
+      )}
       <DialogContentText>
         The Bitcoin lock transaction has been published. The swap will proceed
         once the transaction is confirmed and the swap provider locks their
@@ -24,7 +38,7 @@ export default function BitcoinLockTxInMempoolPage({
           <>
             Most swap providers require 2 confirmations
             <br />
-            Confirmations: {state.bobBtcLockTxConfirmations}
+            Confirmations: {maxTxLockConfirmations}
           </>
         }
       />

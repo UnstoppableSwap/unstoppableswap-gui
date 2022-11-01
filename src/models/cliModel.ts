@@ -1,3 +1,9 @@
+export enum SwapSpawnType {
+  INIT = 'init',
+  RESUME = 'resume',
+  CANCEL_REFUND = 'cancel-refund',
+}
+
 export interface CliLog {
   timestamp: string;
   level: 'DEBUG' | 'INFO' | 'WARN';
@@ -84,6 +90,18 @@ export function isCliLogPublishedBtcTx(
   log: CliLog
 ): log is CliLogPublishedBtcTx {
   return log.fields.message === 'Published Bitcoin transaction';
+}
+
+export interface CliLogBtcTxFound extends CliLog {
+  fields: {
+    message: 'Found relevant Bitcoin transaction';
+    txid: string;
+    status: string;
+  };
+}
+
+export function isCliLogBtcTxFound(log: CliLog): log is CliLogBtcTxFound {
+  return log.fields.message === 'Found relevant Bitcoin transaction';
 }
 
 export interface CliLogBtcTxStatusChanged extends CliLog {

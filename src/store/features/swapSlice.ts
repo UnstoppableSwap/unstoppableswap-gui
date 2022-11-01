@@ -32,6 +32,8 @@ import {
   isCliLogWaitingForBtcDeposit,
   CliLog,
   isCliLogAdvancingState,
+  SwapSpawnType,
+  isCliLogBtcTxFound,
 } from '../../models/cliModel';
 import logger from '../../utils/logger';
 import { Provider } from '../../models/apiModel';
@@ -43,7 +45,7 @@ const initialState: SwapSlice = {
   logs: [],
   stdOut: '',
   provider: null,
-  resume: null,
+  spawnType: null,
 };
 
 export const swapSlice = createSlice({
@@ -158,10 +160,12 @@ export const swapSlice = createSlice({
 
             slice.state = nextState;
           }
-        } else if (isCliLogBtcTxStatusChanged(log)) {
+        } else if (isCliLogBtcTxStatusChanged(log) || isCliLogBtcTxFound(log)) {
           if (isSwapStateBtcLockInMempool(slice.state)) {
             if (slice.state.bobBtcLockTxId === log.fields.txid) {
-              const newStatusText = log.fields.new_status;
+              const newStatusText = isCliLogBtcTxStatusChanged(log)
+                ? log.fields.new_status
+                : log.fields.status;
 
               if (newStatusText.startsWith('confirmed with')) {
                 const confirmations = Number.parseInt(
@@ -227,7 +231,7 @@ export const swapSlice = createSlice({
       swap,
       action: PayloadAction<{
         provider: Provider | null;
-        resume: boolean;
+        spawnType: SwapSpawnType;
         swapId: string | null;
       }>
     ) {
@@ -239,7 +243,7 @@ export const swapSlice = createSlice({
       swap.state = nextState;
       swap.logs = [];
       swap.provider = action.payload.provider;
-      swap.resume = action.payload.resume;
+      swap.spawnType = action.payload.spawnType;
       swap.swapId = action.payload.swapId;
     },
     swapProcessExited(

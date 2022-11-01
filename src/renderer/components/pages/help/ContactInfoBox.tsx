@@ -1,5 +1,5 @@
 import { Box, Button, makeStyles, Typography } from '@material-ui/core';
-import InfoBox from '../../modal/swap/transaction/InfoBox';
+import InfoBox from '../../modal/swap/InfoBox';
 
 const useStyles = makeStyles((theme) => ({
   spacedBox: {

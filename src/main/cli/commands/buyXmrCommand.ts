@@ -1,5 +1,5 @@
 import { dialog } from 'electron';
-import { CliLog } from '../../../models/cliModel';
+import { CliLog, SwapSpawnType } from '../../../models/cliModel';
 import { store } from '../../../store/store';
 import {
   swapAddLog,
@@ -44,7 +44,7 @@ export async function spawnBuyXmr(
     store.dispatch(
       swapInitiate({
         provider,
-        resume: false,
+        spawnType: SwapSpawnType.INIT,
         swapId: null,
       })
     );
@@ -91,7 +91,7 @@ export async function resumeBuyXmr(swapId: string) {
       store.dispatch(
         swapInitiate({
           provider,
-          resume: true,
+          spawnType: SwapSpawnType.RESUME,
           swapId,
         })
       );
