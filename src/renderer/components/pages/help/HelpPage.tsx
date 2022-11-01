@@ -3,6 +3,7 @@ import ContactInfoBox from './ContactInfoBox';
 import FeedbackInfoBox from './FeedbackInfoBox';
 import DonateInfoBox from './DonateInfoBox';
 import TorInfoBox from './TorInfoBox';
+import MonitoredTransactionBox from './MonitoredTransactionsBox';
 
 const useStyles = makeStyles((theme) => ({
   outer: {
@@ -21,6 +22,7 @@ export default function HelpPage() {
       <FeedbackInfoBox />
       <ContactInfoBox />
       <DonateInfoBox />
+      <MonitoredTransactionBox />
     </Box>
   );
 }
