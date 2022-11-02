@@ -8,10 +8,21 @@ import { SwapStateWaitingForBtcDeposit } from '../../../../../../models/storeMod
 import DepositAddressInfoBox from '../../DepositAddressInfoBox';
 import BitcoinIcon from '../../../../icons/BitcoinIcon';
 import { btcToSats, satsToBtc } from '../../../../../../utils/conversionUtils';
+import DepositAmountHelper from './DepositAmountHelper';
 
 const useStyles = makeStyles((theme) => ({
   depositStatusText: {
     paddingTop: theme.spacing(0.5),
+  },
+  amountHelper: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  additionalContent: {
+    paddingTop: theme.spacing(1),
+    gap: theme.spacing(0.5),
+    display: 'flex',
+    flexDirection: 'column',
   },
 }));
 
@@ -25,8 +36,10 @@ export default function WaitingForBtcDepositPage({
   const classes = useStyles();
 
   // Convert to integer for accurate arithmetic operations
-  const fees = satsToBtc(
-    btcToSats(state.minDeposit) - btcToSats(state.minimumAmount)
+  const fees = parseFloat(
+    satsToBtc(
+      btcToSats(state.minDeposit) - btcToSats(state.minimumAmount)
+    ).toFixed(8)
   );
 
   // TODO: Account for BTC lock tx fees
@@ -42,7 +55,7 @@ export default function WaitingForBtcDepositPage({
         title="Bitcoin Deposit Address"
         address={state.depositAddress}
         additionalContent={
-          <>
+          <Box className={classes.additionalContent}>
             <Typography
               variant="subtitle2"
               className={classes.depositStatusText}
@@ -52,12 +65,11 @@ export default function WaitingForBtcDepositPage({
               to this this address will converted into Monero at an exchance
               rate of {state.price || 'unknown'} BTC/XMR. The network fee of{' '}
               {fees} BTC will automatically be deducted from the deposited
-              coins.
+              coins. You have deposited enough Bitcoin to swap{' '}
+              {state.maxGiveable} BTC.
             </Typography>
-            <Typography variant="subtitle2">
-              You have deposited enough Bitcoin to swap {state.maxGiveable} BTC
-            </Typography>
-          </>
+            <DepositAmountHelper state={state} />
+          </Box>
         }
         icon={<BitcoinIcon />}
       />
