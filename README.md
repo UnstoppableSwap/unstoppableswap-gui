@@ -61,6 +61,8 @@ Please download the GUI from the [release page](https://github.com/UnstoppableSw
 
 We rely on generous donors like you to keep development moving forward. To bring Atomic Swaps to life, we need resources. If you have the possibility, please consider making a donation to the project. All funds will be used to support contributors and critical infrastructure.
 
+If you interested in a partnership or want to support the project in a way that requires coordination with the contributors, contact `@binarybaron:matrix.org` on Matrix.
+
 ```
 XMR: 87jS4C7ngk9EHdqFFuxGFgg8AyH63dRUoULshWDybFJaP75UA89qsutG5B1L1QTc4w228nsqsv8EjhL7bz8fB3611Mh98mg
 BTC: bc1q8hj4aq59fucrhz59rxpqnwgy8y6spxxvq4wcj2
