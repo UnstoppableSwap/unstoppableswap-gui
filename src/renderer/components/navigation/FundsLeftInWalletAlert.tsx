@@ -10,6 +10,7 @@ export default function FundsLeftInWalletAlert() {
   if (fundsLeft != null && fundsLeft > 0) {
     return (
       <Alert
+        variant="filled"
         severity="warning"
         action={
           <Button
