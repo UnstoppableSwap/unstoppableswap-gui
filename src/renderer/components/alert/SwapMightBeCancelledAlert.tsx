@@ -33,7 +33,7 @@ export default function SwapMightBeCancelledAlert({
   }
 
   return (
-    <Alert severity="warning" className={classes.outer}>
+    <Alert severity="warning" className={classes.outer} variant="filled">
       <AlertTitle>Be careful!</AlertTitle>
       The swap provider has taken a long time to lock their Monero. This might
       mean that:

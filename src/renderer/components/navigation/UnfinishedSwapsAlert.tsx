@@ -11,6 +11,7 @@ export default function UnfinishedSwapsAlert() {
     return (
       <Alert
         severity="warning"
+        variant="filled"
         action={
           <Button
             color="inherit"

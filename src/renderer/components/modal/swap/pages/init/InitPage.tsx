@@ -6,6 +6,7 @@ import MoneroAddressTextField from 'renderer/components/inputs/MoneroAddressText
 import { useAppSelector } from 'store/hooks';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import { isTestnet } from '../../../../../../store/config';
+import RemainingFundsWillBeUsedAlert from '../../../../alert/RemainingFundsWillBeUsedAlert';
 
 const useStyles = makeStyles((theme) => ({
   initButton: {
@@ -53,6 +54,7 @@ export default function InitPage() {
 
   return (
     <Box>
+      <RemainingFundsWillBeUsedAlert />
       <DialogContentText>
         Please specify the address to which the Monero should be sent upon
         completion of the swap and the address for receiving a Bitcoin refund if

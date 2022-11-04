@@ -68,6 +68,7 @@ export default function SwapTxLockStatusAlert({
       key={dbState.swapId}
       severity="warning"
       action={<SwapResumeButton dbState={dbState} />}
+      variant="filled"
     >
       <AlertTitle>Swap {dbState.swapId} is unfinished</AlertTitle>
       <SwapAlertStatusText timelockStatus={timelockStatus} />
