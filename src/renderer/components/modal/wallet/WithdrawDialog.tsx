@@ -1,10 +1,9 @@
 import { Dialog } from '@material-ui/core';
-import { useState } from 'react';
-import { withdrawReset } from 'store/features/withdrawSlice';
 import DialogHeader from '../DialogHeader';
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
-import CliStopAlert from '../CliStopAlert';
+import { useAppDispatch, useIsRpcEndpointBusy } from '../../../../store/hooks';
 import WithdrawStatePage from './WithdrawStatePage';
+import { RpcMethod } from '../../../../models/rpcModel';
+import { rpcResetWithdrawTxId } from '../../../../store/features/rpcSlice';
 
 export default function WithdrawDialog({
   open,
@@ -13,30 +12,20 @@ export default function WithdrawDialog({
   open: boolean;
   onClose: () => void;
 }) {
-  const processRunning = useAppSelector(
-    (state) => state.withdraw.processRunning
-  );
-  const [openCancelAlert, setOpenCancelAlert] = useState(false);
+  const isRpcEndpointBusy = useIsRpcEndpointBusy(RpcMethod.WITHDRAW_BTC);
   const dispatch = useAppDispatch();
-  const withdrawState = useAppSelector((state) => state.withdraw.state);
 
   function onCancel() {
-    if (processRunning) {
-      setOpenCancelAlert(true);
-    } else {
+    if (!isRpcEndpointBusy) {
       onClose();
-      dispatch(withdrawReset());
+      dispatch(rpcResetWithdrawTxId());
     }
   }
 
   return (
     <Dialog open={open} onClose={onCancel} maxWidth="sm" fullWidth>
       <DialogHeader title="Withdraw Bitcoin" />
-      <WithdrawStatePage onCancel={onCancel} state={withdrawState} />
-      <CliStopAlert
-        open={openCancelAlert}
-        onClose={() => setOpenCancelAlert(false)}
-      />
+      <WithdrawStatePage onCancel={onCancel} />
     </Dialog>
   );
 }

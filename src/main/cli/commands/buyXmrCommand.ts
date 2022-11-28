@@ -8,8 +8,7 @@ import {
   swapProcessExited,
 } from '../../../store/features/swapSlice';
 import { Provider } from '../../../models/apiModel';
-import { spawnSubcommand } from '../cli';
-import spawnBalanceCheck from './balanceCommand';
+import { checkBitcoinBalance, spawnSubcommand } from '../cli';
 import logger from '../../../utils/logger';
 import { providerToConcatenatedMultiAddr } from '../../../utils/multiAddrUtils';
 import { getCliLogStdOut } from '../dirs';
@@ -26,7 +25,7 @@ function onProcExit(code: number | null, signal: NodeJS.Signals | null) {
     })
   );
 
-  spawnBalanceCheck();
+  checkBitcoinBalance();
 }
 
 async function onStdOut(data: string) {

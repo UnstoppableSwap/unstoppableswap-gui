@@ -133,7 +133,10 @@ export const providersSlice = createSlice({
     ) {
       if (
         process.env.STUB_TESTNET_PROVIDER_MULTIADDR &&
-        process.env.STUB_TESTNET_PROVIDER_PEER_ID
+        process.env.STUB_TESTNET_PROVIDER_PEER_ID &&
+        !action.payload.find(
+          (p) => p.peerId === process.env.STUB_TESTNET_PROVIDER_PEER_ID
+        )
       ) {
         action.payload.push({
           multiAddr: process.env.STUB_TESTNET_PROVIDER_MULTIADDR,

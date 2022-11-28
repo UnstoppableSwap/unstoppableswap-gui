@@ -10,24 +10,20 @@
  */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
-import { app, BrowserWindow, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import blocked from 'blocked-at';
 import { resolveHtmlPath } from './util';
-import { stopCli } from './cli/cli';
-import spawnBalanceCheck from './cli/commands/balanceCommand';
-import watchDatabase from './cli/database';
+import { checkBitcoinBalance, startRPC, stopCli, withdrawAllBitcoin } from './cli/cli';
+import { resumeBuyXmr, spawnBuyXmr } from './cli/commands/buyXmrCommand';
 import { getPlatform, isDevelopment } from '../store/config';
-import { getAssetPath, fixAppDataPath } from './cli/dirs';
+import { getAssetPath, fixAppDataPath, getCliLogFile } from './cli/dirs';
 import initSocket from './socket';
 import logger from '../utils/logger';
-import watchElectrumTransactions from './blockchain/electrum';
-import watchLogs from './cli/log';
-import { stopTor } from './tor';
-import initAutoUpdater from './updater';
-import initStats from './stats';
-import registerIpcHandlers from './ipc';
+import spawnListSellersCommand from './cli/commands/listSellersCommand';
+import { spawnTor, stopTor } from './tor';
+import spawnCancelRefund from './cli/commands/cancelRefundCommand';
 
-export let mainWindow: BrowserWindow | null = null;
+let mainWindow: BrowserWindow | null = null;
 
 async function installExtensions() {
   const installer = require('electron-devtools-installer');
@@ -39,8 +35,11 @@ async function installExtensions() {
       extensions.map((name) => installer[name]),
       forceDownload
     )
-    .catch((err: any) =>
-      logger.error({ err }, 'Failed to install browser extensions')
+    .catch((e: any) =>
+      logger.error(
+        { error: e.toString() },
+        'Failed to install browser extensions'
+      )
     );
 }
 
@@ -53,8 +52,8 @@ async function createWindow() {
     title: `UnstoppableSwap ${app.getVersion()}`,
     show: false,
     width: 1024,
-    height: 808,
-    minHeight: 808,
+    height: 728,
+    minHeight: 728,
     minWidth: 1024,
     resizable: isDevelopment,
     icon: getAssetPath('icon.png'),
@@ -66,9 +65,7 @@ async function createWindow() {
     autoHideMenuBar: true,
   });
 
-  mainWindow.loadURL(resolveHtmlPath('index.html'), {
-    userAgent: `UnstoppableSwap GUI/${app.getVersion()}`,
-  });
+  mainWindow.loadURL(resolveHtmlPath('index.html'));
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/main/docs/api/browser-window.md#using-ready-to-show-event
@@ -93,8 +90,6 @@ async function createWindow() {
     event.preventDefault();
     shell.openExternal(url);
   });
-
-  await initAutoUpdater(mainWindow);
 }
 
 fixAppDataPath();
@@ -125,13 +120,8 @@ if (gotTheLock) {
     .whenReady()
     .then(async () => {
       createWindow();
-      registerIpcHandlers();
       initSocket();
-      watchDatabase();
-      spawnBalanceCheck();
-      watchElectrumTransactions();
-      watchLogs();
-      initStats();
+      startRPC();
       return 0;
     })
     .catch((e) =>
@@ -155,3 +145,35 @@ if (isDevelopment) {
     }
   );
 }
+
+ipcMain.handle('stop-cli', stopCli);
+
+ipcMain.handle('spawn-start-rpc', startRPC);
+
+ipcMain.handle('spawn-balance-check', checkBitcoinBalance);
+
+ipcMain.handle(
+  'spawn-buy-xmr',
+  (_event, provider, redeemAddress, refundAddress) =>
+    spawnBuyXmr(provider, redeemAddress, refundAddress)
+);
+
+ipcMain.handle('resume-buy-xmr', (_event, swapId) => resumeBuyXmr(swapId));
+
+ipcMain.handle('spawn-cancel-refund', (_event, swapId) =>
+  spawnCancelRefund(swapId)
+);
+
+ipcMain.handle('spawn-withdraw-btc', (_event, address) =>
+  withdrawAllBitcoin(address)
+);
+
+ipcMain.handle('spawn-list-sellers', (_event, rendezvousPointAddress) =>
+  spawnListSellersCommand(rendezvousPointAddress)
+);
+
+ipcMain.handle('get-cli-log-path', (_event, swapId) => getCliLogFile(swapId));
+
+ipcMain.handle('spawn-tor', spawnTor);
+
+ipcMain.handle('stop-tor', stopTor);

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../../../store/hooks';
 
 export default function FundsLeftInWalletAlert() {
-  const fundsLeft = useAppSelector((state) => state.balance.balanceValue);
+  const fundsLeft = useAppSelector((state) => state.rpc.state.balance);
   const navigate = useNavigate();
 
   if (fundsLeft != null && fundsLeft > 0) {

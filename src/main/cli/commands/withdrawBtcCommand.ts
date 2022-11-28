@@ -1,5 +1,5 @@
 import { store } from '../../../store/store';
-import { spawnSubcommand } from '../cli';
+import { checkBitcoinBalance, spawnSubcommand } from '../cli';
 import {
   withdrawAppendStdOut,
   withdrawInitiate,
@@ -7,7 +7,6 @@ import {
   withdrawAddLog,
 } from '../../../store/features/withdrawSlice';
 import { CliLog } from '../../../models/cliModel';
-import spawnBalanceCheck from './balanceCommand';
 import logger from '../../../utils/logger';
 
 function onProcExit(code: number | null, signal: NodeJS.Signals | null) {
@@ -18,7 +17,7 @@ function onProcExit(code: number | null, signal: NodeJS.Signals | null) {
     })
   );
 
-  spawnBalanceCheck();
+  checkBitcoinBalance();
 }
 
 function onStdOut(data: string) {

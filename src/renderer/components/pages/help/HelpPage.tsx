@@ -3,14 +3,13 @@ import ContactInfoBox from './ContactInfoBox';
 import FeedbackInfoBox from './FeedbackInfoBox';
 import DonateInfoBox from './DonateInfoBox';
 import TorInfoBox from './TorInfoBox';
-import ElectrumInfoBox from './ElectrumInfoBox';
+import RpcControlBox from './RpcControlBox';
 
 const useStyles = makeStyles((theme) => ({
   outer: {
     display: 'flex',
     gap: theme.spacing(2),
     flexDirection: 'column',
-    paddingBottom: theme.spacing(2),
   },
 }));
 
@@ -19,11 +18,11 @@ export default function HelpPage() {
 
   return (
     <Box className={classes.outer}>
+      <RpcControlBox />
       <TorInfoBox />
       <FeedbackInfoBox />
       <ContactInfoBox />
       <DonateInfoBox />
-      <ElectrumInfoBox />
     </Box>
   );
 }

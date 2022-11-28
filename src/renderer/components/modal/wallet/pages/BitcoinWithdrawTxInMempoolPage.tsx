@@ -1,14 +1,13 @@
 import { Button, DialogActions, DialogContentText } from '@material-ui/core';
-import { WithdrawStateWithdrawTxInMempool } from '../../../../../models/storeModel';
 import BitcoinTransactionInfoBox from '../../swap/BitcoinTransactionInfoBox';
 import { useAppSelector } from '../../../../../store/hooks';
 import WithdrawDialogContent from '../WithdrawDialogContent';
 
 export default function BtcTxInMempoolPageContent({
-  state,
+  withdrawTxId,
   onCancel,
 }: {
-  state: WithdrawStateWithdrawTxInMempool;
+  withdrawTxId: string;
   onCancel: () => void;
 }) {
   const processRunning = useAppSelector((s) => s.withdraw.processRunning);
@@ -21,7 +20,7 @@ export default function BtcTxInMempoolPageContent({
           withdraw address.
         </DialogContentText>
         <BitcoinTransactionInfoBox
-          txId={state.txid}
+          txId={withdrawTxId}
           loading={false}
           title="Bitcoin Withdraw Transaction"
           additionalContent={null}

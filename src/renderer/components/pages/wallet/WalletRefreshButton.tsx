@@ -1,12 +1,9 @@
-import RefreshIcon from '@material-ui/icons/Refresh';
 import { CircularProgress } from '@material-ui/core';
-import { useAppSelector } from '../../../../store/hooks';
+import RefreshIcon from '@material-ui/icons/Refresh';
 import IpcInvokeButton from '../../IpcInvokeButton';
 
 export default function WalletRefreshButton() {
-  const checkingBalance = useAppSelector(
-    (state) => state.balance.processRunning
-  );
+  const checkingBalance = useIsRpcEndpointBusy(RpcMethod.GET_BTC_BALANCE);
 
   return (
     <IpcInvokeButton

@@ -7,10 +7,9 @@ import {
   swapProcessExited,
 } from '../../../store/features/swapSlice';
 import { getCliLogStdOut } from '../dirs';
-import { spawnSubcommand } from '../cli';
+import { checkBitcoinBalance, spawnSubcommand } from '../cli';
 import logger from '../../../utils/logger';
 import { CliLog, SwapSpawnType } from '../../../models/cliModel';
-import spawnBalanceCheck from './balanceCommand';
 
 async function onCliLog(logs: CliLog[]) {
   store.dispatch(swapAddLog(logs));
@@ -28,7 +27,7 @@ function onProcExit(code: number | null, signal: NodeJS.Signals | null) {
     })
   );
 
-  spawnBalanceCheck();
+  checkBitcoinBalance();
 }
 
 export default async function spawnCancelRefund(swapId: string) {

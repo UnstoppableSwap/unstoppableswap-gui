@@ -25,6 +25,19 @@ export function isCliLog(log: unknown): log is CliLog {
   return false;
 }
 
+export interface CliLogStartedRpcServer extends CliLog {
+  fields: {
+    message: 'Started RPC server';
+    addr: string;
+  };
+}
+
+export function isCliLogStartedRpcServer(
+  log: CliLog
+): log is CliLogStartedRpcServer {
+  return log.fields.message === 'Started RPC server';
+}
+
 export interface CliLogReceivedQuote extends CliLog {
   fields: {
     message: 'Received quote';

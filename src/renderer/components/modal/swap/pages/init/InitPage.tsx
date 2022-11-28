@@ -7,6 +7,7 @@ import { useAppSelector } from 'store/hooks';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import { isTestnet } from '../../../../../../store/config';
 import RemainingFundsWillBeUsedAlert from '../../../../alert/RemainingFundsWillBeUsedAlert';
+import RpcStatusAlert from '../../../../alert/RpcStatusAlert';
 
 const useStyles = makeStyles((theme) => ({
   initButton: {

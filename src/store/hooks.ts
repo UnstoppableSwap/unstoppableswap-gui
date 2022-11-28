@@ -41,7 +41,7 @@ export function useActiveDbState() {
 
 export function useTxLock(swapId: string) {
   return useAppSelector((state) =>
-    state.electrum.txs.find(
+    state.electrum.find(
       (tx) => tx.transaction.swapId === swapId && tx.transaction.kind === 'lock'
     )
   );
@@ -90,10 +90,6 @@ export function useMaxTxLockConfirmationsActiveSwap() {
   return Math.max(electrumConfirmations, logConfirmations);
 }
 
-export function useAllProviders() {
-  return useAppSelector((state) => {
-    const registryProviders = state.providers.registry.providers || [];
-    const listSellersProviders = state.providers.rendezvous.providers || [];
-    return [...registryProviders, ...listSellersProviders];
-  });
+export function useIsRpcEndpointBusy(method: string) {
+  return useAppSelector((state) => state.rpc.busyEndpoints.includes(method));
 }

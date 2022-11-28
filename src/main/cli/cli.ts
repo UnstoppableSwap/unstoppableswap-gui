@@ -4,12 +4,30 @@ import {
 } from 'child_process';
 import PQueue from 'p-queue';
 import pidtree from 'pidtree';
+import jayson from 'jayson/promise';
 import { isTestnet } from '../../store/config';
 import { CliLog, isCliLog } from '../../models/cliModel';
 import { getCliDataBaseDir, getSwapBinary, makeFileExecutable } from './dirs';
 import { readFromDatabaseAndUpdateState } from './database';
 import logger from '../../utils/logger';
 import { getLinesOfString } from '../../utils/parseUtils';
+import { store } from '../../store/store';
+import {
+  rpcAddLogs,
+  rpcAppendStdOut,
+  rpcInitiate,
+  rpcProcessExited,
+  rpcResetWithdrawTxId,
+  rpcSetBalance,
+  rpcSetEndpointBusy,
+  rpcSetEndpointFree,
+  rpcSetWithdrawTxId
+} from '../../store/features/rpcSlice';
+import { CLI_RPC_HTTP_ADDRESS, RpcMethod } from '../../models/rpcModel';
+
+const rpcClient = jayson.Client.http({
+  port: 1234,
+});
 
 const queue = new PQueue({ concurrency: 1 });
 let cli: ChildProcessWithoutNullStreams | null = null;
@@ -176,4 +194,63 @@ export async function spawnSubcommand(
       );
     }
   );
+}
+
+export async function startRPC() {
+  await spawnSubcommand(
+    'start-daemon',
+    {
+      'server-address': CLI_RPC_HTTP_ADDRESS,
+    },
+    (logs) => {
+      store.dispatch(rpcAddLogs(logs));
+    },
+    (exitCode, exitSignal) => {
+      store.dispatch(rpcProcessExited({ exitCode, exitSignal }));
+      logger.error('RPC server has stopped');
+    },
+    (text) => {
+      store.dispatch(rpcAppendStdOut(text));
+    }
+  );
+  store.dispatch(rpcInitiate());
+}
+
+export async function makeRpcRequest(
+  method: RpcMethod,
+  params: jayson.RequestParamsLike
+) {
+  return new Promise<any>(async (resolve, reject) => {
+    store.dispatch(rpcSetEndpointBusy(method));
+
+    try {
+      resolve(await rpcClient.request(method, params));
+    } catch (e) {
+      reject(e);
+    } finally {
+      store.dispatch(rpcSetEndpointFree(method));
+    }
+  });
+}
+
+export async function checkBitcoinBalance() {
+  const response = await makeRpcRequest(RpcMethod.GET_BTC_BALANCE, []);
+  store.dispatch(rpcSetBalance(response.result.balance));
+}
+
+export async function withdrawBitcoin(address: string, amount: number) {
+  store.dispatch(rpcResetWithdrawTxId());
+  const response = await makeRpcRequest(RpcMethod.WITHDRAW_BTC, {
+    address,
+    amount: amount.toString(),
+  });
+  store.dispatch(rpcSetWithdrawTxId(response.result.txid));
+}
+
+export async function withdrawAllBitcoin(address: string) {
+  store.dispatch(rpcResetWithdrawTxId());
+  const response = await makeRpcRequest(RpcMethod.WITHDRAW_BTC, {
+    address,
+  });
+  store.dispatch(rpcSetWithdrawTxId(response.result.txid));
 }
