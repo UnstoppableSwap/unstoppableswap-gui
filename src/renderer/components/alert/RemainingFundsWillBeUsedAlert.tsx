@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function RemainingFundsWillBeUsedAlert() {
   const classes = useStyles();
-  const balance = useAppSelector((s) => s.balance.balanceValue);
+  const balance = useAppSelector((s) => s.rpc.state.balance);
 
   if (balance == null || balance <= 0) {
     return <></>;

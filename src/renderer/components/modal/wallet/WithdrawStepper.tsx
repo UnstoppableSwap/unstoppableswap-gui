@@ -1,36 +1,31 @@
 import { Step, StepLabel, Stepper } from '@material-ui/core';
-import { useAppSelector } from '../../../../store/hooks';
-import {
-  isWithdrawStateInitiated,
-  isWithdrawStateProcessExited,
-  WithdrawState,
-} from '../../../../models/storeModel';
+import { useAppSelector, useIsRpcEndpointBusy } from '../../../../store/hooks';
+import { RpcMethod } from '../../../../models/rpcModel';
 
-function getActiveStep(withdrawState: WithdrawState | null) {
-  if (isWithdrawStateInitiated(withdrawState)) {
+function getActiveStep(
+  isWithdrawInProgress: boolean,
+  withdrawTxId: string | null
+) {
+  if (isWithdrawInProgress) {
     return 1;
   }
-  if (isWithdrawStateProcessExited(withdrawState)) {
+  if (withdrawTxId !== null) {
     return 2;
   }
   return 0;
 }
 
 export default function WithdrawStepper() {
-  const activeStep = useAppSelector((s) => getActiveStep(s.withdraw.state));
-  const error = useAppSelector(
-    (s) =>
-      isWithdrawStateProcessExited(s.withdraw.state) &&
-      s.withdraw.state.exitCode !== 0
-  );
+  const isWithdrawInProgress = useIsRpcEndpointBusy(RpcMethod.WITHDRAW_BTC);
+  const withdrawTxId = useAppSelector((s) => s.rpc.state.withdrawTxId);
 
   return (
-    <Stepper activeStep={activeStep}>
+    <Stepper activeStep={getActiveStep(isWithdrawInProgress, withdrawTxId)}>
       <Step key={0}>
         <StepLabel>Enter withdraw address</StepLabel>
       </Step>
       <Step key={2}>
-        <StepLabel error={error}>Transfer funds to wallet</StepLabel>
+        <StepLabel error={false}>Transfer funds to wallet</StepLabel>
       </Step>
     </Stepper>
   );

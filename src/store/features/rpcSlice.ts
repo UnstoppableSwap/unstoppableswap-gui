@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RpcProcessStateType } from '../../models/rpcModel';
 import { CliLog, isCliLogStartedRpcServer } from '../../models/cliModel';
+import { ExtendedProviderStatus, ProviderStatus } from '../../models/apiModel';
 
 type Process =
   | {
@@ -24,6 +25,7 @@ type Process =
 interface State {
   balance: number | null;
   withdrawTxId: string | null;
+  rendezvous_discovered_sellers: (ExtendedProviderStatus | ProviderStatus)[];
 }
 
 export interface RPCSlice {
@@ -39,6 +41,7 @@ const initialState: RPCSlice = {
   state: {
     balance: null,
     withdrawTxId: null,
+    rendezvous_discovered_sellers: [],
   },
   busyEndpoints: [],
 };
@@ -99,6 +102,12 @@ export const rpcSlice = createSlice({
     rpcSetWithdrawTxId(slice, action: PayloadAction<string>) {
       slice.state.withdrawTxId = action.payload;
     },
+    rpcSetRendezvousDiscoveredProviders(
+      slice,
+      action: PayloadAction<(ExtendedProviderStatus | ProviderStatus)[]>
+    ) {
+      slice.state.rendezvous_discovered_sellers = action.payload;
+    },
     rpcResetWithdrawTxId(slice) {
       slice.state.withdrawTxId = null;
     },
@@ -126,6 +135,7 @@ export const {
   rpcResetWithdrawTxId,
   rpcSetEndpointBusy,
   rpcSetEndpointFree,
+  rpcSetRendezvousDiscoveredProviders,
 } = rpcSlice.actions;
 
 export default rpcSlice.reducer;

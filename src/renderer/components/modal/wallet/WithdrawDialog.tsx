@@ -23,7 +23,12 @@ export default function WithdrawDialog({
   }
 
   return (
-    <Dialog open={open} onClose={onCancel} maxWidth="sm" fullWidth>
+    <Dialog
+      open={open || isRpcEndpointBusy}
+      onClose={onCancel}
+      maxWidth="sm"
+      fullWidth
+    >
       <DialogHeader title="Withdraw Bitcoin" />
       <WithdrawStatePage onCancel={onCancel} />
     </Dialog>

@@ -1,6 +1,5 @@
 import { Button, DialogActions, DialogContentText } from '@material-ui/core';
 import BitcoinTransactionInfoBox from '../../swap/BitcoinTransactionInfoBox';
-import { useAppSelector } from '../../../../../store/hooks';
 import WithdrawDialogContent from '../WithdrawDialogContent';
 
 export default function BtcTxInMempoolPageContent({
@@ -10,8 +9,6 @@ export default function BtcTxInMempoolPageContent({
   withdrawTxId: string;
   onCancel: () => void;
 }) {
-  const processRunning = useAppSelector((s) => s.withdraw.processRunning);
-
   return (
     <>
       <WithdrawDialogContent>
@@ -30,12 +27,7 @@ export default function BtcTxInMempoolPageContent({
         <Button onClick={onCancel} variant="text">
           Cancel
         </Button>
-        <Button
-          onClick={onCancel}
-          disabled={processRunning}
-          color="primary"
-          variant="contained"
-        >
+        <Button onClick={onCancel} color="primary" variant="contained">
           Done
         </Button>
       </DialogActions>

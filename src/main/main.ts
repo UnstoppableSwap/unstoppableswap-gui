@@ -13,13 +13,18 @@ import 'regenerator-runtime/runtime';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import blocked from 'blocked-at';
 import { resolveHtmlPath } from './util';
-import { checkBitcoinBalance, startRPC, stopCli, withdrawAllBitcoin } from './cli/cli';
-import { resumeBuyXmr, spawnBuyXmr } from './cli/commands/buyXmrCommand';
+import {
+  buyXmr,
+  checkBitcoinBalance,
+  listSellers,
+  startRPC,
+  stopCli,
+  withdrawAllBitcoin,
+} from './cli/cli';
 import { getPlatform, isDevelopment } from '../store/config';
 import { getAssetPath, fixAppDataPath, getCliLogFile } from './cli/dirs';
 import initSocket from './socket';
 import logger from '../utils/logger';
-import spawnListSellersCommand from './cli/commands/listSellersCommand';
 import { spawnTor, stopTor } from './tor';
 import spawnCancelRefund from './cli/commands/cancelRefundCommand';
 
@@ -155,10 +160,8 @@ ipcMain.handle('spawn-balance-check', checkBitcoinBalance);
 ipcMain.handle(
   'spawn-buy-xmr',
   (_event, provider, redeemAddress, refundAddress) =>
-    spawnBuyXmr(provider, redeemAddress, refundAddress)
+    buyXmr(redeemAddress, refundAddress, provider)
 );
-
-ipcMain.handle('resume-buy-xmr', (_event, swapId) => resumeBuyXmr(swapId));
 
 ipcMain.handle('spawn-cancel-refund', (_event, swapId) =>
   spawnCancelRefund(swapId)
@@ -169,7 +172,7 @@ ipcMain.handle('spawn-withdraw-btc', (_event, address) =>
 );
 
 ipcMain.handle('spawn-list-sellers', (_event, rendezvousPointAddress) =>
-  spawnListSellersCommand(rendezvousPointAddress)
+  listSellers(rendezvousPointAddress)
 );
 
 ipcMain.handle('get-cli-log-path', (_event, swapId) => getCliLogFile(swapId));

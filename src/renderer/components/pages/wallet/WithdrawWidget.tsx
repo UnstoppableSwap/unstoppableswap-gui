@@ -5,7 +5,6 @@ import { useAppSelector, useIsRpcEndpointBusy } from '../../../../store/hooks';
 import BitcoinIcon from '../../icons/BitcoinIcon';
 import WithdrawDialog from '../../modal/wallet/WithdrawDialog';
 import WalletRefreshButton from './WalletRefreshButton';
-import { isWithdrawState } from '../../../../models/storeModel';
 import InfoBox from '../../modal/swap/InfoBox';
 import { satsToBtc } from '../../../../utils/conversionUtils';
 import { RpcMethod } from '../../../../models/rpcModel';
@@ -22,10 +21,6 @@ export default function WithdrawWidget() {
   const classes = useStyles();
   const walletBalance = useAppSelector((state) => state.rpc.state.balance);
   const checkingBalance = useIsRpcEndpointBusy(RpcMethod.GET_BTC_BALANCE);
-
-  const forceShowDialog = useAppSelector((s) =>
-    isWithdrawState(s.withdraw.state)
-  );
   const [showDialog, setShowDialog] = useState(false);
 
   function onShowDialog() {
@@ -63,10 +58,7 @@ export default function WithdrawWidget() {
         }
         loading={false}
       />
-      <WithdrawDialog
-        open={showDialog || forceShowDialog}
-        onClose={() => setShowDialog(false)}
-      />
+      <WithdrawDialog open={showDialog} onClose={() => setShowDialog(false)} />
     </>
   );
 }

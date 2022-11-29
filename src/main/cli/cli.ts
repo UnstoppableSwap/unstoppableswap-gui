@@ -5,6 +5,7 @@ import {
 import PQueue from 'p-queue';
 import pidtree from 'pidtree';
 import jayson from 'jayson/promise';
+import { Multiaddr } from 'multiaddr';
 import { isTestnet } from '../../store/config';
 import { CliLog, isCliLog } from '../../models/cliModel';
 import { getCliDataBaseDir, getSwapBinary, makeFileExecutable } from './dirs';
@@ -21,9 +22,16 @@ import {
   rpcSetBalance,
   rpcSetEndpointBusy,
   rpcSetEndpointFree,
-  rpcSetWithdrawTxId
+  rpcSetRendezvousDiscoveredProviders,
+  rpcSetWithdrawTxId,
 } from '../../store/features/rpcSlice';
-import { CLI_RPC_HTTP_ADDRESS, RpcMethod } from '../../models/rpcModel';
+import {
+  CLI_RPC_HTTP_ADDRESS,
+  RpcMethod,
+  RpcSellerStatus,
+} from '../../models/rpcModel';
+import { Provider, ProviderStatus } from '../../models/apiModel';
+import { providerToConcatenatedMultiAddr } from '../../utils/multiAddrUtils';
 
 const rpcClient = jayson.Client.http({
   port: 1234,
@@ -224,7 +232,9 @@ export async function makeRpcRequest(
     store.dispatch(rpcSetEndpointBusy(method));
 
     try {
-      resolve(await rpcClient.request(method, params));
+      const response = await rpcClient.request(method, params);
+      logger.debug({ method, params, response }, 'Received RPC response');
+      resolve(response);
     } catch (e) {
       reject(e);
     } finally {
@@ -233,7 +243,12 @@ export async function makeRpcRequest(
   });
 }
 
+export async function getRawHistory() {
+  await makeRpcRequest(RpcMethod.RAW_HISTORY, {});
+}
+
 export async function checkBitcoinBalance() {
+  await getRawHistory();
   const response = await makeRpcRequest(RpcMethod.GET_BTC_BALANCE, []);
   store.dispatch(rpcSetBalance(response.result.balance));
 }
@@ -253,4 +268,43 @@ export async function withdrawAllBitcoin(address: string) {
     address,
   });
   store.dispatch(rpcSetWithdrawTxId(response.result.txid));
+}
+
+export async function buyXmr(
+  redeemAddress: string,
+  refundAddress: string,
+  provider: Provider
+) {
+  const response = await makeRpcRequest(RpcMethod.BUY_XMR, {
+    bitcoin_change_address: refundAddress,
+    monero_receive_address: redeemAddress,
+    seller: providerToConcatenatedMultiAddr(provider),
+  });
+}
+
+export async function listSellers(rendezvousPointAddress: string) {
+  const response = await makeRpcRequest(RpcMethod.LIST_SELLERS, {
+    rendezvous_point: rendezvousPointAddress,
+  });
+  const sellers = response.result.sellers as RpcSellerStatus[];
+  const reachableSellers: ProviderStatus[] = sellers
+    .map((s) => {
+      if (s.status !== 'Unreachable') {
+        const multiAddrCombined = new Multiaddr(s.multiaddr);
+        const multiAddr = multiAddrCombined.decapsulate('p2p').toString();
+        const peerId = multiAddrCombined.getPeerId();
+
+        return {
+          multiAddr,
+          peerId,
+          price: s.status.Online.price,
+          minSwapAmount: s.status.Online.min_quantity,
+          maxSwapAmount: s.status.Online.min_quantity,
+          testnet: isTestnet(),
+        };
+      }
+      return null;
+    })
+    .filter((s): s is ProviderStatus => s !== null);
+  store.dispatch(rpcSetRendezvousDiscoveredProviders(reachableSellers));
 }
