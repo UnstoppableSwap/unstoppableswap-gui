@@ -14,12 +14,9 @@ import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import blocked from 'blocked-at';
 import { resolveHtmlPath } from './util';
 import {
-  buyXmr,
-  checkBitcoinBalance,
-  listSellers,
   startRPC,
   stopCli,
-  withdrawAllBitcoin,
+
 } from './cli/cli';
 import { getPlatform, isDevelopment } from '../store/config';
 import { getAssetPath, fixAppDataPath, getCliLogFile } from './cli/dirs';
@@ -27,6 +24,7 @@ import initSocket from './socket';
 import logger from '../utils/logger';
 import { spawnTor, stopTor } from './tor';
 import spawnCancelRefund from './cli/commands/cancelRefundCommand';
+import { buyXmr, checkBitcoinBalance, listSellers, withdrawAllBitcoin } from './cli/makeRpcRequest';
 
 let mainWindow: BrowserWindow | null = null;
 

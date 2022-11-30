@@ -8,10 +8,11 @@ import {
   swapProcessExited,
 } from '../../../store/features/swapSlice';
 import { Provider } from '../../../models/apiModel';
-import { checkBitcoinBalance, spawnSubcommand } from '../cli';
+import { spawnSubcommand } from '../cli';
 import logger from '../../../utils/logger';
 import { providerToConcatenatedMultiAddr } from '../../../utils/multiAddrUtils';
 import { getCliLogStdOut } from '../dirs';
+import { checkBitcoinBalance } from '../makeRpcRequest';
 
 async function onCliLog(logs: CliLog[]) {
   store.dispatch(swapAddLog(logs));
