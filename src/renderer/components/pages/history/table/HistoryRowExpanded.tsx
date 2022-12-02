@@ -16,7 +16,6 @@ import {
   getSwapXmrAmount,
 } from '../../../../../models/databaseModel';
 import SwapLogFileOpenButton from './SwapLogFileOpenButton';
-import DateFormatted from '../../../other/DateFormatted';
 import { SwapCancelRefundButton } from './HistoryRowActions';
 import { useTxLock } from '../../../../../store/hooks';
 import { getBitcoinTxExplorerUrl } from '../../../../../utils/conversionUtils';
@@ -46,8 +45,7 @@ export default function HistoryRowExpanded({
   const xmrAmount = getSwapXmrAmount(dbState);
   const txFees = getSwapTxFees(dbState);
   const exchangeRate = getSwapExchangeRate(dbState);
-  const firstEnteredAt = new Date(dbState.firstEnteredDate);
-  const { provider } = dbState;
+  const { provider, firstEnteredDate } = dbState;
 
   const txLock = useTxLock(dbState.swapId);
 
@@ -58,9 +56,7 @@ export default function HistoryRowExpanded({
           <TableBody>
             <TableRow>
               <TableCell>Started on</TableCell>
-              <TableCell>
-                <DateFormatted date={firstEnteredAt} />
-              </TableCell>
+              <TableCell>{firstEnteredDate}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>Swap ID</TableCell>

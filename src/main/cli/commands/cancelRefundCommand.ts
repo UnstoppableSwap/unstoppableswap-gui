@@ -10,7 +10,7 @@ import { getCliLogStdOut } from '../dirs';
 import { spawnSubcommand } from '../cli';
 import logger from '../../../utils/logger';
 import { CliLog, SwapSpawnType } from '../../../models/cliModel';
-import { checkBitcoinBalance } from '../makeRpcRequest';
+import { checkBitcoinBalance } from '../rpc';
 
 async function onCliLog(logs: CliLog[]) {
   store.dispatch(swapAddLog(logs));

@@ -1,3 +1,5 @@
+import { DbState } from './databaseModel';
+
 export enum RpcMethod {
   GET_BTC_BALANCE = 'get_bitcoin_balance',
   WITHDRAW_BTC = 'withdraw_btc',
@@ -5,6 +7,8 @@ export enum RpcMethod {
   RESUME_SWAP = 'resume_swap',
   RAW_HISTORY = 'raw_get_history',
   LIST_SELLERS = 'list_sellers',
+  GET_SELLER = 'get_seller',
+  GET_SWAP_START_DATE = 'get_swap_start_date',
 }
 
 export enum RpcProcessStateType {
@@ -27,4 +31,25 @@ export interface RpcSellerStatus {
       }
     | 'Unreachable';
   multiaddr: string;
+}
+
+export interface WithdrawBitcoinResponse {
+  txid: string;
+}
+
+export interface BalanceBitcoinResponse {
+  balance: number;
+}
+
+export interface RawSwapHistoryResponse {
+  [swapId: string]: DbState[];
+}
+
+export interface GetSellerResponse {
+  peerId: string;
+  addresses: string[];
+}
+
+export interface GetSwapStartDateResponse {
+  start_date: string;
 }

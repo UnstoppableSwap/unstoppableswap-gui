@@ -7,7 +7,6 @@ import pidtree from 'pidtree';
 import { isTestnet } from '../../store/config';
 import { CliLog, isCliLog } from '../../models/cliModel';
 import { getCliDataBaseDir, getSwapBinary, makeFileExecutable } from './dirs';
-import { readFromDatabaseAndUpdateState } from './database';
 import logger from '../../utils/logger';
 import { getLinesOfString } from '../../utils/parseUtils';
 import { store } from '../../store/store';
@@ -130,15 +129,9 @@ export async function spawnSubcommand(
 
               cli.on('exit', async (code, signal) => {
                 logger.info({ subCommand, code, signal }, `CLI excited`);
-
+                onExit(code, signal);
+                resolveRunning();
                 cli = null;
-
-                try {
-                  await readFromDatabaseAndUpdateState();
-                } finally {
-                  onExit(code, signal);
-                  resolveRunning();
-                }
               });
 
               [cli.stderr, cli.stdout].forEach((stream) => {
@@ -170,8 +163,6 @@ export async function spawnSubcommand(
                     .filter(isCliLog);
 
                   onLog(logs);
-
-                  readFromDatabaseAndUpdateState();
                 });
               });
             } catch (e) {

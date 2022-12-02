@@ -13,18 +13,19 @@ import 'regenerator-runtime/runtime';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import blocked from 'blocked-at';
 import { resolveHtmlPath } from './util';
-import {
-  startRPC,
-  stopCli,
-
-} from './cli/cli';
+import { startRPC, stopCli } from './cli/cli';
 import { getPlatform, isDevelopment } from '../store/config';
 import { getAssetPath, fixAppDataPath, getCliLogFile } from './cli/dirs';
 import initSocket from './socket';
 import logger from '../utils/logger';
 import { spawnTor, stopTor } from './tor';
 import spawnCancelRefund from './cli/commands/cancelRefundCommand';
-import { buyXmr, checkBitcoinBalance, listSellers, withdrawAllBitcoin } from './cli/makeRpcRequest';
+import {
+  buyXmr,
+  checkBitcoinBalance,
+  listSellers,
+  withdrawAllBitcoin,
+} from './cli/rpc';
 
 let mainWindow: BrowserWindow | null = null;
 
