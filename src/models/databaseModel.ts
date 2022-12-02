@@ -541,7 +541,7 @@ export function getSwapTxFees(dbState: MergedDbState): number {
     .map((input) => input.witness_utxo.value)
     .reduce((prev, next) => prev + next);
 
-  const sumOutput = tx.inner.global.unsigned_tx.output
+  const sumOutput = tx.inner.unsigned_tx.output
     .map((output) => output.value)
     .reduce((prev, next) => prev + next);
 
@@ -550,7 +550,7 @@ export function getSwapTxFees(dbState: MergedDbState): number {
 
 export function getSwapBtcAmount(dbState: MergedDbState): number {
   return satsToBtc(
-    dbState.state.Bob.ExecutionSetupDone.state2.tx_lock.inner.global.unsigned_tx
+    dbState.state.Bob.ExecutionSetupDone.state2.tx_lock.inner.unsigned_tx
       .output[0]?.value
   );
 }
@@ -648,4 +648,13 @@ export function getTypeOfPathDbState(dbState: MergedDbState): DbStatePathType {
   }
   logger.error({ dbState }, 'Unknown path type. Assuming happy path');
   return DbStatePathType.HAPPY_PATH;
+}
+
+export function isPastBdkMigrationExecutionSetupDoneDbState(
+  dbState: DbState
+): boolean {
+  return (
+    isExecutionSetupDoneDbState(dbState) &&
+    'unsigned_tx' in dbState.Bob.ExecutionSetupDone.state2.tx_lock.inner
+  );
 }

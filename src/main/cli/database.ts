@@ -8,6 +8,7 @@ import {
   getTypeOfDbState,
   isExecutionSetupDoneDbState,
   isMergedDbState,
+  isPastBdkMigrationExecutionSetupDoneDbState,
 } from '../../models/databaseModel';
 import { store } from '../../store/store';
 import { databaseStateChanged } from '../../store/features/historySlice';
@@ -112,7 +113,10 @@ async function getMergedStateForEachSwap(
           const mergedState = merge({}, ...states);
           const provider = await getProviderForSwap(db, swapId);
 
-          if (isExecutionSetupDoneDbState(mergedState)) {
+          if (
+            isExecutionSetupDoneDbState(mergedState) &&
+            isPastBdkMigrationExecutionSetupDoneDbState(mergedState)
+          ) {
             return {
               swapId,
               type: latestStateType,
@@ -124,7 +128,7 @@ async function getMergedStateForEachSwap(
         }
         logger.error(
           { swapId },
-          `There is no execution setup done state saved for swap. Database might be corrupted!`
+          `There is no execution setup done state saved for swap. Database might be corrupted or swap might be from an incompatible version!`
         );
         return null;
       })

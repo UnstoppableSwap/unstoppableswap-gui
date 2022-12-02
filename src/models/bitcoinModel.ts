@@ -4,16 +4,9 @@ export interface TxLock {
 }
 
 export interface Inner {
-  global: Global;
+  unsigned_tx: UnsignedTx; // TODO: On old bdk versions this field does not exist. Check if it exist to hide old swaps
   inputs: InnerInput[];
   outputs: Output[];
-}
-
-export interface Global {
-  unsigned_tx: UnsignedTx;
-  version: number;
-  proprietary: unknown[];
-  unknown: unknown[];
 }
 
 export interface UnsignedTx {
