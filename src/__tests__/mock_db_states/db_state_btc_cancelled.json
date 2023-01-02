@@ -15,29 +15,23 @@
       "refund_address": "tb1qw508d6qejxtdg4y5r3zarvary0c5xw7kxpjzsx",
       "tx_lock": {
         "inner": {
-          "global": {
-            "unsigned_tx": {
-              "version": 1,
-              "lock_time": 0,
-              "input": [
-                {
-                  "previous_output": "dc767a0a2c3633dcd0c59010b4768e06954c19acc7154d9b49d39535016282e1:0",
-                  "script_sig": "",
-                  "sequence": 4294967295,
-                  "witness": []
-                }
-              ],
-              "output": [
-                {
-                  "value": 11878,
-                  "script_pubkey": "00204d11949bffd7793d1ec6f84d400843ae8768760864eb259315b8feb1357e7904"
-                }
-              ]
-            },
-            "version": 0,
-            "xpub": {},
-            "proprietary": [],
-            "unknown": []
+          "unsigned_tx": {
+            "version": 1,
+            "lock_time": 0,
+            "input": [
+              {
+                "previous_output": "dc767a0a2c3633dcd0c59010b4768e06954c19acc7154d9b49d39535016282e1:0",
+                "script_sig": "",
+                "sequence": 4294967295,
+                "witness": []
+              }
+            ],
+            "output": [
+              {
+                "value": 11878,
+                "script_pubkey": "00204d11949bffd7793d1ec6f84d400843ae8768760864eb259315b8feb1357e7904"
+              }
+            ]
           },
           "inputs": [
             {

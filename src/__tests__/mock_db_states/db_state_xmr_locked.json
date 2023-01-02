@@ -23,29 +23,23 @@
         "redeem_address": "tb1qw0dqyy65y7xwafjepy0p22mhjpk9emv9redzvt",
         "tx_lock": {
           "inner": {
-            "global": {
-              "unsigned_tx": {
-                "version": 1,
-                "lock_time": 0,
-                "input": [
-                  {
-                    "previous_output": "674d7ae6c93dbe71ed58f14438bf42a8352e3978446aa952610563bbf73106d4:0",
-                    "script_sig": "",
-                    "sequence": 4294967295,
-                    "witness": []
-                  }
-                ],
-                "output": [
-                  {
-                    "value": 11878,
-                    "script_pubkey": "002000b1d732ed2c5e31eedba86463b6294b5ac662ad5ba8f0e0dbe03ed49daa4ff0"
-                  }
-                ]
-              },
-              "version": 0,
-              "xpub": {},
-              "proprietary": [],
-              "unknown": []
+            "unsigned_tx": {
+              "version": 1,
+              "lock_time": 0,
+              "input": [
+                {
+                  "previous_output": "674d7ae6c93dbe71ed58f14438bf42a8352e3978446aa952610563bbf73106d4:0",
+                  "script_sig": "",
+                  "sequence": 4294967295,
+                  "witness": []
+                }
+              ],
+              "output": [
+                {
+                  "value": 11878,
+                  "script_pubkey": "002000b1d732ed2c5e31eedba86463b6294b5ac662ad5ba8f0e0dbe03ed49daa4ff0"
+                }
+              ]
             },
             "inputs": [
               {

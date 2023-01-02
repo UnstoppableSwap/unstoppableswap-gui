@@ -24,35 +24,29 @@
         "redeem_address": "tb1q6yff3npkpnazflfytunuejqucuczce82qs3930",
         "tx_lock": {
           "inner": {
-            "global": {
-              "unsigned_tx": {
-                "version": 1,
-                "lock_time": 0,
-                "input": [
-                  {
-                    "previous_output": "786fa8a202225810f093715eed4f008028be806f813cb2ec4300a1a28ca3c07c:0",
-                    "script_sig": "",
-                    "sequence": 4294967295,
-                    "witness": []
-                  },
-                  {
-                    "previous_output": "088a96e1154028678cfe5ecec177bc86d4415a02163313e94dc17f2348f8c893:1",
-                    "script_sig": "",
-                    "sequence": 4294967295,
-                    "witness": []
-                  }
-                ],
-                "output": [
-                  {
-                    "value": 14809,
-                    "script_pubkey": "0020d97318e8f42f5f377759c2c34b05795e90ccab68d107927ab73a2d4814a4731e"
-                  }
-                ]
-              },
-              "version": 0,
-              "xpub": {},
-              "proprietary": [],
-              "unknown": []
+            "unsigned_tx": {
+              "version": 1,
+              "lock_time": 0,
+              "input": [
+                {
+                  "previous_output": "786fa8a202225810f093715eed4f008028be806f813cb2ec4300a1a28ca3c07c:0",
+                  "script_sig": "",
+                  "sequence": 4294967295,
+                  "witness": []
+                },
+                {
+                  "previous_output": "088a96e1154028678cfe5ecec177bc86d4415a02163313e94dc17f2348f8c893:1",
+                  "script_sig": "",
+                  "sequence": 4294967295,
+                  "witness": []
+                }
+              ],
+              "output": [
+                {
+                  "value": 14809,
+                  "script_pubkey": "0020d97318e8f42f5f377759c2c34b05795e90ccab68d107927ab73a2d4814a4731e"
+                }
+              ]
             },
             "inputs": [
               {
