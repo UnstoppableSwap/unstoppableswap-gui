@@ -6,7 +6,7 @@ export default async function initAutoUpdater() {
     logger.info({info}, 'Update downloaded');
   });
   autoUpdater.on('update-available', (info: any) => {
-    logger.info({info}, 'Update available');
+    logger.info({ info }, 'Update available');
   });
   autoUpdater.on('update-not-available', (info: any) => {
     logger.info({info}, 'Update not available');
@@ -19,7 +19,8 @@ export default async function initAutoUpdater() {
   });
 
   autoUpdater.allowPrerelease = true;
+  autoUpdater.autoDownload = false;
+
   logger.info('Starting auto updater');
-  console.log(autoUpdater.getFeedURL());
-  await autoUpdater.checkForUpdatesAndNotify();
+  await autoUpdater.checkForUpdatesAndNotify({ title: 'Update available', body: '{appName} is not on the latest version. Version {version} is available. We recommend you update now by downloading the latest release from https://unstoppableswap.net/' });
 }
