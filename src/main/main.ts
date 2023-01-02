@@ -27,6 +27,7 @@ import watchLogs from './cli/log';
 import spawnListSellersCommand from './cli/commands/listSellersCommand';
 import { spawnTor, stopTor } from './tor';
 import spawnCancelRefund from './cli/commands/cancelRefundCommand';
+import initAutoUpdater from './updater';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -95,6 +96,8 @@ async function createWindow() {
     event.preventDefault();
     shell.openExternal(url);
   });
+
+  await initAutoUpdater();
 }
 
 fixAppDataPath();
