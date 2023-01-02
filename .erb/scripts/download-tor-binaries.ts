@@ -1,70 +1,46 @@
 import { join } from 'path';
-import {
-  TorBrowserRelease,
-  TorDownloader,
-  TorBrowserBranch,
-} from '@dreamed-atlas/tor-downloader';
-import { emptyDir, ensureDir } from 'fs-extra';
+import { emptyDir } from 'fs-extra';
+import { spawn } from 'child_process';
 
+const TOR_BINARIES_GIT_URL =
+  'https://github.com/UnstoppableSwap/static-tor-binaries.git';
 const torBuildDir = join(__dirname, '../../build/bin/tor');
 
-const binaries: {
-  platform: NodeJS.Platform;
-  arch: string;
-  dest: string;
-}[] = [
-  {
-    platform: 'linux',
-    arch: 'ia32',
-    dest: join(torBuildDir, 'linux'),
-  },
-  {
-    platform: 'darwin',
-    arch: 'x64',
-    dest: join(torBuildDir, 'mac'),
-  },
-  {
-    platform: 'win32',
-    arch: 'ia32',
-    dest: join(torBuildDir, 'win'),
-  },
-];
-
-Promise.all(
-  binaries.map(async (binary) => {
-    console.log(
-      `Downloading and extracting tor for platform ${binary.platform} to ${binary.dest}`
-    );
-
-    await ensureDir(binary.dest);
-    await emptyDir(binary.dest);
-
-    const downloader = new TorDownloader();
-
-    const release = await TorBrowserRelease.fromBranch(
-      TorBrowserBranch.STABLE,
-      binary.platform,
-      binary.arch
-    );
-
-    await downloader.retrieve(binary.dest, release);
-
-    console.log(
-      `Downloaded and extracted ${release.getFilename()} for platform ${
-        binary.platform
-      } to ${binary.dest}`
-    );
-  })
-)
-  .then(() => {
-    console.log(`Successfully downloaded ${binaries.length} tor binaries!`);
-    process.exit(0);
-    return 0;
-  })
-  .catch((error) => {
-    console.error(
-      `Failed to download swap binaries! Error: ${JSON.stringify(error)}`
-    );
-    console.error(error);
+// Delete tor binaries, use Node fs API instead of spawn
+// to avoid spawning a process that we need to kill.
+emptyDir(torBuildDir, (error) => {
+  if (error) {
+    console.error(`Failed to delete tor binaries! Error: ${error}`);
     process.exit(1);
+  }
+
+  const ls = spawn('git', ['clone', '-v', TOR_BINARIES_GIT_URL, torBuildDir]);
+
+  ls.stdout.on('data', (data: unknown) => {
+    console.log(`Tor Downloader: ${data}`);
   });
+
+  ls.stderr.on('data', (data: unknown) => {
+    console.log(`Tor Downloader: ${data}`);
+  });
+
+  ls.on('error', (e: unknown) => {
+    console.log(`Tor Downloader Error: ${e}`);
+  });
+
+  ls.on('close', (code: number) => {
+    console.log(`Tor Downloader process exited with code ${code}`);
+    if (code === 0) {
+      console.log('Tor binaries downloaded successfully!');
+    } else {
+      console.log('Tor binaries download failed!');
+      process.exit(1);
+    }
+  });
+
+  ls.on('spawn', () => {
+    console.log(
+      `Downloading precompiled tor binaries from ${TOR_BINARIES_GIT_URL}`
+    );
+  });
+});
