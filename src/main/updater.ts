@@ -22,6 +22,7 @@ export default async function initAutoUpdater() {
   autoUpdater.autoDownload = false;
 
   logger.info('Starting auto updater');
+
   await autoUpdater.checkForUpdatesAndNotify({
     title: 'Update available',
     body: '{appName} is not on the latest version. Version {version} is available. We recommend you update now by downloading the latest release from https://unstoppableswap.net/',
