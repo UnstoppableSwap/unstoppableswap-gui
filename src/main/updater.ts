@@ -1,6 +1,6 @@
 import { autoUpdater } from 'electron-updater';
-import logger from '../utils/logger';
 import { dialog } from 'electron';
+import logger from '../utils/logger';
 import { mainWindow } from './main';
 
 export default async function initAutoUpdater() {
