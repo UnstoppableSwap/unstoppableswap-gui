@@ -2,6 +2,7 @@ export interface ExtendedProviderStatus extends ProviderStatus {
   uptime?: number;
   age?: number;
   relevancy?: number;
+  version?: string;
 }
 
 export interface ProviderStatus extends ProviderQuote, Provider {}

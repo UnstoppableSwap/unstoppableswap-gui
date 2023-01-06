@@ -2,6 +2,9 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { sortProviderList } from '../../utils/sortUtils';
 import { ExtendedProviderStatus } from '../../models/apiModel';
 import { isTestnet } from '../config';
+import semver from 'semver';
+
+const MIN_ASB_VERSION = '0.12.0';
 
 export interface ProvidersSlice {
   providers: ExtendedProviderStatus[];
@@ -12,6 +15,17 @@ const initialState: ProvidersSlice = {
   providers: [],
   selectedProvider: null,
 };
+
+export function isProviderCompatible(
+  provider: ExtendedProviderStatus,
+): boolean {
+  if(provider.version) {
+    if(!semver.satisfies(provider.version, `>=${MIN_ASB_VERSION}`)) return false;
+  }
+  if (provider.testnet !== isTestnet()) return false;
+
+  return true;
+}
 
 export const providersSlice = createSlice({
   name: 'providers',
@@ -35,9 +49,7 @@ export const providersSlice = createSlice({
         });
       }
 
-      const providers = sortProviderList(action.payload).filter(
-        (provider) => provider.testnet === isTestnet()
-      );
+      const providers = sortProviderList(action.payload).filter(isProviderCompatible);
       slice.providers = providers;
 
       const newSelectedProvider = providers.find(

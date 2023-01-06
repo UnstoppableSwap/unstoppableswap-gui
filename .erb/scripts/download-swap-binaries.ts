@@ -7,15 +7,15 @@ const swapBinDir = path.join(__dirname, '../../build/bin/swap');
 const binaries = [
   {
     dest: path.join(swapBinDir, 'linux'),
-    url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/0.11.1/swap_0.11.1_Linux_x86_64.tar',
+    url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/0.12.0/swap_0.12.0_Linux_x86_64.tar',
   },
   {
     dest: path.join(swapBinDir, 'mac'),
-    url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/0.11.1/swap_0.11.1_Darwin_x86_64.tar',
+    url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/0.12.0/swap_0.12.0_Darwin_x86_64.tar',
   },
   {
     dest: path.join(swapBinDir, 'win'),
-    url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/0.11.1/swap_0.11.1_Windows_x86_64.zip',
+    url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/0.12.0/swap_0.12.0_Windows_x86_64.zip',
   },
 ];
 
