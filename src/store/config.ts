@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/prefer-default-export
 export const isTestnet = () =>
-  process.env.TESTNET?.toString().toLowerCase() !== 'false';
+  process.env.TESTNET?.toString().toLowerCase() === 'true';
 
 export const isDevelopment =
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
