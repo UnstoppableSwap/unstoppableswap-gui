@@ -475,9 +475,7 @@ export function isMergedCancelTimelockExpiredDbState(
 
 export interface MergedBtcCancelledDbState extends MergedDbState {
   type: DbStateType.BTC_CANCELLED;
-  state: ExecutionSetupDoneDbState &
-    BtcLockedDbState &
-    BtcCancelledDbState;
+  state: ExecutionSetupDoneDbState & BtcLockedDbState & BtcCancelledDbState;
 }
 
 export function isMergedBtcCancelledDbState(
@@ -493,9 +491,7 @@ export function isMergedBtcCancelledDbState(
 
 export interface MergedDoneBtcRefundedDbState extends MergedDbState {
   type: DbStateType.DONE_BTC_REFUNDED;
-  state: ExecutionSetupDoneDbState &
-    BtcLockedDbState &
-    DoneBtcRefundedDbState;
+  state: ExecutionSetupDoneDbState & BtcLockedDbState & DoneBtcRefundedDbState;
 }
 
 export function isMergedDoneBtcRefundedDbState(
@@ -511,9 +507,7 @@ export function isMergedDoneBtcRefundedDbState(
 
 export interface MergedDoneBtcPunishedDbState extends MergedDbState {
   type: DbStateType.DONE_BTC_PUNISHED;
-  state: ExecutionSetupDoneDbState &
-    BtcLockedDbState &
-    DoneBtcPunishedDbState;
+  state: ExecutionSetupDoneDbState & BtcLockedDbState & DoneBtcPunishedDbState;
 }
 
 export function isMergedDoneBtcPunishedDbState(
