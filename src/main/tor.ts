@@ -25,7 +25,13 @@ export async function spawnTor(): Promise<void> {
     }
 
     const torBinary = getTorBinary();
-    await makeFileExecutable(torBinary);
+
+    try {
+      await makeFileExecutable(torBinary);
+    } catch (err) {
+      logger.error({ err, torBinary }, 'Failed to make tor binary executable');
+    }
+
     torProc = spawnProc(`./${torBinary.fileName}`, {
       cwd: torBinary.dirPath,
       detached: false,

@@ -80,7 +80,12 @@ export async function spawnSubcommand(
               const spawnArgs = await getSpawnArgs(subCommand, options);
               const binary = getSwapBinary();
 
-              await makeFileExecutable(binary);
+              try {
+                await makeFileExecutable(binary);
+              } catch (err) {
+                logger.error({ err, binary }, 'Failed to make swap binary executable');
+              }
+
               cli = spawnProc(`./${binary.fileName}`, spawnArgs, {
                 cwd: binary.dirPath,
               });
