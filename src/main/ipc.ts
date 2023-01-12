@@ -1,8 +1,7 @@
 import { ipcMain } from 'electron';
 import { stopCli } from './cli/cli';
 import spawnBalanceCheck from './cli/commands/balanceCommand';
-import { resumeBuyXmr, spawnBuyXmr } from './cli/commands/buyXmrCommand';
-import spawnCancelRefund from './cli/commands/cancelRefundCommand';
+import { cancelRefundBuyXmr, resumeBuyXmr, spawnBuyXmr } from './cli/commands/buyXmrCommand';
 import spawnWithdrawBtc from './cli/commands/withdrawBtcCommand';
 import spawnListSellersCommand from './cli/commands/listSellersCommand';
 import { getCliLogFile } from './cli/dirs';
@@ -24,7 +23,7 @@ export default function registerIpcHandlers() {
   ipcMain.handle('resume-buy-xmr', (_event, swapId) => resumeBuyXmr(swapId));
 
   ipcMain.handle('spawn-cancel-refund', (_event, swapId) =>
-    spawnCancelRefund(swapId)
+    cancelRefundBuyXmr(swapId)
   );
 
   ipcMain.handle('spawn-withdraw-btc', (_event, address) =>

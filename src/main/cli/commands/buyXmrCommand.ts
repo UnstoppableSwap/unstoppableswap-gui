@@ -130,3 +130,46 @@ export async function resumeBuyXmr(swapId: string) {
     onProcExit(null, null);
   }
 }
+
+export async function cancelRefundBuyXmr(swapId: string) {
+  try {
+    const provider = store
+      .getState()
+      .history.find((h) => h.swapId === swapId)?.provider;
+
+    if (provider) {
+      store.dispatch(
+        swapInitiate({
+          provider,
+          spawnType: SwapSpawnType.CANCEL_REFUND,
+          swapId,
+        })
+      );
+
+      const stdOut = await getCliLogStdOut(swapId);
+      const cli = await spawnSubcommand(
+        'cancel-and-refund',
+        {
+          'swap-id': swapId,
+        },
+        onCliLog,
+        onProcExit,
+        onStdOut
+      );
+
+      cli.stderr.push(stdOut);
+    } else {
+      throw new Error('Could not find swap in database');
+    }
+  } catch (err) {
+    logger.error({ swapId, err }, 'Failed to spawn swap cancel-refund');
+
+    const error = `Failed to spawn swap cancel-refund SwapID: ${swapId} Error: ${err}`;
+    dialog.showMessageBoxSync({
+      title: 'Failed to cancel-and-refund command',
+      message: error,
+      type: 'error',
+    });
+    onProcExit(null, null);
+  }
+}
