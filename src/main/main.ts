@@ -42,11 +42,8 @@ async function installExtensions() {
       extensions.map((name) => installer[name]),
       forceDownload
     )
-    .catch((e: any) =>
-      logger.error(
-        { error: e.toString() },
-        'Failed to install browser extensions'
-      )
+    .catch((err: any) =>
+      logger.error({ err }, 'Failed to install browser extensions')
     );
 }
 
@@ -98,7 +95,7 @@ async function createWindow() {
     shell.openExternal(url);
   });
 
-  await initAutoUpdater();
+  await initAutoUpdater(mainWindow);
 }
 
 fixAppDataPath();

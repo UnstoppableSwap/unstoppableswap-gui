@@ -1,9 +1,8 @@
 import { autoUpdater } from 'electron-updater';
-import { dialog } from 'electron';
+import { BrowserWindow, dialog } from 'electron';
 import logger from '../utils/logger';
-import { mainWindow } from './main';
 
-export default async function initAutoUpdater() {
+export default async function initAutoUpdater(mainWindow: BrowserWindow) {
   autoUpdater.on('update-downloaded', (info: any) => {
     logger.info({ info }, 'Update downloaded');
   });
