@@ -83,7 +83,10 @@ export async function spawnSubcommand(
               try {
                 await makeFileExecutable(binary);
               } catch (err) {
-                logger.error({ err, binary }, 'Failed to make swap binary executable');
+                logger.error(
+                  { err, binary },
+                  'Failed to make swap binary executable'
+                );
               }
 
               cli = spawnProc(`./${binary.fileName}`, spawnArgs, {

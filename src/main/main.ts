@@ -29,7 +29,7 @@ import { spawnTor, stopTor } from './tor';
 import spawnCancelRefund from './cli/commands/cancelRefundCommand';
 import initAutoUpdater from './updater';
 
-export let mainWindow: BrowserWindow | null = null;
+let mainWindow: BrowserWindow | null = null;
 
 async function installExtensions() {
   const installer = require('electron-devtools-installer');
