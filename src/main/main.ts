@@ -30,7 +30,7 @@ import spawnCancelRefund from './cli/commands/cancelRefundCommand';
 import initAutoUpdater from './updater';
 import initStats from './stats';
 
-export let mainWindow: BrowserWindow | null = null;
+let mainWindow: BrowserWindow | null = null;
 
 async function installExtensions() {
   const installer = require('electron-devtools-installer');

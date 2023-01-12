@@ -4,7 +4,7 @@ import {
   FormControlLabel,
   makeStyles,
   Switch,
-  Typography
+  Typography,
 } from '@material-ui/core';
 import TorStatusBadge from './pages/TorStatusBadge';
 
@@ -16,8 +16,8 @@ const useStyles = makeStyles((theme) => ({
   rightSide: {
     display: 'flex',
     alignItems: 'center',
-    gridGap: theme.spacing(1)
-  }
+    gridGap: theme.spacing(1),
+  },
 }));
 
 export default function SwapDialogTitle({
