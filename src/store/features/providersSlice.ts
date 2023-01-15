@@ -47,6 +47,7 @@ export const providersSlice = createSlice({
           price: 700000,
           relevancy: 1,
           uptime: 1,
+          recommended: true,
         });
       }
 
