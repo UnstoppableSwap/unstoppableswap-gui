@@ -28,6 +28,7 @@ import spawnListSellersCommand from './cli/commands/listSellersCommand';
 import { spawnTor, stopTor } from './tor';
 import spawnCancelRefund from './cli/commands/cancelRefundCommand';
 import initAutoUpdater from './updater';
+import { session } from 'electron';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -55,8 +56,8 @@ async function createWindow() {
     title: `UnstoppableSwap ${app.getVersion()}`,
     show: false,
     width: 1024,
-    height: 728,
-    minHeight: 728,
+    height: 808,
+    minHeight: 808,
     minWidth: 1024,
     resizable: isDevelopment,
     icon: getAssetPath('icon.png'),
