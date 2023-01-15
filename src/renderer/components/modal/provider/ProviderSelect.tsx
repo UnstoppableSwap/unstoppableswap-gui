@@ -1,9 +1,9 @@
 import {
   makeStyles,
-  ButtonBase,
   Card,
   CardContent,
   Box,
+  IconButton,
 } from '@material-ui/core';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import { useState } from 'react';
@@ -49,14 +49,14 @@ export default function ProviderSelect() {
         open={selectDialogOpen}
         onClose={handleSelectDialogClose}
       />
-      <ButtonBase className={classes.inner} onClick={handleSelectDialogOpen}>
-        <Card variant="outlined" className={classes.providerCard}>
-          <CardContent className={classes.providerCardContent}>
-            <ProviderInfo provider={selectedProvider} />
+      <Card variant="outlined" className={classes.providerCard}>
+        <CardContent className={classes.providerCardContent}>
+          <ProviderInfo provider={selectedProvider} />
+          <IconButton onClick={handleSelectDialogOpen} size="small">
             <ArrowForwardIosIcon />
-          </CardContent>
-        </Card>
-      </ButtonBase>
+          </IconButton>
+        </CardContent>
+      </Card>
     </Box>
   );
 }
