@@ -1,4 +1,5 @@
-import { makeStyles, Box, Typography, Chip } from '@material-ui/core';
+import { makeStyles, Box, Typography, Chip, Tooltip } from '@material-ui/core';
+import { VerifiedUser } from '@material-ui/icons';
 import { satsToBtc, secondsToDays } from '../../../../utils/conversionUtils';
 import { ExtendedProviderStatus } from '../../../../models/apiModel';
 
@@ -13,6 +14,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     marginTop: theme.spacing(1),
     gap: theme.spacing(0.5),
+    flexWrap: 'wrap',
   },
 }));
 
@@ -44,7 +46,9 @@ export default function ProviderInfo({
       <Box className={classes.chipsOuter}>
         <Chip label={provider.testnet ? 'Testnet' : 'Mainnet'} />
         {provider.uptime && (
-          <Chip label={`${Math.round(provider.uptime * 100)} % uptime`} />
+          <Tooltip title="A high uptime indicates reliability. Providers with low uptime may be unreliable and cause swaps to take longer to complete or fail entirely.">
+            <Chip label={`${Math.round(provider.uptime * 100)} % uptime`} />
+          </Tooltip>
         )}
         {provider.age ? (
           <Chip
@@ -54,6 +58,11 @@ export default function ProviderInfo({
           />
         ) : (
           <Chip label="Discovered via rendezvous point" />
+        )}
+        {provider.recommended === true && (
+          <Tooltip title="This provider has shown to be exceptionally reliable">
+            <Chip label="Recommended" icon={<VerifiedUser />} color="primary" />
+          </Tooltip>
         )}
       </Box>
     </Box>
