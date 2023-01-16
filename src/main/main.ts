@@ -69,7 +69,9 @@ async function createWindow() {
     autoHideMenuBar: true,
   });
 
-  mainWindow.loadURL(resolveHtmlPath('index.html'));
+  mainWindow.loadURL(resolveHtmlPath('index.html'), {
+    userAgent: `UnstoppableSwap GUI/${app.getVersion()}`,
+  });
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/main/docs/api/browser-window.md#using-ready-to-show-event
