@@ -31,7 +31,7 @@ export default function initSocket() {
         host: socket.io.opts.hostname,
         path: socket.io.opts.path,
       },
-      `Connected to UnstoppableSwap API`
+      `Connected to UnstoppableSwap Socket API`
     );
   });
 
@@ -41,7 +41,7 @@ export default function initSocket() {
         host: socket.io.opts.hostname,
         path: socket.io.opts.path,
       },
-      `Disconnected from UnstoppableSwap API`
+      `Disconnected from UnstoppableSwap Socket API`
     );
   });
 
@@ -52,7 +52,7 @@ export default function initSocket() {
         path: socket.io.opts.path,
         err,
       },
-      `Failed to connect to UnstoppableSwap API`
+      `Failed to connect to UnstoppableSwap Socket API`
     );
   });
 
