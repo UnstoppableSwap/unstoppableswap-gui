@@ -55,8 +55,8 @@ async function createWindow() {
     title: `UnstoppableSwap ${app.getVersion()}`,
     show: false,
     width: 1024,
-    height: 728,
-    minHeight: 728,
+    height: 808,
+    minHeight: 808,
     minWidth: 1024,
     resizable: isDevelopment,
     icon: getAssetPath('icon.png'),
@@ -68,7 +68,9 @@ async function createWindow() {
     autoHideMenuBar: true,
   });
 
-  mainWindow.loadURL(resolveHtmlPath('index.html'));
+  mainWindow.loadURL(resolveHtmlPath('index.html'), {
+    userAgent: `UnstoppableSwap GUI/${app.getVersion()}`,
+  });
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/main/docs/api/browser-window.md#using-ready-to-show-event

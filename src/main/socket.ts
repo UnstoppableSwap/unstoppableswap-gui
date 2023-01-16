@@ -9,14 +9,38 @@ export default function initSocket() {
     path: '/api/socket.io',
   });
 
+  socket.on('connect', () => {
+    logger.info(
+      {
+        host: socket.io.opts.hostname,
+        path: socket.io.opts.path,
+      },
+      `Connected to UnstoppableSwap Socket API`
+    );
+  });
+
+  socket.on('disconnect', () => {
+    logger.info(
+      {
+        host: socket.io.opts.hostname,
+        path: socket.io.opts.path,
+      },
+      `Disconnected from UnstoppableSwap Socket API`
+    );
+  });
+
+  socket.on('connect_error', (err) => {
+    logger.error(
+      {
+        host: socket.io.opts.hostname,
+        path: socket.io.opts.path,
+        err,
+      },
+      `Failed to connect to UnstoppableSwap Socket API`
+    );
+  });
+
   socket.on('provider-refresh', (providerList: ExtendedProviderStatus[]) => {
     store.dispatch(setProviders(providerList));
   });
-  logger.info(
-    {
-      host: socket.io.opts.hostname,
-      path: socket.io.opts.path,
-    },
-    `Connected to UnstoppableSwap API`
-  );
 }
