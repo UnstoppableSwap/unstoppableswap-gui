@@ -28,6 +28,7 @@ import spawnListSellersCommand from './cli/commands/listSellersCommand';
 import { spawnTor, stopTor } from './tor';
 import spawnCancelRefund from './cli/commands/cancelRefundCommand';
 import initAutoUpdater from './updater';
+import initStats from './stats';
 
 export let mainWindow: BrowserWindow | null = null;
 
@@ -133,6 +134,7 @@ if (gotTheLock) {
       spawnBalanceCheck();
       watchElectrumTransactions();
       watchLogs();
+      initStats();
       return 0;
     })
     .catch((e) =>

@@ -2,6 +2,7 @@ import { merge } from 'lodash';
 import sqlite3 from 'sqlite3';
 import { Database, open } from 'sqlite';
 import chokidar from 'chokidar';
+import { Multiaddr } from 'multiaddr';
 import {
   DbState,
   MergedDbState,
@@ -89,9 +90,14 @@ async function getProviderForSwap(
     [swapId]
   )) as ResponseFormat;
 
+  // Remove peerId from address
+  const addressWithoutPeerId = new Multiaddr(response.address)
+    .decapsulateCode(Multiaddr.protocols.names.p2p.code)
+    .toString();
+
   return {
     peerId: response.peer_id,
-    multiAddr: response.address,
+    multiAddr: addressWithoutPeerId,
     testnet: isTestnet(),
   };
 }
