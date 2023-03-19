@@ -89,7 +89,7 @@ export default function HistoryRowExpanded({
             <TableRow>
               <TableCell>Provider Address</TableCell>
               <TableCell>
-                <Box>{provider.multiAddr}</Box>
+                <Box>{provider.multiAddr}/p2p/{provider.peerId}</Box>
               </TableCell>
             </TableRow>
             {txLock && (
