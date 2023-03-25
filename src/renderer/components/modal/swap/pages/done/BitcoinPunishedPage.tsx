@@ -1,4 +1,5 @@
 import { Box, DialogContentText } from '@material-ui/core';
+import FeedbackInfoBox from '../../../../pages/help/FeedbackInfoBox';
 
 export default function BitcoinPunishedPage() {
   return (
@@ -8,6 +9,7 @@ export default function BitcoinPunishedPage() {
         not refunding in time. It&#39;s impossible to recover the Bitcoin or the
         Monero. The swap is completed and you may exit the application now.
       </DialogContentText>
+      <FeedbackInfoBox />
     </Box>
   );
 }

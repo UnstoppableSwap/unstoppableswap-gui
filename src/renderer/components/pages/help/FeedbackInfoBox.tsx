@@ -11,7 +11,8 @@ export default function FeedbackInfoBox() {
         <Typography variant="subtitle2">
           The main goal of this project is to make Atomic Swaps easier to use,
           and for that we need genuine users&apos; input. Please leave some
-          feedback, it&apos;s very helpful.
+          feedback, it takes just two minutes. I&apos;ll read each and every
+          survey response and take your feedback into consideration.
         </Typography>
       }
       additionalContent={

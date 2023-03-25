@@ -2,6 +2,7 @@ import { Box, DialogContentText } from '@material-ui/core';
 import { SwapStateBtcRefunded } from 'models/storeModel';
 import BitcoinTransactionInfoBox from '../../BitcoinTransactionInfoBox';
 import { useActiveDbState } from '../../../../../../store/hooks';
+import FeedbackInfoBox from '../../../../pages/help/FeedbackInfoBox';
 
 export default function BitcoinRefundedPage({
   state,
@@ -23,13 +24,17 @@ export default function BitcoinRefundedPage({
         application now.
       </DialogContentText>
       {state && (
-        <BitcoinTransactionInfoBox
-          title="Bitcoin Refund Transaction"
-          txId={state.bobBtcRefundTxId}
-          loading={false}
-          additionalContent={additionalContent}
-        />
+        <>
+          <BitcoinTransactionInfoBox
+            title="Bitcoin Refund Transaction"
+            txId={state.bobBtcRefundTxId}
+            loading={false}
+            additionalContent={additionalContent}
+          />
+          <br />
+        </>
       )}
+      <FeedbackInfoBox />
     </Box>
   );
 }
