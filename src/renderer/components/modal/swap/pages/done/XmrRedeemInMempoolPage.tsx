@@ -3,6 +3,7 @@ import { SwapStateXmrRedeemInMempool } from '../../../../../../models/storeModel
 import { pionerosToXmr } from '../../../../../../utils/conversionUtils';
 import { useActiveDbState } from '../../../../../../store/hooks';
 import MoneroTransactionInfoBox from '../../MoneroTransactionInfoBox';
+import FeedbackInfoBox from '../../../../pages/help/FeedbackInfoBox';
 
 type XmrRedeemInMempoolPageProps = {
   state: SwapStateXmrRedeemInMempool | null;
@@ -25,13 +26,17 @@ export default function XmrRedeemInMempoolPage({
         specified. The swap is completed and you may exit the application now.
       </DialogContentText>
       {state && (
-        <MoneroTransactionInfoBox
-          title="Monero Redeem Transaction"
-          txId={state.bobXmrRedeemTxId}
-          additionalContent={additionalContent}
-          loading={false}
-        />
+        <>
+          <MoneroTransactionInfoBox
+            title="Monero Redeem Transaction"
+            txId={state.bobXmrRedeemTxId}
+            additionalContent={additionalContent}
+            loading={false}
+          />
+          <br />
+        </>
       )}
+      <FeedbackInfoBox />
     </Box>
   );
 }
