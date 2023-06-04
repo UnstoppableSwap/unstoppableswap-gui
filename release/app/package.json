@@ -1,6 +1,6 @@
 {
   "name": "unstoppableswap-gui",
-  "version": "0.4.8",
+  "version": "0.4.9",
   "description": "Graphical User Interface for XMR<>BTC Atomic Swaps",
   "main": "./dist/main/main.js",
   "scripts": {
@@ -10,7 +10,8 @@
   },
   "author": {
     "name": "binarybaron",
-    "url": "https://unstoppableswap.net"
+    "url": "https://unstoppableswap.net",
+    "email": "binarybaron@protonmail.com"
   },
   "dependencies": {
     "sqlite3": "5.0.2",
