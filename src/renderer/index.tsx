@@ -15,7 +15,11 @@ render(
 
 // Fetching via HTTP is often faster than socket.io
 async function fetchProvidersViaHttp() {
-  const response = await fetch('https://api.unstoppableswap.net/api/list');
+  const response = await fetch(
+    process.env.OVERWRITE_API_ADDRESS
+      ? `${process.env.OVERWRITE_API_ADDRESS}/api/list`
+      : 'https://api.unstoppableswap.net/api/list'
+  );
   const providerList = (await response.json()) as ExtendedProviderStatus[];
   store.dispatch(setProviders(providerList));
 
