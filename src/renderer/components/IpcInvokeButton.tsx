@@ -2,18 +2,23 @@ import {
   Button,
   ButtonProps,
   CircularProgress,
-  Snackbar,
+  IconButton,
 } from '@material-ui/core';
-import { Alert } from '@material-ui/lab';
 import { ipcRenderer } from 'electron';
 import { useEffect, useState } from 'react';
+import { useSnackbar } from 'notistack';
 
 interface IpcInvokeButtonProps {
   ipcArgs: unknown[];
   ipcChannel: string;
   // eslint-disable-next-line react/require-default-props
   onSuccess?: () => void;
+  isLoadingOverride?: boolean;
+  isIconButton?: boolean;
+  loadIcon?: React.ReactNode;
 }
+
+const DELAY_BEFORE_SHOWING_LOADING_MS = 1000;
 
 export default function IpcInvokeButton({
   ipcChannel,
@@ -21,22 +26,24 @@ export default function IpcInvokeButton({
   onSuccess,
   onClick,
   endIcon,
+  loadIcon,
+  isLoadingOverride,
+  isIconButton,
   ...rest
 }: IpcInvokeButtonProps & ButtonProps) {
+  const { enqueueSnackbar } = useSnackbar();
+
   const [isPending, setIsPending] = useState(false);
   const [hasMinLoadingTimePassed, setHasMinLoadingTimePassed] = useState(false);
-  const [err, setErr] = useState<any | null>(null);
 
-  const actualEndIcon =
-    isPending && hasMinLoadingTimePassed ? (
-      <CircularProgress size="1rem" />
-    ) : (
-      endIcon
-    );
+  const isLoading = (isPending && hasMinLoadingTimePassed) || isLoadingOverride;
+  const actualEndIcon = isLoading
+    ? loadIcon || <CircularProgress size="1rem" />
+    : endIcon;
 
   useEffect(() => {
     setHasMinLoadingTimePassed(false);
-    setTimeout(() => setHasMinLoadingTimePassed(true), 300);
+    setTimeout(() => setHasMinLoadingTimePassed(true), DELAY_BEFORE_SHOWING_LOADING_MS);
   }, [isPending]);
 
   async function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
@@ -47,26 +54,31 @@ export default function IpcInvokeButton({
       try {
         await ipcRenderer.invoke(ipcChannel, ...ipcArgs);
         onSuccess?.();
-      } catch (e) {
-        setErr(e);
+      } catch (e: any) {
+        const message = `Failed to invoke ${ipcChannel}: ${e.message}`;
+        enqueueSnackbar(message, {
+          autoHideDuration: 60 * 1000,
+          variant: 'error',
+        });
       } finally {
         setIsPending(false);
       }
     }
   }
 
+  if (isIconButton) {
+    return (
+      <IconButton onClick={handleClick} disabled={isLoading} {...(rest as any)}>
+        {actualEndIcon}
+      </IconButton>
+    );
+  }
   return (
-    <>
-      <Button onClick={handleClick} endIcon={actualEndIcon} {...rest} />
-      <Snackbar
-        open={!!err}
-        autoHideDuration={6000}
-        onClose={() => setErr(null)}
-      >
-        <Alert onClose={() => setErr(null)} severity="error">
-          Failed to invoke {ipcChannel}: {err?.toString()}
-        </Alert>
-      </Snackbar>
-    </>
+    <Button
+      onClick={handleClick}
+      disabled={isLoading}
+      endIcon={actualEndIcon}
+      {...rest}
+    />
   );
 }
