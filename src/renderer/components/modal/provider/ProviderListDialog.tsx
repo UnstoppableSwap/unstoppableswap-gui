@@ -33,7 +33,7 @@ type ProviderSelectDialogProps = {
   onClose: () => void;
 };
 
-function ProviderSubmitDialogOpenButton() {
+export function ProviderSubmitDialogOpenButton() {
   const [open, setOpen] = useState(false);
 
   return (
@@ -53,12 +53,12 @@ function ProviderSubmitDialogOpenButton() {
           <AddIcon />
         </Avatar>
       </ListItemAvatar>
-      <ListItemText primary="Submit a swap provider" />
+      <ListItemText primary="Add a new provider to public registry" />
     </ListItem>
   );
 }
 
-function ListSellersDialogOpenButton() {
+export function ListSellersDialogOpenButton() {
   const [open, setOpen] = useState(false);
   const running = useAppSelector((state) => state.listSellers.processRunning);
 
@@ -78,7 +78,7 @@ function ListSellersDialogOpenButton() {
       <ListItemAvatar>
         <Avatar>{running ? <CircularProgress /> : <SearchIcon />}</Avatar>
       </ListItemAvatar>
-      <ListItemText primary="Discover providers using rendezvous point" />
+      <ListItemText primary="Discover providers by connecting to a rendezvous point" />
     </ListItem>
   );
 }
@@ -88,9 +88,18 @@ export default function ProviderListDialog({
   onClose,
 }: ProviderSelectDialogProps) {
   const classes = useStyles();
-  const providers = useAppSelector((state) =>
-    state.providers.providers.concat(state.listSellers.sellers)
-  );
+  const providers = useAppSelector((state) => {
+    const registryProviders = state.providers.providers || [];
+    const listSellersProviders = state.listSellers.sellers || [];
+    const listSellersProvidersWithoutDuplicates = listSellersProviders.filter(
+      (listSellersProvider) =>
+        !registryProviders.find(
+          (registryProvider) =>
+            registryProvider.peerId === listSellersProvider.peerId
+        )
+    );
+    return [...registryProviders, ...listSellersProvidersWithoutDuplicates];
+  });
   const dispatch = useAppDispatch();
 
   function handleProviderChange(provider: ExtendedProviderStatus) {
@@ -113,8 +122,8 @@ export default function ProviderListDialog({
               <ProviderInfo provider={provider} key={provider.peerId} />
             </ListItem>
           ))}
-          <ProviderSubmitDialogOpenButton />
           <ListSellersDialogOpenButton />
+          <ProviderSubmitDialogOpenButton />
         </List>
       </DialogContent>
 
