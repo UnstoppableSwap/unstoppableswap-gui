@@ -1,9 +1,10 @@
 import { io, Socket } from 'socket.io-client';
 import { app } from 'electron';
-import { store } from '../store/store';
-import { setProviders } from '../store/features/providersSlice';
 import { ExtendedProviderStatus, Provider } from '../models/apiModel';
 import logger from '../utils/logger';
+import { sendSnackbarAlertToRenderer } from './main';
+import { store } from '../store/store';
+import { setProviders } from '../store/features/providersSlice';
 
 interface ServerToClientEvents {
   'provider-refresh': (list: Provider[]) => void;
@@ -29,6 +30,8 @@ let globalSocket: Socket<ServerToClientEvents, ClientToServerEvents> | null =
   null;
 
 export default function initSocket() {
+  let connectionErrorsDisplayedToUser: string[] = [];
+
   const socket = io(
     process.env.OVERWRITE_API_ADDRESS || 'https://api.unstoppableswap.net',
     {
@@ -47,6 +50,15 @@ export default function initSocket() {
         path: socket.io.opts.path,
       },
       `Connected to UnstoppableSwap Socket API`
+    );
+
+    connectionErrorsDisplayedToUser = [];
+
+    sendSnackbarAlertToRenderer(
+      "Connected to public registry",
+      'info',
+      2000,
+      null,
     );
   });
 
@@ -69,6 +81,18 @@ export default function initSocket() {
       },
       `Failed to connect to UnstoppableSwap Socket API`
     );
+
+    const errMessage = err.message;
+    if(!connectionErrorsDisplayedToUser.includes(errMessage)) {
+      sendSnackbarAlertToRenderer(
+        `Failed to connect to public registry (${errMessage})`,
+        'error',
+        10000,
+        `${err.message}`
+      );
+
+      connectionErrorsDisplayedToUser.push(errMessage);
+    }
   });
 
   socket.on('provider-refresh', (providerList: ExtendedProviderStatus[]) => {

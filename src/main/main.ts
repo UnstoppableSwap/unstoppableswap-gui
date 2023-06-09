@@ -158,6 +158,25 @@ if (isDevelopment) {
   );
 }
 
+export function sendSnackbarAlertToRenderer(message: string, variant: string, autoHideDuration: number | null, key: string | null) {
+  function send() {
+    logger.debug({message, variant, autoHideDuration, key}, 'Attempting to send snackbar alert to renderer');
+    if(mainWindow) {
+      if(mainWindow.webContents.isDestroyed() || mainWindow.webContents.isLoading()) {
+        logger.debug('Main window is loading, waiting for it to finish before sending snackbar alert');
+        mainWindow.webContents.once('did-finish-load', () => setTimeout(send, 5000));
+      }else {
+        logger.debug({message, variant, autoHideDuration, key}, 'Sending snackbar alert to renderer');
+        mainWindow?.webContents.send('display-snackbar-alert', message, variant, autoHideDuration, key);
+      }
+    }else {
+      setTimeout(send, 1000);
+    }
+  }
+
+  send();
+}
+
 ipcMain.handle('stop-cli', stopCli);
 
 ipcMain.handle('spawn-balance-check', spawnBalanceCheck);

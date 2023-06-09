@@ -7,6 +7,7 @@ import HistoryPage from './pages/history/HistoryPage';
 import SwapPage from './pages/swap/SwapPage';
 import WalletPage from './pages/wallet/WalletPage';
 import HelpPage from './pages/help/HelpPage';
+import GlobalSnackbarProvider from './snackbar/GlobalSnackbarProvider';
 
 const useStyles = makeStyles((theme) => ({
   innerContent: {
@@ -46,11 +47,13 @@ function InnerContent() {
 export default function App() {
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Router>
-        <Navigation />
-        <InnerContent />
-      </Router>
+      <GlobalSnackbarProvider>
+        <CssBaseline />
+        <Router>
+          <Navigation />
+          <InnerContent />
+        </Router>
+      </GlobalSnackbarProvider>
     </ThemeProvider>
   );
 }

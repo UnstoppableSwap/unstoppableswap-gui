@@ -5,7 +5,8 @@ import { chmod, stat } from 'fs/promises';
 import { getPlatform, isTestnet } from '../../store/config';
 import { Binary } from '../../models/downloaderModel';
 
-// Be consistent with the way the cli generates the data-dir on linux
+// Be consistent with the way the cli generates the
+// data-dir on linux
 // See https://docs.rs/directories-next/2.0.0/directories_next/struct.ProjectDirs.html#method.data_dir
 export function fixAppDataPath() {
   if (getPlatform() === 'linux') {
