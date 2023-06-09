@@ -5,10 +5,8 @@ import {
   DialogContent,
   DialogContentText,
   TextField,
-  FormControlLabel,
   DialogActions,
   Button,
-  Switch,
 } from '@material-ui/core';
 import { Multiaddr } from 'multiaddr';
 
@@ -23,7 +21,6 @@ export default function ProviderSubmitDialog({
 }: ProviderSubmitDialogProps) {
   const [multiAddr, setMultiAddr] = useState('');
   const [peerId, setPeerId] = useState('');
-  const [testnet, setTestnet] = useState(true);
 
   async function handleProviderSubmit() {
     if (multiAddr && peerId) {
@@ -35,7 +32,6 @@ export default function ProviderSubmitDialog({
         body: JSON.stringify({
           multiAddr,
           peerId,
-          testnet,
         }),
       });
       setMultiAddr('');
@@ -52,12 +48,6 @@ export default function ProviderSubmitDialog({
     setPeerId(event.target.value);
   }
 
-  const handleTestnetCheckboxChange = (
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
-    setTestnet(event.target.checked);
-  };
-
   function getMultiAddressError(): string | null {
     try {
       const multiAddress = new Multiaddr(multiAddr);
@@ -65,7 +55,7 @@ export default function ProviderSubmitDialog({
         return 'The multi address should not contain the peer id (/p2p/)';
       }
       if (multiAddress.protoNames().find((name) => name.includes('onion'))) {
-        return 'It is currently not possible to add an onion only ASB';
+        return 'It is currently not possible to add a provider that is only reachable via Tor';
       }
       return null;
     } catch (e) {
@@ -75,10 +65,10 @@ export default function ProviderSubmitDialog({
 
   return (
     <Dialog onClose={onClose} open={open}>
-      <DialogTitle>Submit a swap provider</DialogTitle>
+      <DialogTitle>Submit a provider to the public registry</DialogTitle>
       <DialogContent dividers>
         <DialogContentText>
-          If the ASB is valid, it will be displayed to all other users to trade
+          If the provider is valid and reachable, it will be displayed to all other users to trade
           with.
         </DialogContentText>
         <TextField
@@ -88,7 +78,7 @@ export default function ProviderSubmitDialog({
           fullWidth
           helperText={
             getMultiAddressError() ||
-            'Tells the swap client where your ASB can be reached'
+            'Tells the swap client where the provider can be reached'
           }
           value={multiAddr}
           onChange={handleMultiAddrChange}
@@ -99,20 +89,10 @@ export default function ProviderSubmitDialog({
           margin="dense"
           label="Peer ID"
           fullWidth
-          helperText="Identifies your ASB and allows for secure communication"
+          helperText="Identifies the provider and allows for secure communication"
           value={peerId}
           onChange={handlePeerIdChange}
           placeholder="12D3KooWCdMKjesXMJz1SiZ7HgotrxuqhQJbP5sgBm2BwP1cqThi"
-        />
-        <FormControlLabel
-          control={
-            <Switch
-              color="primary"
-              checked={testnet}
-              onChange={handleTestnetCheckboxChange}
-            />
-          }
-          label="Testnet"
         />
       </DialogContent>
       <DialogActions>
