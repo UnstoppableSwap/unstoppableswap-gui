@@ -1,9 +1,16 @@
-import { SnackbarProvider, useSnackbar } from 'notistack';
-import { IconButton } from '@material-ui/core';
+import { MaterialDesignContent, SnackbarProvider, useSnackbar } from 'notistack';
+import { IconButton, styled } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
 import { ReactNode } from 'react';
 import IpcSnackbar from './IpcSnackbar';
 import ListSellersSnackbar from './ListSellersSnackbar';
+
+const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
+  '&.notistack-MuiContent': {
+    maxWidth: '50vw'
+  },
+}));
+
 
 export default function GlobalSnackbarManager({
   children,
@@ -20,6 +27,13 @@ export default function GlobalSnackbarManager({
             <Close />
           </IconButton>
         );
+      }}
+      Components={{
+        success: StyledMaterialDesignContent,
+        error: StyledMaterialDesignContent,
+        default: StyledMaterialDesignContent,
+        info: StyledMaterialDesignContent,
+        warning: StyledMaterialDesignContent,
       }}
     >
       <ListSellersSnackbar />
