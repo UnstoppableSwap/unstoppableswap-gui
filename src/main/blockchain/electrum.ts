@@ -13,6 +13,9 @@ import {
 import { isSwapResumable } from '../../models/databaseModel';
 import { transactionsStatusChanged } from '../../store/features/electrumSlice';
 import { ELECTRUM_PROBE_TRANSACTIONS, ELECTRUM_SERVERS } from './electrumData';
+import { sendSnackbarAlertToRenderer } from '../main';
+
+const REPROBE_DELAY_MS = 60 * 1000;
 
 // Verify if the server properly supports https://electrumx.readthedocs.io/en/latest/protocol-methods.html#blockchain-transaction-get with verbose=true
 async function probeServer(electrum: ElectrumClient, testnet: boolean) {
@@ -62,7 +65,8 @@ async function findAndConnectToElectrumServer(): Promise<ElectrumClient> {
         '1.4',
         host,
         port,
-        transport
+        transport,
+
       );
       await electrum.connect();
 
@@ -148,12 +152,23 @@ export default async function watchElectrumTransactions() {
   try {
     const electrum = await findAndConnectToElectrumServer();
 
+    electrum.on('disconnected', () => {
+      logger.error({host: electrum.connection.host}, 'Electrum server disconnected');
+      electrum.disconnect(true);
+      watchElectrumTransactions();
+    });
+
     const update = () => updateTransactions(electrum);
 
     await electrum.subscribe(update, 'blockchain.headers.subscribe');
+
     await update();
     setInterval(update, 2 * 60 * 1000); // Fetch every 2minutes regardless
+
+    sendSnackbarAlertToRenderer('Connected to an Electrum server', 'info', 2000, null);
   } catch (err) {
-    logger.error({ err }, 'Failed to watch blockchain');
+    sendSnackbarAlertToRenderer(`Failed to connect to an Electrum Server. Displayed information about the status of your swaps might be limited or even outdated`, 'error', 10000, null);
+    logger.error({ err, REPROBE_DELAY_MS }, 'Failed to watch blockchain. Will reattempt later');
+    setTimeout(watchElectrumTransactions, REPROBE_DELAY_MS);
   }
 }
