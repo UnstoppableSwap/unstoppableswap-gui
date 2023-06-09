@@ -6,10 +6,23 @@ import {
   DialogContentText,
   TextField,
   DialogActions,
-  Button,
+  Button, Box, Chip, makeStyles, Theme
 } from '@material-ui/core';
 import { Multiaddr } from 'multiaddr';
 import IpcInvokeButton from '../../IpcInvokeButton';
+
+const PRESET_RENDEZVOUS_POINTS = [
+  "/dns4/discover.unstoppableswap.net/tcp/8888/p2p/12D3KooWA6cnqJpVnreBVnoro8midDL9Lpzmg8oJPoAGi7YYaamE",
+  "/dns4/eratosthen.es/tcp/7798/p2p/12D3KooWAh7EXXa2ZyegzLGdjvj1W4G3EXrTGrf6trraoT1MEobs",
+];
+
+const useStyles = makeStyles((theme: Theme) => ({
+  chipOuter: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: theme.spacing(1),
+  },
+}));
 
 type ListSellersDialogProps = {
   open: boolean;
@@ -20,6 +33,7 @@ export default function ListSellersDialog({
   open,
   onClose,
 }: ListSellersDialogProps) {
+  const classes = useStyles();
   const [rendezvousAddress, setRendezvousAddress] = useState('');
 
   function handleMultiAddrChange(event: ChangeEvent<HTMLInputElement>) {
@@ -43,8 +57,10 @@ export default function ListSellersDialog({
       <DialogTitle>Discover swap providers</DialogTitle>
       <DialogContent dividers>
         <DialogContentText>
-          You can manually connect to a rendezvous point to discover swap
-          providers
+          The rendezvous protocol provides a way to discover providers (trading
+          partners) without relying on one singular centralized institution. By
+          manually connecting to a rendezvous point run by a volunteer, you can
+          discover providers and then connect and swap with them.
         </DialogContentText>
         <TextField
           autoFocus
@@ -52,13 +68,20 @@ export default function ListSellersDialog({
           label="Rendezvous point"
           fullWidth
           helperText={
-            getMultiAddressError() || 'Multiaddr of the rendezvous point'
+            getMultiAddressError() || 'Multiaddress of the rendezvous point'
           }
           value={rendezvousAddress}
           onChange={handleMultiAddrChange}
           placeholder="/dns4/discover.unstoppableswap.net/tcp/8888/p2p/12D3KooWA6cnqJpVnreBVnoro8midDL9Lpzmg8oJPoAGi7YYaamE"
           error={!!getMultiAddressError()}
         />
+        <Box className={classes.chipOuter}>
+          {
+            PRESET_RENDEZVOUS_POINTS.map((rAddress) => (
+              <Chip clickable label={`${rAddress.substring(0, Math.min(rAddress.length - 1, 20))}...`} onClick={() => setRendezvousAddress(rAddress)} />
+            ))
+          }
+        </Box>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
