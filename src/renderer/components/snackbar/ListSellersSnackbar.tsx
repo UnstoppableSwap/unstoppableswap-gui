@@ -28,9 +28,9 @@ export default function ListSellersSnackbar() {
         return `No providers were discovered at the rendezvous point`;
       }
       if(amountOfSellers === 1) {
-        return `Discovered one new provider at the rendezvous point which was ${amountOfYetUnknownSellers > 0 ? 'not yet part of the public registry' : 'already part of the public registry'}`;
+        return `Discovered one provider at the rendezvous point which was ${amountOfYetUnknownSellers > 0 ? 'not yet part of the public registry' : 'already part of the public registry'}`;
       }
-      return `Discovered ${amountOfSellers} new providers at the rendezvous point. ${amountOfYetUnknownSellers} of which were not yet part of the public registry`;
+      return `Discovered ${amountOfSellers} providers at the rendezvous point. ${amountOfYetUnknownSellers} of which were not yet part of the public registry`;
     }
     return 'Connection to rendezvous point failed';
   });
