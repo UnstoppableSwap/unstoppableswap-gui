@@ -70,6 +70,8 @@ async function findAndConnectToElectrumServer(): Promise<ElectrumClient> {
       );
       await electrum.connect();
 
+      electrum.setMaxListeners(100);
+
       const supportsVerboseTransactionResponse = await probeServer(
         electrum,
         testnet
@@ -161,7 +163,7 @@ export default async function watchElectrumTransactions() {
     const update = () => updateTransactions(electrum);
 
     await electrum.subscribe(update, 'blockchain.headers.subscribe');
-
+    
     await update();
     setInterval(update, 2 * 60 * 1000); // Fetch every 2minutes regardless
 
