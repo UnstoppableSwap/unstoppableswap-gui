@@ -1,20 +1,22 @@
-import { CircularProgress, IconButton } from '@material-ui/core';
 import RefreshIcon from '@material-ui/icons/Refresh';
-import { ipcRenderer } from 'electron';
 import { useAppSelector } from '../../../../store/hooks';
+import IpcInvokeButton from '../../IpcInvokeButton';
+import { CircularProgress } from '@material-ui/core';
 
 export default function WalletRefreshButton() {
   const checkingBalance = useAppSelector(
     (state) => state.balance.processRunning
   );
 
-  async function handleRefresh() {
-    await ipcRenderer.invoke('spawn-balance-check');
-  }
-
   return (
-    <IconButton disabled={checkingBalance} onClick={handleRefresh} size="small">
-      {checkingBalance ? <CircularProgress size={24} /> : <RefreshIcon />}
-    </IconButton>
+    <IpcInvokeButton
+      loadIcon={<CircularProgress size={24} />}
+      size="small"
+      isIconButton
+      endIcon={<RefreshIcon />}
+      isLoadingOverride={checkingBalance}
+      ipcArgs={[]}
+      ipcChannel="spawn-balance-check"
+    />
   );
 }
