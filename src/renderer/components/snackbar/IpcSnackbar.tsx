@@ -6,10 +6,16 @@ export default function IpcSnackbar() {
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
-    function onIpcMessage(_: any, message: string, variant: any, autoHideDuration: number | null, key: string | null) {
+    function onIpcMessage(
+      _: any,
+      message: string,
+      variant: any,
+      autoHideDuration: number | null,
+      key: string | null
+    ) {
       enqueueSnackbar(message, {
-        variant: variant,
-        autoHideDuration: autoHideDuration,
+        variant,
+        autoHideDuration,
         key,
         preventDuplicate: true,
       });
@@ -19,8 +25,8 @@ export default function IpcSnackbar() {
 
     return () => {
       ipcRenderer.removeListener('display-snackbar-alert', onIpcMessage);
-    }
-  }, []);
+    };
+  }, [enqueueSnackbar]);
 
   return <></>;
 }

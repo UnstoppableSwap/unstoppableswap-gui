@@ -1,7 +1,7 @@
 import RefreshIcon from '@material-ui/icons/Refresh';
+import { CircularProgress } from '@material-ui/core';
 import { useAppSelector } from '../../../../store/hooks';
 import IpcInvokeButton from '../../IpcInvokeButton';
-import { CircularProgress } from '@material-ui/core';
 
 export default function WalletRefreshButton() {
   const checkingBalance = useAppSelector(
