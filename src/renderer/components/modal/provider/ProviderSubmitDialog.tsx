@@ -68,8 +68,8 @@ export default function ProviderSubmitDialog({
       <DialogTitle>Submit a provider to the public registry</DialogTitle>
       <DialogContent dividers>
         <DialogContentText>
-          If the provider is valid and reachable, it will be displayed to all other users to trade
-          with.
+          If the provider is valid and reachable, it will be displayed to all
+          other users to trade with.
         </DialogContentText>
         <TextField
           autoFocus

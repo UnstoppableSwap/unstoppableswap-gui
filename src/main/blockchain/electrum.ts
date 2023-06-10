@@ -65,8 +65,7 @@ async function findAndConnectToElectrumServer(): Promise<ElectrumClient> {
         '1.4',
         host,
         port,
-        transport,
-
+        transport
       );
       await electrum.connect();
 
@@ -155,7 +154,10 @@ export default async function watchElectrumTransactions() {
     const electrum = await findAndConnectToElectrumServer();
 
     electrum.on('disconnected', () => {
-      logger.error({host: electrum.connection.host}, 'Electrum server disconnected');
+      logger.error(
+        { host: electrum.connection.host },
+        'Electrum server disconnected'
+      );
       electrum.disconnect(true);
       watchElectrumTransactions();
     });
@@ -163,14 +165,27 @@ export default async function watchElectrumTransactions() {
     const update = () => updateTransactions(electrum);
 
     await electrum.subscribe(update, 'blockchain.headers.subscribe');
-    
+
     await update();
     setInterval(update, 2 * 60 * 1000); // Fetch every 2minutes regardless
 
-    sendSnackbarAlertToRenderer('Connected to an Electrum server', 'info', 2000, null);
+    sendSnackbarAlertToRenderer(
+      'Connected to an Electrum server',
+      'info',
+      2000,
+      null
+    );
   } catch (err) {
-    sendSnackbarAlertToRenderer(`Failed to connect to an Electrum Server. Displayed information about the status of your swaps might be limited or even outdated`, 'error', 10000, null);
-    logger.error({ err, REPROBE_DELAY_MS }, 'Failed to watch blockchain. Will reattempt later');
+    sendSnackbarAlertToRenderer(
+      `Failed to connect to an Electrum Server. Displayed information about the status of your swaps might be limited or even outdated`,
+      'error',
+      10000,
+      null
+    );
+    logger.error(
+      { err, REPROBE_DELAY_MS },
+      'Failed to watch blockchain. Will reattempt later'
+    );
     setTimeout(watchElectrumTransactions, REPROBE_DELAY_MS);
   }
 }

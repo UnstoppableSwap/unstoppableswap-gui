@@ -6,14 +6,18 @@ import {
   DialogContentText,
   TextField,
   DialogActions,
-  Button, Box, Chip, makeStyles, Theme
+  Button,
+  Box,
+  Chip,
+  makeStyles,
+  Theme,
 } from '@material-ui/core';
 import { Multiaddr } from 'multiaddr';
 import IpcInvokeButton from '../../IpcInvokeButton';
 
 const PRESET_RENDEZVOUS_POINTS = [
-  "/dns4/discover.unstoppableswap.net/tcp/8888/p2p/12D3KooWA6cnqJpVnreBVnoro8midDL9Lpzmg8oJPoAGi7YYaamE",
-  "/dns4/eratosthen.es/tcp/7798/p2p/12D3KooWAh7EXXa2ZyegzLGdjvj1W4G3EXrTGrf6trraoT1MEobs",
+  '/dns4/discover.unstoppableswap.net/tcp/8888/p2p/12D3KooWA6cnqJpVnreBVnoro8midDL9Lpzmg8oJPoAGi7YYaamE',
+  '/dns4/eratosthen.es/tcp/7798/p2p/12D3KooWAh7EXXa2ZyegzLGdjvj1W4G3EXrTGrf6trraoT1MEobs',
 ];
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -76,11 +80,16 @@ export default function ListSellersDialog({
           error={!!getMultiAddressError()}
         />
         <Box className={classes.chipOuter}>
-          {
-            PRESET_RENDEZVOUS_POINTS.map((rAddress) => (
-              <Chip clickable label={`${rAddress.substring(0, Math.min(rAddress.length - 1, 20))}...`} onClick={() => setRendezvousAddress(rAddress)} />
-            ))
-          }
+          {PRESET_RENDEZVOUS_POINTS.map((rAddress) => (
+            <Chip
+              clickable
+              label={`${rAddress.substring(
+                0,
+                Math.min(rAddress.length - 1, 20)
+              )}...`}
+              onClick={() => setRendezvousAddress(rAddress)}
+            />
+          ))}
         </Box>
       </DialogContent>
       <DialogActions>

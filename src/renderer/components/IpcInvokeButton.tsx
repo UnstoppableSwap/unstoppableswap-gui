@@ -43,7 +43,10 @@ export default function IpcInvokeButton({
 
   useEffect(() => {
     setHasMinLoadingTimePassed(false);
-    setTimeout(() => setHasMinLoadingTimePassed(true), DELAY_BEFORE_SHOWING_LOADING_MS);
+    setTimeout(
+      () => setHasMinLoadingTimePassed(true),
+      DELAY_BEFORE_SHOWING_LOADING_MS
+    );
   }, [isPending]);
 
   async function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
