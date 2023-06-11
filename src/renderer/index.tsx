@@ -3,8 +3,8 @@ import { Provider } from 'react-redux';
 import App from './components/App';
 import { store } from '../store/store';
 import { ExtendedProviderStatus } from '../models/apiModel';
-import { setProviders } from '../store/features/providersSlice';
 import logger from '../utils/logger';
+import { setRegistryProviders } from '../store/features/providersSlice';
 
 render(
   <Provider store={store}>
@@ -21,7 +21,7 @@ async function fetchProvidersViaHttp() {
       : 'https://api.unstoppableswap.net/api/list'
   );
   const providerList = (await response.json()) as ExtendedProviderStatus[];
-  store.dispatch(setProviders(providerList));
+  store.dispatch(setRegistryProviders(providerList));
 
   logger.info(
     { providerList },

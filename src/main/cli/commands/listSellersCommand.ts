@@ -7,7 +7,7 @@ import {
   listSellersAppendStdOut,
   listSellersInitiate,
   listSellersProcessExited,
-} from '../../../store/features/listSellersSlice';
+} from '../../../store/features/providersSlice';
 
 function onProcExit(code: number | null, signal: NodeJS.Signals | null) {
   store.dispatch(

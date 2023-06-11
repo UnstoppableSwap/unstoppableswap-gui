@@ -7,11 +7,16 @@ import { isTestnet } from '../../store/config';
 import { store } from '../../store/store';
 import logger from '../../utils/logger';
 import {
+  ElectrumServerAddress,
   isElectrumTransactionData,
   SwapBlockchainTx,
 } from '../../models/electrumModel';
 import { isSwapResumable } from '../../models/databaseModel';
-import { transactionsStatusChanged } from '../../store/features/electrumSlice';
+import {
+  connectedToElectrumServer,
+  disconnectedFromElectrumServer,
+  transactionsStatusChanged,
+} from '../../store/features/electrumSlice';
 import { ELECTRUM_PROBE_TRANSACTIONS, ELECTRUM_SERVERS } from './electrumData';
 import { sendSnackbarAlertToRenderer } from '../main';
 
@@ -53,7 +58,9 @@ async function probeServer(electrum: ElectrumClient, testnet: boolean) {
   return false;
 }
 
-async function findAndConnectToElectrumServer(): Promise<ElectrumClient> {
+async function findAndConnectToElectrumServer(): Promise<
+  [ElectrumClient, ElectrumServerAddress]
+> {
   const servers = ELECTRUM_SERVERS.filter(
     ([testnet]) => testnet === isTestnet()
   );
@@ -77,7 +84,7 @@ async function findAndConnectToElectrumServer(): Promise<ElectrumClient> {
       );
 
       if (supportsVerboseTransactionResponse) {
-        return electrum;
+        return [electrum, [testnet, host, port, transport]];
       }
 
       await electrum.disconnect();
@@ -151,7 +158,9 @@ async function updateTransactions(electrum: ElectrumClient) {
 
 export default async function watchElectrumTransactions() {
   try {
-    const electrum = await findAndConnectToElectrumServer();
+    const [electrum, electrumAddress] = await findAndConnectToElectrumServer();
+
+    store.dispatch(connectedToElectrumServer(electrumAddress));
 
     electrum.on('disconnected', () => {
       logger.error(
@@ -159,6 +168,7 @@ export default async function watchElectrumTransactions() {
         'Electrum server disconnected'
       );
       electrum.disconnect(true);
+      store.dispatch(disconnectedFromElectrumServer());
       watchElectrumTransactions();
     });
 

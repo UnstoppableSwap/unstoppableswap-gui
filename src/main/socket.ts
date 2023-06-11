@@ -4,7 +4,10 @@ import { ExtendedProviderStatus, Provider } from '../models/apiModel';
 import logger from '../utils/logger';
 import { sendSnackbarAlertToRenderer } from './main';
 import { store } from '../store/store';
-import { setProviders } from '../store/features/providersSlice';
+import {
+  increaseFailedRegistryReconnectAttemptsSinceLastSuccess,
+  setRegistryProviders,
+} from '../store/features/providersSlice';
 
 interface ServerToClientEvents {
   'provider-refresh': (list: Provider[]) => void;
@@ -55,10 +58,10 @@ export default function initSocket() {
     connectionErrorsDisplayedToUser = [];
 
     sendSnackbarAlertToRenderer(
-      "Connected to public registry",
+      'Connected to public registry',
       'info',
       2000,
-      null,
+      null
     );
   });
 
@@ -73,6 +76,8 @@ export default function initSocket() {
   });
 
   socket.on('connect_error', (err) => {
+    store.dispatch(increaseFailedRegistryReconnectAttemptsSinceLastSuccess());
+
     logger.error(
       {
         host: socket.io.opts.hostname,
@@ -83,7 +88,7 @@ export default function initSocket() {
     );
 
     const errMessage = err.message;
-    if(!connectionErrorsDisplayedToUser.includes(errMessage)) {
+    if (!connectionErrorsDisplayedToUser.includes(errMessage)) {
       sendSnackbarAlertToRenderer(
         `Failed to connect to public registry (${errMessage})`,
         'error',
@@ -96,7 +101,7 @@ export default function initSocket() {
   });
 
   socket.on('provider-refresh', (providerList: ExtendedProviderStatus[]) => {
-    store.dispatch(setProviders(providerList));
+    store.dispatch(setRegistryProviders(providerList));
   });
 }
 

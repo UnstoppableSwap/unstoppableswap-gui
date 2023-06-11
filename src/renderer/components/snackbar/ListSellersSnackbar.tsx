@@ -1,36 +1,30 @@
 import { useEffect } from 'react';
-import { useAppSelector } from '../../../store/hooks';
 import { useSnackbar } from 'notistack';
+import { useAppSelector } from '../../../store/hooks';
+import { isCliLogFetchedPeerStatus } from '../../../models/cliModel';
 
 export default function ListSellersSnackbar() {
   const { enqueueSnackbar } = useSnackbar();
 
   const message = useAppSelector<string | null>((state) => {
     if (
-      state.listSellers.processRunning ||
-      state.listSellers.exitCode === null
+      state.providers.rendezvous.processRunning ||
+      state.providers.rendezvous.exitCode === null
     ) {
       return null;
     }
-    if (state.listSellers.exitCode === 0) {
-      const amountOfSellers = state.listSellers.sellers.length;
-      const amountOfYetUnknownSellers = state.listSellers.sellers.filter(
-        (seller) => {
-          return (
-            (state.providers.providers || []).findIndex(
-              (p) =>
-                p.peerId === seller.peerId && p.multiAddr === seller.multiAddr
-            ) < 0
-          );
-        }
+    if (state.providers.rendezvous.exitCode === 0) {
+      const amountOfSellers = state.providers.rendezvous.logs.filter(
+        isCliLogFetchedPeerStatus
       ).length;
+
       if (amountOfSellers === 0) {
         return `No providers were discovered at the rendezvous point`;
       }
-      if(amountOfSellers === 1) {
-        return `Discovered one provider at the rendezvous point which was ${amountOfYetUnknownSellers > 0 ? 'not yet part of the public registry' : 'already part of the public registry'}`;
+      if (amountOfSellers === 1) {
+        return `Discovered one provider at the rendezvous point`;
       }
-      return `Discovered ${amountOfSellers} providers at the rendezvous point. ${amountOfYetUnknownSellers} of which were not yet part of the public registry`;
+      return `Discovered ${amountOfSellers} providers at the rendezvous point`;
     }
     return 'Connection to rendezvous point failed';
   });
@@ -39,10 +33,10 @@ export default function ListSellersSnackbar() {
     if (message) {
       enqueueSnackbar(message, {
         variant: message.includes('failed') ? 'error' : 'success',
-        autoHideDuration: 10000,
+        autoHideDuration: 5000,
       });
     }
-  }, [message]);
+  }, [message, enqueueSnackbar]);
 
   return <></>;
 }

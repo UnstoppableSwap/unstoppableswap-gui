@@ -17,10 +17,14 @@ import { useState } from 'react';
 import SearchIcon from '@material-ui/icons/Search';
 import ProviderInfo from './ProviderInfo';
 import { ExtendedProviderStatus } from '../../../../models/apiModel';
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
-import { setSelectedProvider } from '../../../../store/features/providersSlice';
+import {
+  useAllProviders,
+  useAppDispatch,
+  useAppSelector,
+} from '../../../../store/hooks';
 import ProviderSubmitDialog from './ProviderSubmitDialog';
 import ListSellersDialog from '../listSellers/ListSellersDialog';
+import { setSelectedProvider } from '../../../../store/features/providersSlice';
 
 const useStyles = makeStyles({
   dialogContent: {
@@ -60,7 +64,9 @@ export function ProviderSubmitDialogOpenButton() {
 
 export function ListSellersDialogOpenButton() {
   const [open, setOpen] = useState(false);
-  const running = useAppSelector((state) => state.listSellers.processRunning);
+  const running = useAppSelector(
+    (state) => state.providers.rendezvous.processRunning
+  );
 
   return (
     <ListItem
@@ -88,18 +94,7 @@ export default function ProviderListDialog({
   onClose,
 }: ProviderSelectDialogProps) {
   const classes = useStyles();
-  const providers = useAppSelector((state) => {
-    const registryProviders = state.providers.providers || [];
-    const listSellersProviders = state.listSellers.sellers || [];
-    const listSellersProvidersWithoutDuplicates = listSellersProviders.filter(
-      (listSellersProvider) =>
-        !registryProviders.find(
-          (registryProvider) =>
-            registryProvider.peerId === listSellersProvider.peerId
-        )
-    );
-    return [...registryProviders, ...listSellersProvidersWithoutDuplicates];
-  });
+  const providers = useAllProviders();
   const dispatch = useAppDispatch();
 
   function handleProviderChange(provider: ExtendedProviderStatus) {

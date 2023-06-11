@@ -1,5 +1,7 @@
 import { AnyAction } from '@reduxjs/toolkit';
-import reducer, { setProviders } from '../../store/features/providersSlice';
+import reducer, {
+  setRegistryProviders,
+} from '../../store/features/providersSlice';
 import { ExtendedProviderStatus } from '../../models/apiModel';
 
 const exampleTestnetProvider: ExtendedProviderStatus = {
@@ -27,7 +29,17 @@ const exampleMainnetProvider: ExtendedProviderStatus = {
 };
 
 const initialState = {
-  providers: [],
+  rendezvous: {
+    providers: [],
+    processRunning: false,
+    exitCode: null,
+    stdOut: '',
+    logs: [],
+  },
+  registry: {
+    providers: null,
+    failedReconnectAttemptsSinceLastSuccess: 0,
+  },
   selectedProvider: null,
 };
 
@@ -44,10 +56,12 @@ describe('testnet', () => {
     expect(
       reducer(
         initialState,
-        setProviders([exampleMainnetProvider, exampleTestnetProvider])
+        setRegistryProviders([exampleMainnetProvider, exampleTestnetProvider])
       )
-    ).toEqual({
-      providers: [exampleTestnetProvider],
+    ).toContainEqual({
+      registry: {
+        providers: [exampleTestnetProvider],
+      },
       selectedProvider: exampleTestnetProvider,
     });
   });
@@ -62,10 +76,12 @@ describe('mainnet', () => {
     expect(
       reducer(
         initialState,
-        setProviders([exampleMainnetProvider, exampleTestnetProvider])
+        setRegistryProviders([exampleMainnetProvider, exampleTestnetProvider])
       )
     ).toEqual({
-      providers: [exampleMainnetProvider],
+      registry: {
+        providers: [exampleMainnetProvider],
+      },
       selectedProvider: exampleMainnetProvider,
     });
   });

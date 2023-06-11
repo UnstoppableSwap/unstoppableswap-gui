@@ -12,7 +12,7 @@ export default function DebugPage() {
   const dbStateString = JSON.stringify(useActiveDbState(), null, '\t');
   const relevantTransactions = useAppSelector((s) =>
     JSON.stringify(
-      s.electrum.filter((tx) => tx.transaction.swapId === s.swap.swapId),
+      s.electrum.txs.filter((tx) => tx.transaction.swapId === s.swap.swapId),
       null,
       '\t'
     )
