@@ -1,38 +1,136 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import semver from 'semver';
-import { sortProviderList } from '../../utils/sortUtils';
-import { ExtendedProviderStatus } from '../../models/apiModel';
+import { Multiaddr } from 'multiaddr';
 import { isTestnet } from '../config';
-
-const MIN_ASB_VERSION = '0.12.0';
+import { CliLog, isCliLogFetchedPeerStatus } from '../../models/cliModel';
+import { extractAmountFromUnitString } from '../../utils/parseUtils';
+import { ExtendedProviderStatus, ProviderStatus } from '../../models/apiModel';
+import { btcToSats } from '../../utils/conversionUtils';
+import { sortProviderList } from '../../utils/sortUtils';
+import { isProviderCompatible } from '../../utils/multiAddrUtils';
 
 export interface ProvidersSlice {
-  providers: ExtendedProviderStatus[];
+  rendezvous: {
+    providers: (ExtendedProviderStatus | ProviderStatus)[];
+    exitCode: number | null;
+    processRunning: boolean;
+    stdOut: string;
+    logs: CliLog[];
+  };
+  registry: {
+    providers: ExtendedProviderStatus[] | null;
+    failedReconnectAttemptsSinceLastSuccess: number;
+  };
   selectedProvider: ExtendedProviderStatus | null;
 }
 
 const initialState: ProvidersSlice = {
-  providers: [],
+  rendezvous: {
+    providers: [],
+    processRunning: false,
+    exitCode: null,
+    stdOut: '',
+    logs: [],
+  },
+  registry: {
+    providers: null,
+    failedReconnectAttemptsSinceLastSuccess: 0,
+  },
   selectedProvider: null,
 };
 
-export function isProviderCompatible(
-  provider: ExtendedProviderStatus
-): boolean {
-  if (provider.version) {
-    if (!semver.satisfies(provider.version, `>=${MIN_ASB_VERSION}`))
-      return false;
-  }
-  if (provider.testnet !== isTestnet()) return false;
+function selectNewSelectedProvider(
+  slice: ProvidersSlice,
+  peerId?: string
+): ProviderStatus {
+  const selectedPeerId = peerId || slice.selectedProvider?.peerId;
 
-  return true;
+  return (
+    slice.registry.providers?.find((prov) => prov.peerId === selectedPeerId) ||
+    slice.rendezvous.providers.find((prov) => prov.peerId === selectedPeerId) ||
+    slice.registry.providers?.at(0) ||
+    slice.rendezvous.providers[0] ||
+    null
+  );
 }
 
 export const providersSlice = createSlice({
   name: 'providers',
   initialState,
   reducers: {
-    setProviders(slice, action: PayloadAction<ExtendedProviderStatus[]>) {
+    listSellersAppendStdOut(slice, action: PayloadAction<string>) {
+      slice.rendezvous.stdOut += action.payload;
+    },
+    listSellersAddLog(slice, action: PayloadAction<CliLog>) {
+      const log = action.payload;
+
+      if (isCliLogFetchedPeerStatus(log) && log.fields.status === 'Online') {
+        const price = extractAmountFromUnitString(log.fields.price);
+        const minSwapAmount = extractAmountFromUnitString(
+          log.fields.min_quantity
+        );
+        const maxSwapAmount = extractAmountFromUnitString(
+          log.fields.max_quantity
+        );
+
+        const multiAddrCombined = new Multiaddr(log.fields.address);
+        const multiAddr = multiAddrCombined.decapsulate('p2p').toString();
+        const peerId = multiAddrCombined.getPeerId();
+
+        if (price && minSwapAmount && maxSwapAmount && peerId) {
+          // We want to ignore that are already present in the public registry
+          if (
+            !slice.registry.providers?.some(
+              (prov) => prov.peerId === peerId && prov.multiAddr === multiAddr
+            )
+          ) {
+            const newProvider: ExtendedProviderStatus = {
+              multiAddr,
+              peerId,
+              price: btcToSats(price),
+              minSwapAmount: btcToSats(minSwapAmount),
+              maxSwapAmount: btcToSats(maxSwapAmount),
+              testnet: isTestnet(),
+            };
+            const indexOfExistingProvider =
+              slice.rendezvous.providers.findIndex(
+                (prov) => prov.peerId === peerId && prov.multiAddr === multiAddr
+              );
+
+            // Avoid duplicates, replace instead
+            if (indexOfExistingProvider !== -1) {
+              slice.rendezvous.providers[indexOfExistingProvider] = newProvider;
+            } else {
+              slice.rendezvous.providers.push(newProvider);
+            }
+          }
+        }
+      }
+
+      slice.rendezvous.logs.push(log);
+      slice.rendezvous.providers = sortProviderList(slice.rendezvous.providers);
+    },
+    listSellersInitiate(slice) {
+      slice.rendezvous.processRunning = true;
+      slice.rendezvous.stdOut = '';
+      slice.rendezvous.logs = [];
+      slice.rendezvous.exitCode = null;
+      slice.selectedProvider = selectNewSelectedProvider(slice);
+    },
+    listSellersProcessExited(
+      slice,
+      action: PayloadAction<{
+        exitCode: number | null;
+        exitSignal: NodeJS.Signals | null;
+      }>
+    ) {
+      slice.selectedProvider = selectNewSelectedProvider(slice);
+      slice.rendezvous.processRunning = false;
+      slice.rendezvous.exitCode = action.payload.exitCode;
+    },
+    setRegistryProviders(
+      slice,
+      action: PayloadAction<ExtendedProviderStatus[]>
+    ) {
       if (
         process.env.STUB_TESTNET_PROVIDER_MULTIADDR &&
         process.env.STUB_TESTNET_PROVIDER_PEER_ID
@@ -51,15 +149,13 @@ export const providersSlice = createSlice({
         });
       }
 
-      const providers = sortProviderList(action.payload).filter(
+      slice.registry.providers = sortProviderList(action.payload).filter(
         isProviderCompatible
       );
-      slice.providers = providers;
-
-      const newSelectedProvider = providers.find(
-        (prov) => prov.peerId === slice.selectedProvider?.peerId
-      );
-      slice.selectedProvider = newSelectedProvider || providers[0] || null;
+      slice.selectedProvider = selectNewSelectedProvider(slice);
+    },
+    increaseFailedRegistryReconnectAttemptsSinceLastSuccess(slice) {
+      slice.registry.failedReconnectAttemptsSinceLastSuccess++;
     },
     setSelectedProvider(
       slice,
@@ -67,13 +163,22 @@ export const providersSlice = createSlice({
         peerId: string;
       }>
     ) {
-      slice.selectedProvider =
-        slice.providers.find((prov) => prov.peerId === action.payload.peerId) ||
-        null;
+      slice.selectedProvider = selectNewSelectedProvider(
+        slice,
+        action.payload.peerId
+      );
     },
   },
 });
 
-export const { setProviders, setSelectedProvider } = providersSlice.actions;
+export const {
+  listSellersAppendStdOut,
+  listSellersAddLog,
+  listSellersInitiate,
+  listSellersProcessExited,
+  setRegistryProviders,
+  increaseFailedRegistryReconnectAttemptsSinceLastSuccess,
+  setSelectedProvider,
+} = providersSlice.actions;
 
 export default providersSlice.reducer;

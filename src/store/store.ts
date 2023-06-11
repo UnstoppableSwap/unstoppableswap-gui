@@ -4,10 +4,9 @@ import swapReducer from './features/swapSlice';
 import historyReducer from './features/historySlice';
 import balanceReducer from './features/balanceSlice';
 import withdrawReducer from './features/withdrawSlice';
-import providersSlice from './features/providersSlice';
 import electrumSlice from './features/electrumSlice';
 import logSlice from './features/logSlice';
-import listSellersSlice from './features/listSellersSlice';
+import providersSlice from './features/providersSlice';
 import torSlice from './features/torSlice';
 
 export const store = configureStore({
@@ -16,10 +15,9 @@ export const store = configureStore({
     history: historyReducer,
     balance: balanceReducer,
     withdraw: withdrawReducer,
-    providers: providersSlice,
     electrum: electrumSlice,
     log: logSlice,
-    listSellers: listSellersSlice,
+    providers: providersSlice,
     tor: torSlice,
   },
   enhancers: [stateSyncEnhancer()],

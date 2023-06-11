@@ -7,18 +7,28 @@ import {
   TextField,
   LinearProgress,
   Fab,
-  Button,
 } from '@material-ui/core';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
+import { Alert } from '@material-ui/lab';
 import ProviderSelect from '../../modal/provider/ProviderSelect';
 import { satsToBtc } from '../../../../utils/conversionUtils';
-import ProviderSubmitDialog from '../../modal/provider/ProviderSubmitDialog';
 import SwapDialog from '../../modal/swap/SwapDialog';
 import { useAppSelector } from '../../../../store/hooks';
 import { ExtendedProviderStatus } from '../../../../models/apiModel';
 import { isSwapState } from '../../../../models/storeModel';
+import {
+  ListSellersDialogOpenButton,
+  ProviderSubmitDialogOpenButton,
+} from '../../modal/provider/ProviderListDialog';
+
+// After RECONNECTION_ATTEMPTS_UNTIL_ASSUME_DOWN failed reconnection attempts we can assume the public registry is down
+const RECONNECTION_ATTEMPTS_UNTIL_ASSUME_DOWN = 1;
+
+function isRegistryDown(reconnectionAttempts: number): boolean {
+  return reconnectionAttempts > RECONNECTION_ATTEMPTS_UNTIL_ASSUME_DOWN;
+}
 
 const useStyles = makeStyles((theme) => ({
   inner: {
@@ -43,6 +53,15 @@ const useStyles = makeStyles((theme) => ({
   },
   swapIcon: {
     marginRight: theme.spacing(1),
+  },
+  noProvidersAlertOuter: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: theme.spacing(1),
+  },
+  noProvidersAlertButtonsOuter: {
+    display: 'flex',
+    gap: theme.spacing(1),
   },
 }));
 
@@ -164,11 +183,63 @@ function HasProviderSwapWidget({
   );
 }
 
-function HasNoProviderSwapWidget() {
+function HasNoProvidersSwapWidget() {
+  const isPublicRegistryDown = useAppSelector((state) =>
+    isRegistryDown(
+      state.providers.registry.failedReconnectAttemptsSinceLastSuccess
+    )
+  );
   const classes = useStyles();
 
-  const [showSubmitProviderDialog, setShowSubmitProviderDialog] =
-    useState(false);
+  if (isPublicRegistryDown) {
+    return (
+      <Alert severity="info">
+        <Box className={classes.noProvidersAlertOuter}>
+          <Typography>
+            Currently, the public registry of providers seems to be unreachable.
+            Here's what you can do:
+            <ul>
+              <li>
+                Try discovering a provider by connecting to a rendezvous point
+              </li>
+              <li>
+                Try again later when the public registry may be reachable again
+              </li>
+            </ul>
+          </Typography>
+          <Box>
+            <ListSellersDialogOpenButton />
+          </Box>
+        </Box>
+      </Alert>
+    );
+  }
+
+  return (
+    <Alert severity="info">
+      <Box className={classes.noProvidersAlertOuter}>
+        <Typography>
+          Currently, there are no providers (trading partners) available in the
+          official registry. Here's what you can do:
+          <ul>
+            <li>
+              Try discovering a provider by connecting to a rendezvous point
+            </li>
+            <li>Add a new provider to the public registry</li>
+            <li>Try again later when more providers may be available</li>
+          </ul>
+        </Typography>
+        <Box>
+          <ProviderSubmitDialogOpenButton />
+          <ListSellersDialogOpenButton />
+        </Box>
+      </Box>
+    </Alert>
+  );
+}
+
+function ProviderLoadingSwapWidget() {
+  const classes = useStyles();
 
   return (
     // 'elevation' prop can't be passed down (type def issue)
@@ -177,13 +248,6 @@ function HasNoProviderSwapWidget() {
     <Box className={classes.inner} component={Paper} elevation={15}>
       <Title />
       <LinearProgress />
-      <Button onClick={() => setShowSubmitProviderDialog(true)} size="small">
-        Submit swap provider
-      </Button>
-      <ProviderSubmitDialog
-        open={showSubmitProviderDialog}
-        onClose={() => setShowSubmitProviderDialog(false)}
-      />
     </Box>
   );
 }
@@ -192,9 +256,20 @@ export default function SwapWidget() {
   const selectedProvider = useAppSelector(
     (state) => state.providers.selectedProvider
   );
+  // If we fail more than RECONNECTION_ATTEMPTS_UNTIL_ASSUME_DOWN reconnect attempts, we'll show the "no providers" widget. We can assume the public registry is down.
+  const providerLoading = useAppSelector(
+    (state) =>
+      state.providers.registry.providers === null &&
+      !isRegistryDown(
+        state.providers.registry.failedReconnectAttemptsSinceLastSuccess
+      )
+  );
 
+  if (providerLoading) {
+    return <ProviderLoadingSwapWidget />;
+  }
   if (selectedProvider) {
     return <HasProviderSwapWidget selectedProvider={selectedProvider} />;
   }
-  return <HasNoProviderSwapWidget />;
+  return <HasNoProvidersSwapWidget />;
 }

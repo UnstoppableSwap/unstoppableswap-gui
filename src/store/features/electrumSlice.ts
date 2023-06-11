@@ -1,36 +1,49 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
+  ElectrumServerAddress,
   ElectrumTransactionData,
   SwapBlockchainTx,
 } from '../../models/electrumModel';
 
 export type ElectrumSlice = {
-  transaction: SwapBlockchainTx;
-  status: ElectrumTransactionData;
-}[];
+  txs: {
+    transaction: SwapBlockchainTx;
+    status: ElectrumTransactionData;
+  }[];
+  connection: ElectrumServerAddress | null;
+};
 
-const initialState: ElectrumSlice = [];
+const initialState: ElectrumSlice = {
+  txs: [],
+  connection: null,
+};
 
 export const electrumSlice = createSlice({
   name: 'electrum',
   initialState,
   reducers: {
+    connectedToElectrumServer: (
+      state,
+      action: PayloadAction<ElectrumServerAddress>
+    ) => {
+      state.connection = action.payload;
+    },
+    disconnectedFromElectrumServer: (state) => {
+      state.connection = null;
+    },
     transactionsStatusChanged(
-      _,
-      {
-        payload,
-      }: PayloadAction<
-        {
-          transaction: SwapBlockchainTx;
-          status: ElectrumTransactionData;
-        }[]
-      >
+      slice,
+      { payload }: PayloadAction<ElectrumSlice['txs']>
     ) {
-      return payload;
+      slice.txs = payload;
     },
   },
 });
 
-export const { transactionsStatusChanged } = electrumSlice.actions;
+export const {
+  transactionsStatusChanged,
+  connectedToElectrumServer,
+  disconnectedFromElectrumServer,
+} = electrumSlice.actions;
 
 export default electrumSlice.reducer;
