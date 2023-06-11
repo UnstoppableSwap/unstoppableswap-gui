@@ -82,6 +82,7 @@ export default function ListSellersDialog({
         <Box className={classes.chipOuter}>
           {PRESET_RENDEZVOUS_POINTS.map((rAddress) => (
             <Chip
+              key={rAddress}
               clickable
               label={`${rAddress.substring(
                 0,

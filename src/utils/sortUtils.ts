@@ -4,8 +4,8 @@ import { ExtendedProviderStatus } from '../models/apiModel';
 export function sortProviderList(list: ExtendedProviderStatus[]) {
   return list.concat().sort((firstEl, secondEl) => {
     // If neither of them have a relevancy score, sort by max swap amount
-    if(firstEl.relevancy === undefined && secondEl.relevancy === undefined) {
-      if(firstEl.maxSwapAmount > secondEl.maxSwapAmount) {
+    if (firstEl.relevancy === undefined && secondEl.relevancy === undefined) {
+      if (firstEl.maxSwapAmount > secondEl.maxSwapAmount) {
         return -1;
       }
     }
