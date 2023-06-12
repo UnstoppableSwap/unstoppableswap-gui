@@ -1,8 +1,12 @@
+import { TextEncoder, TextDecoder } from 'util';
+
 import { AnyAction } from '@reduxjs/toolkit';
 import reducer, {
   setRegistryProviders,
 } from '../../store/features/providersSlice';
 import { ExtendedProviderStatus } from '../../models/apiModel';
+
+Object.assign(global, { TextDecoder, TextEncoder });
 
 const exampleTestnetProvider: ExtendedProviderStatus = {
   multiAddr: '/dnsaddr/t.xmr.example',
@@ -58,9 +62,10 @@ describe('testnet', () => {
         initialState,
         setRegistryProviders([exampleMainnetProvider, exampleTestnetProvider])
       )
-    ).toContainEqual({
+    ).toMatchObject({
       registry: {
         providers: [exampleTestnetProvider],
+        failedReconnectAttemptsSinceLastSuccess: 0,
       },
       selectedProvider: exampleTestnetProvider,
     });
@@ -78,9 +83,17 @@ describe('mainnet', () => {
         initialState,
         setRegistryProviders([exampleMainnetProvider, exampleTestnetProvider])
       )
-    ).toEqual({
+    ).toMatchObject({
       registry: {
         providers: [exampleMainnetProvider],
+        failedReconnectAttemptsSinceLastSuccess: 0,
+      },
+      rendezvous: {
+        providers: [],
+        processRunning: false,
+        exitCode: null,
+        stdOut: '',
+        logs: [],
       },
       selectedProvider: exampleMainnetProvider,
     });
