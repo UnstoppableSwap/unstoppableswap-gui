@@ -155,7 +155,7 @@ export const providersSlice = createSlice({
       slice.selectedProvider = selectNewSelectedProvider(slice);
     },
     increaseFailedRegistryReconnectAttemptsSinceLastSuccess(slice) {
-      slice.registry.failedReconnectAttemptsSinceLastSuccess++;
+      slice.registry.failedReconnectAttemptsSinceLastSuccess += 1;
     },
     setSelectedProvider(
       slice,

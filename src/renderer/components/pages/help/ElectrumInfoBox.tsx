@@ -1,5 +1,5 @@
-import InfoBox from '../../modal/swap/InfoBox';
 import { Typography } from '@material-ui/core';
+import InfoBox from '../../modal/swap/InfoBox';
 import BitcoinIcon from '../../icons/BitcoinIcon';
 import { useAppSelector } from '../../../../store/hooks';
 
@@ -11,7 +11,7 @@ export default function ElectrumInfoBox() {
 
   return (
     <InfoBox
-      title={'Bitcoin Electrum Server'}
+      title="Bitcoin Electrum Server"
       mainContent={
         <Typography variant="subtitle2">
           The GUI connects to a Bitcoin Electrum Server to retrieve Blockchain
