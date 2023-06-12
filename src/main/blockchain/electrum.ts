@@ -18,7 +18,7 @@ import {
   transactionsStatusChanged,
 } from '../../store/features/electrumSlice';
 import { ELECTRUM_PROBE_TRANSACTIONS, ELECTRUM_SERVERS } from './electrumData';
-import { sendSnackbarAlertToRenderer } from '../main';
+import { sendSnackbarAlertToRenderer } from '../ipc';
 
 const REPROBE_DELAY_MS = 60 * 1000;
 
