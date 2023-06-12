@@ -4,7 +4,10 @@ import reducer, {
 } from '../../store/features/electrumSlice';
 
 test('should return the initial state', () => {
-  expect(reducer(undefined, {} as AnyAction)).toEqual([]);
+  expect(reducer(undefined, {} as AnyAction)).toEqual({
+    txs: [],
+    connection: null,
+  });
 });
 
 test('should set the electrum list', () => {
@@ -20,7 +23,7 @@ test('should set the electrum list', () => {
     },
   };
 
-  expect(reducer([], transactionsStatusChanged([mockTx]))).toStrictEqual([
-    mockTx,
-  ]);
+  expect(
+    reducer({ connection: null, txs: [] }, transactionsStatusChanged([mockTx]))
+  ).toStrictEqual({ txs: [mockTx], connection: null });
 });
