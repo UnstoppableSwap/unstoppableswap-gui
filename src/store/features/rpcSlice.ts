@@ -1,7 +1,20 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RpcProcessStateType } from '../../models/rpcModel';
+import {
+  RpcProcessStateType,
+  SwapStateName,
+  SwapTimelockInfo,
+} from '../../models/rpcModel';
 import { CliLog, isCliLogStartedRpcServer } from '../../models/cliModel';
-import { ExtendedProviderStatus, ProviderStatus } from '../../models/apiModel';
+import {
+  ExtendedProviderStatus,
+  Provider,
+  ProviderStatus,
+} from '../../models/apiModel';
+import {
+  DbStateType,
+  ExecutionSetupDoneDbState,
+  MergedDbState,
+} from '../../models/databaseModel';
 
 type Process =
   | {
@@ -22,10 +35,22 @@ type Process =
       type: RpcProcessStateType.NOT_STARTED;
     };
 
+export type ExtendedSwapInfo = {
+  swapId: string;
+  completed: boolean;
+  seller: Provider;
+  timelock: null | SwapTimelockInfo;
+  state: MergedDbState;
+  startDate: string;
+};
+
 interface State {
   balance: number | null;
   withdrawTxId: string | null;
   rendezvous_discovered_sellers: (ExtendedProviderStatus | ProviderStatus)[];
+  swapInfos: {
+    [swapId: string]: ExtendedSwapInfo;
+  };
 }
 
 export interface RPCSlice {
@@ -42,6 +67,7 @@ const initialState: RPCSlice = {
     balance: null,
     withdrawTxId: null,
     rendezvous_discovered_sellers: [],
+    swapInfos: {},
   },
   busyEndpoints: [],
 };
@@ -111,6 +137,9 @@ export const rpcSlice = createSlice({
     rpcResetWithdrawTxId(slice) {
       slice.state.withdrawTxId = null;
     },
+    rpcSetSwapInfo(slice, action: PayloadAction<ExtendedSwapInfo>) {
+      slice.state.swapInfos[action.payload.swapId] = action.payload;
+    },
     rpcSetEndpointBusy(slice, action: PayloadAction<string>) {
       if (!slice.busyEndpoints.includes(action.payload)) {
         slice.busyEndpoints.push(action.payload);
@@ -136,6 +165,7 @@ export const {
   rpcSetEndpointBusy,
   rpcSetEndpointFree,
   rpcSetRendezvousDiscoveredProviders,
+  rpcSetSwapInfo,
 } = rpcSlice.actions;
 
 export default rpcSlice.reducer;

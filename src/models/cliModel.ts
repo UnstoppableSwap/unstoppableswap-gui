@@ -11,6 +11,10 @@ export interface CliLog {
     message: string;
     [index: string]: unknown;
   };
+  spans?: {
+    name: string;
+    [index: string]: unknown;
+  }[];
 }
 
 export function isCliLog(log: unknown): log is CliLog {
@@ -36,6 +40,19 @@ export function isCliLogStartedRpcServer(
   log: CliLog
 ): log is CliLogStartedRpcServer {
   return log.fields.message === 'Started RPC server';
+}
+
+export interface CliLogReleasingSwapLockLog extends CliLog {
+  fields: {
+    message: 'Releasing swap lock';
+    swap_id: string;
+  };
+}
+
+export function isCliLogReleasingSwapLockLog(
+  log: CliLog
+): log is CliLogReleasingSwapLockLog {
+  return log.fields.message === 'Releasing swap lock';
 }
 
 export interface CliLogReceivedQuote extends CliLog {

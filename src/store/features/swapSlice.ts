@@ -34,6 +34,7 @@ import {
   isCliLogAdvancingState,
   SwapSpawnType,
   isCliLogBtcTxFound,
+  isCliLogReleasingSwapLockLog,
 } from '../../models/cliModel';
 import logger from '../../utils/logger';
 import { Provider } from '../../models/apiModel';
@@ -43,7 +44,6 @@ const initialState: SwapSlice = {
   processRunning: false,
   swapId: null,
   logs: [],
-  stdOut: '',
   provider: null,
   spawnType: null,
 };
@@ -52,8 +52,11 @@ export const swapSlice = createSlice({
   name: 'swap',
   initialState,
   reducers: {
-    swapAddLog(slice, action: PayloadAction<CliLog[]>) {
-      const logs = action.payload;
+    swapAddLog(
+      slice,
+      action: PayloadAction<{ logs: CliLog[]; isFromRestore: boolean }>
+    ) {
+      const { logs } = action.payload;
       slice.logs.push(...logs);
 
       logs.forEach((log) => {
@@ -216,13 +219,21 @@ export const swapSlice = createSlice({
           };
 
           slice.state = nextState;
+        } else if (
+          isCliLogReleasingSwapLockLog(log) &&
+          !action.payload.isFromRestore
+        ) {
+          const nextState: SwapStateProcessExited = {
+            type: SwapStateType.PROCESS_EXITED,
+            prevState: slice.state,
+          };
+
+          slice.state = nextState;
+          slice.processRunning = false;
         } else {
           logger.debug({ log }, `Swap log was not reduced`);
         }
       });
-    },
-    swapAppendStdOut(slice, action: PayloadAction<string>) {
-      slice.stdOut += action.payload;
     },
     swapReset() {
       return initialState;
@@ -246,17 +257,9 @@ export const swapSlice = createSlice({
       swap.spawnType = action.payload.spawnType;
       swap.swapId = action.payload.swapId;
     },
-    swapProcessExited(
-      swap,
-      action: PayloadAction<{
-        exitCode: number | null;
-        exitSignal: NodeJS.Signals | null;
-      }>
-    ) {
+    swapProcessExited(swap) {
       const nextState: SwapStateProcessExited = {
         type: SwapStateType.PROCESS_EXITED,
-        exitSignal: action.payload.exitSignal,
-        exitCode: action.payload.exitCode,
         prevState: swap.state,
       };
 
@@ -266,12 +269,7 @@ export const swapSlice = createSlice({
   },
 });
 
-export const {
-  swapInitiate,
-  swapProcessExited,
-  swapReset,
-  swapAddLog,
-  swapAppendStdOut,
-} = swapSlice.actions;
+export const { swapInitiate, swapProcessExited, swapReset, swapAddLog } =
+  swapSlice.actions;
 
 export default swapSlice.reducer;

@@ -19,13 +19,16 @@ import { getAssetPath, fixAppDataPath, getCliLogFile } from './cli/dirs';
 import initSocket from './socket';
 import logger from '../utils/logger';
 import { spawnTor, stopTor } from './tor';
-import spawnCancelRefund from './cli/commands/cancelRefundCommand';
 import {
   buyXmr,
+  cancelRefundSwap,
   checkBitcoinBalance,
   listSellers,
+  resumeSwap,
+  suspendCurrentSwap,
   withdrawAllBitcoin,
 } from './cli/rpc';
+import watchLogs from './cli/log';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -126,6 +129,7 @@ if (gotTheLock) {
       createWindow();
       initSocket();
       startRPC();
+      watchLogs();
       return 0;
     })
     .catch((e) =>
@@ -156,6 +160,8 @@ ipcMain.handle('spawn-start-rpc', startRPC);
 
 ipcMain.handle('spawn-balance-check', checkBitcoinBalance);
 
+ipcMain.handle('suspend-current-swap', suspendCurrentSwap);
+
 ipcMain.handle(
   'spawn-buy-xmr',
   (_event, provider, redeemAddress, refundAddress) =>
@@ -163,8 +169,10 @@ ipcMain.handle(
 );
 
 ipcMain.handle('spawn-cancel-refund', (_event, swapId) =>
-  spawnCancelRefund(swapId)
+  cancelRefundSwap(swapId)
 );
+
+ipcMain.handle('spawn-resume-swap', (_event, swapId) => resumeSwap(swapId));
 
 ipcMain.handle('spawn-withdraw-btc', (_event, address) =>
   withdrawAllBitcoin(address)

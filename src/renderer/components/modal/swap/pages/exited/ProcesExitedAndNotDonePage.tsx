@@ -1,30 +1,28 @@
 import { Box, DialogContentText } from '@material-ui/core';
-import { SwapStateProcessExited } from '../../../../../../models/storeModel';
-import { MergedDbState } from '../../../../../../models/databaseModel';
-import { useAppSelector } from '../../../../../../store/hooks';
+import {
+  useActiveSwapInfo,
+  useAppSelector,
+} from '../../../../../../store/hooks';
 import PaperTextBox from '../../../PaperTextBox';
+import { logsToRawString } from '../../../../../../utils/parseUtils';
 
-type Props = {
-  state: SwapStateProcessExited;
-  dbState: MergedDbState | null;
-};
+export default function ProcesExitedAndNotDonePage() {
+  const swap = useActiveSwapInfo();
+  const swapStdOut = useAppSelector((s) => logsToRawString(s.swap.logs));
 
-export default function ProcesExitedAndNotDonePage({ state, dbState }: Props) {
-  const stdOut = useAppSelector((s) => s.swap.stdOut);
+  if (!swap) {
+    return null;
+  }
 
   return (
     <Box>
       <DialogContentText>
-        The swap-cli process has exited
-        {state.exitCode != null
-          ? ` with the exit code ${state.exitCode}`
-          : ''}{' '}
-        but the swap has not been completed yet.{' '}
-        {dbState ? `The current state is ${dbState.type}.` : null} Please check
-        the logs displayed below for more information. You might have to
-        manually take some action.
+        The swap-cli process has exited but the swap has not been completed yet.{' '}
+        The current state is "{swap.state.type}". Please check the logs
+        displayed below for more information. You might have to manually take
+        some action.
       </DialogContentText>
-      <PaperTextBox stdOut={stdOut} />
+      <PaperTextBox stdOut={swapStdOut} />
     </Box>
   );
 }

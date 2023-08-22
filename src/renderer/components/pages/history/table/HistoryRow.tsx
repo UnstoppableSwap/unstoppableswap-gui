@@ -11,16 +11,15 @@ import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import {
-  MergedDbState,
   getSwapBtcAmount,
   getSwapXmrAmount,
-  getHumanReadableDbStateType,
 } from '../../../../../models/databaseModel';
 import HistoryRowActions from './HistoryRowActions';
 import HistoryRowExpanded from './HistoryRowExpanded';
+import { ExtendedSwapInfo } from '../../../../../store/features/rpcSlice';
 
 type HistoryRowProps = {
-  dbState: MergedDbState;
+  swap: ExtendedSwapInfo;
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -49,12 +48,11 @@ function AmountTransfer({
   );
 }
 
-export default function HistoryRow({ dbState }: HistoryRowProps) {
-  const btcAmount = getSwapBtcAmount(dbState);
-  const xmrAmount = getSwapXmrAmount(dbState);
+export default function HistoryRow({ swap }: HistoryRowProps) {
+  const btcAmount = getSwapBtcAmount(swap);
+  const xmrAmount = getSwapXmrAmount(swap);
 
   const [expanded, setExpanded] = useState(false);
-  const humanReadableStateType = getHumanReadableDbStateType(dbState.type);
 
   return (
     <>
@@ -64,20 +62,20 @@ export default function HistoryRow({ dbState }: HistoryRowProps) {
             {expanded ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell>{dbState.swapId.substring(0, 5)}...</TableCell>
+        <TableCell>{swap.swapId.substring(0, 5)}...</TableCell>
         <TableCell>
           <AmountTransfer xmrAmount={xmrAmount} btcAmount={btcAmount} />
         </TableCell>
-        <TableCell>{humanReadableStateType}</TableCell>
+        <TableCell>{swap.state.type}</TableCell>
         <TableCell>
-          <HistoryRowActions dbState={dbState} />
+          <HistoryRowActions swap={swap} />
         </TableCell>
       </TableRow>
 
       <TableRow>
         <TableCell style={{ padding: 0 }} colSpan={6}>
           <Collapse in={expanded} timeout="auto">
-            {expanded && <HistoryRowExpanded dbState={dbState} />}
+            {expanded && <HistoryRowExpanded swap={swap} />}
           </Collapse>
         </TableCell>
       </TableRow>

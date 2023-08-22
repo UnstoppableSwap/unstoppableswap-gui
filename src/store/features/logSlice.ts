@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import _ from 'lodash';
 import { CliLog, isCliLog } from '../../models/cliModel';
-import { getLinesOfString, logFilePathToSwapId } from '../../utils/parseUtils';
+import { getLinesOfString } from '../../utils/parseUtils';
 
 export interface LogSlice {
   [swapId: string]: CliLog[];
@@ -14,13 +15,10 @@ export const logSlice = createSlice({
   reducers: {
     swapLogFileDataChanged(
       slice,
-      {
-        payload: { fileData, logFilePath },
-      }: PayloadAction<{ logFilePath: string; fileData: string }>
+      { payload: { fileData } }: PayloadAction<{ fileData: string }>
     ) {
-      const swapId = logFilePathToSwapId(logFilePath);
       const lines = getLinesOfString(fileData);
-      slice[swapId] = lines
+      const logsInFile = lines
         .map((line) => {
           try {
             return JSON.parse(line);
@@ -29,6 +27,19 @@ export const logSlice = createSlice({
           }
         })
         .filter(isCliLog);
+
+      const logsFilteredBySwapId = _.groupBy(
+        logsInFile,
+        (log) =>
+          (log.spans?.find((span) => 'swap_id' in span)?.swap_id as string) ||
+          null
+      );
+
+      Object.entries(logsFilteredBySwapId).forEach(([swapId, logs]) => {
+        if (swapId) {
+          slice[swapId] = logs;
+        }
+      });
     },
   },
 });

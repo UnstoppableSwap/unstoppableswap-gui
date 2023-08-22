@@ -9,7 +9,7 @@ import {
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import SwapStatePage from './pages/SwapStatePage';
 import SwapStateStepper from './SwapStateStepper';
-import CliStopAlert from '../CliStopAlert';
+import SwapSuspendAlert from '../SwapSuspendAlert';
 import { swapReset } from '../../../../store/features/swapSlice';
 import SwapDialogTitle from './SwapDialogTitle';
 import DebugPage from './pages/DebugPage';
@@ -33,12 +33,12 @@ export default function SwapDialog({
   const classes = useStyles();
   const swap = useAppSelector((state) => state.swap);
   const [debug, setDebug] = useState(false);
-  const [openCancelAlert, setOpenCancelAlert] = useState(false);
+  const [openSuspendAlert, setOpenSuspendAlert] = useState(false);
   const dispatch = useAppDispatch();
 
   function onCancel() {
     if (swap.processRunning) {
-      setOpenCancelAlert(true);
+      setOpenSuspendAlert(true);
     } else {
       onClose();
       setImmediate(() => dispatch(swapReset()));
@@ -65,11 +65,7 @@ export default function SwapDialog({
       </DialogContent>
 
       <DialogActions>
-        <Button
-          onClick={onCancel}
-          variant="text"
-          disabled={!(swap.processRunning || swap.state === null)}
-        >
+        <Button onClick={onCancel} variant="text">
           Cancel
         </Button>
         <Button
@@ -82,9 +78,9 @@ export default function SwapDialog({
         </Button>
       </DialogActions>
 
-      <CliStopAlert
-        open={openCancelAlert}
-        onClose={() => setOpenCancelAlert(false)}
+      <SwapSuspendAlert
+        open={openSuspendAlert}
+        onClose={() => setOpenSuspendAlert(false)}
       />
     </Dialog>
   );

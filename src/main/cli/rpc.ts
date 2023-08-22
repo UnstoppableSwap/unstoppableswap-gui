@@ -1,119 +1,160 @@
 import jayson from 'jayson/promise';
 import { Multiaddr } from 'multiaddr';
-import { merge } from 'lodash';
+import { isObject, merge } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 import {
   BalanceBitcoinResponse,
-  GetSellerResponse,
-  GetSwapStartDateResponse,
+  GetSwapInfoResponse,
+  isErrorResponse,
+  RawRpcResponse,
+  RawRpcResponseSuccess,
   RawSwapHistoryResponse,
   RpcMethod,
   RpcSellerStatus,
+  SwapSellerInfo,
   WithdrawBitcoinResponse,
 } from '../../models/rpcModel';
 import { store } from '../../store/store';
 import {
+  ExtendedSwapInfo,
   rpcResetWithdrawTxId,
   rpcSetBalance,
   rpcSetEndpointBusy,
   rpcSetEndpointFree,
   rpcSetRendezvousDiscoveredProviders,
+  rpcSetSwapInfo,
   rpcSetWithdrawTxId,
 } from '../../store/features/rpcSlice';
 import logger from '../../utils/logger';
 import { Provider, ProviderStatus } from '../../models/apiModel';
 import { isTestnet } from '../../store/config';
 import { providerToConcatenatedMultiAddr } from '../../utils/multiAddrUtils';
-import {
-  DbState,
-  getTypeOfDbState,
-  MergedDbState,
-} from '../../models/databaseModel';
-import { databaseStateChanged } from '../../store/features/historySlice';
+import { swapAddLog, swapInitiate } from '../../store/features/swapSlice';
+import { CliLog, SwapSpawnType } from '../../models/cliModel';
+import { RPC_BIND_HOST, RPC_BIND_PORT, RPC_LOG_EVENT_EMITTER } from './cli';
+import getSavedLogsOfSwapId from './log';
 
 const rpcClient = jayson.Client.http({
-  port: 1234,
+  port: RPC_BIND_PORT,
+  hostname: RPC_BIND_HOST,
+  timeout: 60 * 1000,
 });
 
 export async function makeRpcRequest<T>(
   method: RpcMethod,
-  params: jayson.RequestParamsLike
+  params: jayson.RequestParamsLike,
+  logCallback?: (log: CliLog[]) => void
 ) {
-  return new Promise<{ result: T }>(async (resolve, reject) => {
+  return new Promise<T>(async (resolve, reject) => {
+    console.time(`makeRpcRequest ${method}`);
     store.dispatch(rpcSetEndpointBusy(method));
 
     try {
-      const response = await rpcClient.request(method, params);
+      if (isObject(params) && logCallback) {
+        const logReferenceId = uuidv4();
 
-      logger.debug(
-        { method, params, response },
-        'Received RPC response (success)'
-      );
+        Object.assign(params, { log_reference_id: logReferenceId });
 
-      if (response.error) {
-        reject(
-          new Error(`${response.error.message} (Code: ${response.error.code})`)
-        );
+        RPC_LOG_EVENT_EMITTER.on((logs) => {
+          const relevantLogs = logs.filter((log) =>
+            log.spans?.find((span) => span.log_reference_id === logReferenceId)
+          );
+          logCallback(relevantLogs);
+        });
       }
 
-      resolve(response);
+      const response = (await rpcClient.request(
+        method,
+        params
+      )) as RawRpcResponse<T>;
+
+      if (isErrorResponse(response)) {
+        reject(
+          new Error(
+            `RPC request failed Error: ${response.error.message} (Code: ${response.error.code})`
+          )
+        );
+      } else {
+        logger.debug({ method, params }, 'Received RPC response (success)');
+
+        resolve(response.result);
+      }
     } catch (e) {
       reject(e);
     } finally {
       store.dispatch(rpcSetEndpointFree(method));
+      console.timeLog(`makeRpcRequest ${method}`);
+      console.timeEnd(`makeRpcRequest ${method}`);
     }
   });
 }
 
-export async function getRawHistory() {
-  console.time('raw_history');
-  const response = await makeRpcRequest<RawSwapHistoryResponse>(
-    RpcMethod.RAW_HISTORY,
-    {}
-  );
-  const mergedSwaps: MergedDbState[] = await Promise.all(
-    Object.entries(response.result).map(async ([swapId, states]) => {
-      const providerAddress = await makeRpcRequest<GetSellerResponse>(
-        RpcMethod.GET_SELLER,
-        {
-          swap_id: swapId,
-        }
-      );
-      const multiAddr = new Multiaddr(providerAddress.result.addresses[0])
-        .decapsulate('p2p')
-        .toString();
+export async function makeBatchRpcRequest<T>(
+  method: RpcMethod,
+  params: jayson.RequestParamsLike[]
+): Promise<T[]> {
+  return new Promise<T[]>(async (resolve, reject) => {
+    console.time(`makeRpcRequest ${method} (batch)`);
+    store.dispatch(rpcSetEndpointBusy(method));
 
-      const startedDate = await makeRpcRequest<GetSwapStartDateResponse>(
-        RpcMethod.GET_SWAP_START_DATE,
-        {
-          swap_id: swapId,
-        }
+    const batch = params.map((param) =>
+      rpcClient.request(method, param, undefined, false)
+    );
+
+    try {
+      const responses = (await rpcClient.request(batch)) as RawRpcResponse<T>[];
+
+      // Check if any of the responses have an error
+      const errorResponses = responses.filter(isErrorResponse);
+      if (errorResponses.length > 0) {
+        throw new Error(
+          `One or more RPC requests failed Errors: ${errorResponses
+            .map((r) => `${r.error.message} (${r.error.code})`)
+            .join(', ')}`
+        );
+      }
+
+      logger.debug(
+        { method, length: responses.length },
+        'Received batched RPC response (success)'
       );
 
-      return {
-        state: merge({}, ...states),
-        swapId,
-        type: getTypeOfDbState(states.at(-1) as DbState),
-        provider: {
-          testnet: false,
-          peerId: providerAddress.result.peerId,
-          multiAddr,
-        },
-        firstEnteredDate: startedDate.result.start_date,
-      };
-    })
-  );
-  console.timeLog('raw_history');
-  console.timeEnd('raw_history');
-  store.dispatch(databaseStateChanged(mergedSwaps));
+      // Because we know that all responses are successful, we can cast them to RawRpcResponseSuccess
+      const results = (responses as RawRpcResponseSuccess<T>[]).map(
+        (r) => r.result
+      );
+      resolve(results);
+    } catch (e) {
+      reject(e);
+    } finally {
+      store.dispatch(rpcSetEndpointFree(method));
+      console.timeLog(`makeRpcRequest ${method} (batch)`);
+      console.timeEnd(`makeRpcRequest ${method} (batch)`);
+    }
+  });
+}
+
+function providerFromGetSellerResponse(
+  providerResponse: SwapSellerInfo
+): Provider {
+  const multiAddr = new Multiaddr(providerResponse.addresses[0])
+    .decapsulate('p2p')
+    .toString();
+
+  return {
+    peerId: providerResponse.peerId,
+    multiAddr,
+    testnet: isTestnet(),
+  };
 }
 
 export async function checkBitcoinBalance() {
-  await getRawHistory();
   const response = await makeRpcRequest<BalanceBitcoinResponse>(
     RpcMethod.GET_BTC_BALANCE,
-    []
+    {}
   );
-  store.dispatch(rpcSetBalance(response.result.balance));
+  store.dispatch(rpcSetBalance(response.balance));
+  await getRawHistory();
 }
 
 export async function withdrawAllBitcoin(address: string) {
@@ -124,7 +165,24 @@ export async function withdrawAllBitcoin(address: string) {
       address,
     }
   );
-  store.dispatch(rpcSetWithdrawTxId(response.result.txid));
+  store.dispatch(rpcSetWithdrawTxId(response.txid));
+}
+
+export async function getSwapInfo(swapId: string) {
+  return makeRpcRequest<GetSwapInfoResponse>(RpcMethod.GET_SWAP_INFO, {
+    swap_id: swapId,
+  });
+}
+
+export async function getSwapInfoBatch(
+  swapIds: string[]
+): Promise<GetSwapInfoResponse[]> {
+  return makeBatchRpcRequest<GetSwapInfoResponse>(
+    RpcMethod.GET_SWAP_INFO,
+    swapIds.map((swapId) => ({
+      swap_id: swapId,
+    }))
+  );
 }
 
 export async function buyXmr(
@@ -132,11 +190,100 @@ export async function buyXmr(
   refundAddress: string,
   provider: Provider
 ) {
-  const response = await makeRpcRequest(RpcMethod.BUY_XMR, {
-    bitcoin_change_address: refundAddress,
-    monero_receive_address: redeemAddress,
-    seller: providerToConcatenatedMultiAddr(provider),
-  });
+  await makeRpcRequest(
+    RpcMethod.BUY_XMR,
+    {
+      bitcoin_change_address: refundAddress,
+      monero_receive_address: redeemAddress,
+      seller: providerToConcatenatedMultiAddr(provider),
+    },
+    (logs) => {
+      store.dispatch(
+        swapAddLog({
+          logs,
+          isFromRestore: false,
+        })
+      );
+    }
+  );
+
+  store.dispatch(
+    swapInitiate({
+      provider,
+      spawnType: SwapSpawnType.INIT,
+      swapId: null,
+    })
+  );
+}
+
+export async function cancelRefundSwap(swapId: string) {
+  const swapInfo = await getSwapInfo(swapId);
+  const previousLogs = await getSavedLogsOfSwapId(swapId);
+
+  store.dispatch(
+    swapInitiate({
+      provider: providerFromGetSellerResponse(swapInfo.seller),
+      spawnType: SwapSpawnType.CANCEL_REFUND,
+      swapId,
+    })
+  );
+
+  store.dispatch(
+    swapAddLog({
+      logs: previousLogs,
+      isFromRestore: true,
+    })
+  );
+
+  await makeRpcRequest(
+    RpcMethod.CANCEL_REFUND_SWAP,
+    {
+      swap_id: swapId,
+    },
+    (logs) => {
+      store.dispatch(
+        swapAddLog({
+          logs,
+          isFromRestore: false,
+        })
+      );
+    }
+  );
+}
+
+export async function resumeSwap(swapId: string) {
+  const swapInfo = await getSwapInfo(swapId);
+  const previousLogs = await getSavedLogsOfSwapId(swapId);
+
+  store.dispatch(
+    swapInitiate({
+      provider: providerFromGetSellerResponse(swapInfo.seller),
+      spawnType: SwapSpawnType.RESUME,
+      swapId,
+    })
+  );
+
+  store.dispatch(
+    swapAddLog({
+      logs: previousLogs,
+      isFromRestore: true,
+    })
+  );
+
+  await makeRpcRequest(
+    RpcMethod.RESUME_SWAP,
+    {
+      swap_id: swapId,
+    },
+    (logs) => {
+      store.dispatch(
+        swapAddLog({
+          logs,
+          isFromRestore: false,
+        })
+      );
+    }
+  );
 }
 
 export async function listSellers(rendezvousPointAddress: string) {
@@ -146,7 +293,7 @@ export async function listSellers(rendezvousPointAddress: string) {
       rendezvous_point: rendezvousPointAddress,
     }
   );
-  const reachableSellers: ProviderStatus[] = response.result.sellers
+  const reachableSellers: ProviderStatus[] = response.sellers
     .map((s) => {
       if (s.status !== 'Unreachable') {
         const multiAddrCombined = new Multiaddr(s.multiaddr);
@@ -166,4 +313,49 @@ export async function listSellers(rendezvousPointAddress: string) {
     })
     .filter((s): s is ProviderStatus => s !== null);
   store.dispatch(rpcSetRendezvousDiscoveredProviders(reachableSellers));
+}
+
+export async function suspendCurrentSwap() {
+  await makeRpcRequest(RpcMethod.SUSPEND_CURRENT_SWAP, {}, (logs) => {
+    store.dispatch(
+      swapAddLog({
+        logs,
+        isFromRestore: false,
+      })
+    );
+  });
+}
+
+export async function getRawHistory() {
+  const mainResponse = await makeRpcRequest<RawSwapHistoryResponse>(
+    RpcMethod.RAW_HISTORY,
+    {}
+  );
+  const swapIds = Object.keys(mainResponse.raw_history);
+
+  // Execute batch requests
+  const getSwapInfoBatchResults = await getSwapInfoBatch(swapIds);
+
+  const swapInfos: ExtendedSwapInfo[] = [];
+
+  swapIds.forEach((swapId, i) => {
+    const rawStates = mainResponse.raw_history[swapId];
+    const info: GetSwapInfoResponse = getSwapInfoBatchResults[i];
+
+    swapInfos.push({
+      state: {
+        raw: merge({}, ...rawStates),
+        type: info.stateName,
+      },
+      swapId,
+      seller: providerFromGetSellerResponse(info.seller),
+      completed: info.completed,
+      timelock: info.timelock,
+      startDate: info.startDate,
+    });
+  });
+
+  swapInfos.forEach((info) => {
+    store.dispatch(rpcSetSwapInfo(info));
+  });
 }

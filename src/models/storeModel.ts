@@ -4,7 +4,6 @@ import { Provider } from './apiModel';
 export interface SwapSlice {
   state: SwapState | null;
   logs: CliLog[];
-  stdOut: string;
   processRunning: boolean;
   provider: Provider | null;
   spawnType: SwapSpawnType | null;
@@ -164,8 +163,6 @@ export function isSwapStateBtcRefunded(
 
 export interface SwapStateProcessExited extends SwapState {
   type: SwapStateType.PROCESS_EXITED;
-  exitCode: number | null;
-  exitSignal: NodeJS.Signals | null | undefined;
   prevState: SwapState | null;
 }
 
@@ -246,12 +243,11 @@ export enum TimelockStatusType {
 
 export type TimelockStatus =
   | {
-      blocksUntilRefund: number;
-      blocksUntilPunish: number;
+      blocksLeft: number;
       type: TimelockStatusType.NONE;
     }
   | {
-      blocksUntilPunish: number;
+      blocksLeft: number;
       type: TimelockStatusType.REFUND_EXPIRED;
     }
   | {

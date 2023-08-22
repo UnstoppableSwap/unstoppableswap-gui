@@ -45,5 +45,5 @@ export default function ProcessExitedPage({ state }: ProcessExitedPageProps) {
   }
 
   // If the swap is not a "done" state we should tell the user and show logs
-  return <ProcesExitedAndNotDonePage state={state} dbState={dbState} />;
+  return <ProcesExitedAndNotDonePage />;
 }

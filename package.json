@@ -10,7 +10,7 @@
     "package": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder build --publish never",
     "postinstall": "ts-node .erb/scripts/check-native-dep.js && electron-builder install-app-deps && cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.ts && opencollective-postinstall && ts-node .erb/scripts/download-swap-binaries.ts && ts-node .erb/scripts/download-tor-binaries.ts",
     "start": "ts-node ./.erb/scripts/check-port-in-use.js && npm run start:renderer",
-    "start:main": "cross-env NODE_ENV=development electron -r ts-node/register/transpile-only ./src/main/main.ts",
+    "start:main": "cross-env NODE_ENV=development electron --inspect -r ts-node/register/transpile-only ./src/main/main.ts",
     "start:renderer": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
     "test": "jest",
     "prepare": "husky install"
@@ -167,6 +167,7 @@
     "@types/react-dom": "^17.0.11",
     "@types/react-test-renderer": "^17.0.1",
     "@types/terser-webpack-plugin": "^5.0.4",
+    "@types/uuid": "^9.0.2",
     "@types/webpack-bundle-analyzer": "^4.4.1",
     "@types/webpack-env": "^1.16.3",
     "@typescript-eslint/eslint-plugin": "^5.8.1",
@@ -251,7 +252,8 @@
     "react-router-dom": "^6.2.1",
     "regenerator-runtime": "^0.13.9",
     "socket.io-client": "^4.4.0",
-    "sqlite": "^4.0.23"
+    "sqlite": "^4.0.23",
+    "uuid": "^9.0.0"
   },
   "devEngines": {
     "node": ">=14.x",

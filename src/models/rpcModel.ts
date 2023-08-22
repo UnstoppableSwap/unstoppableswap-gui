@@ -5,10 +5,11 @@ export enum RpcMethod {
   WITHDRAW_BTC = 'withdraw_btc',
   BUY_XMR = 'buy_xmr',
   RESUME_SWAP = 'resume_swap',
-  RAW_HISTORY = 'raw_get_history',
+  RAW_HISTORY = 'get_raw_history',
   LIST_SELLERS = 'list_sellers',
-  GET_SELLER = 'get_seller',
-  GET_SWAP_START_DATE = 'get_swap_start_date',
+  CANCEL_REFUND_SWAP = 'cancel_refund_swap',
+  GET_SWAP_INFO = 'get_swap_info',
+  SUSPEND_CURRENT_SWAP = 'suspend_current_swap',
 }
 
 export enum RpcProcessStateType {
@@ -17,8 +18,6 @@ export enum RpcProcessStateType {
   EXITED = 'exited',
   NOT_STARTED = 'not started',
 }
-
-export const CLI_RPC_HTTP_ADDRESS = '127.0.0.1:1234';
 
 export interface RpcSellerStatus {
   status:
@@ -33,8 +32,60 @@ export interface RpcSellerStatus {
   multiaddr: string;
 }
 
+export type RawRpcResponseSuccess<T> = {
+  jsonrpc: string;
+  id: string;
+  result: T;
+};
+export type RawRpcResponseError = {
+  jsonrpc: string;
+  id: string;
+  error: { code: number; message: string };
+};
+
+export type RawRpcResponse<T> = RawRpcResponseSuccess<T> | RawRpcResponseError;
+
+export function isSuccessResponse<T>(
+  response: RawRpcResponse<T>
+): response is RawRpcResponseSuccess<T> {
+  return 'result' in response;
+}
+
+export function isErrorResponse<T>(
+  response: RawRpcResponse<T>
+): response is RawRpcResponseError {
+  return 'error' in response;
+}
+
 export interface WithdrawBitcoinResponse {
   txid: string;
+}
+
+export type SwapTimelockInfo =
+  | {
+      None: {
+        blocksLeft: number;
+      };
+    }
+  | {
+      Cancel: {
+        blocksLeft: number;
+      };
+    }
+  | 'Punish';
+
+export type SwapSellerInfo = {
+  peerId: string;
+  addresses: string[];
+};
+
+export interface GetSwapInfoResponse {
+  swapId: string;
+  completed: boolean;
+  seller: SwapSellerInfo;
+  startDate: string;
+  stateName: SwapStateName;
+  timelock: null | SwapTimelockInfo;
 }
 
 export interface BalanceBitcoinResponse {
@@ -42,14 +93,23 @@ export interface BalanceBitcoinResponse {
 }
 
 export interface RawSwapHistoryResponse {
-  [swapId: string]: DbState[];
+  raw_history: {
+    [swapId: string]: DbState[];
+  };
 }
 
-export interface GetSellerResponse {
-  peerId: string;
-  addresses: string[];
-}
-
-export interface GetSwapStartDateResponse {
-  start_date: string;
+export enum SwapStateName {
+  Started = 'quote has been requested',
+  SwapSetupCompleted = 'execution setup done',
+  BtcLocked = 'btc is locked',
+  XmrLockProofReceived = 'XMR lock transaction transfer proof received',
+  XmrLocked = 'xmr is locked',
+  EncSigSent = 'encrypted signature is sent',
+  BtcRedeemed = 'btc is redeemed',
+  CancelTimelockExpired = 'cancel timelock is expired',
+  BtcCancelled = 'btc is cancelled',
+  BtcRefunded = 'btc is refunded',
+  XmrRedeemed = 'xmr is redeemed',
+  BtcPunished = 'btc is punished',
+  SafelyAborted = 'safely aborted',
 }

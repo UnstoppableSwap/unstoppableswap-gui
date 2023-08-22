@@ -1,14 +1,14 @@
+import path from 'path';
+import { DbState, isDbState } from '../models/databaseModel';
+import { TimelockStatus, TimelockStatusType } from '../models/storeModel';
+import { CliLog, isCliLog } from '../models/cliModel';
+
 /*
 Extract btc amount from string
 
 E.g: "0.00100000 BTC"
 Output: 0.001
  */
-
-import path from 'path';
-import { DbState, isDbState } from '../models/databaseModel';
-import { TimelockStatus, TimelockStatusType } from '../models/storeModel';
-
 export function extractAmountFromUnitString(text: string): number | null {
   if (text != null) {
     const parts = text.split(' ');
@@ -59,6 +59,18 @@ export function getLinesOfString(data: string): string[] {
     .filter((l) => l.length > 0);
 }
 
+export function getLogsFromRawFileString(rawFileData: string): CliLog[] {
+  return getLinesOfString(rawFileData)
+    .map((line) => {
+      try {
+        return JSON.parse(line);
+      } catch (e) {
+        return null;
+      }
+    })
+    .filter(isCliLog);
+}
+
 /*
 E.g /Users/test/Library/Application Support/xmr-btc-swap/cli/testnet/logs/swap-0dba95a3-4b59-4b5b-bf69-40e7a0d6fbd3.log
 => 0dba95a3-4b59-4b5b-bf69-40e7a0d6fbd3
@@ -71,6 +83,10 @@ export function logFilePathToSwapId(logFilePath: string): string {
     return swapId;
   }
   throw new Error(`Log file path does not contain swap id ${logFilePath}`);
+}
+
+export function logsToRawString(logs: CliLog[]): string {
+  return logs.map((l) => JSON.stringify(l)).join('\n');
 }
 
 export function getTimelockStatus(

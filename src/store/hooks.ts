@@ -1,12 +1,12 @@
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from './store';
-import { isSwapResumable } from '../models/databaseModel';
 import {
   isSwapStateBtcLockInMempool,
   TimelockStatus,
   TimelockStatusType,
 } from '../models/storeModel';
 import { getTimelockStatus } from '../utils/parseUtils';
+import { MergedDbState } from '../models/databaseModel';
 
 // Use throughout your app instead of plain `useDispatch` and `useSelector`
 export const useAppDispatch = () => useDispatch<AppDispatch>();
@@ -14,7 +14,10 @@ export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 export function useResumeableSwapsCount() {
   return useAppSelector(
-    (state) => state.history.filter(isSwapResumable).length
+    (state) =>
+      Object.values(state.rpc.state.swapInfos).filter(
+        (swapInfo) => !swapInfo.completed
+      ).length
   );
 }
 
@@ -22,16 +25,23 @@ export function useIsSwapRunning() {
   return useAppSelector((state) => state.swap.state !== null);
 }
 
-export function useDbState(swapId?: string | null) {
-  return (
-    useAppSelector((s) =>
-      s.history.find((h) => h.swapId === swapId && swapId)
-    ) || null
+export function useSwapInfo(swapId: string | null) {
+  return useAppSelector((state) =>
+    swapId ? state.rpc.state.swapInfos[swapId] : null
   );
+}
+
+export function useDbState(swapId: string | null): MergedDbState | undefined {
+  return useSwapInfo(swapId)?.state;
 }
 
 export function useActiveSwapId() {
   return useAppSelector((s) => s.swap.swapId);
+}
+
+export function useActiveSwapInfo() {
+  const swapId = useActiveSwapId();
+  return useSwapInfo(swapId);
 }
 
 export function useActiveDbState() {
@@ -40,11 +50,8 @@ export function useActiveDbState() {
 }
 
 export function useTxLock(swapId: string) {
-  return useAppSelector((state) =>
-    state.electrum.find(
-      (tx) => tx.transaction.swapId === swapId && tx.transaction.kind === 'lock'
-    )
-  );
+  // TODO: Implement this using RPC
+  return null;
 }
 
 export function useTxLockConfirmations(swapId: string): number | null {

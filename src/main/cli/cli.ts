@@ -5,10 +5,10 @@ import {
 import PQueue from 'p-queue';
 import pidtree from 'pidtree';
 import { isTestnet } from '../../store/config';
-import { CliLog, isCliLog } from '../../models/cliModel';
+import { CliLog } from '../../models/cliModel';
 import { getCliDataBaseDir, getSwapBinary, makeFileExecutable } from './dirs';
 import logger from '../../utils/logger';
-import { getLinesOfString } from '../../utils/parseUtils';
+import { getLogsFromRawFileString } from '../../utils/parseUtils';
 import { store } from '../../store/store';
 import {
   rpcAddLogs,
@@ -16,7 +16,13 @@ import {
   rpcInitiate,
   rpcProcessExited,
 } from '../../store/features/rpcSlice';
-import { CLI_RPC_HTTP_ADDRESS } from '../../models/rpcModel';
+import { SingleTypeEventEmitter } from '../../utils/event';
+
+export const RPC_BIND_HOST = '0.0.0.0';
+export const RPC_BIND_PORT = 1234;
+
+export const RPC_LOG_EVENT_EMITTER: SingleTypeEventEmitter<CliLog[]> =
+  new SingleTypeEventEmitter();
 
 const queue = new PQueue({ concurrency: 1 });
 let cli: ChildProcessWithoutNullStreams | null = null;
@@ -139,28 +145,8 @@ export async function spawnSubcommand(
                 stream.on('data', (data: string) => {
                   onStdOut(data);
 
-                  const logs = getLinesOfString(data)
-                    .map((logText) => {
-                      logger.debug(
-                        { subCommand, logText: logText.trim() },
-                        'Received stdout from cli process'
-                      );
-
-                      try {
-                        return JSON.parse(logText);
-                      } catch (err) {
-                        logger.debug(
-                          {
-                            subCommand,
-                            logText,
-                            err,
-                          },
-                          'Failed to parse CLI log'
-                        );
-                      }
-                      return null;
-                    })
-                    .filter(isCliLog);
+                  logger.debug({ subCommand, data }, `CLI stdout`);
+                  const logs = getLogsFromRawFileString(data);
 
                   onLog(logs);
                 });
@@ -181,10 +167,11 @@ export async function startRPC() {
   await spawnSubcommand(
     'start-daemon',
     {
-      'server-address': CLI_RPC_HTTP_ADDRESS,
+      'server-address': `${RPC_BIND_HOST}:${RPC_BIND_PORT}`,
     },
     (logs) => {
       store.dispatch(rpcAddLogs(logs));
+      RPC_LOG_EVENT_EMITTER.emit(logs);
     },
     (exitCode, exitSignal) => {
       store.dispatch(rpcProcessExited({ exitCode, exitSignal }));

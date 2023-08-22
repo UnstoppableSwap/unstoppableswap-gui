@@ -56,9 +56,9 @@ export async function getCliLogsDir(): Promise<string> {
   return logsDir;
 }
 
-export async function getCliLogFile(swapId: string): Promise<string> {
+export async function getCliLogFile(): Promise<string> {
   const logsDir = await getCliLogsDir();
-  return path.join(logsDir, `swap-${swapId}.log`);
+  return path.join(logsDir, `swap-all.log`);
 }
 
 export async function getSqliteDbFiles() {
@@ -139,10 +139,9 @@ export async function getFileData(file: string): Promise<string> {
   }
 }
 
-export async function getCliLogStdOut(swapId: string): Promise<string> {
-  const logFile = await getCliLogFile(swapId);
-  const logData = await getFileData(logFile);
-  return logData;
+export async function getCliLogStdOut(): Promise<string> {
+  const logFile = await getCliLogFile();
+  return getFileData(logFile);
 }
 
 export async function makeFileExecutable(binary: Binary) {

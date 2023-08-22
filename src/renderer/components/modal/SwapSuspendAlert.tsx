@@ -13,14 +13,16 @@ type SwapCancelAlertProps = {
   onClose: () => void;
 };
 
-export default function CliStopAlert({ open, onClose }: SwapCancelAlertProps) {
+export default function SwapSuspendAlert({
+  open,
+  onClose,
+}: SwapCancelAlertProps) {
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Force stop running operation?</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          Are you sure you want to force stop the running operation? This might
-          have unintended consequences.
+          Are you sure you want to force stop the swap?
         </DialogContentText>
       </DialogContent>
       <DialogActions>
@@ -28,7 +30,7 @@ export default function CliStopAlert({ open, onClose }: SwapCancelAlertProps) {
           No
         </Button>
         <IpcInvokeButton
-          ipcChannel="stop-cli"
+          ipcChannel="suspend-current-swap"
           ipcArgs={[]}
           color="primary"
           onSuccess={onClose}
