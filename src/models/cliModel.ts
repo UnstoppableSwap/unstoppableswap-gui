@@ -170,17 +170,6 @@ export interface CliLogReceivedXmrLockTxConfirmation extends CliLog {
   };
 }
 
-export interface CliLogFetchedPeerStatus extends CliLog {
-  fields: {
-    message: 'Fetched peer status';
-    price: string;
-    min_quantity: string;
-    max_quantity: string;
-    status: string;
-    address: string;
-  };
-}
-
 export function isCliLogReceivedXmrLockTxConfirmation(
   log: CliLog
 ): log is CliLogReceivedXmrLockTxConfirmation {
@@ -223,23 +212,4 @@ export interface CliLogRedeemedXmr extends CliLog {
 
 export function isCliLogRedeemedXmr(log: CliLog): log is CliLogRedeemedXmr {
   return log.fields.message === 'Successfully transferred XMR to wallet';
-}
-
-export interface CliLogCheckedBitcoinBalance extends CliLog {
-  fields: {
-    message: 'Checked Bitcoin balance';
-    balance: string;
-  };
-}
-
-export function isCliLogCheckedBitcoinBalance(
-  log: CliLog
-): log is CliLogCheckedBitcoinBalance {
-  return log.fields.message === 'Checked Bitcoin balance';
-}
-
-export function isCliLogFetchedPeerStatus(
-  log: CliLog
-): log is CliLogFetchedPeerStatus {
-  return log.fields.message === 'Fetched peer status';
 }

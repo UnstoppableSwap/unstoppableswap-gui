@@ -1,18 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { stateSyncEnhancer } from 'electron-redux';
 import swapReducer from './features/swapSlice';
-import historyReducer from './features/historySlice';
 import providersSlice from './features/providersSlice';
-import logSlice from './features/logSlice';
 import torSlice from './features/torSlice';
 import rpcSlice from './features/rpcSlice';
 
 export const store = configureStore({
   reducer: {
     swap: swapReducer,
-    history: historyReducer,
     providers: providersSlice,
-    log: logSlice,
     tor: torSlice,
     rpc: rpcSlice,
   },

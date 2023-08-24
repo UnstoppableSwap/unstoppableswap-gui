@@ -23,12 +23,12 @@ import {
   buyXmr,
   cancelRefundSwap,
   checkBitcoinBalance,
+  getRawHistory,
   listSellers,
   resumeSwap,
   suspendCurrentSwap,
   withdrawAllBitcoin,
 } from './cli/rpc';
-import watchLogs from './cli/log';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -129,7 +129,11 @@ if (gotTheLock) {
       createWindow();
       initSocket();
       startRPC();
-      watchLogs();
+
+      setInterval(() => {
+        getRawHistory();
+      }, 1000 * 20);
+
       return 0;
     })
     .catch((e) =>

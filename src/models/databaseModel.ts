@@ -1,8 +1,9 @@
 import { isObject } from 'lodash';
-import { satsToBtc, pionerosToXmr } from '../utils/conversionUtils';
+import { pionerosToXmr, satsToBtc } from '../utils/conversionUtils';
 import { TxLock } from './bitcoinModel';
-import { Provider } from './apiModel';
 import logger from '../utils/logger';
+import { ExtendedSwapInfo } from '../store/features/rpcSlice';
+import { SwapStateName } from './rpcModel';
 
 export interface DbState {
   Bob: {
@@ -12,23 +13,6 @@ export interface DbState {
 
 export function isDbState(dbState: unknown): dbState is DbState {
   return isObject(dbState) && 'Bob' in dbState;
-}
-
-export interface DbStateDone extends DbState {
-  Bob: {
-    Done: {
-      [stateName: string]: unknown;
-    };
-  };
-}
-
-export function getTypeOfDbState(dbState: DbState): DbStateType {
-  let [firstKey] = Object.keys(dbState.Bob);
-  if (firstKey === 'Done') {
-    [firstKey] = Object.keys((dbState as DbStateDone).Bob.Done);
-  }
-
-  return firstKey as DbStateType;
 }
 
 export interface ExecutionSetupDoneDbState extends DbState {
@@ -58,234 +42,30 @@ export function isExecutionSetupDoneDbState(
   return 'ExecutionSetupDone' in dbState.Bob;
 }
 
-export interface BtcLockedDbState extends DbState {
-  Bob: {
-    BtcLocked: {
-      state3: DbState3;
-    };
-  };
-}
-
-export function isBtcLockedDbState(
-  dbState: DbState
-): dbState is BtcLockedDbState {
-  return 'BtcLocked' in dbState.Bob;
-}
-
-export interface XmrLockProofReceivedDbState extends DbState {
-  Bob: {
-    XmrLockProofReceived: {
-      state: DbState3;
-      monero_wallet_restore_blockheight: {
-        height: number;
-      };
-    };
-  };
-}
-
-export function isXmrLockProofReceivedDbState(
-  dbState: DbState
-): dbState is XmrLockProofReceivedDbState {
-  return 'XmrLockProofReceived' in dbState.Bob;
-}
-
-export interface XmrLockedDbState extends DbState {
-  Bob: {
-    XmrLocked: {
-      state4: DbState4;
-    };
-  };
-}
-
-export function isXmrLockedDbState(
-  dbState: DbState
-): dbState is XmrLockedDbState {
-  return 'XmrLocked' in dbState.Bob;
-}
-
-export interface EncSigSentDbState extends DbState {
-  Bob: {
-    EncSigSent: {
-      state4: DbState4;
-    };
-  };
-}
-
-export function isEncSigSentDbState(
-  dbState: DbState
-): dbState is EncSigSentDbState {
-  return 'EncSigSent' in dbState.Bob;
-}
-
-export interface BtcRedeemedDbState extends DbState {
-  Bob: {
-    BtcRedeemed: DbState5;
-  };
-}
-
-export function isBtcRedeemedDbState(
-  dbState: DbState
-): dbState is BtcRedeemedDbState {
-  return 'BtcRedeemed' in dbState.Bob;
-}
-
-export interface DoneXmrRedeemedDbState extends DbStateDone {
-  Bob: {
-    Done: {
-      XmrRedeemed: {
-        tx_lock_id: string;
-      };
-    };
-  };
-}
-
-export function isDoneXmrRedeemedDbState(
-  dbState: DbState
-): dbState is DoneXmrRedeemedDbState {
-  return (
-    'Done' in dbState.Bob && 'XmrRedeemed' in (dbState as DbStateDone).Bob.Done
-  );
-}
-
-export interface CancelTimelockExpiredDbState extends DbState {
-  Bob: {
-    CancelTimelockExpired: DbState6;
-  };
-}
-
-export function isCancelTimelockExpiredDbState(
-  dbState: DbState
-): dbState is CancelTimelockExpiredDbState {
-  return 'CancelTimelockExpired' in dbState.Bob;
-}
-
-export interface BtcCancelledDbState extends DbState {
-  Bob: {
-    BtcCancelled: DbState6;
-  };
-}
-
-export function isBtcCancelledDbState(
-  dbState: DbState
-): dbState is BtcCancelledDbState {
-  return 'BtcCancelled' in dbState.Bob;
-}
-
-export interface DoneBtcRefundedDbState extends DbStateDone {
-  Bob: {
-    Done: {
-      BtcRefunded: DbState6;
-    };
-  };
-}
-
-export function isDoneBtcRefundedDbState(
-  dbState: DbState
-): dbState is DoneBtcRefundedDbState {
-  return (
-    'Done' in dbState.Bob && 'BtcRefunded' in (dbState as DbStateDone).Bob.Done
-  );
-}
-
-export interface DoneBtcPunishedDbState extends DbStateDone {
-  Bob: {
-    Done: {
-      BtcPunished: {
-        tx_lock_id: string;
-      };
-    };
-  };
-}
-
-export function isDoneBtcPunishedDbState(
-  dbState: DbState
-): dbState is DoneBtcPunishedDbState {
-  return (
-    'Done' in dbState.Bob && 'BtcPunished' in (dbState as DbStateDone).Bob.Done
-  );
-}
-
-export interface DbState3 {
-  xmr: number;
-  cancel_timelock: number;
-  punish_timelock: number;
-  refund_address: string;
-  redeem_address: string;
-  min_monero_confirmations: number;
-  tx_redeem_fee: number;
-  tx_refund_fee: number;
-  tx_cancel_fee: number;
-  tx_lock: TxLock;
-}
-
-export interface DbState4 {
-  cancel_timelock: number;
-  punish_timelock: number;
-  refund_address: string;
-  redeem_address: string;
-  monero_wallet_restore_blockheight: {
-    height: number;
-  };
-  tx_redeem_fee: number;
-  tx_refund_fee: number;
-  tx_cancel_fee: number;
-  tx_lock: TxLock;
-}
-
-export interface DbState5 {
-  monero_wallet_restore_blockheight: {
-    height: number;
-  };
-  tx_lock: TxLock;
-}
-
-export interface DbState6 {
-  cancel_timelock: number;
-  punish_timelock: number;
-  refund_address: string;
-  tx_refund_fee: number;
-  tx_cancel_fee: number;
-  tx_lock: TxLock;
-}
-
-export enum DbStateType {
-  EXECUTION_SETUP_DONE = 'ExecutionSetupDone',
-  BTC_LOCKED = 'BtcLocked',
-  XMR_LOCK_PROOF_RECEIVED = 'XmrLockProofReceived',
-  XMR_LOCKED = 'XmrLocked',
-  ENC_SIG_SENT = 'EncSigSent',
-  BTC_REDEEMED = 'BtcRedeemed',
-  DONE_XMR_REDEEMED = 'XmrRedeemed',
-  CANCEL_TIMELOCK_EXPIRED = 'CancelTimelockExpired',
-  BTC_CANCELLED = 'BtcCancelled',
-  DONE_BTC_REFUNDED = 'BtcRefunded',
-  DONE_BTC_PUNISHED = 'BtcPunished',
-}
-
 // See https://github.com/comit-network/xmr-btc-swap/blob/50ae54141255e03dba3d2b09036b1caa4a63e5a3/swap/src/protocol/bob/state.rs#L55
-export function getHumanReadableDbStateType(type: DbStateType): string {
+export function getHumanReadableDbStateType(type: SwapStateName): string {
   switch (type) {
-    case DbStateType.EXECUTION_SETUP_DONE:
+    case SwapStateName.SwapSetupCompleted:
       return 'Swap has been initiated';
-    case DbStateType.BTC_LOCKED:
+    case SwapStateName.BtcLocked:
       return 'Bitcoin has been locked';
-    case DbStateType.XMR_LOCK_PROOF_RECEIVED:
+    case SwapStateName.XmrLockProofReceived:
       return 'Monero lock transaction transfer proof has been received';
-    case DbStateType.XMR_LOCKED:
+    case SwapStateName.XmrLocked:
       return 'Monero has been locked';
-    case DbStateType.ENC_SIG_SENT:
+    case SwapStateName.EncSigSent:
       return 'Encrypted signature has been sent';
-    case DbStateType.BTC_REDEEMED:
+    case SwapStateName.BtcRedeemed:
       return 'Bitcoin has been redeemed';
-    case DbStateType.CANCEL_TIMELOCK_EXPIRED:
+    case SwapStateName.CancelTimelockExpired:
       return 'Cancel timelock has expired';
-    case DbStateType.BTC_CANCELLED:
+    case SwapStateName.BtcCancelled:
       return 'Swap has been cancelled';
-    case DbStateType.DONE_BTC_REFUNDED:
+    case SwapStateName.BtcRefunded:
       return 'Bitcoin has been refunded';
-    case DbStateType.DONE_XMR_REDEEMED:
+    case SwapStateName.XmrRedeemed:
       return 'Monero has been redeemed';
-    case DbStateType.DONE_BTC_PUNISHED:
+    case SwapStateName.BtcPunished:
       return 'Bitcoin has been punished';
     default:
       return 'unknown';
@@ -298,26 +78,12 @@ export enum DbStatePathType {
 }
 
 export interface MergedDbState {
-  swapId: string;
-  type: DbStateType;
-  state: ExecutionSetupDoneDbState; // Only ExecutionSetupDone states or more are saved
-  provider: Provider;
-  firstEnteredDate: string;
-}
-
-export function isMergedDbState(dbState: unknown): dbState is MergedDbState {
-  return (
-    isObject(dbState) &&
-    'swapId' in dbState &&
-    'type' in dbState &&
-    'state' in dbState &&
-    'provider' in dbState &&
-    'firstEnteredDate' in dbState
-  );
+  type: SwapStateName;
+  raw: ExecutionSetupDoneDbState;
 }
 
 export interface MergedExecutionSetupDoneDbState extends MergedDbState {
-  type: DbStateType.EXECUTION_SETUP_DONE;
+  type: SwapStateName.SwapSetupCompleted;
   state: ExecutionSetupDoneDbState;
 }
 
@@ -325,204 +91,13 @@ export function isMergedExecutionSetupDoneDbState(
   dbState: MergedDbState
 ): dbState is MergedExecutionSetupDoneDbState {
   return (
-    isExecutionSetupDoneDbState(dbState.state) &&
-    dbState.type === DbStateType.EXECUTION_SETUP_DONE
+    isExecutionSetupDoneDbState(dbState.raw) &&
+    dbState.type === SwapStateName.SwapSetupCompleted
   );
 }
 
-export interface MergedBtcLockedDbState extends MergedDbState {
-  type: DbStateType.BTC_LOCKED;
-  state: ExecutionSetupDoneDbState & BtcLockedDbState;
-}
-
-export function isMergedBtcLockedDbState(
-  dbState: MergedDbState
-): dbState is MergedBtcLockedDbState {
-  return (
-    isExecutionSetupDoneDbState(dbState.state) &&
-    isBtcLockedDbState(dbState.state) &&
-    dbState.type === DbStateType.BTC_LOCKED
-  );
-}
-
-export interface MergedXmrLockProofReceivedDbState extends MergedDbState {
-  type: DbStateType.XMR_LOCK_PROOF_RECEIVED;
-  state: ExecutionSetupDoneDbState &
-    BtcLockedDbState &
-    XmrLockProofReceivedDbState;
-}
-
-export function isMergedXmrLockProofReceivedDbState(
-  dbState: MergedDbState
-): dbState is MergedXmrLockProofReceivedDbState {
-  return (
-    isExecutionSetupDoneDbState(dbState.state) &&
-    isBtcLockedDbState(dbState.state) &&
-    isXmrLockProofReceivedDbState(dbState.state) &&
-    dbState.type === DbStateType.XMR_LOCK_PROOF_RECEIVED
-  );
-}
-
-export interface MergedXmrLockedDbState extends MergedDbState {
-  type: DbStateType.XMR_LOCKED;
-  state: ExecutionSetupDoneDbState &
-    BtcLockedDbState &
-    XmrLockProofReceivedDbState &
-    XmrLockedDbState;
-}
-
-export function isMergedXmrLockedDbState(
-  dbState: MergedDbState
-): dbState is MergedXmrLockedDbState {
-  return (
-    isExecutionSetupDoneDbState(dbState.state) &&
-    isBtcLockedDbState(dbState.state) &&
-    isXmrLockProofReceivedDbState(dbState.state) &&
-    isXmrLockedDbState(dbState.state) &&
-    dbState.type === DbStateType.XMR_LOCKED
-  );
-}
-
-export interface MergedEncSigSentDbState extends MergedDbState {
-  type: DbStateType.ENC_SIG_SENT;
-  state: ExecutionSetupDoneDbState &
-    BtcLockedDbState &
-    XmrLockProofReceivedDbState &
-    XmrLockedDbState &
-    EncSigSentDbState;
-}
-
-export function isMergedEncSigSentDbState(
-  dbState: MergedDbState
-): dbState is MergedEncSigSentDbState {
-  return (
-    isExecutionSetupDoneDbState(dbState.state) &&
-    isBtcLockedDbState(dbState.state) &&
-    isXmrLockProofReceivedDbState(dbState.state) &&
-    isXmrLockedDbState(dbState.state) &&
-    isEncSigSentDbState(dbState.state) &&
-    dbState.type === DbStateType.ENC_SIG_SENT
-  );
-}
-
-export interface MergedBtcRedeemedDbState extends MergedDbState {
-  type: DbStateType.BTC_REDEEMED;
-  state: ExecutionSetupDoneDbState &
-    BtcLockedDbState &
-    XmrLockProofReceivedDbState &
-    XmrLockedDbState &
-    EncSigSentDbState &
-    BtcRedeemedDbState;
-}
-
-export function isMergedBtcRedeemedDbState(
-  dbState: MergedDbState
-): dbState is MergedBtcRedeemedDbState {
-  return (
-    isExecutionSetupDoneDbState(dbState.state) &&
-    isBtcLockedDbState(dbState.state) &&
-    isXmrLockProofReceivedDbState(dbState.state) &&
-    isXmrLockedDbState(dbState.state) &&
-    isEncSigSentDbState(dbState.state) &&
-    isBtcRedeemedDbState(dbState.state) &&
-    dbState.type === DbStateType.BTC_REDEEMED
-  );
-}
-
-export interface MergedDoneXmrRedeemedDbState extends MergedDbState {
-  type: DbStateType.DONE_XMR_REDEEMED;
-  state: ExecutionSetupDoneDbState &
-    BtcLockedDbState &
-    XmrLockProofReceivedDbState &
-    XmrLockedDbState &
-    EncSigSentDbState &
-    BtcRedeemedDbState &
-    DoneXmrRedeemedDbState;
-}
-
-export function isMergedDoneXmrRedeemedDbState(
-  dbState: MergedDbState
-): dbState is MergedDoneXmrRedeemedDbState {
-  return (
-    isExecutionSetupDoneDbState(dbState.state) &&
-    isBtcLockedDbState(dbState.state) &&
-    isXmrLockProofReceivedDbState(dbState.state) &&
-    isXmrLockedDbState(dbState.state) &&
-    isEncSigSentDbState(dbState.state) &&
-    isBtcRedeemedDbState(dbState.state) &&
-    isDoneXmrRedeemedDbState(dbState.state) &&
-    dbState.type === DbStateType.DONE_XMR_REDEEMED
-  );
-}
-
-export interface MergedCancelTimelockExpiredDbState extends MergedDbState {
-  type: DbStateType.CANCEL_TIMELOCK_EXPIRED;
-  state: ExecutionSetupDoneDbState &
-    BtcLockedDbState &
-    CancelTimelockExpiredDbState;
-}
-
-export function isMergedCancelTimelockExpiredDbState(
-  dbState: MergedDbState
-): dbState is MergedCancelTimelockExpiredDbState {
-  return (
-    isExecutionSetupDoneDbState(dbState.state) &&
-    isBtcLockedDbState(dbState.state) &&
-    isCancelTimelockExpiredDbState(dbState.state) &&
-    dbState.type === DbStateType.CANCEL_TIMELOCK_EXPIRED
-  );
-}
-
-export interface MergedBtcCancelledDbState extends MergedDbState {
-  type: DbStateType.BTC_CANCELLED;
-  state: ExecutionSetupDoneDbState & BtcLockedDbState & BtcCancelledDbState;
-}
-
-export function isMergedBtcCancelledDbState(
-  dbState: MergedDbState
-): dbState is MergedBtcCancelledDbState {
-  return (
-    isExecutionSetupDoneDbState(dbState.state) &&
-    isBtcLockedDbState(dbState.state) &&
-    isBtcCancelledDbState(dbState.state) &&
-    dbState.type === DbStateType.BTC_CANCELLED
-  );
-}
-
-export interface MergedDoneBtcRefundedDbState extends MergedDbState {
-  type: DbStateType.DONE_BTC_REFUNDED;
-  state: ExecutionSetupDoneDbState & BtcLockedDbState & DoneBtcRefundedDbState;
-}
-
-export function isMergedDoneBtcRefundedDbState(
-  dbState: MergedDbState
-): dbState is MergedDoneBtcRefundedDbState {
-  return (
-    isExecutionSetupDoneDbState(dbState.state) &&
-    isBtcLockedDbState(dbState.state) &&
-    isDoneBtcRefundedDbState(dbState.state) &&
-    dbState.type === DbStateType.DONE_BTC_REFUNDED
-  );
-}
-
-export interface MergedDoneBtcPunishedDbState extends MergedDbState {
-  type: DbStateType.DONE_BTC_PUNISHED;
-  state: ExecutionSetupDoneDbState & BtcLockedDbState & DoneBtcPunishedDbState;
-}
-
-export function isMergedDoneBtcPunishedDbState(
-  dbState: MergedDbState
-): dbState is MergedDoneBtcPunishedDbState {
-  return (
-    isExecutionSetupDoneDbState(dbState.state) &&
-    isBtcLockedDbState(dbState.state) &&
-    isDoneBtcPunishedDbState(dbState.state) &&
-    dbState.type === DbStateType.DONE_BTC_PUNISHED
-  );
-}
-
-export function getSwapTxFees(dbState: MergedDbState): number {
-  const tx = dbState.state.Bob.ExecutionSetupDone.state2.tx_lock;
+export function getSwapTxFees(swap: ExtendedSwapInfo): number {
+  const tx = swap.state.raw.Bob.ExecutionSetupDone.state2.tx_lock;
 
   const sumInput = tx.inner.inputs
     .map((input) => input.witness_utxo.value)
@@ -535,32 +110,36 @@ export function getSwapTxFees(dbState: MergedDbState): number {
   return satsToBtc(sumInput - sumOutput);
 }
 
-export function getSwapBtcAmount(dbState: MergedDbState): number {
+export function getSwapBtcAmount(swap: ExtendedSwapInfo): number {
   return satsToBtc(
-    dbState.state.Bob.ExecutionSetupDone.state2.tx_lock.inner.unsigned_tx
+    swap.state.raw.Bob.ExecutionSetupDone.state2.tx_lock.inner.unsigned_tx
       .output[0]?.value
   );
 }
 
-export function getSwapXmrAmount(dbState: MergedDbState): number {
-  return pionerosToXmr(dbState.state.Bob.ExecutionSetupDone.state2.xmr);
+export function getSwapXmrAmount(swap: ExtendedSwapInfo): number {
+  return pionerosToXmr(swap.state.raw.Bob.ExecutionSetupDone.state2.xmr);
 }
 
-export function getSwapExchangeRate(dbState: MergedDbState): number {
-  const btcAmount = getSwapBtcAmount(dbState);
-  const xmrAmount = getSwapXmrAmount(dbState);
+export function getSwapExchangeRate(swap: ExtendedSwapInfo): number {
+  const btcAmount = getSwapBtcAmount(swap);
+  const xmrAmount = getSwapXmrAmount(swap);
 
   return btcAmount / xmrAmount;
 }
 
+export function getSwapRefundAddress(swap: ExtendedSwapInfo): string {
+  return swap.state.raw.Bob.ExecutionSetupDone.state2.refund_address;
+}
+
+export function getSwapPunishTimelockOffset(swap: ExtendedSwapInfo): number {
+  return swap.state.raw.Bob.ExecutionSetupDone.state2.punish_timelock;
+}
+
 // See https://github.com/comit-network/xmr-btc-swap/blob/50ae54141255e03dba3d2b09036b1caa4a63e5a3/swap/src/protocol/bob/swap.rs#L11
-export function isSwapResumable(dbState: MergedDbState): boolean {
+export function isSwapResumable(swap: ExtendedSwapInfo): boolean {
   // TODO: Add SafelyAborted db state
-  return !(
-    isMergedDoneBtcRefundedDbState(dbState) ||
-    isMergedDoneXmrRedeemedDbState(dbState) ||
-    isMergedDoneBtcPunishedDbState(dbState)
-  );
+  return !swap.completed;
 }
 
 /*
@@ -576,13 +155,13 @@ The following conditions must be met:
 See: https://github.com/comit-network/xmr-btc-swap/blob/7023e75bb51ab26dff4c8fcccdc855d781ca4b15/swap/src/cli/cancel.rs#L16-L35
  */
 export function isSwapCancellable(dbState: MergedDbState): boolean {
-  return (
-    isBtcLockedDbState(dbState.state) &&
-    !isBtcRedeemedDbState(dbState.state) &&
-    !isBtcCancelledDbState(dbState.state) &&
-    !isDoneBtcRefundedDbState(dbState.state) &&
-    !isDoneBtcPunishedDbState(dbState.state)
-  );
+  return [
+    SwapStateName.BtcLocked,
+    SwapStateName.XmrLockProofReceived,
+    SwapStateName.XmrLocked,
+    SwapStateName.EncSigSent,
+    SwapStateName.CancelTimelockExpired,
+  ].includes(dbState.type);
 }
 
 /*
@@ -597,33 +176,37 @@ The following conditions must be met:
 See: https://github.com/comit-network/xmr-btc-swap/blob/7023e75bb51ab26dff4c8fcccdc855d781ca4b15/swap/src/cli/refund.rs#L16-L34
  */
 export function isSwapRefundable(dbState: MergedDbState): boolean {
-  return (
-    isBtcLockedDbState(dbState.state) &&
-    !isBtcRedeemedDbState(dbState.state) &&
-    !isDoneBtcRefundedDbState(dbState.state) &&
-    !isDoneBtcPunishedDbState(dbState.state)
-  );
+  return [
+    SwapStateName.BtcLocked,
+    SwapStateName.XmrLockProofReceived,
+    SwapStateName.XmrLocked,
+    SwapStateName.EncSigSent,
+    SwapStateName.CancelTimelockExpired,
+    SwapStateName.BtcCancelled,
+  ].includes(dbState.type);
 }
 
 export function isHappyPathSwap(dbState: MergedDbState): boolean {
-  return (
-    isMergedExecutionSetupDoneDbState(dbState) ||
-    isMergedBtcLockedDbState(dbState) ||
-    isMergedXmrLockProofReceivedDbState(dbState) ||
-    isMergedXmrLockedDbState(dbState) ||
-    isMergedEncSigSentDbState(dbState) ||
-    isMergedBtcRedeemedDbState(dbState) ||
-    isMergedDoneXmrRedeemedDbState(dbState)
-  );
+  return [
+    SwapStateName.SwapSetupCompleted,
+    SwapStateName.BtcLocked,
+    SwapStateName.XmrLockProofReceived,
+    SwapStateName.XmrLocked,
+    SwapStateName.EncSigSent,
+    SwapStateName.BtcRedeemed,
+    SwapStateName.XmrRedeemed,
+    // We assume here that safely aborted is "happy" because the user will not lose any funds
+    SwapStateName.SafelyAborted,
+  ].includes(dbState.type);
 }
 
 export function isUnhappyPathSwap(dbState: MergedDbState): boolean {
-  return (
-    isMergedCancelTimelockExpiredDbState(dbState) ||
-    isMergedBtcCancelledDbState(dbState) ||
-    isMergedDoneBtcRefundedDbState(dbState) ||
-    isMergedDoneBtcPunishedDbState(dbState)
-  );
+  return [
+    SwapStateName.CancelTimelockExpired,
+    SwapStateName.BtcCancelled,
+    SwapStateName.BtcRefunded,
+    SwapStateName.BtcPunished,
+  ].includes(dbState.type);
 }
 
 export function getTypeOfPathDbState(dbState: MergedDbState): DbStatePathType {
@@ -635,13 +218,4 @@ export function getTypeOfPathDbState(dbState: MergedDbState): DbStatePathType {
   }
   logger.error({ dbState }, 'Unknown path type. Assuming happy path');
   return DbStatePathType.HAPPY_PATH;
-}
-
-export function isPastBdkMigrationExecutionSetupDoneDbState(
-  dbState: DbState
-): boolean {
-  return (
-    isExecutionSetupDoneDbState(dbState) &&
-    'unsigned_tx' in dbState.Bob.ExecutionSetupDone.state2.tx_lock.inner
-  );
 }

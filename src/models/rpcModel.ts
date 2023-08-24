@@ -61,18 +61,42 @@ export interface WithdrawBitcoinResponse {
   txid: string;
 }
 
+export type SwapTimelockInfoNone = {
+  None: {
+    blocks_left: number;
+  };
+};
+
+export type SwapTimelockInfoCancelled = {
+  Cancel: {
+    blocks_left: number;
+  };
+};
+
+export type SwapTimelockInfoPunished = 'Punish';
+
 export type SwapTimelockInfo =
-  | {
-      None: {
-        blocksLeft: number;
-      };
-    }
-  | {
-      Cancel: {
-        blocksLeft: number;
-      };
-    }
-  | 'Punish';
+  | SwapTimelockInfoNone
+  | SwapTimelockInfoCancelled
+  | SwapTimelockInfoPunished;
+
+export function isSwapTimelockInfoNone(
+  info: SwapTimelockInfo
+): info is SwapTimelockInfoNone {
+  return typeof info === 'object' && 'None' in info;
+}
+
+export function isSwapTimelockInfoCancelled(
+  info: SwapTimelockInfo
+): info is SwapTimelockInfoCancelled {
+  return typeof info === 'object' && 'Cancel' in info;
+}
+
+export function isSwapTimelockInfoPunished(
+  info: SwapTimelockInfo
+): info is SwapTimelockInfoPunished {
+  return info === 'Punish';
+}
 
 export type SwapSellerInfo = {
   peerId: string;

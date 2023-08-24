@@ -1,20 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import {
-  RpcProcessStateType,
-  SwapStateName,
-  SwapTimelockInfo,
-} from '../../models/rpcModel';
+import { RpcProcessStateType, SwapTimelockInfo } from '../../models/rpcModel';
 import { CliLog, isCliLogStartedRpcServer } from '../../models/cliModel';
 import {
   ExtendedProviderStatus,
   Provider,
   ProviderStatus,
 } from '../../models/apiModel';
-import {
-  DbStateType,
-  ExecutionSetupDoneDbState,
-  MergedDbState,
-} from '../../models/databaseModel';
+import { MergedDbState } from '../../models/databaseModel';
 
 type Process =
   | {

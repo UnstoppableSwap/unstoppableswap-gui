@@ -1,77 +1,78 @@
 import { Alert, AlertTitle } from '@material-ui/lab/';
-import { useTimelockStatus } from '../../../store/hooks';
-import { MergedDbState } from '../../../models/databaseModel';
+import { getSwapPunishTimelockOffset } from '../../../models/databaseModel';
 import { SwapResumeButton } from '../pages/history/table/HistoryRowActions';
-import { TimelockStatus, TimelockStatusType } from '../../../models/storeModel';
 import HumanizedBitcoinBlockDuration from '../other/HumanizedBitcoinBlockDuration';
+import { ExtendedSwapInfo } from '../../../store/features/rpcSlice';
+import {
+  isSwapTimelockInfoCancelled,
+  isSwapTimelockInfoNone,
+} from '../../../models/rpcModel';
 
-function SwapAlertStatusText({
-  timelockStatus,
-}: {
-  timelockStatus: TimelockStatus;
-}) {
-  switch (timelockStatus.type) {
-    case TimelockStatusType.NONE:
-      return (
-        <>
-          Resume the swap as soon as possible!
-          <ul
-            style={{
-              padding: '0px',
-              margin: '0px',
-            }}
-          >
-            <li>
-              You will be able to refund in about{' '}
-              <HumanizedBitcoinBlockDuration
-                blocks={timelockStatus.blocksUntilRefund}
-              />
-            </li>
-            <li>
-              You will lose your funds, if you have not refunded or completed
-              the swap in about{' '}
-              <HumanizedBitcoinBlockDuration
-                blocks={timelockStatus.blocksUntilPunish}
-              />
-            </li>
-          </ul>
-        </>
-      );
-    case TimelockStatusType.REFUND_EXPIRED:
-      return (
-        <>
-          Immediately resume the swap! You only have about{' '}
-          <HumanizedBitcoinBlockDuration
-            blocks={timelockStatus.blocksUntilPunish}
-          />{' '}
-          left to refund. After that time has passed, you will lose your funds.
-        </>
-      );
-    default:
-      return (
-        <>
-          Immediately resume the swap! You are in danger of losing your funds.
-        </>
-      );
+function SwapAlertStatusText({ swap }: { swap: ExtendedSwapInfo }) {
+  if (swap.timelock === null) {
+    return <></>;
   }
+  const punishTimelockOffset = getSwapPunishTimelockOffset(swap);
+
+  if (isSwapTimelockInfoNone(swap.timelock)) {
+    return (
+      <>
+        Resume the swap as soon as possible!
+        <ul
+          style={{
+            padding: '0px',
+            margin: '0px',
+          }}
+        >
+          <li>
+            You will be able to refund in about{' '}
+            <HumanizedBitcoinBlockDuration
+              blocks={swap.timelock.None.blocks_left}
+            />
+          </li>
+          <li>
+            You will lose your funds, if you have not refunded or completed the
+            swap in about{' '}
+            <HumanizedBitcoinBlockDuration
+              blocks={swap.timelock.None.blocks_left + punishTimelockOffset}
+            />
+          </li>
+        </ul>
+      </>
+    );
+  }
+
+  if (isSwapTimelockInfoCancelled(swap.timelock)) {
+    return (
+      <>
+        Immediately resume the swap! You only have about{' '}
+        <HumanizedBitcoinBlockDuration
+          blocks={swap.timelock.Cancel.blocks_left}
+        />{' '}
+        left to refund. After that time has passed, you will lose your funds.
+      </>
+    );
+  }
+
+  return (
+    <>Immediately resume the swap! You are in danger of losing your funds.</>
+  );
 }
 
 export default function SwapTxLockStatusAlert({
-  dbState,
+  swap,
 }: {
-  dbState: MergedDbState;
+  swap: ExtendedSwapInfo;
 }): JSX.Element {
-  const timelockStatus = useTimelockStatus(dbState.swapId);
-
   return (
     <Alert
-      key={dbState.swapId}
+      key={swap.swapId}
       severity="warning"
-      action={<SwapResumeButton dbState={dbState} />}
+      action={<SwapResumeButton swap={swap} />}
       variant="filled"
     >
-      <AlertTitle>Swap {dbState.swapId} is unfinished</AlertTitle>
-      <SwapAlertStatusText timelockStatus={timelockStatus} />
+      <AlertTitle>Swap {swap.swapId} is unfinished</AlertTitle>
+      <SwapAlertStatusText swap={swap} />
     </Alert>
   );
 }

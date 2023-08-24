@@ -1,7 +1,8 @@
 import { Box, DialogContentText } from '@material-ui/core';
 import { SwapStateBtcRefunded } from 'models/storeModel';
 import BitcoinTransactionInfoBox from '../../BitcoinTransactionInfoBox';
-import { useActiveDbState } from '../../../../../../store/hooks';
+import { useActiveSwapInfo } from '../../../../../../store/hooks';
+import { getSwapRefundAddress } from '../../../../../../models/databaseModel';
 import FeedbackInfoBox from '../../../../pages/help/FeedbackInfoBox';
 
 export default function BitcoinRefundedPage({
@@ -9,10 +10,9 @@ export default function BitcoinRefundedPage({
 }: {
   state: SwapStateBtcRefunded | null;
 }) {
-  const refundAddress =
-    useActiveDbState()?.state.Bob.ExecutionSetupDone.state2.refund_address;
-  const additionalContent = refundAddress
-    ? `Refund address: ${refundAddress}`
+  const swap = useActiveSwapInfo();
+  const additionalContent = swap
+    ? `Refund address: ${getSwapRefundAddress(swap)}`
     : null;
 
   return (
@@ -24,15 +24,12 @@ export default function BitcoinRefundedPage({
         application now.
       </DialogContentText>
       {state && (
-        <>
-          <BitcoinTransactionInfoBox
-            title="Bitcoin Refund Transaction"
-            txId={state.bobBtcRefundTxId}
-            loading={false}
-            additionalContent={additionalContent}
-          />
-          <br />
-        </>
+        <BitcoinTransactionInfoBox
+          title="Bitcoin Refund Transaction"
+          txId={state.bobBtcRefundTxId}
+          loading={false}
+          additionalContent={additionalContent}
+        />
       )}
       <FeedbackInfoBox />
     </Box>

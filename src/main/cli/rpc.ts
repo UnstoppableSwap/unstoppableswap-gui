@@ -32,7 +32,7 @@ import { providerToConcatenatedMultiAddr } from '../../utils/multiAddrUtils';
 import { swapAddLog, swapInitiate } from '../../store/features/swapSlice';
 import { CliLog, SwapSpawnType } from '../../models/cliModel';
 import { RPC_BIND_HOST, RPC_BIND_PORT, RPC_LOG_EVENT_EMITTER } from './cli';
-import getSavedLogsOfSwapId from './log';
+import getSavedLogsOfSwapId from './dirs';
 
 const rpcClient = jayson.Client.http({
   port: RPC_BIND_PORT,
@@ -154,7 +154,6 @@ export async function checkBitcoinBalance() {
     {}
   );
   store.dispatch(rpcSetBalance(response.balance));
-  await getRawHistory();
 }
 
 export async function withdrawAllBitcoin(address: string) {

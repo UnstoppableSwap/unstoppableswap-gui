@@ -1,8 +1,12 @@
 import { makeStyles } from '@material-ui/core';
 import { Alert, AlertTitle } from '@material-ui/lab';
-import { MergedDbState } from '../../../models/databaseModel';
-import { getTimelockStatus } from '../../../utils/parseUtils';
+import { getSwapPunishTimelockOffset } from '../../../models/databaseModel';
 import HumanizedBitcoinBlockDuration from '../other/HumanizedBitcoinBlockDuration';
+import { useActiveSwapInfo } from '../../../store/hooks';
+import {
+  isSwapTimelockInfoCancelled,
+  isSwapTimelockInfoNone,
+} from '../../../models/rpcModel';
 
 const useStyles = makeStyles((theme) => ({
   outer: {
@@ -14,23 +18,23 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function SwapMightBeCancelledAlert({
-  dbState,
   bobBtcLockTxConfirmations,
 }: {
-  dbState: MergedDbState;
   bobBtcLockTxConfirmations: number;
 }) {
   const classes = useStyles();
+  const swap = useActiveSwapInfo();
 
-  const timelockStatus = getTimelockStatus(
-    dbState.state.Bob.ExecutionSetupDone.state2.cancel_timelock,
-    dbState.state.Bob.ExecutionSetupDone.state2.punish_timelock,
-    bobBtcLockTxConfirmations
-  );
-
-  if (bobBtcLockTxConfirmations < 3) {
+  if (
+    bobBtcLockTxConfirmations < 3 ||
+    swap === null ||
+    swap.timelock === null
+  ) {
     return <></>;
   }
+
+  const { timelock } = swap;
+  const punishTimelockOffset = getSwapPunishTimelockOffset(swap);
 
   return (
     <Alert severity="warning" className={classes.outer} variant="filled">
@@ -49,27 +53,38 @@ export default function SwapMightBeCancelledAlert({
       swap within the required time period if the swap is not completed. If you
       fail to to do so, you will be punished and lose your money.
       <ul className={classes.list}>
-        {timelockStatus.type === 'none' && (
+        {isSwapTimelockInfoNone(timelock) && (
+          <>
+            <li>
+              <strong>
+                You will be able to refund in about{' '}
+                <HumanizedBitcoinBlockDuration
+                  blocks={timelock.None.blocks_left}
+                />
+              </strong>
+            </li>
+
+            <li>
+              <strong>
+                If you have not refunded or completed the swap in about{' '}
+                <HumanizedBitcoinBlockDuration
+                  blocks={timelock.None.blocks_left + punishTimelockOffset}
+                />
+                , you will lose your funds.
+              </strong>
+            </li>
+          </>
+        )}
+        {isSwapTimelockInfoCancelled(timelock) && (
           <li>
             <strong>
-              You will be able to refund in about{' '}
-              <HumanizedBitcoinBlockDuration
-                blocks={timelockStatus.blocksUntilRefund}
-              />
-            </strong>
-          </li>
-        )}
-        {(timelockStatus.type === 'none' ||
-          timelockStatus.type === 'cancelExpired') && (
-          <strong>
-            <li>
               If you have not refunded or completed the swap in about{' '}
               <HumanizedBitcoinBlockDuration
-                blocks={timelockStatus.blocksUntilPunish}
+                blocks={timelock.Cancel.blocks_left}
               />
               , you will lose your funds.
-            </li>
-          </strong>
+            </strong>
+          </li>
         )}
         <li>
           As long as you see this screen, the swap should be refunded

@@ -13,14 +13,14 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SwapTxLockAlertsBox() {
   const classes = useStyles();
-  const resumeableDbStates = useAppSelector((state) =>
-    state.history.filter(isSwapResumable)
+  const resumeableSwaps = useAppSelector((state) =>
+    Object.values(state.rpc.state.swapInfos).filter(isSwapResumable)
   );
 
   return (
     <Box className={classes.outer}>
-      {resumeableDbStates.map((dbState) => (
-        <SwapTxLockStatusAlert key={dbState.swapId} dbState={dbState} />
+      {resumeableSwaps.map((swap) => (
+        <SwapTxLockStatusAlert key={swap.swapId} swap={swap} />
       ))}
     </Box>
   );
