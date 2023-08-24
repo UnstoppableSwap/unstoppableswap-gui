@@ -1,4 +1,3 @@
-import { isObject } from 'lodash';
 import { pionerosToXmr, satsToBtc } from '../utils/conversionUtils';
 import { TxLock } from './bitcoinModel';
 import logger from '../utils/logger';
@@ -12,7 +11,7 @@ export interface DbState {
 }
 
 export function isDbState(dbState: unknown): dbState is DbState {
-  return isObject(dbState) && 'Bob' in dbState;
+  return typeof dbState === 'object' && dbState !== null && 'Bob' in dbState;
 }
 
 export interface ExecutionSetupDoneDbState extends DbState {

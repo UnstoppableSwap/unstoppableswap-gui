@@ -252,7 +252,6 @@
     "react-router-dom": "^6.2.1",
     "regenerator-runtime": "^0.13.9",
     "socket.io-client": "^4.4.0",
-    "sqlite": "^4.0.23",
     "uuid": "^9.0.0"
   },
   "devEngines": {
