@@ -4,7 +4,7 @@ import { constants, promises as fs } from 'fs';
 import { chmod, stat } from 'fs/promises';
 import { getPlatform, isTestnet } from '../../store/config';
 import { Binary } from '../../models/downloaderModel';
-import { CliLog } from '../../models/cliModel';
+import { CliLog, getCliLogSpanSwapId } from '../../models/cliModel';
 import { getLogsFromRawFileString } from '../../utils/parseUtils';
 
 // Be consistent with the way the cli generates the
@@ -132,9 +132,7 @@ export default async function getSavedLogsOfSwapId(
   const fileData = await getFileData(logsFile);
   const allLogs = getLogsFromRawFileString(fileData);
 
-  return allLogs.filter(
-    (log) => log.spans?.find((span) => 'swap_id' in span)?.swap_id === swapId
-  );
+  return allLogs.filter((log) => getCliLogSpanSwapId(log) === swapId);
 }
 
 export async function makeFileExecutable(binary: Binary) {

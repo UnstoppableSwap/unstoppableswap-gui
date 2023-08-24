@@ -1,9 +1,4 @@
 import {
-  isMergedDoneBtcPunishedDbState,
-  isMergedDoneBtcRefundedDbState,
-  isMergedDoneXmrRedeemedDbState,
-} from 'models/databaseModel';
-import {
   isSwapStateBtcRefunded,
   isSwapStateXmrRedeemInMempool,
   SwapStateProcessExited,
@@ -15,6 +10,7 @@ import BitcoinPunishedPage from '../done/BitcoinPunishedPage';
 import SwapStatePage from '../SwapStatePage';
 import BitcoinRefundedPage from '../done/BitcoinRefundedPage';
 import ProcesExitedAndNotDonePage from './ProcesExitedAndNotDonePage';
+import { SwapStateName } from '../../../../../../models/rpcModel';
 
 type ProcessExitedPageProps = {
   state: SwapStateProcessExited;
@@ -33,13 +29,13 @@ export default function ProcessExitedPage({ state }: ProcessExitedPageProps) {
 
   // If we don't have a swap state for a "done" state, we should fall back to using the database to display as much information as we can
   if (dbState) {
-    if (isMergedDoneXmrRedeemedDbState(dbState)) {
+    if (dbState.type === SwapStateName.XmrRedeemed) {
       return <XmrRedeemInMempoolPage state={null} />;
     }
-    if (isMergedDoneBtcRefundedDbState(dbState)) {
+    if (dbState.type === SwapStateName.BtcRefunded) {
       return <BitcoinRefundedPage state={null} />;
     }
-    if (isMergedDoneBtcPunishedDbState(dbState)) {
+    if (dbState.type === SwapStateName.BtcPunished) {
       return <BitcoinPunishedPage />;
     }
   }

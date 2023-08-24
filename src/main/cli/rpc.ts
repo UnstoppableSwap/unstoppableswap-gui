@@ -4,6 +4,7 @@ import { isObject, merge } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import {
   BalanceBitcoinResponse,
+  BuyXmrResponse,
   GetSwapInfoResponse,
   isErrorResponse,
   RawRpcResponse,
@@ -30,7 +31,11 @@ import { Provider, ProviderStatus } from '../../models/apiModel';
 import { isTestnet } from '../../store/config';
 import { providerToConcatenatedMultiAddr } from '../../utils/multiAddrUtils';
 import { swapAddLog, swapInitiate } from '../../store/features/swapSlice';
-import { CliLog, SwapSpawnType } from '../../models/cliModel';
+import {
+  CliLog,
+  getCliLogSpanLogReferenceId,
+  SwapSpawnType,
+} from '../../models/cliModel';
 import { RPC_BIND_HOST, RPC_BIND_PORT, RPC_LOG_EVENT_EMITTER } from './cli';
 import getSavedLogsOfSwapId from './dirs';
 
@@ -56,8 +61,8 @@ export async function makeRpcRequest<T>(
         Object.assign(params, { log_reference_id: logReferenceId });
 
         RPC_LOG_EVENT_EMITTER.on((logs) => {
-          const relevantLogs = logs.filter((log) =>
-            log.spans?.find((span) => span.log_reference_id === logReferenceId)
+          const relevantLogs = logs.filter(
+            (log) => getCliLogSpanLogReferenceId(log) === logReferenceId
           );
           logCallback(relevantLogs);
         });
@@ -83,7 +88,6 @@ export async function makeRpcRequest<T>(
       reject(e);
     } finally {
       store.dispatch(rpcSetEndpointFree(method));
-      console.timeLog(`makeRpcRequest ${method}`);
       console.timeEnd(`makeRpcRequest ${method}`);
     }
   });
@@ -91,11 +95,29 @@ export async function makeRpcRequest<T>(
 
 export async function makeBatchRpcRequest<T>(
   method: RpcMethod,
-  params: jayson.RequestParamsLike[]
+  params: jayson.RequestParamsLike[],
+  logCallback?: (log: CliLog[]) => void
 ): Promise<T[]> {
   return new Promise<T[]>(async (resolve, reject) => {
     console.time(`makeRpcRequest ${method} (batch)`);
     store.dispatch(rpcSetEndpointBusy(method));
+
+    if (logCallback) {
+      const logReferenceId = uuidv4();
+
+      params.forEach((param) => {
+        if (isObject(param)) {
+          Object.assign(param, { log_reference_id: logReferenceId });
+        }
+      });
+
+      RPC_LOG_EVENT_EMITTER.on((logs) => {
+        const relevantLogs = logs.filter(
+          (log) => getCliLogSpanLogReferenceId(log) === logReferenceId
+        );
+        logCallback(relevantLogs);
+      });
+    }
 
     const batch = params.map((param) =>
       rpcClient.request(method, param, undefined, false)
@@ -128,7 +150,6 @@ export async function makeBatchRpcRequest<T>(
       reject(e);
     } finally {
       store.dispatch(rpcSetEndpointFree(method));
-      console.timeLog(`makeRpcRequest ${method} (batch)`);
       console.timeEnd(`makeRpcRequest ${method} (batch)`);
     }
   });
@@ -189,7 +210,7 @@ export async function buyXmr(
   refundAddress: string,
   provider: Provider
 ) {
-  await makeRpcRequest(
+  const { swapId } = await makeRpcRequest<BuyXmrResponse>(
     RpcMethod.BUY_XMR,
     {
       bitcoin_change_address: refundAddress,
@@ -210,7 +231,7 @@ export async function buyXmr(
     swapInitiate({
       provider,
       spawnType: SwapSpawnType.INIT,
-      swapId: null,
+      swapId,
     })
   );
 }

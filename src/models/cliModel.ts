@@ -213,3 +213,19 @@ export interface CliLogRedeemedXmr extends CliLog {
 export function isCliLogRedeemedXmr(log: CliLog): log is CliLogRedeemedXmr {
   return log.fields.message === 'Successfully transferred XMR to wallet';
 }
+
+function getCliLogSpanAttribute<T>(log: CliLog, key: string): T | null {
+  const span = log.spans?.find((s) => s[key]);
+  if (!span) {
+    return null;
+  }
+  return span[key] as T;
+}
+
+export function getCliLogSpanSwapId(log: CliLog): string | null {
+  return getCliLogSpanAttribute<string>(log, 'swap_id');
+}
+
+export function getCliLogSpanLogReferenceId(log: CliLog): string | null {
+  return getCliLogSpanAttribute<string>(log, 'log_reference_id');
+}

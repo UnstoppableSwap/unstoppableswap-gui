@@ -61,6 +61,10 @@ export interface WithdrawBitcoinResponse {
   txid: string;
 }
 
+export interface BuyXmrResponse {
+  swapId: string;
+}
+
 export type SwapTimelockInfoNone = {
   None: {
     blocks_left: number;

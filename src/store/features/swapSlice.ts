@@ -35,6 +35,7 @@ import {
   SwapSpawnType,
   isCliLogBtcTxFound,
   isCliLogReleasingSwapLockLog,
+  getCliLogSpanSwapId,
 } from '../../models/cliModel';
 import logger from '../../utils/logger';
 import { Provider } from '../../models/apiModel';
@@ -60,6 +61,9 @@ export const swapSlice = createSlice({
       slice.logs.push(...logs);
 
       logs.forEach((log) => {
+        // If the log contains a swap id, set it as the current swap id. Little bit unnecessary because we already set the swapId at init but can't hurt.
+        slice.swapId = getCliLogSpanSwapId(log) ?? slice.swapId;
+
         if (isCliLogReceivedQuote(log)) {
           const price = extractAmountFromUnitString(log.fields.price);
           const minimumSwapAmount = extractAmountFromUnitString(
@@ -243,7 +247,7 @@ export const swapSlice = createSlice({
       action: PayloadAction<{
         provider: Provider | null;
         spawnType: SwapSpawnType;
-        swapId: string | null;
+        swapId: string;
       }>
     ) {
       const nextState: SwapStateInitiated = {

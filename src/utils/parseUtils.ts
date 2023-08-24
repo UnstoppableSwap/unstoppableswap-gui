@@ -1,4 +1,3 @@
-import path from 'path';
 import { DbState, isDbState } from '../models/databaseModel';
 import { CliLog, isCliLog } from '../models/cliModel';
 
