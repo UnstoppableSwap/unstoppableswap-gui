@@ -25,8 +25,8 @@ export default function NavigationFooter() {
   return (
     <Box className={classes.outer}>
       <FundsLeftInWalletAlert />
-      <RpcStatusAlert />
       <UnfinishedSwapsAlert />
+      <RpcStatusAlert />
       <Box className={classes.linksOuter}>
         <LinkIconButton url="https://reddit.com/r/unstoppableswap">
           <RedditIcon />

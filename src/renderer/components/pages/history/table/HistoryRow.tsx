@@ -11,15 +11,16 @@ import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import {
+  getHumanReadableDbStateType,
   getSwapBtcAmount,
   getSwapXmrAmount,
 } from '../../../../../models/databaseModel';
 import HistoryRowActions from './HistoryRowActions';
 import HistoryRowExpanded from './HistoryRowExpanded';
-import { ExtendedSwapInfo } from '../../../../../store/features/rpcSlice';
+import { GetSwapInfoResponse } from '../../../../../models/rpcModel';
 
 type HistoryRowProps = {
-  swap: ExtendedSwapInfo;
+  swap: GetSwapInfoResponse;
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -66,7 +67,7 @@ export default function HistoryRow({ swap }: HistoryRowProps) {
         <TableCell>
           <AmountTransfer xmrAmount={xmrAmount} btcAmount={btcAmount} />
         </TableCell>
-        <TableCell>{swap.state.type}</TableCell>
+        <TableCell>{getHumanReadableDbStateType(swap.stateName)}</TableCell>
         <TableCell>
           <HistoryRowActions swap={swap} />
         </TableCell>

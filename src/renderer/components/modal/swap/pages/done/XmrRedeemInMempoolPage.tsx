@@ -1,6 +1,6 @@
 import { Box, DialogContentText } from '@material-ui/core';
 import { SwapStateXmrRedeemInMempool } from '../../../../../../models/storeModel';
-import { pionerosToXmr } from '../../../../../../utils/conversionUtils';
+import { piconerosToXmr } from '../../../../../../utils/conversionUtils';
 import { useActiveSwapInfo } from '../../../../../../store/hooks';
 import MoneroTransactionInfoBox from '../../MoneroTransactionInfoBox';
 import { getSwapXmrAmount } from '../../../../../../models/databaseModel';
@@ -15,7 +15,7 @@ export default function XmrRedeemInMempoolPage({
 }: XmrRedeemInMempoolPageProps) {
   const swap = useActiveSwapInfo();
   const additionalContent = swap
-    ? `This transaction transfers ${pionerosToXmr(
+    ? `This transaction transfers ${piconerosToXmr(
         getSwapXmrAmount(swap)
       ).toFixed(6)} XMR to ${state?.bobXmrRedeemAddress}`
     : null;

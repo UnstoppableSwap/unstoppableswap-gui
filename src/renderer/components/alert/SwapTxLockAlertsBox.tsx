@@ -1,7 +1,7 @@
 import { Box, makeStyles } from '@material-ui/core';
 import { useAppSelector } from '../../../store/hooks';
-import { isSwapResumable } from '../../../models/databaseModel';
 import SwapTxLockStatusAlert from './SwapTxLockStatusAlert';
+import { SwapStateName } from '../../../models/rpcModel';
 
 const useStyles = makeStyles((theme) => ({
   outer: {
@@ -13,8 +13,13 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SwapTxLockAlertsBox() {
   const classes = useStyles();
+
+  // We only want to show the alerts when the swap is not completed and the Bitcoin have been locked (such that there is a risk of losing funds)
   const resumeableSwaps = useAppSelector((state) =>
-    Object.values(state.rpc.state.swapInfos).filter(isSwapResumable)
+    Object.values(state.rpc.state.swapInfos).filter(
+      (swap) =>
+        !swap.completed && swap.stateName !== SwapStateName.SwapSetupCompleted
+    )
   );
 
   return (

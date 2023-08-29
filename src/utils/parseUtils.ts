@@ -1,4 +1,3 @@
-import { DbState, isDbState } from '../models/databaseModel';
 import { CliLog, isCliLog } from '../models/cliModel';
 
 /*
@@ -16,18 +15,6 @@ export function extractAmountFromUnitString(text: string): number | null {
     }
   }
   return null;
-}
-
-export function parseStateString(str: string): DbState {
-  try {
-    const dbState = JSON.parse(str) as DbState;
-    if (isDbState(dbState)) {
-      return dbState;
-    }
-    throw new Error(`State string is not a valid db str: ${str}`);
-  } catch (e) {
-    throw new Error(`State string could not be parsed Error: ${e} str: ${str}`);
-  }
 }
 
 // E.g 2021-12-29 14:25:59.64082 +00:00:00
@@ -57,18 +44,22 @@ export function getLinesOfString(data: string): string[] {
     .filter((l) => l.length > 0);
 }
 
-export function getLogsFromRawFileString(rawFileData: string): CliLog[] {
-  return getLinesOfString(rawFileData)
-    .map((line) => {
-      try {
-        return JSON.parse(line);
-      } catch (e) {
-        return null;
-      }
-    })
-    .filter(isCliLog);
+export function getLogsAndStringsFromRawFileString(
+  rawFileData: string
+): (CliLog | string)[] {
+  return getLinesOfString(rawFileData).map((line) => {
+    try {
+      return JSON.parse(line);
+    } catch (e) {
+      return line;
+    }
+  });
 }
 
-export function logsToRawString(logs: CliLog[]): string {
+export function getLogsFromRawFileString(rawFileData: string): CliLog[] {
+  return getLogsAndStringsFromRawFileString(rawFileData).filter(isCliLog);
+}
+
+export function logsToRawString(logs: (CliLog | string)[]): string {
   return logs.map((l) => JSON.stringify(l)).join('\n');
 }

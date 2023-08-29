@@ -15,7 +15,7 @@ import blocked from 'blocked-at';
 import { resolveHtmlPath } from './util';
 import { startRPC, stopCli } from './cli/cli';
 import { getPlatform, isDevelopment } from '../store/config';
-import { getAssetPath, fixAppDataPath, getCliLogFile } from './cli/dirs';
+import getSavedLogsOfSwapId, { getAssetPath, fixAppDataPath } from './cli/dirs';
 import initSocket from './socket';
 import logger from '../utils/logger';
 import { spawnTor, stopTor } from './tor';
@@ -23,7 +23,7 @@ import {
   buyXmr,
   cancelRefundSwap,
   checkBitcoinBalance,
-  getRawHistory,
+  getRawSwapInfos,
   listSellers,
   resumeSwap,
   suspendCurrentSwap,
@@ -131,7 +131,7 @@ if (gotTheLock) {
       startRPC();
 
       setInterval(() => {
-        getRawHistory();
+        getRawSwapInfos();
       }, 1000 * 20);
 
       return 0;
@@ -186,8 +186,53 @@ ipcMain.handle('spawn-list-sellers', (_event, rendezvousPointAddress) =>
   listSellers(rendezvousPointAddress)
 );
 
-ipcMain.handle('get-cli-log-path', (_event, swapId) => getCliLogFile(swapId));
-
 ipcMain.handle('spawn-tor', spawnTor);
 
 ipcMain.handle('stop-tor', stopTor);
+
+ipcMain.handle('get-swap-logs', (_event, swapId) =>
+  getSavedLogsOfSwapId(swapId)
+);
+
+// eslint-disable-next-line import/prefer-default-export
+export function sendSnackbarAlertToRenderer(
+  message: string,
+  variant: string,
+  autoHideDuration: number | null,
+  key: string | null
+) {
+  function send() {
+    logger.debug(
+      { message, variant, autoHideDuration, key },
+      'Attempting to send snackbar alert to renderer'
+    );
+    if (mainWindow) {
+      if (
+        mainWindow.webContents.isDestroyed() ||
+        mainWindow.webContents.isLoading()
+      ) {
+        logger.debug(
+          'Main window is loading, waiting for it to finish before sending snackbar alert'
+        );
+        mainWindow.webContents.once('did-finish-load', () =>
+          setTimeout(send, 5000)
+        );
+      } else {
+        logger.debug(
+          { message, variant, autoHideDuration, key },
+          'Sending snackbar alert to renderer'
+        );
+        mainWindow?.webContents.send(
+          'display-snackbar-alert',
+          message,
+          variant,
+          autoHideDuration,
+          key
+        );
+      }
+    } else {
+      setTimeout(send, 1000);
+    }
+  }
+  send();
+}

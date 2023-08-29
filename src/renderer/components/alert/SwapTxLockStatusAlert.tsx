@@ -1,18 +1,18 @@
 import { Alert, AlertTitle } from '@material-ui/lab/';
-import { getSwapPunishTimelockOffset } from '../../../models/databaseModel';
 import { SwapResumeButton } from '../pages/history/table/HistoryRowActions';
 import HumanizedBitcoinBlockDuration from '../other/HumanizedBitcoinBlockDuration';
-import { ExtendedSwapInfo } from '../../../store/features/rpcSlice';
 import {
+  GetSwapInfoResponse,
   isSwapTimelockInfoCancelled,
   isSwapTimelockInfoNone,
 } from '../../../models/rpcModel';
 
-function SwapAlertStatusText({ swap }: { swap: ExtendedSwapInfo }) {
+function SwapAlertStatusText({ swap }: { swap: GetSwapInfoResponse }) {
   if (swap.timelock === null) {
     return <></>;
   }
-  const punishTimelockOffset = getSwapPunishTimelockOffset(swap);
+
+  const punishTimelockOffset = swap.punishTimelock;
 
   if (isSwapTimelockInfoNone(swap.timelock)) {
     return (
@@ -62,7 +62,7 @@ function SwapAlertStatusText({ swap }: { swap: ExtendedSwapInfo }) {
 export default function SwapTxLockStatusAlert({
   swap,
 }: {
-  swap: ExtendedSwapInfo;
+  swap: GetSwapInfoResponse;
 }): JSX.Element {
   return (
     <Alert

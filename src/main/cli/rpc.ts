@@ -1,15 +1,15 @@
 import jayson from 'jayson/promise';
 import { Multiaddr } from 'multiaddr';
-import { isObject, merge } from 'lodash';
+import { isObject } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import {
   BalanceBitcoinResponse,
   BuyXmrResponse,
+  GetHistoryResponse,
   GetSwapInfoResponse,
   isErrorResponse,
   RawRpcResponse,
   RawRpcResponseSuccess,
-  RawSwapHistoryResponse,
   RpcMethod,
   RpcSellerStatus,
   SwapSellerInfo,
@@ -17,12 +17,10 @@ import {
 } from '../../models/rpcModel';
 import { store } from '../../store/store';
 import {
-  ExtendedSwapInfo,
   rpcResetWithdrawTxId,
   rpcSetBalance,
   rpcSetEndpointBusy,
   rpcSetEndpointFree,
-  rpcSetRendezvousDiscoveredProviders,
   rpcSetSwapInfo,
   rpcSetWithdrawTxId,
 } from '../../store/features/rpcSlice';
@@ -33,11 +31,14 @@ import { providerToConcatenatedMultiAddr } from '../../utils/multiAddrUtils';
 import { swapAddLog, swapInitiate } from '../../store/features/swapSlice';
 import {
   CliLog,
+  CliLogSpanType,
   getCliLogSpanLogReferenceId,
+  hasCliLogOneOfMultipleSpans,
   SwapSpawnType,
 } from '../../models/cliModel';
 import { RPC_BIND_HOST, RPC_BIND_PORT, RPC_LOG_EVENT_EMITTER } from './cli';
 import getSavedLogsOfSwapId from './dirs';
+import { discoveredProvidersByRendezvous } from '../../store/features/providersSlice';
 
 const rpcClient = jayson.Client.http({
   port: RPC_BIND_PORT,
@@ -45,10 +46,13 @@ const rpcClient = jayson.Client.http({
   timeout: 60 * 1000,
 });
 
+const GLOBALLY_RELEVANT_SPANS: CliLogSpanType[] = ['BitcoinWalletSubscription'];
+
 export async function makeRpcRequest<T>(
   method: RpcMethod,
   params: jayson.RequestParamsLike,
-  logCallback?: (log: CliLog[]) => void
+  logCallback?: (log: CliLog[]) => void,
+  includeGloballyRelevantLogs?: boolean
 ) {
   return new Promise<T>(async (resolve, reject) => {
     console.time(`makeRpcRequest ${method}`);
@@ -62,7 +66,10 @@ export async function makeRpcRequest<T>(
 
         RPC_LOG_EVENT_EMITTER.on((logs) => {
           const relevantLogs = logs.filter(
-            (log) => getCliLogSpanLogReferenceId(log) === logReferenceId
+            (log) =>
+              getCliLogSpanLogReferenceId(log) === logReferenceId ||
+              (includeGloballyRelevantLogs &&
+                hasCliLogOneOfMultipleSpans(log, GLOBALLY_RELEVANT_SPANS))
           );
           logCallback(relevantLogs);
         });
@@ -224,7 +231,8 @@ export async function buyXmr(
           isFromRestore: false,
         })
       );
-    }
+    },
+    true
   );
 
   store.dispatch(
@@ -267,7 +275,8 @@ export async function cancelRefundSwap(swapId: string) {
           isFromRestore: false,
         })
       );
-    }
+    },
+    true
   );
 }
 
@@ -302,7 +311,8 @@ export async function resumeSwap(swapId: string) {
           isFromRestore: false,
         })
       );
-    }
+    },
+    true
   );
 }
 
@@ -332,7 +342,7 @@ export async function listSellers(rendezvousPointAddress: string) {
       return null;
     })
     .filter((s): s is ProviderStatus => s !== null);
-  store.dispatch(rpcSetRendezvousDiscoveredProviders(reachableSellers));
+  store.dispatch(discoveredProvidersByRendezvous(reachableSellers));
 }
 
 export async function suspendCurrentSwap() {
@@ -346,36 +356,19 @@ export async function suspendCurrentSwap() {
   });
 }
 
-export async function getRawHistory() {
-  const mainResponse = await makeRpcRequest<RawSwapHistoryResponse>(
-    RpcMethod.RAW_HISTORY,
+export async function getAllSwapIds(): Promise<string[]> {
+  const result = await makeRpcRequest<GetHistoryResponse>(
+    RpcMethod.GET_HISTORY,
     {}
   );
-  const swapIds = Object.keys(mainResponse.raw_history);
+  return result.swaps.map((swap) => swap[0]);
+}
 
-  // Execute batch requests
+export async function getRawSwapInfos() {
+  const swapIds = await getAllSwapIds();
   const getSwapInfoBatchResults = await getSwapInfoBatch(swapIds);
 
-  const swapInfos: ExtendedSwapInfo[] = [];
-
-  swapIds.forEach((swapId, i) => {
-    const rawStates = mainResponse.raw_history[swapId];
-    const info: GetSwapInfoResponse = getSwapInfoBatchResults[i];
-
-    swapInfos.push({
-      state: {
-        raw: merge({}, ...rawStates),
-        type: info.stateName,
-      },
-      swapId,
-      seller: providerFromGetSellerResponse(info.seller),
-      completed: info.completed,
-      timelock: info.timelock,
-      startDate: info.startDate,
-    });
-  });
-
-  swapInfos.forEach((info) => {
+  getSwapInfoBatchResults.forEach((info) => {
     store.dispatch(rpcSetSwapInfo(info));
   });
 }

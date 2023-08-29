@@ -4,21 +4,23 @@ export enum SwapSpawnType {
   CANCEL_REFUND = 'cancel-refund',
 }
 
+export type CliLogSpanType = string | 'BitcoinWalletSubscription';
+
 export interface CliLog {
   timestamp: string;
-  level: 'DEBUG' | 'INFO' | 'WARN';
+  level: 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'TRACE';
   fields: {
     message: string;
     [index: string]: unknown;
   };
   spans?: {
-    name: string;
+    name: CliLogSpanType;
     [index: string]: unknown;
   }[];
 }
 
 export function isCliLog(log: unknown): log is CliLog {
-  if (log) {
+  if (log && typeof log === 'object') {
     return (
       'timestamp' in (log as CliLog) &&
       'level' in (log as CliLog) &&
@@ -214,6 +216,20 @@ export function isCliLogRedeemedXmr(log: CliLog): log is CliLogRedeemedXmr {
   return log.fields.message === 'Successfully transferred XMR to wallet';
 }
 
+export interface YouHaveBeenPunishedCliLog extends CliLog {
+  fields: {
+    message: 'You have been punished for not refunding in time';
+  };
+}
+
+export function isYouHaveBeenPunishedCliLog(
+  log: CliLog
+): log is YouHaveBeenPunishedCliLog {
+  return (
+    log.fields.message === 'You have been punished for not refunding in time'
+  );
+}
+
 function getCliLogSpanAttribute<T>(log: CliLog, key: string): T | null {
   const span = log.spans?.find((s) => s[key]);
   if (!span) {
@@ -228,4 +244,11 @@ export function getCliLogSpanSwapId(log: CliLog): string | null {
 
 export function getCliLogSpanLogReferenceId(log: CliLog): string | null {
   return getCliLogSpanAttribute<string>(log, 'log_reference_id');
+}
+
+export function hasCliLogOneOfMultipleSpans(
+  log: CliLog,
+  spanNames: string[]
+): boolean {
+  return log.spans?.some((s) => spanNames.includes(s.name)) ?? false;
 }

@@ -22,7 +22,7 @@ export default function SwapSuspendAlert({
       <DialogTitle>Force stop running operation?</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          Are you sure you want to force stop the swap?
+          Are you sure you want to force stop the running swap?
         </DialogContentText>
       </DialogContent>
       <DialogActions>
@@ -34,6 +34,7 @@ export default function SwapSuspendAlert({
           ipcArgs={[]}
           color="primary"
           onSuccess={onClose}
+          requiresRpcDaemon
         >
           Force stop
         </IpcInvokeButton>

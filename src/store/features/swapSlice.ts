@@ -8,6 +8,7 @@ import {
   SwapSlice,
   SwapStateBtcCancelled,
   SwapStateBtcLockInMempool,
+  SwapStateBtcPunished,
   SwapStateBtcRedemeed,
   SwapStateBtcRefunded,
   SwapStateInitiated,
@@ -36,6 +37,7 @@ import {
   isCliLogBtcTxFound,
   isCliLogReleasingSwapLockLog,
   getCliLogSpanSwapId,
+  isYouHaveBeenPunishedCliLog,
 } from '../../models/cliModel';
 import logger from '../../utils/logger';
 import { Provider } from '../../models/apiModel';
@@ -220,6 +222,12 @@ export const swapSlice = createSlice({
             type: SwapStateType.XMR_REDEEM_IN_MEMPOOL,
             bobXmrRedeemTxId: log.fields.txid,
             bobXmrRedeemAddress: log.fields.monero_receive_address,
+          };
+
+          slice.state = nextState;
+        } else if (isYouHaveBeenPunishedCliLog(log)) {
+          const nextState: SwapStateBtcPunished = {
+            type: SwapStateType.BTC_PUNISHED,
           };
 
           slice.state = nextState;

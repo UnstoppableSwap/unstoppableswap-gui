@@ -45,6 +45,9 @@ export default function SwapDialog({
     }
   }
 
+  // This prevents an issue where the Dialog is shown for a split second without a present swap state
+  if (!open) return null;
+
   return (
     <Dialog open={open} onClose={onCancel} maxWidth="md" fullWidth>
       <SwapDialogTitle

@@ -27,6 +27,7 @@ export enum SwapStateType {
   PROCESS_EXITED = 'process exited',
   BTC_CANCELLED = 'btc cancelled',
   BTC_REFUNDED = 'btc refunded',
+  BTC_PUNISHED = 'btc punished',
 }
 
 export function isSwapState(state?: SwapState | null): state is SwapState {
@@ -159,6 +160,16 @@ export function isSwapStateBtcRefunded(
   state?: SwapState | null
 ): state is SwapStateBtcRefunded {
   return state?.type === SwapStateType.BTC_REFUNDED;
+}
+
+export interface SwapStateBtcPunished extends SwapState {
+  type: SwapStateType.BTC_PUNISHED;
+}
+
+export function isSwapStateBtcPunished(
+  state?: SwapState | null
+): state is SwapStateBtcPunished {
+  return state?.type === SwapStateType.BTC_PUNISHED;
 }
 
 export interface SwapStateProcessExited extends SwapState {

@@ -22,13 +22,11 @@ export default function WithdrawDialog({
     }
   }
 
+  // This prevents an issue where the Dialog is shown for a split second without a present withdraw state
+  if (!open && !isRpcEndpointBusy) return null;
+
   return (
-    <Dialog
-      open={open || isRpcEndpointBusy}
-      onClose={onCancel}
-      maxWidth="sm"
-      fullWidth
-    >
+    <Dialog open onClose={onCancel} maxWidth="sm" fullWidth>
       <DialogHeader title="Withdraw Bitcoin" />
       <WithdrawStatePage onCancel={onCancel} />
     </Dialog>

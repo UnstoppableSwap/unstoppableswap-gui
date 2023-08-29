@@ -6,7 +6,7 @@ export function btcToSats(btc: number): number {
   return btc * 100000000;
 }
 
-export function pionerosToXmr(piconeros: number): number {
+export function piconerosToXmr(piconeros: number): number {
   return piconeros / 1000000000000;
 }
 

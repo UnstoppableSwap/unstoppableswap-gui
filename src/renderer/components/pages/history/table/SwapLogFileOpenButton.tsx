@@ -1,25 +1,45 @@
 import { ButtonProps } from '@material-ui/core/Button/Button';
-import { Button } from '@material-ui/core';
-import { ipcRenderer, shell } from 'electron';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from '@material-ui/core';
 import { useState } from 'react';
+import IpcInvokeButton from '../../../IpcInvokeButton';
+import { CliLog } from '../../../../../models/cliModel';
+import CliLogsBox from '../../../other/RenderedCliLog';
 
 export default function SwapLogFileOpenButton({
   swapId,
   ...props
 }: { swapId: string } & ButtonProps) {
-  const [blocked, setBlocked] = useState(false);
-
-  async function openLogFile() {
-    if (blocked) return;
-    setBlocked(true);
-    const file = await ipcRenderer.invoke('get-cli-log-path', swapId);
-    await shell.openPath(file);
-    setBlocked(false);
-  }
+  const [logs, setLogs] = useState<CliLog[] | null>(null);
 
   return (
-    <Button onClick={openLogFile} {...props}>
-      view log
-    </Button>
+    <>
+      <IpcInvokeButton
+        ipcArgs={[swapId]}
+        ipcChannel="get-swap-logs"
+        onSuccess={(data) => {
+          setLogs(data as CliLog[]);
+        }}
+        {...props}
+      >
+        view log
+      </IpcInvokeButton>
+      {logs && (
+        <Dialog open onClose={() => setLogs(null)} fullWidth maxWidth="sm">
+          <DialogTitle>Logs of swap {swapId}</DialogTitle>
+          <DialogContent>
+            <CliLogsBox logs={logs} label="Logs relevant to the swap" />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setLogs(null)}>Close</Button>
+          </DialogActions>
+        </Dialog>
+      )}
+    </>
   );
 }

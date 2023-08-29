@@ -1,6 +1,5 @@
 import { makeStyles } from '@material-ui/core';
 import { Alert, AlertTitle } from '@material-ui/lab';
-import { getSwapPunishTimelockOffset } from '../../../models/databaseModel';
 import HumanizedBitcoinBlockDuration from '../other/HumanizedBitcoinBlockDuration';
 import { useActiveSwapInfo } from '../../../store/hooks';
 import {
@@ -26,7 +25,7 @@ export default function SwapMightBeCancelledAlert({
   const swap = useActiveSwapInfo();
 
   if (
-    bobBtcLockTxConfirmations < 3 ||
+    bobBtcLockTxConfirmations < 5 ||
     swap === null ||
     swap.timelock === null
   ) {
@@ -34,7 +33,7 @@ export default function SwapMightBeCancelledAlert({
   }
 
   const { timelock } = swap;
-  const punishTimelockOffset = getSwapPunishTimelockOffset(swap);
+  const punishTimelockOffset = swap.punishTimelock;
 
   return (
     <Alert severity="warning" className={classes.outer} variant="filled">

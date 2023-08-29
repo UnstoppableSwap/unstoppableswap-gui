@@ -3,26 +3,30 @@ import {
   useActiveSwapInfo,
   useAppSelector,
 } from '../../../../../../store/hooks';
-import PaperTextBox from '../../../PaperTextBox';
-import { logsToRawString } from '../../../../../../utils/parseUtils';
+import CliLogsBox from '../../../../other/RenderedCliLog';
 
 export default function ProcesExitedAndNotDonePage() {
   const swap = useActiveSwapInfo();
-  const swapStdOut = useAppSelector((s) => logsToRawString(s.swap.logs));
+  const logs = useAppSelector((s) => s.swap.logs);
 
-  if (!swap) {
-    return null;
-  }
+  const text = swap ? (
+    <>
+      The swap exited unexpectedly without completing. The current state is
+      &quot;{swap.stateName}&quot;. You might have to manually take some action.
+    </>
+  ) : (
+    <>
+      The swap exited unexpectedly before being initiated and without
+      completing.
+    </>
+  );
 
   return (
     <Box>
       <DialogContentText>
-        The swap-cli process has exited but the swap has not been completed yet.{' '}
-        The current state is "{swap.state.type}". Please check the logs
-        displayed below for more information. You might have to manually take
-        some action.
+        {text} Please check the logs displayed below for more information.
       </DialogContentText>
-      <PaperTextBox stdOut={swapStdOut} />
+      <CliLogsBox logs={logs} label="Logs relevant to the swap" />
     </Box>
   );
 }

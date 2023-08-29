@@ -1,62 +1,48 @@
 import { Step, StepLabel, Stepper, Typography } from '@material-ui/core';
-import {
-  DbStatePathType,
-  isMergedBtcCancelledDbState,
-  isMergedBtcLockedDbState,
-  isMergedBtcRedeemedDbState,
-  isMergedCancelTimelockExpiredDbState,
-  isMergedDoneBtcPunishedDbState,
-  isMergedDoneBtcRefundedDbState,
-  isMergedDoneXmrRedeemedDbState,
-  isMergedEncSigSentDbState,
-  isMergedExecutionSetupDoneDbState,
-  isMergedXmrLockedDbState,
-  isMergedXmrLockProofReceivedDbState,
-  MergedDbState,
-  getTypeOfPathDbState,
-} from 'models/databaseModel';
-import { useActiveDbState, useAppSelector } from '../../../../store/hooks';
+import { DbStatePathType, getTypeOfPathDbState } from 'models/databaseModel';
+import { useActiveSwapInfo, useAppSelector } from '../../../../store/hooks';
+import { SwapStateName } from '../../../../models/rpcModel';
 
 function getActiveStep(
-  dbState: MergedDbState | null,
+  stateName: SwapStateName | null,
   processExited: boolean
 ): [DbStatePathType, number, boolean] {
-  if (dbState) {
-    const pathType = getTypeOfPathDbState(dbState);
+  if (stateName) {
+    const pathType = getTypeOfPathDbState(stateName);
 
     if (pathType === DbStatePathType.HAPPY_PATH) {
-      if (isMergedExecutionSetupDoneDbState(dbState)) {
+      if (stateName === SwapStateName.SwapSetupCompleted) {
         return [pathType, 0, processExited];
       }
-      if (isMergedBtcLockedDbState(dbState)) {
+      if (stateName === SwapStateName.BtcLocked) {
         return [pathType, 0, processExited];
       }
-      if (isMergedXmrLockProofReceivedDbState(dbState)) {
+      if (stateName === SwapStateName.XmrLockProofReceived) {
         return [pathType, 1, processExited];
       }
-      if (isMergedXmrLockedDbState(dbState)) {
+      if (stateName === SwapStateName.XmrLocked) {
         return [pathType, 2, processExited];
       }
-      if (isMergedEncSigSentDbState(dbState)) {
+      if (stateName === SwapStateName.EncSigSent) {
         return [pathType, 2, processExited];
       }
-      if (isMergedBtcRedeemedDbState(dbState)) {
+      if (stateName === SwapStateName.BtcRedeemed) {
         return [pathType, 3, processExited];
       }
-      if (isMergedDoneXmrRedeemedDbState(dbState)) {
+      if (stateName === SwapStateName.XmrRedeemed) {
         return [pathType, 4, false];
       }
     } else {
-      if (isMergedCancelTimelockExpiredDbState(dbState)) {
+      if (stateName === SwapStateName.CancelTimelockExpired) {
         return [pathType, 0, processExited];
       }
-      if (isMergedBtcCancelledDbState(dbState)) {
+      if (stateName === SwapStateName.BtcCancelled) {
         return [pathType, 1, processExited];
       }
-      if (isMergedDoneBtcRefundedDbState(dbState)) {
+      if (stateName === SwapStateName.BtcRefunded) {
         return [pathType, 2, false];
       }
-      if (isMergedDoneBtcPunishedDbState(dbState)) {
+      if (stateName === SwapStateName.BtcPunished) {
         return [pathType, 1, true];
       }
     }
@@ -140,9 +126,9 @@ function UnhappyPathStepper({
 }
 
 export default function SwapStateStepper() {
-  const dbState = useActiveDbState();
+  const stateName = useActiveSwapInfo()?.stateName ?? null;
   const processExited = useAppSelector((s) => !s.swap.processRunning);
-  const [pathType, activeStep, error] = getActiveStep(dbState, processExited);
+  const [pathType, activeStep, error] = getActiveStep(stateName, processExited);
 
   if (pathType === DbStatePathType.HAPPY_PATH) {
     return <HappyPathStepper activeStep={activeStep} error={error} />;

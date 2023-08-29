@@ -2,7 +2,6 @@ import { Box, DialogContentText } from '@material-ui/core';
 import { SwapStateBtcRefunded } from 'models/storeModel';
 import BitcoinTransactionInfoBox from '../../BitcoinTransactionInfoBox';
 import { useActiveSwapInfo } from '../../../../../../store/hooks';
-import { getSwapRefundAddress } from '../../../../../../models/databaseModel';
 import FeedbackInfoBox from '../../../../pages/help/FeedbackInfoBox';
 
 export default function BitcoinRefundedPage({
@@ -12,16 +11,15 @@ export default function BitcoinRefundedPage({
 }) {
   const swap = useActiveSwapInfo();
   const additionalContent = swap
-    ? `Refund address: ${getSwapRefundAddress(swap)}`
+    ? `Refund address: ${swap.btcRefundAddress}`
     : null;
 
   return (
     <Box>
       <DialogContentText>
-        Unfortunately, the swap was unsuccessful and the Bitcoin refund
-        transaction was published. All Bitcoin have been refunded to the Bitcoin
-        address you specified. The swap is completed and you may exit the
-        application now.
+        Unfortunately, the swap was not successful. However, rest assured that
+        all your Bitcoin has been refunded to the specified address. The swap
+        process is now complete, and you are free to exit the application.
       </DialogContentText>
       {state && (
         <BitcoinTransactionInfoBox

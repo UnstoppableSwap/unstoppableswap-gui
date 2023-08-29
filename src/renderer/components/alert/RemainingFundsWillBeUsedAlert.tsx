@@ -2,6 +2,7 @@ import { Alert } from '@material-ui/lab';
 import { Box, makeStyles } from '@material-ui/core';
 import { useAppSelector } from '../../../store/hooks';
 import WalletRefreshButton from '../pages/wallet/WalletRefreshButton';
+import { satsToBtc } from '../../../utils/conversionUtils';
 
 const useStyles = makeStyles((theme) => ({
   outer: {
@@ -24,9 +25,9 @@ export default function RemainingFundsWillBeUsedAlert() {
         action={<WalletRefreshButton />}
         variant="filled"
       >
-        The remaining funds of {balance} BTC in the wallet will be used for the
-        next swap. If the remaining funds exceed the minimum swap amount of the
-        provider, a swap will be initiated instantaneously.
+        The remaining funds of {satsToBtc(balance)} BTC in the wallet will be
+        used for the next swap. If the remaining funds exceed the minimum swap
+        amount of the provider, a swap will be initiated instantaneously.
       </Alert>
     </Box>
   );

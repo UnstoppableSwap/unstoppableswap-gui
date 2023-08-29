@@ -9,7 +9,7 @@ import {
   TableRow,
 } from '@material-ui/core';
 import {
-  MergedDbState,
+  getHumanReadableDbStateType,
   getSwapBtcAmount,
   getSwapExchangeRate,
   getSwapTxFees,
@@ -17,7 +17,7 @@ import {
 } from '../../../../../models/databaseModel';
 import SwapLogFileOpenButton from './SwapLogFileOpenButton';
 import { SwapCancelRefundButton } from './HistoryRowActions';
-import { useTxLock } from '../../../../../store/hooks';
+import { GetSwapInfoResponse } from '../../../../../models/rpcModel';
 import { getBitcoinTxExplorerUrl } from '../../../../../utils/conversionUtils';
 import { isTestnet } from '../../../../../store/config';
 
@@ -35,19 +35,17 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function HistoryRowExpanded({
-  dbState,
+  swap,
 }: {
-  dbState: MergedDbState;
+  swap: GetSwapInfoResponse;
 }) {
   const classes = useStyles();
 
-  const btcAmount = getSwapBtcAmount(dbState);
-  const xmrAmount = getSwapXmrAmount(dbState);
-  const txFees = getSwapTxFees(dbState);
-  const exchangeRate = getSwapExchangeRate(dbState);
-  const { provider, firstEnteredDate } = dbState;
-
-  const txLock = useTxLock(dbState.swapId);
+  const { seller, startDate } = swap;
+  const btcAmount = getSwapBtcAmount(swap);
+  const xmrAmount = getSwapXmrAmount(swap);
+  const txFees = getSwapTxFees(swap);
+  const exchangeRate = getSwapExchangeRate(swap);
 
   return (
     <Box className={classes.outer}>
@@ -56,15 +54,17 @@ export default function HistoryRowExpanded({
           <TableBody>
             <TableRow>
               <TableCell>Started on</TableCell>
-              <TableCell>{firstEnteredDate}</TableCell>
+              <TableCell>{startDate}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>Swap ID</TableCell>
-              <TableCell>{dbState.swapId}</TableCell>
+              <TableCell>{swap.swapId}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>State Name</TableCell>
-              <TableCell>{dbState.type}</TableCell>
+              <TableCell>
+                {getHumanReadableDbStateType(swap.stateName)}
+              </TableCell>
             </TableRow>
             <TableRow>
               <TableCell>Monero Amount</TableCell>
@@ -85,40 +85,31 @@ export default function HistoryRowExpanded({
             <TableRow>
               <TableCell>Provider Address</TableCell>
               <TableCell>
-                {provider.multiAddr}/p2p/{provider.peerId}
+                <Box>{seller.addresses.join(', ')}</Box>
               </TableCell>
             </TableRow>
-            {txLock && (
-              <TableRow>
-                <TableCell>Bitcoin lock transaction</TableCell>
-                <TableCell>
-                  <Link
-                    href={getBitcoinTxExplorerUrl(
-                      txLock.transaction.txid,
-                      isTestnet()
-                    )}
-                    target="_blank"
-                  >
-                    {txLock.transaction.txid}
-                  </Link>{' '}
-                  ({txLock.status.confirmations ?? 0} confirmations)
-                </TableCell>
-              </TableRow>
-            )}
+            <TableRow>
+              <TableCell>Bitcoin lock transaction</TableCell>
+              <TableCell>
+                <Link
+                  href={getBitcoinTxExplorerUrl(swap.txLockId, isTestnet())}
+                  target="_blank"
+                >
+                  {swap.txLockId}
+                </Link>{' '}
+                ^
+              </TableCell>
+            </TableRow>
           </TableBody>
         </Table>
       </TableContainer>
       <Box className={classes.actionsOuter}>
         <SwapLogFileOpenButton
-          swapId={dbState.swapId}
+          swapId={swap.swapId}
           variant="outlined"
           size="small"
         />
-        <SwapCancelRefundButton
-          dbState={dbState}
-          variant="outlined"
-          size="small"
-        />
+        <SwapCancelRefundButton swap={swap} variant="outlined" size="small" />
       </Box>
     </Box>
   );

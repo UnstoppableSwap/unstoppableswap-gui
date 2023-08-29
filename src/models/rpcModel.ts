@@ -1,15 +1,13 @@
-import { DbState } from './databaseModel';
-
 export enum RpcMethod {
   GET_BTC_BALANCE = 'get_bitcoin_balance',
   WITHDRAW_BTC = 'withdraw_btc',
   BUY_XMR = 'buy_xmr',
   RESUME_SWAP = 'resume_swap',
-  RAW_HISTORY = 'get_raw_history',
   LIST_SELLERS = 'list_sellers',
   CANCEL_REFUND_SWAP = 'cancel_refund_swap',
   GET_SWAP_INFO = 'get_swap_info',
   SUSPEND_CURRENT_SWAP = 'suspend_current_swap',
+  GET_HISTORY = 'get_history',
 }
 
 export enum RpcProcessStateType {
@@ -114,16 +112,22 @@ export interface GetSwapInfoResponse {
   startDate: string;
   stateName: SwapStateName;
   timelock: null | SwapTimelockInfo;
+  txLockId: string;
+  txCancelFee: number;
+  txRefundFee: number;
+  btcAmount: number;
+  xmrAmount: number;
+  btcRefundAddress: string;
+  cancelTimelock: number;
+  punishTimelock: number;
 }
 
 export interface BalanceBitcoinResponse {
   balance: number;
 }
 
-export interface RawSwapHistoryResponse {
-  raw_history: {
-    [swapId: string]: DbState[];
-  };
+export interface GetHistoryResponse {
+  swaps: [swapId: string, stateName: SwapStateName][];
 }
 
 export enum SwapStateName {

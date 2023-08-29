@@ -5,7 +5,8 @@ import StopIcon from '@material-ui/icons/Stop';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import { RpcProcessStateType } from 'models/rpcModel';
 import InfoBox from '../../modal/swap/InfoBox';
-import PaperTextBox from '../../modal/PaperTextBox';
+import CliLogsBox from '../../other/RenderedCliLog';
+import { getLogsAndStringsFromRawFileString } from '../../../../utils/parseUtils';
 
 const useStyles = makeStyles((theme) => ({
   actionsOuter: {
@@ -26,7 +27,10 @@ export default function RpcControlBox() {
       title="Swap Daemon"
       mainContent={
         isRunning || rpcProcess.type === RpcProcessStateType.EXITED ? (
-          <PaperTextBox stdOut={rpcProcess.stdOut} />
+          <CliLogsBox
+            label="Swap Daemon Logs (current session only)"
+            logs={getLogsAndStringsFromRawFileString(rpcProcess.stdOut)}
+          />
         ) : null
       }
       additionalContent={

@@ -2,7 +2,7 @@ import { io, Socket } from 'socket.io-client';
 import { app } from 'electron';
 import { ExtendedProviderStatus, Provider } from '../models/apiModel';
 import logger from '../utils/logger';
-import { sendSnackbarAlertToRenderer } from './ipc';
+import { sendSnackbarAlertToRenderer } from './main';
 import { store } from '../store/store';
 import {
   increaseFailedRegistryReconnectAttemptsSinceLastSuccess,
