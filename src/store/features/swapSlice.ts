@@ -253,6 +253,11 @@ export const swapSlice = createSlice({
         exitSignal: NodeJS.Signals | null;
       }>
     ) {
+      if (!swap.processRunning) {
+        logger.warn(`swapProcessExited called on a swap that is not running`);
+        return;
+      }
+
       const nextState: SwapStateProcessExited = {
         type: SwapStateType.PROCESS_EXITED,
         exitSignal: action.payload.exitSignal,
