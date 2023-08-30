@@ -102,6 +102,7 @@ export default function ListSellersDialog({
           onSuccess={onClose}
           ipcChannel="spawn-list-sellers"
           ipcArgs={[rendezvousAddress]}
+          requiresRpcDaemon
         >
           Connect
         </IpcInvokeButton>

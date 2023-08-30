@@ -20,11 +20,12 @@ import { ExtendedProviderStatus } from '../../../../models/apiModel';
 import {
   useAllProviders,
   useAppDispatch,
-  useAppSelector,
+  useIsRpcEndpointBusy,
 } from '../../../../store/hooks';
 import ProviderSubmitDialog from './ProviderSubmitDialog';
 import ListSellersDialog from '../listSellers/ListSellersDialog';
 import { setSelectedProvider } from '../../../../store/features/providersSlice';
+import { RpcMethod } from '../../../../models/rpcModel';
 
 const useStyles = makeStyles({
   dialogContent: {
@@ -64,9 +65,7 @@ export function ProviderSubmitDialogOpenButton() {
 
 export function ListSellersDialogOpenButton() {
   const [open, setOpen] = useState(false);
-  const running = useAppSelector(
-    (state) => state.providers.rendezvous.processRunning
-  );
+  const running = useIsRpcEndpointBusy(RpcMethod.LIST_SELLERS);
 
   return (
     <ListItem

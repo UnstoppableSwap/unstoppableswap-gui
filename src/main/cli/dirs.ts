@@ -4,6 +4,8 @@ import { constants, promises as fs } from 'fs';
 import { chmod, stat } from 'fs/promises';
 import { getPlatform, isTestnet } from '../../store/config';
 import { Binary } from '../../models/downloaderModel';
+import { CliLog, getCliLogSpanSwapId } from '../../models/cliModel';
+import { getLogsFromRawFileString } from '../../utils/parseUtils';
 
 // Be consistent with the way the cli generates the
 // data-dir on linux
@@ -56,24 +58,9 @@ export async function getCliLogsDir(): Promise<string> {
   return logsDir;
 }
 
-export async function getCliLogFile(swapId: string): Promise<string> {
+export async function getCliLogFile(): Promise<string> {
   const logsDir = await getCliLogsDir();
-  return path.join(logsDir, `swap-${swapId}.log`);
-}
-
-export async function getSqliteDbFiles() {
-  const cliDataDir = await getCliDataDir();
-
-  const primary = path.join(cliDataDir, 'sqlite');
-  const shm = path.join(cliDataDir, 'sqlite-shm');
-  const wal = path.join(cliDataDir, 'sqlite-wal');
-
-  return {
-    folder: cliDataDir,
-    primaryFile: primary,
-    shmFile: shm,
-    walFile: wal,
-  };
+  return path.join(logsDir, `swap-all.log`);
 }
 
 export function getSwapBinary(): Binary {
@@ -130,19 +117,22 @@ export function getTorBinary(): Binary {
 
 export async function getFileData(file: string): Promise<string> {
   try {
-    const prevLogData = await fs.readFile(file, {
+    return await fs.readFile(file, {
       encoding: 'utf8',
     });
-    return prevLogData;
   } catch (e) {
     throw new Error(`Failed to read file! Path: ${file} Error: ${e}`);
   }
 }
 
-export async function getCliLogStdOut(swapId: string): Promise<string> {
-  const logFile = await getCliLogFile(swapId);
-  const logData = await getFileData(logFile);
-  return logData;
+export default async function getSavedLogsOfSwapId(
+  swapId: string
+): Promise<CliLog[]> {
+  const logsFile = await getCliLogFile();
+  const fileData = await getFileData(logsFile);
+  const allLogs = getLogsFromRawFileString(fileData);
+
+  return allLogs.filter((log) => getCliLogSpanSwapId(log) === swapId);
 }
 
 export async function makeFileExecutable(binary: Binary) {

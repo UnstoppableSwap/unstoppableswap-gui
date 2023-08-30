@@ -4,31 +4,29 @@ import DoneIcon from '@material-ui/icons/Done';
 import ErrorIcon from '@material-ui/icons/Error';
 import { green, red } from '@material-ui/core/colors';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import IpcInvokeButton from '../../../IpcInvokeButton';
 import {
-  MergedDbState,
-  isSwapResumable,
-  isMergedDoneXmrRedeemedDbState,
-  isMergedDoneBtcRefundedDbState,
-  isMergedDoneBtcPunishedDbState,
+  GetSwapInfoResponse,
+  SwapStateName,
+} from '../../../../../models/rpcModel';
+import {
   isSwapCancellable,
   isSwapRefundable,
 } from '../../../../../models/databaseModel';
-import IpcInvokeButton from '../../../IpcInvokeButton';
 
 export function SwapResumeButton({
-  dbState,
+  swap,
   ...props
-}: { dbState: MergedDbState } & ButtonProps) {
-  const resumable = isSwapResumable(dbState);
-
+}: { swap: GetSwapInfoResponse } & ButtonProps) {
   return (
     <IpcInvokeButton
       variant="contained"
       color="primary"
-      disabled={!resumable}
-      ipcChannel="resume-buy-xmr"
-      ipcArgs={[dbState.swapId]}
+      disabled={swap.completed}
+      ipcChannel="spawn-resume-swap"
+      ipcArgs={[swap.swapId]}
       endIcon={<PlayArrowIcon />}
+      requiresRpcDaemon
       {...props}
     >
       Resume
@@ -37,17 +35,19 @@ export function SwapResumeButton({
 }
 
 export function SwapCancelRefundButton({
-  dbState,
+  swap,
   ...props
-}: { dbState: MergedDbState } & ButtonProps) {
+}: { swap: GetSwapInfoResponse } & ButtonProps) {
   const cancelOrRefundable =
-    isSwapCancellable(dbState) || isSwapRefundable(dbState);
+    isSwapCancellable(swap.stateName) || isSwapRefundable(swap.stateName);
 
   return (
     <IpcInvokeButton
       disabled={!cancelOrRefundable}
       ipcChannel="spawn-cancel-refund"
-      ipcArgs={[dbState.swapId]}
+      ipcArgs={[swap.swapId]}
+      requiresRpcDaemon
+      title="test"
       {...props}
     >
       Attempt manual Cancel & Refund
@@ -56,11 +56,11 @@ export function SwapCancelRefundButton({
 }
 
 export default function HistoryRowActions({
-  dbState,
+  swap,
 }: {
-  dbState: MergedDbState;
+  swap: GetSwapInfoResponse;
 }) {
-  if (isMergedDoneXmrRedeemedDbState(dbState)) {
+  if (swap.stateName === SwapStateName.XmrRedeemed) {
     return (
       <Tooltip title="The swap is completed because you have redeemed the XMR">
         <DoneIcon style={{ color: green[500] }} />
@@ -68,7 +68,7 @@ export default function HistoryRowActions({
     );
   }
 
-  if (isMergedDoneBtcRefundedDbState(dbState)) {
+  if (swap.stateName === SwapStateName.BtcRefunded) {
     return (
       <Tooltip title="The swap is completed because your BTC have been refunded">
         <DoneIcon style={{ color: green[500] }} />
@@ -76,7 +76,7 @@ export default function HistoryRowActions({
     );
   }
 
-  if (isMergedDoneBtcPunishedDbState(dbState)) {
+  if (swap.stateName === SwapStateName.BtcPunished) {
     return (
       <Tooltip title="The swap is completed because you have been punished">
         <ErrorIcon style={{ color: red[500] }} />
@@ -84,5 +84,5 @@ export default function HistoryRowActions({
     );
   }
 
-  return <SwapResumeButton dbState={dbState} />;
+  return <SwapResumeButton swap={swap} />;
 }

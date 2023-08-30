@@ -4,17 +4,23 @@ export enum SwapSpawnType {
   CANCEL_REFUND = 'cancel-refund',
 }
 
+export type CliLogSpanType = string | 'BitcoinWalletSubscription';
+
 export interface CliLog {
   timestamp: string;
-  level: 'DEBUG' | 'INFO' | 'WARN';
+  level: 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'TRACE';
   fields: {
     message: string;
     [index: string]: unknown;
   };
+  spans?: {
+    name: CliLogSpanType;
+    [index: string]: unknown;
+  }[];
 }
 
 export function isCliLog(log: unknown): log is CliLog {
-  if (log) {
+  if (log && typeof log === 'object') {
     return (
       'timestamp' in (log as CliLog) &&
       'level' in (log as CliLog) &&
@@ -23,6 +29,32 @@ export function isCliLog(log: unknown): log is CliLog {
     );
   }
   return false;
+}
+
+export interface CliLogStartedRpcServer extends CliLog {
+  fields: {
+    message: 'Started RPC server';
+    addr: string;
+  };
+}
+
+export function isCliLogStartedRpcServer(
+  log: CliLog
+): log is CliLogStartedRpcServer {
+  return log.fields.message === 'Started RPC server';
+}
+
+export interface CliLogReleasingSwapLockLog extends CliLog {
+  fields: {
+    message: 'Releasing swap lock';
+    swap_id: string;
+  };
+}
+
+export function isCliLogReleasingSwapLockLog(
+  log: CliLog
+): log is CliLogReleasingSwapLockLog {
+  return log.fields.message === 'Releasing swap lock';
 }
 
 export interface CliLogReceivedQuote extends CliLog {
@@ -140,17 +172,6 @@ export interface CliLogReceivedXmrLockTxConfirmation extends CliLog {
   };
 }
 
-export interface CliLogFetchedPeerStatus extends CliLog {
-  fields: {
-    message: 'Fetched peer status';
-    price: string;
-    min_quantity: string;
-    max_quantity: string;
-    status: string;
-    address: string;
-  };
-}
-
 export function isCliLogReceivedXmrLockTxConfirmation(
   log: CliLog
 ): log is CliLogReceivedXmrLockTxConfirmation {
@@ -195,21 +216,39 @@ export function isCliLogRedeemedXmr(log: CliLog): log is CliLogRedeemedXmr {
   return log.fields.message === 'Successfully transferred XMR to wallet';
 }
 
-export interface CliLogCheckedBitcoinBalance extends CliLog {
+export interface YouHaveBeenPunishedCliLog extends CliLog {
   fields: {
-    message: 'Checked Bitcoin balance';
-    balance: string;
+    message: 'You have been punished for not refunding in time';
   };
 }
 
-export function isCliLogCheckedBitcoinBalance(
+export function isYouHaveBeenPunishedCliLog(
   log: CliLog
-): log is CliLogCheckedBitcoinBalance {
-  return log.fields.message === 'Checked Bitcoin balance';
+): log is YouHaveBeenPunishedCliLog {
+  return (
+    log.fields.message === 'You have been punished for not refunding in time'
+  );
 }
 
-export function isCliLogFetchedPeerStatus(
-  log: CliLog
-): log is CliLogFetchedPeerStatus {
-  return log.fields.message === 'Fetched peer status';
+function getCliLogSpanAttribute<T>(log: CliLog, key: string): T | null {
+  const span = log.spans?.find((s) => s[key]);
+  if (!span) {
+    return null;
+  }
+  return span[key] as T;
+}
+
+export function getCliLogSpanSwapId(log: CliLog): string | null {
+  return getCliLogSpanAttribute<string>(log, 'swap_id');
+}
+
+export function getCliLogSpanLogReferenceId(log: CliLog): string | null {
+  return getCliLogSpanAttribute<string>(log, 'log_reference_id');
+}
+
+export function hasCliLogOneOfMultipleSpans(
+  log: CliLog,
+  spanNames: string[]
+): boolean {
+  return log.spans?.some((s) => spanNames.includes(s.name)) ?? false;
 }

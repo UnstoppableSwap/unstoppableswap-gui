@@ -13,7 +13,7 @@ const initialState: TorSlice = {
 };
 
 export const torSlice = createSlice({
-  name: 'balance',
+  name: 'tor',
   initialState,
   reducers: {
     torAppendStdOut(slice, action: PayloadAction<string>) {

@@ -4,7 +4,7 @@ import {
   getMoneroTxExplorerUrl,
   isBtcAddressValid,
   isXmrAddressValid,
-  pionerosToXmr,
+  piconerosToXmr,
   satsToBtc,
   secondsToDays,
 } from '../../utils/conversionUtils';
@@ -18,7 +18,7 @@ test('should convert btc to sats', () => {
 });
 
 test('should convert piconeros to xmr', () => {
-  expect(pionerosToXmr(1)).toBe(0.000000000001);
+  expect(piconerosToXmr(1)).toBe(0.000000000001);
 });
 
 test('should seconds to days', () => {

@@ -2,6 +2,7 @@ import { Box } from '@material-ui/core';
 import {
   isSwapStateBtcCancelled,
   isSwapStateBtcLockInMempool,
+  isSwapStateBtcPunished,
   isSwapStateBtcRedemeed,
   isSwapStateBtcRefunded,
   isSwapStateInitiated,
@@ -28,6 +29,7 @@ import InitPage from './init/InitPage';
 import XmrLockedPage from './in_progress/XmrLockedPage';
 import BitcoinCancelledPage from './in_progress/BitcoinCancelledPage';
 import BitcoinRefundedPage from './done/BitcoinRefundedPage';
+import BitcoinPunishedPage from './done/BitcoinPunishedPage';
 
 export default function SwapStatePage({
   swapState,
@@ -72,9 +74,13 @@ export default function SwapStatePage({
   if (isSwapStateBtcRefunded(swapState)) {
     return <BitcoinRefundedPage state={swapState} />;
   }
+  if (isSwapStateBtcPunished(swapState)) {
+    return <BitcoinPunishedPage />;
+  }
   if (isSwapStateProcessExited(swapState)) {
     return <ProcessExitedPage state={swapState} />;
   }
+
   console.error(
     `No swap state page found for swap state State: ${JSON.stringify(
       swapState,

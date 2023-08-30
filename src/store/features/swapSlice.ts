@@ -8,6 +8,7 @@ import {
   SwapSlice,
   SwapStateBtcCancelled,
   SwapStateBtcLockInMempool,
+  SwapStateBtcPunished,
   SwapStateBtcRedemeed,
   SwapStateBtcRefunded,
   SwapStateInitiated,
@@ -34,6 +35,9 @@ import {
   isCliLogAdvancingState,
   SwapSpawnType,
   isCliLogBtcTxFound,
+  isCliLogReleasingSwapLockLog,
+  getCliLogSpanSwapId,
+  isYouHaveBeenPunishedCliLog,
 } from '../../models/cliModel';
 import logger from '../../utils/logger';
 import { Provider } from '../../models/apiModel';
@@ -43,7 +47,6 @@ const initialState: SwapSlice = {
   processRunning: false,
   swapId: null,
   logs: [],
-  stdOut: '',
   provider: null,
   spawnType: null,
 };
@@ -52,11 +55,17 @@ export const swapSlice = createSlice({
   name: 'swap',
   initialState,
   reducers: {
-    swapAddLog(slice, action: PayloadAction<CliLog[]>) {
-      const logs = action.payload;
+    swapAddLog(
+      slice,
+      action: PayloadAction<{ logs: CliLog[]; isFromRestore: boolean }>
+    ) {
+      const { logs } = action.payload;
       slice.logs.push(...logs);
 
       logs.forEach((log) => {
+        // If the log contains a swap id, set it as the current swap id. Little bit unnecessary because we already set the swapId at init but can't hurt.
+        slice.swapId = getCliLogSpanSwapId(log) ?? slice.swapId;
+
         if (isCliLogReceivedQuote(log)) {
           const price = extractAmountFromUnitString(log.fields.price);
           const minimumSwapAmount = extractAmountFromUnitString(
@@ -216,13 +225,27 @@ export const swapSlice = createSlice({
           };
 
           slice.state = nextState;
+        } else if (isYouHaveBeenPunishedCliLog(log)) {
+          const nextState: SwapStateBtcPunished = {
+            type: SwapStateType.BTC_PUNISHED,
+          };
+
+          slice.state = nextState;
+        } else if (
+          isCliLogReleasingSwapLockLog(log) &&
+          !action.payload.isFromRestore
+        ) {
+          const nextState: SwapStateProcessExited = {
+            type: SwapStateType.PROCESS_EXITED,
+            prevState: slice.state,
+          };
+
+          slice.state = nextState;
+          slice.processRunning = false;
         } else {
           logger.debug({ log }, `Swap log was not reduced`);
         }
       });
-    },
-    swapAppendStdOut(slice, action: PayloadAction<string>) {
-      slice.stdOut += action.payload;
     },
     swapReset() {
       return initialState;
@@ -232,7 +255,7 @@ export const swapSlice = createSlice({
       action: PayloadAction<{
         provider: Provider | null;
         spawnType: SwapSpawnType;
-        swapId: string | null;
+        swapId: string;
       }>
     ) {
       const nextState: SwapStateInitiated = {
@@ -246,17 +269,9 @@ export const swapSlice = createSlice({
       swap.spawnType = action.payload.spawnType;
       swap.swapId = action.payload.swapId;
     },
-    swapProcessExited(
-      swap,
-      action: PayloadAction<{
-        exitCode: number | null;
-        exitSignal: NodeJS.Signals | null;
-      }>
-    ) {
+    swapProcessExited(swap) {
       const nextState: SwapStateProcessExited = {
         type: SwapStateType.PROCESS_EXITED,
-        exitSignal: action.payload.exitSignal,
-        exitCode: action.payload.exitCode,
         prevState: swap.state,
       };
 
@@ -266,12 +281,7 @@ export const swapSlice = createSlice({
   },
 });
 
-export const {
-  swapInitiate,
-  swapProcessExited,
-  swapReset,
-  swapAddLog,
-  swapAppendStdOut,
-} = swapSlice.actions;
+export const { swapInitiate, swapProcessExited, swapReset, swapAddLog } =
+  swapSlice.actions;
 
 export default swapSlice.reducer;

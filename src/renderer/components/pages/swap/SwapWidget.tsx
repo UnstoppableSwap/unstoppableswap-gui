@@ -166,12 +166,7 @@ function HasProviderSwapWidget({
         }}
       />
       <ProviderSelect />
-      <Fab
-        variant="extended"
-        color="primary"
-        disabled={!!getBtcFieldError()}
-        onClick={handleGuideDialogOpen}
-      >
+      <Fab variant="extended" color="primary" onClick={handleGuideDialogOpen}>
         <SwapHorizIcon className={classes.swapIcon} />
         Swap
       </Fab>
@@ -197,7 +192,7 @@ function HasNoProvidersSwapWidget() {
         <Box className={classes.noProvidersAlertOuter}>
           <Typography>
             Currently, the public registry of providers seems to be unreachable.
-            Here's what you can do:
+            Here&apos;s what you can do:
             <ul>
               <li>
                 Try discovering a provider by connecting to a rendezvous point
@@ -220,7 +215,7 @@ function HasNoProvidersSwapWidget() {
       <Box className={classes.noProvidersAlertOuter}>
         <Typography>
           Currently, there are no providers (trading partners) available in the
-          official registry. Here's what you can do:
+          official registry. Here&apos;s what you can do:
           <ul>
             <li>
               Try discovering a provider by connecting to a rendezvous point

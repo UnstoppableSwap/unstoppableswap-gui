@@ -5,11 +5,24 @@ import {
 import PQueue from 'p-queue';
 import pidtree from 'pidtree';
 import { isTestnet } from '../../store/config';
-import { CliLog, isCliLog } from '../../models/cliModel';
+import { CliLog } from '../../models/cliModel';
 import { getCliDataBaseDir, getSwapBinary, makeFileExecutable } from './dirs';
-import { readFromDatabaseAndUpdateState } from './database';
 import logger from '../../utils/logger';
-import { getLinesOfString } from '../../utils/parseUtils';
+import { getLogsFromRawFileString } from '../../utils/parseUtils';
+import { store } from '../../store/store';
+import {
+  rpcAddLogs,
+  rpcAppendStdOut,
+  rpcInitiate,
+  rpcProcessExited,
+} from '../../store/features/rpcSlice';
+import { SingleTypeEventEmitter } from '../../utils/event';
+
+export const RPC_BIND_HOST = '0.0.0.0';
+export const RPC_BIND_PORT = 1234;
+
+export const RPC_LOG_EVENT_EMITTER: SingleTypeEventEmitter<CliLog[]> =
+  new SingleTypeEventEmitter();
 
 const queue = new PQueue({ concurrency: 1 });
 let cli: ChildProcessWithoutNullStreams | null = null;
@@ -122,15 +135,9 @@ export async function spawnSubcommand(
 
               cli.on('exit', async (code, signal) => {
                 logger.info({ subCommand, code, signal }, `CLI excited`);
-
+                onExit(code, signal);
+                resolveRunning();
                 cli = null;
-
-                try {
-                  await readFromDatabaseAndUpdateState();
-                } finally {
-                  onExit(code, signal);
-                  resolveRunning();
-                }
               });
 
               [cli.stderr, cli.stdout].forEach((stream) => {
@@ -138,32 +145,10 @@ export async function spawnSubcommand(
                 stream.on('data', (data: string) => {
                   onStdOut(data);
 
-                  const logs = getLinesOfString(data)
-                    .map((logText) => {
-                      logger.debug(
-                        { subCommand, logText: logText.trim() },
-                        'Received stdout from cli process'
-                      );
-
-                      try {
-                        return JSON.parse(logText);
-                      } catch (err) {
-                        logger.debug(
-                          {
-                            subCommand,
-                            logText,
-                            err,
-                          },
-                          'Failed to parse CLI log'
-                        );
-                      }
-                      return null;
-                    })
-                    .filter(isCliLog);
+                  logger.debug({ subCommand, data }, `CLI stdout`);
+                  const logs = getLogsFromRawFileString(data);
 
                   onLog(logs);
-
-                  readFromDatabaseAndUpdateState();
                 });
               });
             } catch (e) {
@@ -176,4 +161,25 @@ export async function spawnSubcommand(
       );
     }
   );
+}
+
+export async function startRPC() {
+  await spawnSubcommand(
+    'start-daemon',
+    {
+      'server-address': `${RPC_BIND_HOST}:${RPC_BIND_PORT}`,
+    },
+    (logs) => {
+      store.dispatch(rpcAddLogs(logs));
+      RPC_LOG_EVENT_EMITTER.emit(logs);
+    },
+    (exitCode, exitSignal) => {
+      store.dispatch(rpcProcessExited({ exitCode, exitSignal }));
+      logger.error('RPC server has stopped');
+    },
+    (text) => {
+      store.dispatch(rpcAppendStdOut(text));
+    }
+  );
+  store.dispatch(rpcInitiate());
 }

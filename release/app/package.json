@@ -14,8 +14,7 @@
     "email": "binarybaron@protonmail.com"
   },
   "dependencies": {
-    "sqlite3": "5.0.2",
-    "chokidar": "^3.5.3"
+    "jayson": "^4.0.0"
   },
   "license": "MIT"
 }

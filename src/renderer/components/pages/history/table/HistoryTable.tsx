@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function HistoryTable() {
   const classes = useStyles();
-  const history = useAppSelector((state) => state.history);
+  const swaps = useAppSelector((state) => state.rpc.state.swapInfos);
 
   return (
     <Box className={classes.outer}>
@@ -37,8 +37,8 @@ export default function HistoryTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {history.map((dbState) => (
-              <HistoryRow dbState={dbState} key={dbState.swapId} />
+            {Object.entries(swaps).map(([id, swap]) => (
+              <HistoryRow swap={swap} key={id} />
             ))}
           </TableBody>
         </Table>

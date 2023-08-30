@@ -7,15 +7,18 @@ import {
 import { ipcRenderer } from 'electron';
 import { useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
+import { useAppSelector } from '../../store/hooks';
+import { RpcProcessStateType } from '../../models/rpcModel';
 
 interface IpcInvokeButtonProps {
   ipcArgs: unknown[];
   ipcChannel: string;
   // eslint-disable-next-line react/require-default-props
-  onSuccess?: () => void;
+  onSuccess?: (data: unknown) => void;
   isLoadingOverride?: boolean;
   isIconButton?: boolean;
   loadIcon?: React.ReactNode;
+  requiresRpc?: boolean;
 }
 
 const DELAY_BEFORE_SHOWING_LOADING_MS = 1000;
@@ -29,10 +32,15 @@ export default function IpcInvokeButton({
   loadIcon,
   isLoadingOverride,
   isIconButton,
+  requiresRpc,
   ...rest
 }: IpcInvokeButtonProps & ButtonProps) {
   const { enqueueSnackbar } = useSnackbar();
 
+  const isRpcReady = useAppSelector(
+    (state) =>
+      state.rpc.process.type === RpcProcessStateType.LISTENING_FOR_CONNECTIONS
+  );
   const [isPending, setIsPending] = useState(false);
   const [hasMinLoadingTimePassed, setHasMinLoadingTimePassed] = useState(false);
 
@@ -55,11 +63,10 @@ export default function IpcInvokeButton({
     if (!isPending) {
       setIsPending(true);
       try {
-        await ipcRenderer.invoke(ipcChannel, ...ipcArgs);
-        onSuccess?.();
+        const result = await ipcRenderer.invoke(ipcChannel, ...ipcArgs);
+        onSuccess?.(result);
       } catch (e: any) {
-        const message = `Failed to invoke ${ipcChannel}: ${e.message}`;
-        enqueueSnackbar(message, {
+        enqueueSnackbar(e.message, {
           autoHideDuration: 60 * 1000,
           variant: 'error',
         });
@@ -79,7 +86,7 @@ export default function IpcInvokeButton({
   return (
     <Button
       onClick={handleClick}
-      disabled={isLoading}
+      disabled={isLoading || (requiresRpc && !isRpcReady)}
       endIcon={actualEndIcon}
       {...rest}
     />

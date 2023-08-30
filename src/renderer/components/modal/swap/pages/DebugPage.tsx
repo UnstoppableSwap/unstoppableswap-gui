@@ -1,38 +1,35 @@
-import { Box, DialogContentText, Typography } from '@material-ui/core';
-import PaperTextBox from '../../PaperTextBox';
-import { useActiveDbState, useAppSelector } from '../../../../../store/hooks';
-import ConfidentialityAlert from '../../../alert/ConfidentialityAlert';
+import { Box, DialogContentText } from '@material-ui/core';
+import { useActiveSwapInfo, useAppSelector } from '../../../../../store/hooks';
+import CliLogsBox from '../../../other/RenderedCliLog';
+import JsonTreeView from '../../../other/JSONViewTree';
 
 export default function DebugPage() {
-  const swapStdOut = useAppSelector((s) => s.swap.stdOut);
   const torStdOut = useAppSelector((s) => s.tor.stdOut);
-  const fullSwapStateString = useAppSelector((s) =>
-    JSON.stringify(s.swap, null, '\t')
-  );
-  const dbStateString = JSON.stringify(useActiveDbState(), null, '\t');
-  const relevantTransactions = useAppSelector((s) =>
-    JSON.stringify(
-      s.electrum.txs.filter((tx) => tx.transaction.swapId === s.swap.swapId),
-      null,
-      '\t'
-    )
-  );
+  const logs = useAppSelector((s) => s.swap.logs);
+  const guiState = useAppSelector((s) => s.swap);
+  const cliState = useActiveSwapInfo();
 
   return (
     <Box>
       <DialogContentText>
-        <ConfidentialityAlert />
-        <br />
-        <Typography>Swap standard output</Typography>
-        <PaperTextBox stdOut={swapStdOut} />
-        <Typography>Swap state</Typography>
-        <PaperTextBox stdOut={fullSwapStateString} />
-        <Typography>Database state</Typography>
-        <PaperTextBox stdOut={dbStateString} />
-        <Typography>Blockchain transactions</Typography>
-        <PaperTextBox stdOut={relevantTransactions} />
-        <Typography>Tor standard output</Typography>
-        <PaperTextBox stdOut={torStdOut} />
+        <Box
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
+          }}
+        >
+          <CliLogsBox logs={logs} label="Logs relevant to the swap" />
+          <JsonTreeView
+            data={guiState}
+            label="Internal GUI State (inferred from Logs)"
+          />
+          <JsonTreeView
+            data={cliState}
+            label="Swap Daemon State (exposed via API)"
+          />
+          <CliLogsBox label="Tor Daemon Logs" logs={[torStdOut]} />
+        </Box>
       </DialogContentText>
     </Box>
   );

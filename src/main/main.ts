@@ -10,24 +10,27 @@
  */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
-import { app, BrowserWindow, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import blocked from 'blocked-at';
 import { resolveHtmlPath } from './util';
-import { stopCli } from './cli/cli';
-import spawnBalanceCheck from './cli/commands/balanceCommand';
-import watchDatabase from './cli/database';
+import { startRPC, stopCli } from './cli/cli';
 import { getPlatform, isDevelopment } from '../store/config';
-import { getAssetPath, fixAppDataPath } from './cli/dirs';
+import getSavedLogsOfSwapId, { getAssetPath, fixAppDataPath } from './cli/dirs';
 import initSocket from './socket';
 import logger from '../utils/logger';
-import watchElectrumTransactions from './blockchain/electrum';
-import watchLogs from './cli/log';
-import { stopTor } from './tor';
-import initAutoUpdater from './updater';
-import initStats from './stats';
-import registerIpcHandlers from './ipc';
+import { spawnTor, stopTor } from './tor';
+import {
+  buyXmr,
+  cancelRefundSwap,
+  checkBitcoinBalance,
+  getRawSwapInfos,
+  listSellers,
+  resumeSwap,
+  suspendCurrentSwap,
+  withdrawAllBitcoin,
+} from './cli/rpc';
 
-export let mainWindow: BrowserWindow | null = null;
+let mainWindow: BrowserWindow | null = null;
 
 async function installExtensions() {
   const installer = require('electron-devtools-installer');
@@ -39,8 +42,11 @@ async function installExtensions() {
       extensions.map((name) => installer[name]),
       forceDownload
     )
-    .catch((err: any) =>
-      logger.error({ err }, 'Failed to install browser extensions')
+    .catch((e: any) =>
+      logger.error(
+        { error: e.toString() },
+        'Failed to install browser extensions'
+      )
     );
 }
 
@@ -53,8 +59,8 @@ async function createWindow() {
     title: `UnstoppableSwap ${app.getVersion()}`,
     show: false,
     width: 1024,
-    height: 808,
-    minHeight: 808,
+    height: 728,
+    minHeight: 728,
     minWidth: 1024,
     resizable: isDevelopment,
     icon: getAssetPath('icon.png'),
@@ -66,9 +72,7 @@ async function createWindow() {
     autoHideMenuBar: true,
   });
 
-  mainWindow.loadURL(resolveHtmlPath('index.html'), {
-    userAgent: `UnstoppableSwap GUI/${app.getVersion()}`,
-  });
+  mainWindow.loadURL(resolveHtmlPath('index.html'));
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/main/docs/api/browser-window.md#using-ready-to-show-event
@@ -93,8 +97,6 @@ async function createWindow() {
     event.preventDefault();
     shell.openExternal(url);
   });
-
-  await initAutoUpdater(mainWindow);
 }
 
 fixAppDataPath();
@@ -125,13 +127,13 @@ if (gotTheLock) {
     .whenReady()
     .then(async () => {
       createWindow();
-      registerIpcHandlers();
       initSocket();
-      watchDatabase();
-      spawnBalanceCheck();
-      watchElectrumTransactions();
-      watchLogs();
-      initStats();
+      startRPC();
+
+      setInterval(() => {
+        getRawSwapInfos();
+      }, 1000 * 20);
+
       return 0;
     })
     .catch((e) =>
@@ -154,4 +156,83 @@ if (isDevelopment) {
       threshold: 250,
     }
   );
+}
+
+ipcMain.handle('stop-cli', stopCli);
+
+ipcMain.handle('spawn-start-rpc', startRPC);
+
+ipcMain.handle('spawn-balance-check', checkBitcoinBalance);
+
+ipcMain.handle('suspend-current-swap', suspendCurrentSwap);
+
+ipcMain.handle(
+  'spawn-buy-xmr',
+  (_event, provider, redeemAddress, refundAddress) =>
+    buyXmr(redeemAddress, refundAddress, provider)
+);
+
+ipcMain.handle('spawn-cancel-refund', (_event, swapId) =>
+  cancelRefundSwap(swapId)
+);
+
+ipcMain.handle('spawn-resume-swap', (_event, swapId) => resumeSwap(swapId));
+
+ipcMain.handle('spawn-withdraw-btc', (_event, address) =>
+  withdrawAllBitcoin(address)
+);
+
+ipcMain.handle('spawn-list-sellers', (_event, rendezvousPointAddress) =>
+  listSellers(rendezvousPointAddress)
+);
+
+ipcMain.handle('spawn-tor', spawnTor);
+
+ipcMain.handle('stop-tor', stopTor);
+
+ipcMain.handle('get-swap-logs', (_event, swapId) =>
+  getSavedLogsOfSwapId(swapId)
+);
+
+// eslint-disable-next-line import/prefer-default-export
+export function sendSnackbarAlertToRenderer(
+  message: string,
+  variant: string,
+  autoHideDuration: number | null,
+  key: string | null
+) {
+  function send() {
+    logger.debug(
+      { message, variant, autoHideDuration, key },
+      'Attempting to send snackbar alert to renderer'
+    );
+    if (mainWindow) {
+      if (
+        mainWindow.webContents.isDestroyed() ||
+        mainWindow.webContents.isLoading()
+      ) {
+        logger.debug(
+          'Main window is loading, waiting for it to finish before sending snackbar alert'
+        );
+        mainWindow.webContents.once('did-finish-load', () =>
+          setTimeout(send, 5000)
+        );
+      } else {
+        logger.debug(
+          { message, variant, autoHideDuration, key },
+          'Sending snackbar alert to renderer'
+        );
+        mainWindow?.webContents.send(
+          'display-snackbar-alert',
+          message,
+          variant,
+          autoHideDuration,
+          key
+        );
+      }
+    } else {
+      setTimeout(send, 1000);
+    }
+  }
+  send();
 }
