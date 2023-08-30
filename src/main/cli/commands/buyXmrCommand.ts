@@ -13,6 +13,7 @@ import spawnBalanceCheck from './balanceCommand';
 import logger from '../../../utils/logger';
 import { providerToConcatenatedMultiAddr } from '../../../utils/multiAddrUtils';
 import { getCliLogStdOut } from '../dirs';
+import { findMoneroNode } from '../../blockchain/monero';
 
 async function onCliLog(logs: CliLog[]) {
   store.dispatch(swapAddLog(logs));
@@ -41,6 +42,8 @@ export async function spawnBuyXmr(
   const concatenatedMultiAddr = providerToConcatenatedMultiAddr(provider);
 
   try {
+    const moneroDaemonAddress = await findMoneroNode();
+
     store.dispatch(
       swapInitiate({
         provider,
@@ -55,6 +58,7 @@ export async function spawnBuyXmr(
         'change-address': refundAddress,
         'receive-address': redeemAddress,
         seller: concatenatedMultiAddr,
+        'monero-daemon-address': moneroDaemonAddress,
       },
       onCliLog,
       onProcExit,
@@ -88,6 +92,8 @@ export async function resumeBuyXmr(swapId: string) {
       .history.find((h) => h.swapId === swapId)?.provider;
 
     if (provider) {
+      const moneroDaemonAddress = await findMoneroNode();
+
       store.dispatch(
         swapInitiate({
           provider,
@@ -101,6 +107,7 @@ export async function resumeBuyXmr(swapId: string) {
         'resume',
         {
           'swap-id': swapId,
+          'monero-daemon-address': moneroDaemonAddress,
         },
         onCliLog,
         onProcExit,
