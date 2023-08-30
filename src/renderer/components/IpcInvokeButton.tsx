@@ -66,8 +66,7 @@ export default function IpcInvokeButton({
         const result = await ipcRenderer.invoke(ipcChannel, ...ipcArgs);
         onSuccess?.(result);
       } catch (e: any) {
-        const message = `Failed to invoke ${ipcChannel}: ${e.message}`;
-        enqueueSnackbar(message, {
+        enqueueSnackbar(e.message, {
           autoHideDuration: 60 * 1000,
           variant: 'error',
         });
