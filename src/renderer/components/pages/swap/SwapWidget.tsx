@@ -166,12 +166,7 @@ function HasProviderSwapWidget({
         }}
       />
       <ProviderSelect />
-      <Fab
-        variant="extended"
-        color="primary"
-        disabled={!!getBtcFieldError()}
-        onClick={handleGuideDialogOpen}
-      >
+      <Fab variant="extended" color="primary" onClick={handleGuideDialogOpen}>
         <SwapHorizIcon className={classes.swapIcon} />
         Swap
       </Fab>
