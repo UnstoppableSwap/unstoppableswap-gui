@@ -1,4 +1,5 @@
 import {
+  isSwapStateBtcPunished,
   isSwapStateBtcRefunded,
   isSwapStateXmrRedeemInMempool,
   SwapStateProcessExited,
@@ -22,7 +23,8 @@ export default function ProcessExitedPage({ state }: ProcessExitedPageProps) {
   // If we have a swap state, for a "done" state we should use it to display additional information that can't be extracted from the database
   if (
     isSwapStateXmrRedeemInMempool(state.prevState) ||
-    isSwapStateBtcRefunded(state.prevState)
+    isSwapStateBtcRefunded(state.prevState) ||
+    isSwapStateBtcPunished(state.prevState)
   ) {
     return <SwapStatePage swapState={state.prevState} />;
   }
