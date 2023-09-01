@@ -24,11 +24,26 @@ const NODES: MoneroNode[] = [
   ['stagenet.community.rino.io', 38081, true],
 ];
 
+/**
+ * Checks if a node is online, synced and on the correct network
+ * Times out after 45s
+ * @param node
+ */
 async function checkNode(node: MoneroNode): Promise<boolean> {
-  // Documented here: https://www.getmonero.org/resources/developer-guides/daemon-rpc.html#get_info-not-json
+  const controller = new AbortController();
+  const timeout = setTimeout(() => {
+    controller.abort();
+  }, 45 * 1000);
+
   try {
+    // Documented here: https://www.getmonero.org/resources/developer-guides/daemon-rpc.html#get_info-not-json
     const url = `http://${node[0]}:${node[1]}/get_info`;
-    const response = await fetch(url, {});
+    const response = await fetch(url, {
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeout);
+
     const json = (await response.json()) as {
       status: string;
       stagenet: boolean;
@@ -46,6 +61,7 @@ async function checkNode(node: MoneroNode): Promise<boolean> {
     );
   } catch (e) {
     logger.error(`Failed to connect to node ${formatNode(node)}`);
+    clearTimeout(timeout);
     return false;
   }
 }
@@ -54,6 +70,9 @@ function formatNode(node: MoneroNode): string {
   return `${node[0]}:${node[1]}`;
 }
 
+/**
+ * Returns one of the nodes in NODES that is online, synced and on the correct network
+ */
 export async function findMoneroNode(): Promise<string> {
   for (const node of NODES.filter((node) => node[2] === isTestnet())) {
     if (await checkNode(node)) {
