@@ -1,6 +1,9 @@
 import { Box, makeStyles } from '@material-ui/core';
 import { useAppSelector } from '../../../store/hooks';
-import { isSwapResumable } from '../../../models/databaseModel';
+import {
+  isSwapCancellable,
+  isSwapResumable,
+} from '../../../models/databaseModel';
 import SwapTxLockStatusAlert from './SwapTxLockStatusAlert';
 
 const useStyles = makeStyles((theme) => ({
@@ -14,7 +17,9 @@ const useStyles = makeStyles((theme) => ({
 export default function SwapTxLockAlertsBox() {
   const classes = useStyles();
   const resumeableDbStates = useAppSelector((state) =>
-    state.history.filter(isSwapResumable)
+    state.history.filter(
+      (s) => isSwapResumable(s) && (isSwapCancellable(s) || isSwapResumable(s))
+    )
   );
 
   return (
