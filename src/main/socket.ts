@@ -56,13 +56,6 @@ export default function initSocket() {
     );
 
     connectionErrorsDisplayedToUser = [];
-
-    sendSnackbarAlertToRenderer(
-      'Connected to public registry',
-      'info',
-      2000,
-      null
-    );
   });
 
   socket.on('disconnect', () => {
