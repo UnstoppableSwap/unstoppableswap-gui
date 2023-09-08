@@ -1,12 +1,12 @@
-import { Box, Button, DialogContentText, makeStyles } from '@material-ui/core';
+import { Box, DialogContentText, makeStyles } from '@material-ui/core';
 import { useState } from 'react';
-import { ipcRenderer } from 'electron';
 import BitcoinAddressTextField from 'renderer/components/inputs/BitcoinAddressTextField';
 import MoneroAddressTextField from 'renderer/components/inputs/MoneroAddressTextField';
 import { useAppSelector } from 'store/hooks';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import { isTestnet } from '../../../../../../store/config';
 import RemainingFundsWillBeUsedAlert from '../../../../alert/RemainingFundsWillBeUsedAlert';
+import IpcInvokeButton from '../../../../IpcInvokeButton';
 
 const useStyles = makeStyles((theme) => ({
   initButton: {
@@ -37,21 +37,6 @@ export default function InitPage() {
     (state) => state.providers.selectedProvider
   );
 
-  async function handleSwapStart() {
-    if (selectedProvider) {
-      try {
-        await ipcRenderer.invoke(
-          'spawn-buy-xmr',
-          selectedProvider,
-          redeemAddress,
-          refundAddress
-        );
-      } catch (e) {
-        console.error(e);
-      }
-    }
-  }
-
   return (
     <Box>
       <RemainingFundsWillBeUsedAlert />
@@ -81,19 +66,20 @@ export default function InitPage() {
         />
       </Box>
 
-      <Button
+      <IpcInvokeButton
         disabled={
           !refundAddressValid || !redeemAddressValid || !selectedProvider
         }
-        onClick={handleSwapStart}
         variant="contained"
         color="primary"
         size="large"
         className={classes.initButton}
         endIcon={<PlayArrowIcon />}
+        ipcChannel="spawn-buy-xmr"
+        ipcArgs={[selectedProvider, redeemAddress, refundAddress]}
       >
         Start swap
-      </Button>
+      </IpcInvokeButton>
     </Box>
   );
 }

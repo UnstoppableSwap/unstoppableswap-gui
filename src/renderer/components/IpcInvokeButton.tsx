@@ -19,11 +19,13 @@ interface IpcInvokeButtonProps<T> {
   isIconButton?: boolean;
   loadIcon?: React.ReactNode;
   requiresRpc?: boolean;
+  disabled?: boolean;
 }
 
 const DELAY_BEFORE_SHOWING_LOADING_MS = 1000;
 
 export default function IpcInvokeButton<T>({
+  disabled,
   ipcChannel,
   ipcArgs,
   onSuccess,
@@ -86,7 +88,7 @@ export default function IpcInvokeButton<T>({
   return (
     <Button
       onClick={handleClick}
-      disabled={isLoading || (requiresRpc && !isRpcReady)}
+      disabled={isLoading || (requiresRpc && !isRpcReady) || disabled}
       endIcon={actualEndIcon}
       {...rest}
     />
