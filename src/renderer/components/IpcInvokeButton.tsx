@@ -93,3 +93,12 @@ export default function IpcInvokeButton<T>({
     />
   );
 }
+
+IpcInvokeButton.defaultProps = {
+  requiresRpc: true,
+  disabled: false,
+  onSuccess: undefined,
+  isLoadingOverride: false,
+  isIconButton: false,
+  loadIcon: undefined,
+};
