@@ -34,7 +34,7 @@ export default function SwapSuspendAlert({
           ipcArgs={[]}
           color="primary"
           onSuccess={onClose}
-          requiresRpcDaemon
+          requiresRpc
         >
           Force stop
         </IpcInvokeButton>

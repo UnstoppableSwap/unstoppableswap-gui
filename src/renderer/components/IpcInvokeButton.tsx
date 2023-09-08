@@ -10,11 +10,11 @@ import { useSnackbar } from 'notistack';
 import { useAppSelector } from '../../store/hooks';
 import { RpcProcessStateType } from '../../models/rpcModel';
 
-interface IpcInvokeButtonProps {
+interface IpcInvokeButtonProps<T> {
   ipcArgs: unknown[];
   ipcChannel: string;
   // eslint-disable-next-line react/require-default-props
-  onSuccess?: (data: unknown) => void;
+  onSuccess?: (data: T) => void;
   isLoadingOverride?: boolean;
   isIconButton?: boolean;
   loadIcon?: React.ReactNode;
@@ -23,7 +23,7 @@ interface IpcInvokeButtonProps {
 
 const DELAY_BEFORE_SHOWING_LOADING_MS = 1000;
 
-export default function IpcInvokeButton({
+export default function IpcInvokeButton<T>({
   ipcChannel,
   ipcArgs,
   onSuccess,
@@ -34,7 +34,7 @@ export default function IpcInvokeButton({
   isIconButton,
   requiresRpc,
   ...rest
-}: IpcInvokeButtonProps & ButtonProps) {
+}: IpcInvokeButtonProps<T> & ButtonProps) {
   const { enqueueSnackbar } = useSnackbar();
 
   const isRpcReady = useAppSelector(

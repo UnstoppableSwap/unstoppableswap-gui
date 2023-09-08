@@ -7,7 +7,6 @@ import { IconButton, styled } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
 import { ReactNode } from 'react';
 import IpcSnackbar from './IpcSnackbar';
-import ListSellersSnackbar from './ListSellersSnackbar';
 
 const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
   '&.notistack-MuiContent': {
@@ -39,7 +38,6 @@ export default function GlobalSnackbarManager({
         warning: StyledMaterialDesignContent,
       }}
     >
-      <ListSellersSnackbar />
       <IpcSnackbar />
       {children}
     </SnackbarProvider>
