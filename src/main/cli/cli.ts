@@ -17,6 +17,7 @@ import {
   rpcProcessExited,
 } from '../../store/features/rpcSlice';
 import { SingleTypeEventEmitter } from '../../utils/event';
+import { swapProcessExited } from '../../store/features/swapSlice';
 
 export const RPC_BIND_HOST = '0.0.0.0';
 export const RPC_BIND_PORT = 1234;
@@ -175,6 +176,7 @@ export async function startRPC() {
     },
     (exitCode, exitSignal) => {
       store.dispatch(rpcProcessExited({ exitCode, exitSignal }));
+      store.dispatch(swapProcessExited());
       logger.error('RPC server has stopped');
     },
     (text) => {

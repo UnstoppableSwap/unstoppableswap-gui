@@ -270,6 +270,10 @@ export const swapSlice = createSlice({
       swap.swapId = action.payload.swapId;
     },
     swapProcessExited(swap) {
+      if (!swap.processRunning) {
+        return;
+      }
+
       const nextState: SwapStateProcessExited = {
         type: SwapStateType.PROCESS_EXITED,
         prevState: swap.state,
