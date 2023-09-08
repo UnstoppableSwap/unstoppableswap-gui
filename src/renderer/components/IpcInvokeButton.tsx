@@ -13,7 +13,6 @@ import { RpcProcessStateType } from '../../models/rpcModel';
 interface IpcInvokeButtonProps<T> {
   ipcArgs: unknown[];
   ipcChannel: string;
-  // eslint-disable-next-line react/require-default-props
   onSuccess?: (data: T) => void;
   isLoadingOverride?: boolean;
   isIconButton?: boolean;
