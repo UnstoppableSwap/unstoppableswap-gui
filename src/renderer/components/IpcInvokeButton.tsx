@@ -5,7 +5,7 @@ import {
   IconButton,
 } from '@material-ui/core';
 import { ipcRenderer } from 'electron';
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { useAppSelector } from '../../store/hooks';
 import { RpcProcessStateType } from '../../models/rpcModel';
@@ -16,7 +16,7 @@ interface IpcInvokeButtonProps<T> {
   onSuccess?: (data: T) => void;
   isLoadingOverride?: boolean;
   isIconButton?: boolean;
-  loadIcon?: React.ReactNode;
+  loadIcon?: ReactNode;
   requiresRpc?: boolean;
   disabled?: boolean;
 }

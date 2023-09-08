@@ -1,4 +1,4 @@
-import React from 'react';
+import { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 
@@ -9,7 +9,7 @@ export default function RouteListItemIconButton({
 }: {
   name: string;
   route: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   const navigate = useNavigate();
 

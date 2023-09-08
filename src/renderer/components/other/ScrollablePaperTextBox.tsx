@@ -1,11 +1,12 @@
 import { Box, Button, Divider, Paper, Typography } from '@material-ui/core';
+import { ReactNode } from 'react';
 
 export default function ScrollablePaperTextBox({
   children,
   title,
   copyValue,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   title: string;
   copyValue: string;
 }) {
