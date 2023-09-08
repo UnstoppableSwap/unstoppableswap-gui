@@ -39,7 +39,7 @@ export default function AddressInputPage({
           ipcArgs={[withdrawAddress]}
           color="primary"
           variant="contained"
-          requiresRpcDaemon
+          requiresRpc
         >
           Withdraw
         </IpcInvokeButton>

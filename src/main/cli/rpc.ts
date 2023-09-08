@@ -87,7 +87,10 @@ export async function makeRpcRequest<T>(
           )
         );
       } else {
-        logger.debug({ method, params }, 'Received RPC response (success)');
+        logger.debug(
+          { method, params, response },
+          'Received RPC response (success)'
+        );
 
         resolve(response.result);
       }
@@ -316,7 +319,9 @@ export async function resumeSwap(swapId: string) {
   );
 }
 
-export async function listSellers(rendezvousPointAddress: string) {
+export async function listSellers(
+  rendezvousPointAddress: string
+): Promise<number> {
   const response = await makeRpcRequest<{ sellers: RpcSellerStatus[] }>(
     RpcMethod.LIST_SELLERS,
     {
@@ -343,6 +348,7 @@ export async function listSellers(rendezvousPointAddress: string) {
     })
     .filter((s): s is ProviderStatus => s !== null);
   store.dispatch(discoveredProvidersByRendezvous(reachableSellers));
+  return reachableSellers.length;
 }
 
 export async function suspendCurrentSwap() {

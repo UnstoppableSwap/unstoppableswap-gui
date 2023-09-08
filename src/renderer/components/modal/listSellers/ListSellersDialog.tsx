@@ -13,6 +13,7 @@ import {
   Theme,
 } from '@material-ui/core';
 import { Multiaddr } from 'multiaddr';
+import { useSnackbar } from 'notistack';
 import IpcInvokeButton from '../../IpcInvokeButton';
 
 const PRESET_RENDEZVOUS_POINTS = [
@@ -39,6 +40,7 @@ export default function ListSellersDialog({
 }: ListSellersDialogProps) {
   const classes = useStyles();
   const [rendezvousAddress, setRendezvousAddress] = useState('');
+  const { enqueueSnackbar } = useSnackbar();
 
   function handleMultiAddrChange(event: ChangeEvent<HTMLInputElement>) {
     setRendezvousAddress(event.target.value);
@@ -54,6 +56,28 @@ export default function ListSellersDialog({
     } catch (e) {
       return 'Not a valid multi address';
     }
+  }
+
+  function handleSuccess(amountOfSellers: number) {
+    let message: string;
+
+    switch (amountOfSellers) {
+      case 0:
+        message = `No providers were discovered at the rendezvous point`;
+        break;
+      case 1:
+        message = `Discovered one provider at the rendezvous point`;
+        break;
+      default:
+        message = `Discovered ${amountOfSellers} providers at the rendezvous point`;
+    }
+
+    enqueueSnackbar(message, {
+      variant: 'success',
+      autoHideDuration: 5000,
+    });
+
+    onClose();
   }
 
   return (
@@ -99,10 +123,10 @@ export default function ListSellersDialog({
           variant="contained"
           disabled={!(rendezvousAddress && !getMultiAddressError())}
           color="primary"
-          onSuccess={onClose}
+          onSuccess={handleSuccess}
           ipcChannel="spawn-list-sellers"
           ipcArgs={[rendezvousAddress]}
-          requiresRpcDaemon
+          requiresRpc
         >
           Connect
         </IpcInvokeButton>

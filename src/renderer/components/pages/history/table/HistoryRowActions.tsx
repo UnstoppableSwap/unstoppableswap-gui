@@ -26,7 +26,7 @@ export function SwapResumeButton({
       ipcChannel="spawn-resume-swap"
       ipcArgs={[swap.swapId]}
       endIcon={<PlayArrowIcon />}
-      requiresRpcDaemon
+      requiresRpc
       {...props}
     >
       Resume
@@ -46,7 +46,7 @@ export function SwapCancelRefundButton({
       disabled={!cancelOrRefundable}
       ipcChannel="spawn-cancel-refund"
       ipcArgs={[swap.swapId]}
-      requiresRpcDaemon
+      requiresRpc
       title="test"
       {...props}
     >
