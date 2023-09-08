@@ -63,6 +63,11 @@ export async function getCliLogFile(): Promise<string> {
   return path.join(logsDir, `swap-all.log`);
 }
 
+export async function getLegacyCliLogFile(swapId: string): Promise<string> {
+  const logsDir = await getCliLogsDir();
+  return path.join(logsDir, `swap-${swapId}.log`);
+}
+
 export function getSwapBinary(): Binary {
   const platform = getPlatform();
   const dirPath = app.isPackaged
@@ -130,9 +135,20 @@ export default async function getSavedLogsOfSwapId(
 ): Promise<CliLog[]> {
   const logsFile = await getCliLogFile();
   const fileData = await getFileData(logsFile);
-  const allLogs = getLogsFromRawFileString(fileData);
 
-  return allLogs.filter((log) => getCliLogSpanSwapId(log) === swapId);
+  /*
+  The CLI used to write logs to a file per swapId.
+  This function will read the old logs file if it exists and also take it into account.
+   */
+  const legacyLogsFile = await getLegacyCliLogFile(swapId);
+  const legacyFileData = await getFileData(legacyLogsFile).catch(() => '');
+
+  const legacyLogs = getLogsFromRawFileString(legacyFileData);
+  const logs = getLogsFromRawFileString(fileData).filter(
+    (log) => getCliLogSpanSwapId(log) === swapId
+  );
+
+  return [...legacyLogs, ...logs];
 }
 
 export async function makeFileExecutable(binary: Binary) {

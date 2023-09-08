@@ -30,7 +30,7 @@ export default function SwapLogFileOpenButton({
         view log
       </IpcInvokeButton>
       {logs && (
-        <Dialog open onClose={() => setLogs(null)} fullWidth maxWidth="sm">
+        <Dialog open onClose={() => setLogs(null)} fullWidth maxWidth="lg">
           <DialogTitle>Logs of swap {swapId}</DialogTitle>
           <DialogContent>
             <CliLogsBox logs={logs} label="Logs relevant to the swap" />
