@@ -238,7 +238,6 @@
     "electrum-cash": "^2.0.10",
     "humanize-duration": "^3.27.2",
     "multiaddr": "^10.0.1",
-    "node-fetch": "^2.7.0",
     "notistack": "^3.0.1",
     "p-queue": "^6.6.2",
     "path-browserify": "^1.0.1",
