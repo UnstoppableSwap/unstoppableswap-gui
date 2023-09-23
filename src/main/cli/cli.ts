@@ -1,10 +1,12 @@
 import {
   ChildProcessWithoutNullStreams,
   spawn as spawnProc,
+  exec,
 } from 'child_process';
 import PQueue from 'p-queue';
 import pidtree from 'pidtree';
-import { isTestnet } from '../../store/config';
+import util from 'util';
+import { getPlatform, isTestnet } from '../../store/config';
 import { CliLog, isCliLog } from '../../models/cliModel';
 import { getCliDataBaseDir, getSwapBinary, makeFileExecutable } from './dirs';
 import { readFromDatabaseAndUpdateState } from './database';
@@ -13,6 +15,26 @@ import { getLinesOfString } from '../../utils/parseUtils';
 
 const queue = new PQueue({ concurrency: 1 });
 let cli: ChildProcessWithoutNullStreams | null = null;
+
+async function attemptKillMoneroWalletRpcProcess() {
+  const WIN_COMMAND = `powershell.exe "Get-Process | Where-Object {$_.Path -like '*monero-wallet-rpc*'} | Stop-Process -Force"`;
+  const UNIX_COMMAND = `ps aux | grep 'monero-wallet-rpc' | grep -v 'grep' | awk '{print $2}' | xargs kill -9`;
+
+  const command = getPlatform() === 'win' ? WIN_COMMAND : UNIX_COMMAND;
+
+  try {
+    const { stderr, stdout } = await util.promisify(exec)(command);
+    logger.debug(
+      { stderr, stdout },
+      'Attempted to kill monero-wallet-rpc using command'
+    );
+  } catch (e) {
+    logger.error(
+      { e },
+      'Attempted monero-wallet-rpc kill using command failed'
+    );
+  }
+}
 
 async function getSpawnArgs(
   subCommand: string,
@@ -89,6 +111,10 @@ export async function spawnSubcommand(
                 );
               }
 
+              if (process.env.SKIP_MONERO_WALLET_RPC_KILL !== 'true') {
+                attemptKillMoneroWalletRpcProcess();
+              }
+
               cli = spawnProc(`./${binary.fileName}`, spawnArgs, {
                 cwd: binary.dirPath,
               });
@@ -126,7 +152,10 @@ export async function spawnSubcommand(
                 cli = null;
 
                 try {
-                  await readFromDatabaseAndUpdateState();
+                  await Promise.all([
+                    attemptKillMoneroWalletRpcProcess(),
+                    readFromDatabaseAndUpdateState(),
+                  ]);
                 } finally {
                   onExit(code, signal);
                   resolveRunning();
