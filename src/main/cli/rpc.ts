@@ -130,11 +130,13 @@ export async function makeBatchRpcRequest<T>(
     }
 
     const batch = params.map((param) =>
-      rpcClient.request(method, param, undefined, false)
+      rpcClient.request(method, param, Math.random(), false)
     );
 
     try {
       const responses = (await rpcClient.request(batch)) as RawRpcResponse<T>[];
+
+      console.log(responses);
 
       // Check if any of the responses have an error
       const errorResponses = responses.filter(isErrorResponse);
