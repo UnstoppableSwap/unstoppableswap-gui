@@ -26,7 +26,6 @@ export default async function initAutoUpdater(mainWindow: BrowserWindow) {
     logger.info('Checking for update');
   });
 
-  autoUpdater.allowPrerelease = true;
   autoUpdater.autoDownload = false;
   autoUpdater.allowPrerelease = false;
 
