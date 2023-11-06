@@ -31,6 +31,10 @@ const queue = new PQueue({ concurrency: 1 });
 let cli: ChildProcessWithoutNullStreams | null = null;
 
 async function attemptKillMoneroWalletRpcProcess() {
+  if (process.env.SKIP_MONERO_WALLET_RPC_KILL === 'true') {
+    return;
+  }
+
   const WIN_COMMAND = `powershell.exe "Get-Process | Where-Object {$_.Path -like '*monero-wallet-rpc*'} | Stop-Process -Force"`;
   const UNIX_COMMAND = `ps aux | grep 'monero-wallet-rpc' | grep -v 'grep' | awk '{print $2}' | xargs kill -9`;
 
@@ -125,9 +129,7 @@ export async function spawnSubcommand(
                 );
               }
 
-              if (process.env.SKIP_MONERO_WALLET_RPC_KILL !== 'true') {
-                await attemptKillMoneroWalletRpcProcess();
-              }
+              await attemptKillMoneroWalletRpcProcess();
 
               cli = spawnProc(`./${binary.fileName}`, spawnArgs, {
                 cwd: binary.dirPath,
