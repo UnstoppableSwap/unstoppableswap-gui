@@ -69,6 +69,13 @@ export async function getLegacyCliLogFile(swapId: string): Promise<string> {
 }
 
 export function getSwapBinary(): Binary {
+  if (process.env.OVERWRITE_SWAP_BINARY_LOCATION && isTestnet()) {
+    return {
+      fileName: path.basename(process.env.OVERWRITE_SWAP_BINARY_LOCATION),
+      dirPath: path.dirname(process.env.OVERWRITE_SWAP_BINARY_LOCATION),
+    };
+  }
+
   const platform = getPlatform();
   const dirPath = app.isPackaged
     ? BINARIES_PATH
