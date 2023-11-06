@@ -43,7 +43,7 @@ import { discoveredProvidersByRendezvous } from '../../store/features/providersS
 const rpcClient = jayson.Client.http({
   port: RPC_BIND_PORT,
   hostname: RPC_BIND_HOST,
-  timeout: 60 * 1000,
+  timeout: 5 * 60 * 1000,
 });
 
 const GLOBALLY_RELEVANT_SPANS: CliLogSpanType[] = ['BitcoinWalletSubscription'];
