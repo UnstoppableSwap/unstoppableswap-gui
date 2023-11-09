@@ -57,6 +57,19 @@ export function isCliLogReleasingSwapLockLog(
   return log.fields.message === 'Releasing swap lock';
 }
 
+export interface CliLogAcquiringSwapLockLog extends CliLog {
+  fields: {
+    message: 'Acquiring swap lock';
+    swap_id: string;
+  };
+}
+
+export function isCliLogAcquiringSwapLockLog(
+  log: CliLog
+): log is CliLogAcquiringSwapLockLog {
+  return log.fields.message === 'Acquiring swap lock';
+}
+
 export interface CliLogReceivedQuote extends CliLog {
   fields: {
     message: 'Received quote';
