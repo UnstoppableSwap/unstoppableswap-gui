@@ -130,7 +130,7 @@ export async function makeBatchRpcRequest<T>(
     }
 
     const batch = params.map((param) =>
-      rpcClient.request(method, param, Math.random(), false)
+      rpcClient.request(method, param, undefined, false)
     );
 
     try {
@@ -211,9 +211,7 @@ export async function getSwapInfoBatch(
 ): Promise<GetSwapInfoResponse[]> {
   return makeBatchRpcRequest<GetSwapInfoResponse>(
     RpcMethod.GET_SWAP_INFO,
-    swapIds.map((swapId) => ({
-      swap_id: swapId,
-    }))
+    swapIds.map((swapId) => ({ swap_id: swapId }))
   );
 }
 
