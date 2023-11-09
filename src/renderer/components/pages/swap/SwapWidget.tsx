@@ -127,9 +127,7 @@ function HasProviderSwapWidget({
   }
 
   function handleGuideDialogOpen() {
-    if (!getBtcFieldError()) {
-      setShowDialog(true);
-    }
+    setShowDialog(true);
   }
 
   useEffect(updateXmrValue, [btcFieldValue, selectedProvider]);
