@@ -24,7 +24,7 @@ export default function RpcControlBox() {
 
   return (
     <InfoBox
-      title="Swap Daemon"
+      title={`Swap Daemon (${rpcProcess.type})`}
       mainContent={
         isRunning || rpcProcess.type === RpcProcessStateType.EXITED ? (
           <CliLogsBox
@@ -41,6 +41,7 @@ export default function RpcControlBox() {
             ipcArgs={[]}
             endIcon={<PlayArrowIcon />}
             disabled={isRunning}
+            requiresRpc={false}
           >
             Start Daemon
           </IpcInvokeButton>
@@ -50,6 +51,7 @@ export default function RpcControlBox() {
             ipcArgs={[]}
             endIcon={<StopIcon />}
             disabled={!isRunning}
+            requiresRpc={false}
           >
             Stop Daemon
           </IpcInvokeButton>

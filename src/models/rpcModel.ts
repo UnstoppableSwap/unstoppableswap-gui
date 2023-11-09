@@ -11,8 +11,8 @@ export enum RpcMethod {
 }
 
 export enum RpcProcessStateType {
-  STARTED = 'started',
-  LISTENING_FOR_CONNECTIONS = 'listening',
+  STARTED = 'starting...',
+  LISTENING_FOR_CONNECTIONS = 'running',
   EXITED = 'exited',
   NOT_STARTED = 'not started',
 }
