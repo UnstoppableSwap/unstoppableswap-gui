@@ -16,7 +16,7 @@ export default function ProcesExitedAndNotDonePage() {
     </>
   ) : (
     <>
-      The swap exited unexpectedly before being initiated and without
+      The swap exited unexpectedly before any funds were locked and without
       completing.
     </>
   );
