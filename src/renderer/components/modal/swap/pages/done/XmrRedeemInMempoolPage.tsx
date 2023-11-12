@@ -15,9 +15,9 @@ export default function XmrRedeemInMempoolPage({
 }: XmrRedeemInMempoolPageProps) {
   const swap = useActiveSwapInfo();
   const additionalContent = swap
-    ? `This transaction transfers ${piconerosToXmr(
-        getSwapXmrAmount(swap)
-      ).toFixed(6)} XMR to ${state?.bobXmrRedeemAddress}`
+    ? `This transaction transfers ${getSwapXmrAmount(swap).toFixed(6)} XMR to ${
+        state?.bobXmrRedeemAddress
+      }`
     : null;
 
   return (
