@@ -38,8 +38,7 @@ export enum DbStatePathType {
 }
 
 export function getSwapTxFees(swap: GetSwapInfoResponse): number {
-  // TODO
-  return 124;
+  return satsToBtc(swap.txLockFee);
 }
 
 export function getSwapBtcAmount(swap: GetSwapInfoResponse): number {

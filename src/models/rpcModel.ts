@@ -115,6 +115,7 @@ export interface GetSwapInfoResponse {
   txLockId: string;
   txCancelFee: number;
   txRefundFee: number;
+  txLockFee: number;
   btcAmount: number;
   xmrAmount: number;
   btcRefundAddress: string;
