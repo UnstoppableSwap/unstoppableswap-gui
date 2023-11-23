@@ -31,7 +31,7 @@ export default function ScrollablePaperTextBox({
         style={{
           overflow: 'auto',
           whiteSpace: 'nowrap',
-          maxHeight: '10rem',
+          maxHeight: '15rem',
           display: 'flex',
           flexDirection: 'column',
           gap: '0.5rem',
