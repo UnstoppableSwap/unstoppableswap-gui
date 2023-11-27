@@ -57,6 +57,17 @@ export function isCliLogReleasingSwapLockLog(
   return log.fields.message === 'Releasing swap lock';
 }
 
+export interface CliLogApiCallError extends CliLog {
+  fields: {
+    message: 'API call resulted in an error';
+    err: string;
+  };
+}
+
+export function isCliLogApiCallError(log: CliLog): log is CliLogApiCallError {
+  return log.fields.message === 'API call resulted in an error';
+}
+
 export interface CliLogAcquiringSwapLockLog extends CliLog {
   fields: {
     message: 'Acquiring swap lock';

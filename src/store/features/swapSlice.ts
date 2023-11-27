@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { extractAmountFromUnitString } from '../../utils/parseUtils';
 import {
   isSwapStateBtcLockInMempool,
+  isSwapStateProcessExited,
   isSwapStateReceivedQuote,
   isSwapStateWaitingForBtcDeposit,
   isSwapStateXmrLockInMempool,
@@ -39,6 +40,7 @@ import {
   getCliLogSpanSwapId,
   isYouHaveBeenPunishedCliLog,
   isCliLogAcquiringSwapLockLog,
+  isCliLogApiCallError,
 } from '../../models/cliModel';
 import logger from '../../utils/logger';
 import { Provider } from '../../models/apiModel';
@@ -246,10 +248,15 @@ export const swapSlice = createSlice({
           const nextState: SwapStateProcessExited = {
             type: SwapStateType.PROCESS_EXITED,
             prevState: slice.state,
+            rpcError: null,
           };
 
           slice.state = nextState;
           slice.processRunning = false;
+        } else if (isCliLogApiCallError(log) && !action.payload.isFromRestore) {
+          if (isSwapStateProcessExited(slice.state)) {
+            slice.state.rpcError = log.fields.err;
+          }
         } else {
           logger.debug({ log }, `Swap log was not reduced`);
         }
@@ -277,7 +284,7 @@ export const swapSlice = createSlice({
       swap.spawnType = action.payload.spawnType;
       swap.swapId = action.payload.swapId;
     },
-    swapProcessExited(swap) {
+    swapProcessExited(swap, action: PayloadAction<string | null>) {
       if (!swap.processRunning) {
         return;
       }
@@ -285,6 +292,7 @@ export const swapSlice = createSlice({
       const nextState: SwapStateProcessExited = {
         type: SwapStateType.PROCESS_EXITED,
         prevState: swap.state,
+        rpcError: action.payload,
       };
 
       swap.state = nextState;

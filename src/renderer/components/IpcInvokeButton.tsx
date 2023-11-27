@@ -19,9 +19,10 @@ interface IpcInvokeButtonProps<T> {
   loadIcon?: ReactNode;
   requiresRpc?: boolean;
   disabled?: boolean;
+  displayErrorSnackbar?: boolean;
 }
 
-const DELAY_BEFORE_SHOWING_LOADING_MS = 1000;
+const DELAY_BEFORE_SHOWING_LOADING_MS = 0;
 
 export default function IpcInvokeButton<T>({
   disabled,
@@ -34,6 +35,7 @@ export default function IpcInvokeButton<T>({
   isLoadingOverride,
   isIconButton,
   requiresRpc,
+  displayErrorSnackbar,
   ...rest
 }: IpcInvokeButtonProps<T> & ButtonProps) {
   const { enqueueSnackbar } = useSnackbar();
@@ -66,20 +68,31 @@ export default function IpcInvokeButton<T>({
       try {
         const result = await ipcRenderer.invoke(ipcChannel, ...ipcArgs);
         onSuccess?.(result);
-      } catch (e: any) {
-        enqueueSnackbar(e.message, {
-          autoHideDuration: 60 * 1000,
-          variant: 'error',
-        });
+      } catch (e: unknown) {
+        if (displayErrorSnackbar) {
+          enqueueSnackbar((e as Error).message, {
+            autoHideDuration: 60 * 1000,
+            variant: 'error',
+          });
+        }
       } finally {
         setIsPending(false);
       }
     }
   }
 
+  const isDisabled =
+    disabled ||
+    (requiresRpc && !isRpcReady && process.env.USE_EXTERNAL_RPC !== 'true') ||
+    isLoading;
+
   if (isIconButton) {
     return (
-      <IconButton onClick={handleClick} disabled={isLoading} {...(rest as any)}>
+      <IconButton
+        onClick={handleClick}
+        disabled={isDisabled}
+        {...(rest as any)}
+      >
         {actualEndIcon}
       </IconButton>
     );
@@ -87,7 +100,7 @@ export default function IpcInvokeButton<T>({
   return (
     <Button
       onClick={handleClick}
-      disabled={isLoading || (requiresRpc && !isRpcReady) || disabled}
+      disabled={isDisabled}
       endIcon={actualEndIcon}
       {...rest}
     />
@@ -101,4 +114,5 @@ IpcInvokeButton.defaultProps = {
   isLoadingOverride: false,
   isIconButton: false,
   loadIcon: undefined,
+  displayErrorSnackbar: true,
 };

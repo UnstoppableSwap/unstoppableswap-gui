@@ -77,6 +77,7 @@ export default function InitPage() {
         endIcon={<PlayArrowIcon />}
         ipcChannel="spawn-buy-xmr"
         ipcArgs={[selectedProvider, redeemAddress, refundAddress]}
+        displayErrorSnackbar={false}
       >
         Start swap
       </IpcInvokeButton>

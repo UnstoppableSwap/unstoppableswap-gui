@@ -273,7 +273,7 @@ export async function buyXmr(
       true
     );
   } catch (e) {
-    store.dispatch(swapProcessExited());
+    store.dispatch(swapProcessExited((e as Error).toString()));
     throw e;
   }
 }
@@ -283,17 +283,17 @@ export async function cancelRefundSwap(swapId: string) {
   const previousLogs = await getSavedLogsOfSwapId(swapId);
 
   store.dispatch(
-    swapInitiate({
-      provider: providerFromGetSellerResponse(swapInfo.seller),
-      spawnType: SwapSpawnType.CANCEL_REFUND,
-      swapId,
+    swapAddLog({
+      logs: previousLogs,
+      isFromRestore: true,
     })
   );
 
   store.dispatch(
-    swapAddLog({
-      logs: previousLogs,
-      isFromRestore: true,
+    swapInitiate({
+      provider: providerFromGetSellerResponse(swapInfo.seller),
+      spawnType: SwapSpawnType.CANCEL_REFUND,
+      swapId,
     })
   );
 

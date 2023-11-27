@@ -271,8 +271,8 @@ export async function startRPC() {
     },
     (exitCode, exitSignal) => {
       store.dispatch(rpcProcessExited({ exitCode, exitSignal }));
-      store.dispatch(swapProcessExited());
-      logger.error('RPC server has stopped');
+      store.dispatch(swapProcessExited('RPC Server has stopped'));
+      logger.error(`RPC server has stopped with code ${exitCode}`);
 
       isPeriodicRetrievalRunning = false;
     },

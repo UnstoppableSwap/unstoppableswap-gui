@@ -4,8 +4,13 @@ import {
   useAppSelector,
 } from '../../../../../../store/hooks';
 import CliLogsBox from '../../../../other/RenderedCliLog';
+import { SwapStateProcessExited } from '../../../../../../models/storeModel';
 
-export default function ProcesExitedAndNotDonePage() {
+export default function ProcessExitedAndNotDonePage({
+  state,
+}: {
+  state: SwapStateProcessExited;
+}) {
   const swap = useActiveSwapInfo();
   const logs = useAppSelector((s) => s.swap.logs);
 
@@ -26,7 +31,18 @@ export default function ProcesExitedAndNotDonePage() {
       <DialogContentText>
         {text} Please check the logs displayed below for more information.
       </DialogContentText>
-      <CliLogsBox logs={logs} label="Logs relevant to the swap" />
+      <Box
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.5rem',
+        }}
+      >
+        {state.rpcError && (
+          <CliLogsBox logs={[state.rpcError]} label="Swap Daemon Error" />
+        )}
+        <CliLogsBox logs={logs} label="Logs relevant to the swap" />
+      </Box>
     </Box>
   );
 }

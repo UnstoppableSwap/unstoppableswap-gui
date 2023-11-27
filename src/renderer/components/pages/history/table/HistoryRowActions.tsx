@@ -50,6 +50,7 @@ export function SwapCancelRefundButton({
       ipcChannel="spawn-cancel-refund"
       ipcArgs={[swap.swapId]}
       requiresRpc
+      displayErrorSnackbar={false}
       {...props}
     >
       Attempt manual Cancel & Refund

@@ -175,6 +175,7 @@ export function isSwapStateBtcPunished(
 export interface SwapStateProcessExited extends SwapState {
   type: SwapStateType.PROCESS_EXITED;
   prevState: SwapState | null;
+  rpcError: string | null;
 }
 
 export function isSwapStateProcessExited(

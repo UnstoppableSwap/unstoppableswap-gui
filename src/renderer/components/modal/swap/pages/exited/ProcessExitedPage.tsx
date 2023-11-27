@@ -10,7 +10,7 @@ import BitcoinPunishedPage from '../done/BitcoinPunishedPage';
 // eslint-disable-next-line import/no-cycle
 import SwapStatePage from '../SwapStatePage';
 import BitcoinRefundedPage from '../done/BitcoinRefundedPage';
-import ProcesExitedAndNotDonePage from './ProcesExitedAndNotDonePage';
+import ProcessExitedAndNotDonePage from './ProcessExitedAndNotDonePage';
 import { SwapStateName } from '../../../../../../models/rpcModel';
 
 type ProcessExitedPageProps = {
@@ -43,5 +43,5 @@ export default function ProcessExitedPage({ state }: ProcessExitedPageProps) {
   }
 
   // If the swap is not a "done" state (or we don't have a db state because the swap did complete the SwapSetup yet) we should tell the user and show logs
-  return <ProcesExitedAndNotDonePage />;
+  return <ProcessExitedAndNotDonePage state={state} />;
 }
