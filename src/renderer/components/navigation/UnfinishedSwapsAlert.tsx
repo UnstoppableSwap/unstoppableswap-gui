@@ -22,7 +22,10 @@ export default function UnfinishedSwapsAlert() {
           </Button>
         }
       >
-        You have {resumableSwapsCount} unfinished swaps
+        You have{' '}
+        {resumableSwapsCount > 1
+          ? `${resumableSwapsCount} unfinished swaps`
+          : 'one unfinished swap'}
       </Alert>
     );
   }
