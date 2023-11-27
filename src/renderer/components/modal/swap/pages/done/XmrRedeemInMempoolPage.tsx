@@ -1,6 +1,5 @@
 import { Box, DialogContentText } from '@material-ui/core';
 import { SwapStateXmrRedeemInMempool } from '../../../../../../models/storeModel';
-import { piconerosToXmr } from '../../../../../../utils/conversionUtils';
 import { useActiveSwapInfo } from '../../../../../../store/hooks';
 import MoneroTransactionInfoBox from '../../MoneroTransactionInfoBox';
 import { getSwapXmrAmount } from '../../../../../../models/databaseModel';
@@ -26,18 +25,25 @@ export default function XmrRedeemInMempoolPage({
         The swap was successful and the Monero has been sent to the address you
         specified. The swap is completed and you may exit the application now.
       </DialogContentText>
-      {state && (
-        <>
-          <MoneroTransactionInfoBox
-            title="Monero Redeem Transaction"
-            txId={state.bobXmrRedeemTxId}
-            additionalContent={additionalContent}
-            loading={false}
-          />
-          <br />
-        </>
-      )}
-      <FeedbackInfoBox />
+      <Box
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.5rem',
+        }}
+      >
+        {state && (
+          <>
+            <MoneroTransactionInfoBox
+              title="Monero Redeem Transaction"
+              txId={state.bobXmrRedeemTxId}
+              additionalContent={additionalContent}
+              loading={false}
+            />
+          </>
+        )}
+        <FeedbackInfoBox />
+      </Box>
     </Box>
   );
 }

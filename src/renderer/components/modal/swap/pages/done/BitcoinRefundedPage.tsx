@@ -21,15 +21,23 @@ export default function BitcoinRefundedPage({
         all your Bitcoin has been refunded to the specified address. The swap
         process is now complete, and you are free to exit the application.
       </DialogContentText>
-      {state && (
-        <BitcoinTransactionInfoBox
-          title="Bitcoin Refund Transaction"
-          txId={state.bobBtcRefundTxId}
-          loading={false}
-          additionalContent={additionalContent}
-        />
-      )}
-      <FeedbackInfoBox />
+      <Box
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.5rem',
+        }}
+      >
+        {state && (
+          <BitcoinTransactionInfoBox
+            title="Bitcoin Refund Transaction"
+            txId={state.bobBtcRefundTxId}
+            loading={false}
+            additionalContent={additionalContent}
+          />
+        )}
+        <FeedbackInfoBox />
+      </Box>
     </Box>
   );
 }

@@ -20,8 +20,8 @@ export default function WithdrawStatePage({
       />
     );
   }
-  if (!isRpcEndpointBusy) {
-    return <AddressInputPage onCancel={onCancel} />;
+  if (isRpcEndpointBusy) {
+    return <InitiatedPage onCancel={onCancel} />;
   }
-  return <InitiatedPage onCancel={onCancel} />;
+  return <AddressInputPage onCancel={onCancel} />;
 }
