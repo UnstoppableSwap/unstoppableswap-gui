@@ -8,6 +8,7 @@ import {
   GetHistoryResponse,
   GetSwapInfoResponse,
   isErrorResponse,
+  MoneroRecoveryResponse,
   RawRpcResponse,
   RawRpcResponseSuccess,
   RpcMethod,
@@ -21,6 +22,7 @@ import {
   rpcSetBalance,
   rpcSetEndpointBusy,
   rpcSetEndpointFree,
+  rpcSetMoneroRecoveryKeys,
   rpcSetSwapInfo,
   rpcSetWithdrawTxId,
 } from '../../store/features/rpcSlice';
@@ -28,7 +30,11 @@ import logger from '../../utils/logger';
 import { Provider, ProviderStatus } from '../../models/apiModel';
 import { isTestnet } from '../../store/config';
 import { providerToConcatenatedMultiAddr } from '../../utils/multiAddrUtils';
-import { swapAddLog, swapInitiate } from '../../store/features/swapSlice';
+import {
+  swapAddLog,
+  swapInitiate,
+  swapProcessExited,
+} from '../../store/features/swapSlice';
 import {
   CliLog,
   CliLogSpanType,
@@ -36,9 +42,15 @@ import {
   hasCliLogOneOfMultipleSpans,
   SwapSpawnType,
 } from '../../models/cliModel';
-import { RPC_BIND_HOST, RPC_BIND_PORT, RPC_LOG_EVENT_EMITTER } from './cli';
 import getSavedLogsOfSwapId from './dirs';
 import { discoveredProvidersByRendezvous } from '../../store/features/providersSlice';
+import { SingleTypeEventEmitter } from '../../utils/event';
+
+export const RPC_BIND_HOST = '0.0.0.0';
+export const RPC_BIND_PORT = 1234;
+
+export const RPC_LOG_EVENT_EMITTER: SingleTypeEventEmitter<CliLog[]> =
+  new SingleTypeEventEmitter();
 
 const rpcClient = jayson.Client.http({
   port: RPC_BIND_PORT,
@@ -71,7 +83,9 @@ export async function makeRpcRequest<T>(
               (includeGloballyRelevantLogs &&
                 hasCliLogOneOfMultipleSpans(log, GLOBALLY_RELEVANT_SPANS))
           );
-          logCallback(relevantLogs);
+          if (relevantLogs.length > 0) {
+            logCallback(relevantLogs);
+          }
         });
       }
 
@@ -125,7 +139,9 @@ export async function makeBatchRpcRequest<T>(
         const relevantLogs = logs.filter(
           (log) => getCliLogSpanLogReferenceId(log) === logReferenceId
         );
-        logCallback(relevantLogs);
+        if (relevantLogs.length > 0) {
+          logCallback(relevantLogs);
+        }
       });
     }
 
@@ -135,8 +151,6 @@ export async function makeBatchRpcRequest<T>(
 
     try {
       const responses = (await rpcClient.request(batch)) as RawRpcResponse<T>[];
-
-      console.log(responses);
 
       // Check if any of the responses have an error
       const errorResponses = responses.filter(isErrorResponse);
@@ -181,12 +195,24 @@ function providerFromGetSellerResponse(
   };
 }
 
-export async function checkBitcoinBalance() {
+export async function checkBitcoinBalance(forceRefresh: boolean) {
   const response = await makeRpcRequest<BalanceBitcoinResponse>(
     RpcMethod.GET_BTC_BALANCE,
-    {}
+    {
+      force_refresh: forceRefresh,
+    }
   );
   store.dispatch(rpcSetBalance(response.balance));
+}
+
+export async function getMoneroRecoveryKeys(swapId: string) {
+  const response = await makeRpcRequest<MoneroRecoveryResponse>(
+    RpcMethod.GET_MONERO_RECOVERY_KEYS,
+    {
+      swap_id: swapId,
+    }
+  );
+  store.dispatch(rpcSetMoneroRecoveryKeys([swapId, response]));
 }
 
 export async function withdrawAllBitcoin(address: string) {
@@ -220,31 +246,36 @@ export async function buyXmr(
   refundAddress: string,
   provider: Provider
 ) {
-  const { swapId } = await makeRpcRequest<BuyXmrResponse>(
-    RpcMethod.BUY_XMR,
-    {
-      bitcoin_change_address: refundAddress,
-      monero_receive_address: redeemAddress,
-      seller: providerToConcatenatedMultiAddr(provider),
-    },
-    (logs) => {
-      store.dispatch(
-        swapAddLog({
-          logs,
-          isFromRestore: false,
-        })
-      );
-    },
-    true
-  );
-
   store.dispatch(
     swapInitiate({
       provider,
       spawnType: SwapSpawnType.INIT,
-      swapId,
+      swapId: null,
     })
   );
+
+  try {
+    await makeRpcRequest<BuyXmrResponse>(
+      RpcMethod.BUY_XMR,
+      {
+        bitcoin_change_address: refundAddress,
+        monero_receive_address: redeemAddress,
+        seller: providerToConcatenatedMultiAddr(provider),
+      },
+      (logs) => {
+        store.dispatch(
+          swapAddLog({
+            logs,
+            isFromRestore: false,
+          })
+        );
+      },
+      true
+    );
+  } catch (e) {
+    store.dispatch(swapProcessExited());
+    throw e;
+  }
 }
 
 export async function cancelRefundSwap(swapId: string) {

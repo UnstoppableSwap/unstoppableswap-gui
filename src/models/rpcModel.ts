@@ -8,6 +8,7 @@ export enum RpcMethod {
   GET_SWAP_INFO = 'get_swap_info',
   SUSPEND_CURRENT_SWAP = 'suspend_current_swap',
   GET_HISTORY = 'get_history',
+  GET_MONERO_RECOVERY_KEYS = 'get_monero_recovery_info',
 }
 
 export enum RpcProcessStateType {
@@ -146,3 +147,10 @@ export enum SwapStateName {
   BtcPunished = 'btc is punished',
   SafelyAborted = 'safely aborted',
 }
+
+export type MoneroRecoveryResponse = {
+  address: string;
+  spend_key: string;
+  view_key: string;
+  restore_height: number;
+};

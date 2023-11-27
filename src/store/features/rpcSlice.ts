@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
   GetSwapInfoResponse,
+  MoneroRecoveryResponse,
   RpcProcessStateType,
 } from '../../models/rpcModel';
 import { CliLog, isCliLogStartedRpcServer } from '../../models/cliModel';
@@ -32,6 +33,10 @@ interface State {
   swapInfos: {
     [swapId: string]: GetSwapInfoResponse;
   };
+  moneroRecovery: {
+    swapId: string;
+    keys: MoneroRecoveryResponse;
+  } | null;
 }
 
 export interface RPCSlice {
@@ -49,6 +54,7 @@ const initialState: RPCSlice = {
     withdrawTxId: null,
     rendezvous_discovered_sellers: [],
     swapInfos: {},
+    moneroRecovery: null,
   },
   busyEndpoints: [],
 };
@@ -132,6 +138,21 @@ export const rpcSlice = createSlice({
         slice.busyEndpoints.splice(index);
       }
     },
+    rpcSetMoneroRecoveryKeys(
+      slice,
+      action: PayloadAction<[string, MoneroRecoveryResponse]>
+    ) {
+      const swapId = action.payload[0];
+      const keys = action.payload[1];
+
+      slice.state.moneroRecovery = {
+        swapId,
+        keys,
+      };
+    },
+    rpcResetMoneroRecoveryKeys(slice) {
+      slice.state.moneroRecovery = null;
+    },
   },
 });
 
@@ -147,6 +168,8 @@ export const {
   rpcSetEndpointFree,
   rpcSetRendezvousDiscoveredProviders,
   rpcSetSwapInfo,
+  rpcSetMoneroRecoveryKeys,
+  rpcResetMoneroRecoveryKeys,
 } = rpcSlice.actions;
 
 export default rpcSlice.reducer;

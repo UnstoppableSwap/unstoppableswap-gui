@@ -23,7 +23,7 @@ import {
   buyXmr,
   cancelRefundSwap,
   checkBitcoinBalance,
-  getRawSwapInfos,
+  getMoneroRecoveryKeys,
   listSellers,
   resumeSwap,
   suspendCurrentSwap,
@@ -128,11 +128,7 @@ if (gotTheLock) {
     .then(async () => {
       createWindow();
       initSocket();
-      startRPC();
-
-      setInterval(() => {
-        getRawSwapInfos();
-      }, 1000 * 20);
+      await startRPC();
 
       return 0;
     })
@@ -162,7 +158,7 @@ ipcMain.handle('stop-cli', stopCli);
 
 ipcMain.handle('spawn-start-rpc', startRPC);
 
-ipcMain.handle('spawn-balance-check', checkBitcoinBalance);
+ipcMain.handle('spawn-balance-check', () => checkBitcoinBalance(true));
 
 ipcMain.handle('suspend-current-swap', suspendCurrentSwap);
 
@@ -174,6 +170,10 @@ ipcMain.handle(
 
 ipcMain.handle('spawn-cancel-refund', (_event, swapId) =>
   cancelRefundSwap(swapId)
+);
+
+ipcMain.handle('spawn-monero-recovery', (_event, swapId) =>
+  getMoneroRecoveryKeys(swapId)
 );
 
 ipcMain.handle('spawn-resume-swap', (_event, swapId) => resumeSwap(swapId));
@@ -194,7 +194,6 @@ ipcMain.handle('get-swap-logs', (_event, swapId) =>
   getSavedLogsOfSwapId(swapId)
 );
 
-// eslint-disable-next-line import/prefer-default-export
 export function sendSnackbarAlertToRenderer(
   message: string,
   variant: string,

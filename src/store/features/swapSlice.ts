@@ -38,6 +38,7 @@ import {
   isCliLogReleasingSwapLockLog,
   getCliLogSpanSwapId,
   isYouHaveBeenPunishedCliLog,
+  isCliLogAcquiringSwapLockLog,
 } from '../../models/cliModel';
 import logger from '../../utils/logger';
 import { Provider } from '../../models/apiModel';
@@ -63,10 +64,17 @@ export const swapSlice = createSlice({
       slice.logs.push(...logs);
 
       logs.forEach((log) => {
-        // If the log contains a swap id, set it as the current swap id. Little bit unnecessary because we already set the swapId at init but can't hurt.
+        // If the log contains a swap id, set it as the current swap id
         slice.swapId = getCliLogSpanSwapId(log) ?? slice.swapId;
 
-        if (isCliLogReceivedQuote(log)) {
+        if (
+          isCliLogAcquiringSwapLockLog(log) &&
+          !action.payload.isFromRestore
+        ) {
+          slice.processRunning = true;
+          slice.swapId = log.fields.swap_id;
+          // TODO: Maybe we can infer more info here (state) from the log
+        } else if (isCliLogReceivedQuote(log)) {
           const price = extractAmountFromUnitString(log.fields.price);
           const minimumSwapAmount = extractAmountFromUnitString(
             log.fields.minimum_amount
@@ -255,7 +263,7 @@ export const swapSlice = createSlice({
       action: PayloadAction<{
         provider: Provider | null;
         spawnType: SwapSpawnType;
-        swapId: string;
+        swapId: string | null;
       }>
     ) {
       const nextState: SwapStateInitiated = {

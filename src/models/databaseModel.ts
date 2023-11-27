@@ -78,6 +78,10 @@ export function isSwapCancellable(swapStateName: SwapStateName): boolean {
   ].includes(swapStateName);
 }
 
+export function isSwapMoneroRecoverable(swapStateName: SwapStateName): boolean {
+  return [SwapStateName.BtcRedeemed].includes(swapStateName);
+}
+
 /*
 Checks if a swap is in a state where it can possibly be refunded (meaning it's not impossible)
 
