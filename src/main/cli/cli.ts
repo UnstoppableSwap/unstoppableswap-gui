@@ -18,14 +18,18 @@ import {
   rpcInitiate,
   rpcProcessExited,
 } from '../../store/features/rpcSlice';
-import { SingleTypeEventEmitter } from '../../utils/event';
 import { swapProcessExited } from '../../store/features/swapSlice';
+import { RpcProcessStateType } from '../../models/rpcModel';
+import {
+  checkBitcoinBalance,
+  getRawSwapInfos,
+  RPC_BIND_HOST,
+  RPC_BIND_PORT,
+  RPC_LOG_EVENT_EMITTER,
+} from './rpc';
 
-export const RPC_BIND_HOST = '0.0.0.0';
-export const RPC_BIND_PORT = 1234;
-
-export const RPC_LOG_EVENT_EMITTER: SingleTypeEventEmitter<CliLog[]> =
-  new SingleTypeEventEmitter();
+const PERIODIC_API_RETRIEVAL_INTERVAL = 1000 * 10;
+const BITCOIN_BALANCE_FORCE_REFRESH_INTERVAL = 1000 * 60;
 
 const queue = new PQueue({ concurrency: 1 });
 let cli: ChildProcessWithoutNullStreams | null = null;
@@ -198,19 +202,79 @@ export async function spawnSubcommand(
 }
 
 export async function startRPC() {
+  let isPeriodicRetrievalRunning = false;
+  let lastBitcoinBalanceForceCheckTime = Date.now();
+
+  /**
+   * Starts the periodic retrieval of swap information and Bitcoin balance.
+   *
+   * This function initiates an ongoing loop that periodically calls `getRawSwapInfos`
+   * to retrieve current swap information and `checkBitcoinBalance` to check the
+   * Bitcoin balance. The Bitcoin balance check includes a conditional 'force check'
+   * that is triggered at a specified interval, defined by BITCOIN_BALANCE_FORCE_REFRESH_INTERVAL.
+   *
+   * The loop runs continuously until the `isRunning` flag is set to false, which occurs
+   * when the RPC server stops. This ensures that the periodic checks are terminated properly.
+   *
+   * The initial call to `getRawSwapInfos` and `checkBitcoinBalance` with `forceCheck` set to `true`
+   * ensures that both actions are performed immediately when the periodic retrieval starts,
+   * without waiting for the first interval to elapse.
+   *
+   * The `forceCheck` parameter for `checkBitcoinBalance` is set to `true` at intervals defined by
+   * BITCOIN_BALANCE_FORCE_REFRESH_INTERVAL. This is controlled by comparing the current time
+   * against the timestamp of the last force check (`lastBitcoinBalanceForceCheckTime`).
+   *
+   */
+  const startPeriodicRetrieval = async () => {
+    isPeriodicRetrievalRunning = true;
+    await getRawSwapInfos();
+    await checkBitcoinBalance(true);
+
+    while (isPeriodicRetrievalRunning) {
+      // Wait for the next interval before repeating
+      await new Promise((resolve) =>
+        setTimeout(resolve, PERIODIC_API_RETRIEVAL_INTERVAL)
+      );
+
+      await getRawSwapInfos();
+
+      // Check if enough time has elapsed to set forceCheck to true
+      const currentTime = Date.now();
+      const forceCheck =
+        currentTime - lastBitcoinBalanceForceCheckTime >=
+        BITCOIN_BALANCE_FORCE_REFRESH_INTERVAL;
+      if (forceCheck) {
+        console.log('force check is true');
+        lastBitcoinBalanceForceCheckTime = currentTime; // Reset the timer
+      }
+
+      await checkBitcoinBalance(forceCheck);
+    }
+  };
+
   await spawnSubcommand(
     'start-daemon',
     {
       'server-address': `${RPC_BIND_HOST}:${RPC_BIND_PORT}`,
     },
-    (logs) => {
+    async (logs) => {
       store.dispatch(rpcAddLogs(logs));
       RPC_LOG_EVENT_EMITTER.emit(logs);
+
+      const processType = store.getState().rpc.process.type;
+      if (
+        processType === RpcProcessStateType.LISTENING_FOR_CONNECTIONS &&
+        !isPeriodicRetrievalRunning
+      ) {
+        startPeriodicRetrieval();
+      }
     },
     (exitCode, exitSignal) => {
       store.dispatch(rpcProcessExited({ exitCode, exitSignal }));
       store.dispatch(swapProcessExited());
       logger.error('RPC server has stopped');
+
+      isPeriodicRetrievalRunning = false;
     },
     (text) => {
       store.dispatch(rpcAppendStdOut(text));
