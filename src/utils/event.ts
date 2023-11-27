@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/prefer-default-export
 export class SingleTypeEventEmitter<T> {
   private listeners: Array<(data: T) => void> = [];
 

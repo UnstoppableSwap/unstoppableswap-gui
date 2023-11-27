@@ -8,6 +8,8 @@ module.exports = {
     'react/jsx-no-bind': 'off',
     'promise/param-names': 'off',
     'no-async-promise-executor': 'off',
+    'no-await-in-loop': 'off',
+    'import/prefer-default-export': 'off',
     'import/no-restricted-paths': [
       'error',
       {

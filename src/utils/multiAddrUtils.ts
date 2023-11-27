@@ -5,7 +5,6 @@ import { isTestnet } from '../store/config';
 
 const MIN_ASB_VERSION = '0.12.0';
 
-// eslint-disable-next-line import/prefer-default-export
 export function providerToConcatenatedMultiAddr(provider: Provider) {
   return new Multiaddr(provider.multiAddr)
     .encapsulate(`/p2p/${provider.peerId}`)
