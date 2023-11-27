@@ -20,6 +20,7 @@ import { SwapCancelRefundButton } from './HistoryRowActions';
 import { GetSwapInfoResponse } from '../../../../../models/rpcModel';
 import { getBitcoinTxExplorerUrl } from '../../../../../utils/conversionUtils';
 import { isTestnet } from '../../../../../store/config';
+import { SwapMoneroRecoveryButton } from './SwapMoneroRecoveryButton';
 
 const useStyles = makeStyles((theme) => ({
   outer: {
@@ -96,8 +97,7 @@ export default function HistoryRowExpanded({
                   target="_blank"
                 >
                   {swap.txLockId}
-                </Link>{' '}
-                ^
+                </Link>
               </TableCell>
             </TableRow>
           </TableBody>
@@ -109,7 +109,12 @@ export default function HistoryRowExpanded({
           variant="outlined"
           size="small"
         />
-        <SwapCancelRefundButton swap={swap} variant="outlined" size="small" />
+        <SwapCancelRefundButton swap={swap} variant="contained" size="small" />
+        <SwapMoneroRecoveryButton
+          swap={swap}
+          variant="contained"
+          size="small"
+        />
       </Box>
     </Box>
   );
