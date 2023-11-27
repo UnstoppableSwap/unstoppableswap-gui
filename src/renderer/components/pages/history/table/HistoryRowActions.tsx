@@ -41,13 +41,15 @@ export function SwapCancelRefundButton({
   const cancelOrRefundable =
     isSwapCancellable(swap.stateName) || isSwapRefundable(swap.stateName);
 
+  if (!cancelOrRefundable) {
+    return <></>;
+  }
+
   return (
     <IpcInvokeButton
-      disabled={!cancelOrRefundable}
       ipcChannel="spawn-cancel-refund"
       ipcArgs={[swap.swapId]}
       requiresRpc
-      title="test"
       {...props}
     >
       Attempt manual Cancel & Refund
