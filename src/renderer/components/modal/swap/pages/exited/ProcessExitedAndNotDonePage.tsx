@@ -38,10 +38,13 @@ export default function ProcessExitedAndNotDonePage({
           gap: '0.5rem',
         }}
       >
-        {state.rpcError && (
-          <CliLogsBox logs={[state.rpcError]} label="Swap Daemon Error" />
-        )}
         <CliLogsBox logs={logs} label="Logs relevant to the swap" />
+        {state.rpcError && (
+          <CliLogsBox
+            logs={[state.rpcError]}
+            label="Error returned by the Swap Daemon"
+          />
+        )}
       </Box>
     </Box>
   );
