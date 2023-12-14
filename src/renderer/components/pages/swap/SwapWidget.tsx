@@ -184,6 +184,9 @@ function HasProviderSwapWidget({
 }
 
 function HasNoProvidersSwapWidget() {
+  const forceShowDialog = useAppSelector((state) =>
+    isSwapState(state.swap.state)
+  );
   const isPublicRegistryDown = useAppSelector((state) =>
     isRegistryDown(
       state.providers.registry.failedReconnectAttemptsSinceLastSuccess
@@ -191,8 +194,7 @@ function HasNoProvidersSwapWidget() {
   );
   const classes = useStyles();
 
-  if (isPublicRegistryDown) {
-    return (
+  const alertBox = isPublicRegistryDown ? (
       <Alert severity="info">
         <Box className={classes.noProvidersAlertOuter}>
           <Typography>
@@ -212,10 +214,7 @@ function HasNoProvidersSwapWidget() {
           </Box>
         </Box>
       </Alert>
-    );
-  }
-
-  return (
+  ) : (
     <Alert severity="info">
       <Box className={classes.noProvidersAlertOuter}>
         <Typography>
@@ -235,6 +234,13 @@ function HasNoProvidersSwapWidget() {
         </Box>
       </Box>
     </Alert>
+  );
+
+  return (
+    <Box>
+      {alertBox}
+      <SwapDialog open={forceShowDialog} onClose={() => {}} />
+    </Box>
   );
 }
 
