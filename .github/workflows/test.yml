@@ -20,6 +20,10 @@ jobs:
           node-version: 16
           cache: npm
 
+      - name: Install python setup tools
+        run: |
+          pip install setuptools
+
       - name: npm install
         run: |
           npm install
