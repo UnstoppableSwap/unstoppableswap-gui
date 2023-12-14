@@ -8,7 +8,7 @@ import spawnListSellersCommand from './cli/commands/listSellersCommand';
 import { getCliLogFile } from './cli/dirs';
 import { spawnTor, stopTor } from './tor';
 import logger from '../utils/logger';
-import { mainWindow } from './main';
+import { getMainWindow } from './main';
 
 export default function registerIpcHandlers() {
   ipcMain.handle('stop-cli', stopCli);
@@ -53,6 +53,7 @@ export function sendSnackbarAlertToRenderer(
       { message, variant, autoHideDuration, key },
       'Attempting to send snackbar alert to renderer'
     );
+    const mainWindow = getMainWindow();
     if (mainWindow) {
       if (
         mainWindow.webContents.isDestroyed() ||

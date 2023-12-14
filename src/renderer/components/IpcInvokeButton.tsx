@@ -85,3 +85,9 @@ export default function IpcInvokeButton({
     />
   );
 }
+
+IpcInvokeButton.defaultProps = {
+  isLoadingOverride: false,
+  isIconButton: false,
+  loadIcon: null,
+};

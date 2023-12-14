@@ -195,31 +195,31 @@ function HasNoProvidersSwapWidget() {
   const classes = useStyles();
 
   const alertBox = isPublicRegistryDown ? (
-      <Alert severity="info">
-        <Box className={classes.noProvidersAlertOuter}>
-          <Typography>
-            Currently, the public registry of providers seems to be unreachable.
-            Here's what you can do:
-            <ul>
-              <li>
-                Try discovering a provider by connecting to a rendezvous point
-              </li>
-              <li>
-                Try again later when the public registry may be reachable again
-              </li>
-            </ul>
-          </Typography>
-          <Box>
-            <ListSellersDialogOpenButton />
-          </Box>
+    <Alert severity="info">
+      <Box className={classes.noProvidersAlertOuter}>
+        <Typography>
+          Currently, the public registry of providers seems to be unreachable.
+          Here&apos;s what you can do:
+          <ul>
+            <li>
+              Try discovering a provider by connecting to a rendezvous point
+            </li>
+            <li>
+              Try again later when the public registry may be reachable again
+            </li>
+          </ul>
+        </Typography>
+        <Box>
+          <ListSellersDialogOpenButton />
         </Box>
-      </Alert>
+      </Box>
+    </Alert>
   ) : (
     <Alert severity="info">
       <Box className={classes.noProvidersAlertOuter}>
         <Typography>
           Currently, there are no providers (trading partners) available in the
-          official registry. Here's what you can do:
+          official registry. Here&apos;s what you can do:
           <ul>
             <li>
               Try discovering a provider by connecting to a rendezvous point
