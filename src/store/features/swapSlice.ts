@@ -34,6 +34,10 @@ import {
   isCliLogAdvancingState,
   SwapSpawnType,
   isCliLogBtcTxFound,
+  isCliLogStartedSyncingMoneroWallet,
+  isCliLogFinishedSyncingMoneroWallet,
+  isCliLogDownloadingMoneroWalletRpc,
+  isCliLogFailedToSyncMoneroWallet,
 } from '../../models/cliModel';
 import logger from '../../utils/logger';
 import { Provider } from '../../models/apiModel';
@@ -46,6 +50,14 @@ const initialState: SwapSlice = {
   stdOut: '',
   provider: null,
   spawnType: null,
+  parallelOperations: {
+    moneroWallet: {
+      isSyncing: false,
+    },
+    moneroWalletRpc: {
+      updateState: false,
+    },
+  },
 };
 
 export const swapSlice = createSlice({
@@ -216,6 +228,21 @@ export const swapSlice = createSlice({
           };
 
           slice.state = nextState;
+        } else if (isCliLogStartedSyncingMoneroWallet(log)) {
+          slice.parallelOperations.moneroWallet.isSyncing = true;
+        } else if (isCliLogFinishedSyncingMoneroWallet(log)) {
+          slice.parallelOperations.moneroWallet.isSyncing = false;
+        } else if (isCliLogFailedToSyncMoneroWallet(log)) {
+          slice.parallelOperations.moneroWallet.isSyncing = false;
+        } else if (isCliLogDownloadingMoneroWalletRpc(log)) {
+          slice.parallelOperations.moneroWalletRpc.updateState = {
+            progress: log.fields.progress,
+            downloadUrl: log.fields.download_url,
+          };
+
+          if (log.fields.progress === '100%') {
+            slice.parallelOperations.moneroWalletRpc.updateState = false;
+          }
         } else {
           logger.debug({ log }, `Swap log was not reduced`);
         }

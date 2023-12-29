@@ -141,8 +141,11 @@ export async function getFileData(file: string): Promise<string> {
 
 export async function getCliLogStdOut(swapId: string): Promise<string> {
   const logFile = await getCliLogFile(swapId);
-  const logData = await getFileData(logFile);
-  return logData;
+  try {
+    return await getFileData(logFile);
+  } catch (e) {
+    return '';
+  }
 }
 
 export async function makeFileExecutable(binary: Binary) {

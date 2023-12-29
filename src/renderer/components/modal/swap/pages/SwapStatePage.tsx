@@ -28,6 +28,9 @@ import InitPage from './init/InitPage';
 import XmrLockedPage from './in_progress/XmrLockedPage';
 import BitcoinCancelledPage from './in_progress/BitcoinCancelledPage';
 import BitcoinRefundedPage from './done/BitcoinRefundedPage';
+import { useAppSelector } from '../../../../../store/hooks';
+import DownloadingMoneroWalletRpcPage from './init/DownloadingMoneroWalletRpcPage';
+import { SyncingMoneroWalletPage } from './in_progress/SyncingMoneroWalletPage';
 
 export default function SwapStatePage({
   swapState,
@@ -35,6 +38,23 @@ export default function SwapStatePage({
   swapState: SwapState | null;
 }) {
   // TODO: Add punish page here, this is currently handled by the `process exited` page which is not optimal
+  const moneroWalletRpcDownloadState = useAppSelector(
+    (state) => state.swap.parallelOperations.moneroWalletRpc.updateState
+  );
+  const isSyncingMoneroWallet = useAppSelector(
+    (state) => state.swap.parallelOperations.moneroWallet.isSyncing
+  );
+
+  if (moneroWalletRpcDownloadState) {
+    return (
+      <DownloadingMoneroWalletRpcPage
+        updateState={moneroWalletRpcDownloadState}
+      />
+    );
+  }
+  if (isSyncingMoneroWallet) {
+    return <SyncingMoneroWalletPage />;
+  }
 
   if (swapState === null) {
     return <InitPage />;
