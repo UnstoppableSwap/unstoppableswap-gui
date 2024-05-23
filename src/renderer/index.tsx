@@ -2,9 +2,10 @@ import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import App from './components/App';
 import { store } from '../store/store';
-import { ExtendedProviderStatus } from '../models/apiModel';
 import logger from '../utils/logger';
+import { fetchAlertsViaHttp, fetchProvidersViaHttp } from './api';
 import { setRegistryProviders } from '../store/features/providersSlice';
+import { setAlerts } from '../store/features/alertsSlice';
 
 render(
   <Provider store={store}>
@@ -13,22 +14,26 @@ render(
   document.getElementById('root')
 );
 
-// Fetching via HTTP is often faster than socket.io
-async function fetchProvidersViaHttp() {
-  const response = await fetch(
-    process.env.OVERWRITE_API_ADDRESS
-      ? `${process.env.OVERWRITE_API_ADDRESS}/api/list`
-      : 'https://api.unstoppableswap.net/api/list'
-  );
-  const providerList = (await response.json()) as ExtendedProviderStatus[];
-  store.dispatch(setRegistryProviders(providerList));
+async function fetchInitialData() {
+  try {
+    const providerList = await fetchProvidersViaHttp();
+    store.dispatch(setRegistryProviders(providerList));
 
-  logger.info(
-    { providerList },
-    'Fetched providers via UnstoppableSwap HTTP API'
-  );
+    logger.info(
+      { providerList },
+      'Fetched providers via UnstoppableSwap HTTP API'
+    );
+  } catch (e) {
+    logger.error(e, 'Failed to fetch providers via UnstoppableSwap HTTP API');
+  }
+
+  try {
+    const alerts = await fetchAlertsViaHttp();
+    store.dispatch(setAlerts(alerts));
+    logger.info({ alerts }, 'Fetched alerts via UnstoppableSwap HTTP API');
+  } catch (e) {
+    logger.error(e, 'Failed to fetch alerts via UnstoppableSwap HTTP API');
+  }
 }
 
-fetchProvidersViaHttp().catch((err) => {
-  logger.error(err, 'Failed to fetch providers via UnstoppableSwap HTTP API');
-});
+fetchInitialData();

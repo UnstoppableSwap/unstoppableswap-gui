@@ -19,3 +19,10 @@ export interface Provider {
   testnet: boolean;
   peerId: string;
 }
+
+export interface Alert {
+  id: number;
+  title: string;
+  body: string;
+  severity: 'info' | 'warning' | 'error';
+}
