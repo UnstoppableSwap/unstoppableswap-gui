@@ -1,4 +1,5 @@
 import { Box, Chip, Typography } from '@material-ui/core';
+import { useMemo, useState } from 'react';
 import { CliLog } from '../../../models/cliModel';
 import { logsToRawString } from '../../../utils/parseUtils';
 import ScrollablePaperTextBox from './ScrollablePaperTextBox';
@@ -61,9 +62,25 @@ export default function CliLogsBox({
   label: string;
   logs: (CliLog | string)[];
 }) {
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const memoizedLogs = useMemo(() => {
+    if (searchQuery.length === 0) {
+      return logs;
+    }
+    return logs.filter((log) =>
+      JSON.stringify(log).toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [logs, searchQuery]);
+
   return (
-    <ScrollablePaperTextBox title={label} copyValue={logsToRawString(logs)}>
-      {logs.map((log) =>
+    <ScrollablePaperTextBox
+      title={label}
+      copyValue={logsToRawString(logs)}
+      searchQuery={searchQuery}
+      setSearchQuery={setSearchQuery}
+    >
+      {memoizedLogs.map((log) =>
         typeof log === 'string' ? (
           <Typography component="pre">{log}</Typography>
         ) : (

@@ -37,7 +37,7 @@ export default function TorInfoBox() {
             below. If Tor is running, all traffic will be routed through it and
             the swap provider will not be able to see your IP address.
           </Typography>
-          <CliLogsBox label="Tor Daemon Logs" logs={[torStdOut]} />
+          <CliLogsBox label="Tor Daemon Logs" logs={torStdOut.split('\n')} />
         </Box>
       }
       additionalContent={
