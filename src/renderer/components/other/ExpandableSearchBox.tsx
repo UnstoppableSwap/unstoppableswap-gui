@@ -13,8 +13,8 @@ export function ExpandableSearchBox({
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <Box display="flex" justifyContent="center">
-      <Box display="flex" alignItems="center" gap="0.5rem">
+    <Box style={{ display: 'flex', justifyContent: 'center' }}>
+      <Box style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
         {expanded ? (
           <>
             <TextField
