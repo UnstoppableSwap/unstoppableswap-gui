@@ -1,9 +1,11 @@
 import { Button, Typography } from '@material-ui/core';
+import { useState } from 'react';
 import InfoBox from '../../modal/swap/InfoBox';
-
-const FEEDBACK_URL = 'https://unstoppableswap.aidaform.com/feedback';
+import FeedbackDialog from '../../modal/feedback/FeedbackDialog';
 
 export default function FeedbackInfoBox() {
+  const [showDialog, setShowDialog] = useState(false);
+
   return (
     <InfoBox
       title="Feedback"
@@ -16,9 +18,15 @@ export default function FeedbackInfoBox() {
         </Typography>
       }
       additionalContent={
-        <Button variant="outlined" onClick={() => window.open(FEEDBACK_URL)}>
-          Give feedback
-        </Button>
+        <>
+          <Button variant="outlined" onClick={() => setShowDialog(true)}>
+            Give feedback
+          </Button>
+          <FeedbackDialog
+            open={showDialog}
+            onClose={() => setShowDialog(false)}
+          />
+        </>
       }
       icon={null}
       loading={false}
