@@ -5,6 +5,8 @@ import LinkIconButton from '../icons/LinkIconButton';
 import UnfinishedSwapsAlert from './UnfinishedSwapsAlert';
 import FundsLeftInWalletAlert from './FundsLeftInWalletAlert';
 import RpcStatusAlert from '../alert/RpcStatusAlert';
+import DiscordIcon from '../icons/DiscordIcon';
+import { DISCORD_URL } from '../pages/help/ContactInfoBox';
 
 const useStyles = makeStyles((theme) => ({
   outer: {
@@ -33,6 +35,9 @@ export default function NavigationFooter() {
         </LinkIconButton>
         <LinkIconButton url="https://github.com/UnstoppableSwap/unstoppableswap-gui">
           <GitHubIcon />
+        </LinkIconButton>
+        <LinkIconButton url={DISCORD_URL}>
+          <DiscordIcon />
         </LinkIconButton>
       </Box>
     </Box>
