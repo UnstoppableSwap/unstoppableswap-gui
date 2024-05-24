@@ -244,7 +244,6 @@ export async function startRPC() {
         currentTime - lastBitcoinBalanceForceCheckTime >=
         BITCOIN_BALANCE_FORCE_REFRESH_INTERVAL;
       if (forceCheck) {
-        console.log('force check is true');
         lastBitcoinBalanceForceCheckTime = currentTime; // Reset the timer
       }
 
