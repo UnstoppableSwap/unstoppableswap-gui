@@ -1,50 +1,40 @@
-import {
-  Box,
-  Button,
-  Divider,
-  IconButton,
-  Paper,
-  Typography,
-} from '@material-ui/core';
+import { Box, Divider, IconButton, Paper, Typography } from '@material-ui/core';
 import { ReactNode, useRef } from 'react';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import { VList, VListHandle } from 'virtua';
+import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 import { ExpandableSearchBox } from './ExpandableSearchBox';
 
+const MIN_HEIGHT = '10rem';
+
 export default function ScrollablePaperTextBox({
-  children,
+  rows,
   title,
   copyValue,
   searchQuery,
   setSearchQuery,
+  minHeight,
 }: {
-  children: ReactNode;
+  rows: ReactNode[];
   title: string;
   copyValue: string;
-  searchQuery: string | undefined;
-  setSearchQuery: (query: string) => void | undefined;
+  searchQuery?: string;
+  setSearchQuery?: (query: string) => void;
+  minHeight?: string;
 }) {
-  const bottomScrollEl = useRef<HTMLDivElement | null>(null);
-  const topScrollEl = useRef<HTMLDivElement | null>(null);
+  const virtuaEl = useRef<VListHandle | null>(null);
 
   function onCopy() {
     navigator.clipboard.writeText(copyValue);
   }
 
   function scrollToBottom() {
-    bottomScrollEl.current?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'nearest',
-      inline: 'start',
-    });
+    virtuaEl.current?.scrollToIndex(rows.length - 1);
   }
 
   function scrollToTop() {
-    topScrollEl.current?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'nearest',
-      inline: 'start',
-    });
+    virtuaEl.current?.scrollToIndex(0);
   }
 
   return (
@@ -64,21 +54,21 @@ export default function ScrollablePaperTextBox({
         style={{
           overflow: 'auto',
           whiteSpace: 'nowrap',
-          maxHeight: '10rem',
-          minHeight: '10rem',
+          maxHeight: minHeight,
+          minHeight,
           display: 'flex',
           flexDirection: 'column',
           gap: '0.5rem',
         }}
       >
-        <div ref={topScrollEl} />
-        {children}
-        <div ref={bottomScrollEl} />
+        <VList ref={virtuaEl} style={{ height: MIN_HEIGHT, width: '100%' }}>
+          {rows}
+        </VList>
       </Box>
       <Box style={{ display: 'flex', gap: '0.5rem' }}>
-        <Button variant="outlined" onClick={onCopy}>
-          Copy
-        </Button>
+        <IconButton onClick={onCopy} size="small">
+          <FileCopyOutlinedIcon />
+        </IconButton>
         <IconButton onClick={scrollToBottom} size="small">
           <KeyboardArrowDownIcon />
         </IconButton>
@@ -92,3 +82,9 @@ export default function ScrollablePaperTextBox({
     </Paper>
   );
 }
+
+ScrollablePaperTextBox.defaultProps = {
+  searchQuery: undefined,
+  setSearchQuery: undefined,
+  minHeight: MIN_HEIGHT,
+};

@@ -34,16 +34,17 @@ export default function JsonTreeView({ data, label }: JsonTreeViewProps) {
     <ScrollablePaperTextBox
       title={label}
       copyValue={JSON.stringify(data, null, 4)}
-    >
-      <TreeView
-        defaultCollapseIcon={<ExpandMoreIcon />}
-        defaultExpandIcon={<ChevronRightIcon />}
-        defaultExpanded={['root']}
-      >
-        <TreeItem nodeId="root" label={label}>
-          {renderTree(data ?? {}, 'root')}
-        </TreeItem>
-      </TreeView>
-    </ScrollablePaperTextBox>
+      rows={[
+        <TreeView
+          defaultCollapseIcon={<ExpandMoreIcon />}
+          defaultExpandIcon={<ChevronRightIcon />}
+          defaultExpanded={['root']}
+        >
+          <TreeItem nodeId="root" label={label}>
+            {renderTree(data ?? {}, 'root')}
+          </TreeItem>
+        </TreeView>,
+      ]}
+    />
   );
 }

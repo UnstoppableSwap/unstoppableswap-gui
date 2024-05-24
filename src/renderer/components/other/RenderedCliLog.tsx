@@ -79,14 +79,13 @@ export default function CliLogsBox({
       copyValue={logsToRawString(logs)}
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}
-    >
-      {memoizedLogs.map((log) =>
+      rows={memoizedLogs.map((log) =>
         typeof log === 'string' ? (
           <Typography component="pre">{log}</Typography>
         ) : (
           <RenderedCliLog log={log} key={JSON.stringify(log)} />
         )
       )}
-    </ScrollablePaperTextBox>
+    />
   );
 }

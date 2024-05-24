@@ -73,9 +73,12 @@ function MoneroRecoveryKeysDialog({ swap }: { swap: GetSwapInfoResponse }) {
             ['Spend Key', keys.keys.spend_key],
             ['Restore Height', keys.keys.restore_height.toString()],
           ].map(([title, value]) => (
-            <ScrollablePaperTextBox title={title} copyValue={value}>
-              {value}
-            </ScrollablePaperTextBox>
+            <ScrollablePaperTextBox
+              minHeight="2rem"
+              title={title}
+              copyValue={value}
+              rows={[value]}
+            />
           ))}
         </Box>
       </DialogContent>
