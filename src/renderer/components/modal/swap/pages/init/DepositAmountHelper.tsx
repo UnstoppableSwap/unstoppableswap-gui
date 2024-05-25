@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { Box, makeStyles, TextField, Typography } from '@material-ui/core';
 import { SwapStateWaitingForBtcDeposit } from '../../../../../../models/storeModel';
+import { useAppSelector } from '../../../../../../store/hooks';
+import { satsToBtc } from '../../../../../../utils/conversionUtils';
+import { MoneroAmount } from '../../../../other/Units';
 
 const MONERO_FEE = 0.000016;
 
@@ -21,33 +24,55 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+function calcBtcAmountWithoutFees(amount: number, fees: number) {
+  return amount - fees;
+}
+
 export default function DepositAmountHelper({
   state,
+  btcFees,
 }: {
   state: SwapStateWaitingForBtcDeposit;
+  btcFees: number;
 }) {
   const classes = useStyles();
   const [amount, setAmount] = useState(state.minDeposit);
+  const bitcoinBalance = useAppSelector((s) => s.rpc.state.balance) || 0;
 
-  function hasError() {
-    if (amount < state.minDeposit || amount > state.maximumAmount) {
-      return true;
-    }
-    return false;
+  function getTotalAmountAfterDeposit() {
+    return amount + satsToBtc(bitcoinBalance);
   }
 
-  function calcXMRAmount() {
-    if (Number.isNaN(amount)) return '?';
-    if (hasError()) return '?';
-    if (state.price == null) return '?';
+  function hasError() {
+    return (
+      amount < state.minDeposit ||
+      getTotalAmountAfterDeposit() > state.maximumAmount
+    );
+  }
 
-    const fees = state.minDeposit - state.minimumAmount;
-    return ((amount - fees) / state.price - MONERO_FEE).toFixed(4);
+  function calcXMRAmount(): number | null {
+    if (Number.isNaN(amount)) return null;
+    if (hasError()) return null;
+    if (state.price == null) return null;
+
+    console.log(
+      `Calculating calcBtcAmountWithoutFees(${getTotalAmountAfterDeposit()}, ${btcFees}) / ${
+        state.price
+      } - ${MONERO_FEE}`
+    );
+
+    return (
+      calcBtcAmountWithoutFees(getTotalAmountAfterDeposit(), btcFees) /
+        state.price -
+      MONERO_FEE
+    );
   }
 
   return (
     <Box className={classes.outer}>
-      <Typography variant="subtitle2">Depositing</Typography>
+      <Typography variant="subtitle2">
+        Depositing {bitcoinBalance > 0 && <>another</>}
+      </Typography>
       <TextField
         error={hasError()}
         value={amount}
@@ -57,7 +82,8 @@ export default function DepositAmountHelper({
         className={classes.textField}
       />
       <Typography variant="subtitle2">
-        BTC will give you approximately {calcXMRAmount()} XMR.
+        BTC will give you approximately{' '}
+        <MoneroAmount amount={calcXMRAmount()} />.
       </Typography>
     </Box>
   );

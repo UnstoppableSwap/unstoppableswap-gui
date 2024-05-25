@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Box, makeStyles, Typography } from '@material-ui/core';
+import { Box, Typography } from '@material-ui/core';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 import InfoBox from './InfoBox';
 import ClipboardIconButton from './ClipbiardIconButton';
@@ -12,28 +12,18 @@ type Props = {
   icon: ReactNode;
 };
 
-const useStyles = makeStyles((theme) => ({
-  additionalContentOuter: {
-    display: 'flex',
-    flexDirection: 'row',
-    gap: theme.spacing(0.5),
-  },
-}));
-
 export default function DepositAddressInfoBox({
   title,
   address,
   additionalContent,
   icon,
 }: Props) {
-  const classes = useStyles();
-
   return (
     <InfoBox
       title={title}
       mainContent={<Typography variant="h5">{address}</Typography>}
       additionalContent={
-        <Box className={classes.additionalContentOuter}>
+        <Box>
           <Box>
             <ClipboardIconButton
               text={address}
@@ -42,9 +32,18 @@ export default function DepositAddressInfoBox({
               variant="contained"
               size="medium"
             />
-            <Box>{additionalContent}</Box>
+            <Box
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                gap: '0.5rem',
+                alignItems: 'center',
+              }}
+            >
+              <Box>{additionalContent}</Box>
+              <BitcoinQrCode address={address} />
+            </Box>
           </Box>
-          <BitcoinQrCode address={address} />
         </Box>
       }
       icon={icon}

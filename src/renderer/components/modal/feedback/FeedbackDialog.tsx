@@ -14,11 +14,11 @@ import { useState } from 'react';
 import { ipcRenderer } from 'electron';
 import { useSnackbar } from 'notistack';
 import { useAppSelector } from '../../../../store/hooks';
-import { piconerosToXmr } from '../../../../utils/conversionUtils';
 import { parseDateString } from '../../../../utils/parseUtils';
 import { store } from '../../../../store/store';
 import { submitFeedbackViaHttp } from '../../../api';
 import { CliLog } from '../../../../models/cliModel';
+import { PiconeroAmount } from '../../other/Units';
 
 async function submitFeedback(body: string, swapId: string | number) {
   let attachedBody = '';
@@ -71,7 +71,7 @@ function SwapSelectDropDown({
         <MenuItem value={swap.swapId}>
           Swap {swap.swapId.substring(0, 5)}... from{' '}
           {new Date(parseDateString(swap.startDate)).toDateString()} (
-          {piconerosToXmr(swap.xmrAmount).toFixed(5)} BTC)
+          <PiconeroAmount amount={swap.xmrAmount} />)
         </MenuItem>
       ))}
     </Select>

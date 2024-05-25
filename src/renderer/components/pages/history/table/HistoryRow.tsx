@@ -18,6 +18,7 @@ import {
 import HistoryRowActions from './HistoryRowActions';
 import HistoryRowExpanded from './HistoryRowExpanded';
 import { GetSwapInfoResponse } from '../../../../../models/rpcModel';
+import { BitcoinAmount, MoneroAmount } from '../../../other/Units';
 
 type HistoryRowProps = {
   swap: GetSwapInfoResponse;
@@ -42,9 +43,9 @@ function AmountTransfer({
 
   return (
     <Box className={classes.amountTransferContainer}>
-      {btcAmount.toFixed(6)} BTC
+      <BitcoinAmount amount={btcAmount} />
       <ArrowForwardIcon />
-      {xmrAmount.toFixed(6)} XMR
+      <MoneroAmount amount={xmrAmount} />
     </Box>
   );
 }

@@ -1,19 +1,17 @@
-import {
-  Box,
-  DialogContentText,
-  makeStyles,
-  Typography,
-} from '@material-ui/core';
+import { Box, makeStyles, Typography } from '@material-ui/core';
 import { SwapStateWaitingForBtcDeposit } from '../../../../../../models/storeModel';
 import DepositAddressInfoBox from '../../DepositAddressInfoBox';
 import BitcoinIcon from '../../../../icons/BitcoinIcon';
 import { btcToSats, satsToBtc } from '../../../../../../utils/conversionUtils';
 import DepositAmountHelper from './DepositAmountHelper';
+import { useAppSelector } from '../../../../../../store/hooks';
+import {
+  BitcoinAmount,
+  MoneroBitcoinExchangeRate,
+  SatsAmount,
+} from '../../../../other/Units';
 
 const useStyles = makeStyles((theme) => ({
-  depositStatusText: {
-    paddingTop: theme.spacing(0.5),
-  },
   amountHelper: {
     display: 'flex',
     alignItems: 'center',
@@ -34,41 +32,59 @@ export default function WaitingForBtcDepositPage({
   state,
 }: WaitingForBtcDepositPageProps) {
   const classes = useStyles();
+  const bitcoinBalance = useAppSelector((s) => s.rpc.state.balance) || 0;
 
   // Convert to integer for accurate arithmetic operations
-  const fees = parseFloat(
-    satsToBtc(
-      btcToSats(state.minDeposit) - btcToSats(state.minimumAmount)
-    ).toFixed(8)
+  const fees = satsToBtc(
+    btcToSats(state.minDeposit) -
+      btcToSats(state.minimumAmount) +
+      bitcoinBalance
   );
 
   // TODO: Account for BTC lock tx fees
   return (
     <Box>
-      <DialogContentText>
-        The swap will start automatically as soon as you transfer the minimum
-        amount of Bitcoin to the address below. The funds will be used in their
-        entirety.
-      </DialogContentText>
-
       <DepositAddressInfoBox
         title="Bitcoin Deposit Address"
         address={state.depositAddress}
         additionalContent={
           <Box className={classes.additionalContent}>
-            <Typography
-              variant="subtitle2"
-              className={classes.depositStatusText}
-            >
-              Send any amount between {state.minDeposit} BTC and{' '}
-              {state.maximumAmount} BTC to the address above. All Bitcoin sent
-              to this this address will converted into Monero at an exchance
-              rate of {state.price || 'unknown'} BTC/XMR. The network fee of{' '}
-              {fees} BTC will automatically be deducted from the deposited
-              coins. You have deposited enough Bitcoin to swap{' '}
-              {state.maxGiveable} BTC.
+            <Typography variant="subtitle2">
+              <ul>
+                {bitcoinBalance > 0 ? (
+                  <li>
+                    You have already deposited{' '}
+                    <SatsAmount amount={bitcoinBalance} />
+                  </li>
+                ) : null}
+                <li>
+                  Send any amount between{' '}
+                  <BitcoinAmount amount={state.minDeposit} /> and{' '}
+                  <BitcoinAmount
+                    amount={state.maximumAmount - satsToBtc(bitcoinBalance)}
+                  />
+                  to the address above{' '}
+                  {bitcoinBalance > 0 && (
+                    <>(on top of the already deposited funds)</>
+                  )}
+                </li>
+                <li>
+                  All Bitcoin sent to this this address will converted into
+                  Monero at an exchance rate of{' '}
+                  <MoneroBitcoinExchangeRate rate={state.price} />
+                </li>
+                <li>
+                  The network fee of{' '}
+                  <BitcoinAmount amount={fees >= 0 ? fees : null} /> will
+                  automatically be deducted from the deposited coins
+                </li>
+                <li>
+                  The swap will start automatically as soon as the minimum
+                  amount is deposited
+                </li>
+              </ul>
             </Typography>
-            <DepositAmountHelper state={state} />
+            <DepositAmountHelper btcFees={fees} state={state} />
           </Box>
         }
         icon={<BitcoinIcon />}
