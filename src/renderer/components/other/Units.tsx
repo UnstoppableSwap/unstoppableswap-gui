@@ -31,9 +31,11 @@ export function MoneroBitcoinExchangeRate({ rate }: { rate: Amount }) {
 }
 
 export function SatsAmount({ amount }: { amount: Amount }) {
-  return <BitcoinAmount amount={satsToBtc(amount)} />;
+  return <BitcoinAmount amount={amount == null ? null : satsToBtc(amount)} />;
 }
 
 export function PiconeroAmount({ amount }: { amount: Amount }) {
-  return <MoneroAmount amount={piconerosToXmr(amount)} />;
+  return (
+    <MoneroAmount amount={amount == null ? null : piconerosToXmr(amount)} />
+  );
 }
