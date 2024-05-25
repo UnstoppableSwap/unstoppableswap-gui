@@ -26,6 +26,14 @@ const theme = createTheme({
     },
     secondary: indigo,
   },
+  transitions: {
+    create: () => 'none',
+  },
+  props: {
+    MuiButtonBase: {
+      disableRipple: true,
+    },
+  },
 });
 
 function InnerContent() {
