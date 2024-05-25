@@ -2,10 +2,13 @@ import { app } from 'electron';
 import path from 'path';
 import { constants, promises as fs } from 'fs';
 import { chmod, stat } from 'fs/promises';
+import { uniqBy } from 'lodash';
+import { store } from '../../store/store';
 import { getPlatform, isTestnet } from '../../store/config';
 import { Binary } from '../../models/downloaderModel';
 import { CliLog, getCliLogSpanSwapId } from '../../models/cliModel';
 import { getLogsFromRawFileString } from '../../utils/parseUtils';
+import { RpcProcessStateType } from '../../models/rpcModel';
 
 // Be consistent with the way the cli generates the
 // data-dir on linux
@@ -151,11 +154,27 @@ export default async function getSavedLogsOfSwapId(
   const legacyFileData = await getFileData(legacyLogsFile).catch(() => '');
 
   const legacyLogs = getLogsFromRawFileString(legacyFileData);
-  const logs = getLogsFromRawFileString(fileData).filter(
-    (log) => getCliLogSpanSwapId(log) === swapId
+  const logs = getLogsFromRawFileString(fileData).filter((log) => {
+    return getCliLogSpanSwapId(log) === swapId;
+  });
+
+  const rpcProcess = store.getState().rpc.process;
+  const currentProcessLogs =
+    rpcProcess.type === RpcProcessStateType.NOT_STARTED
+      ? ''
+      : rpcProcess.stdOut;
+  const rpcProcessLogs = getLogsFromRawFileString(currentProcessLogs).filter(
+    (log) => {
+      return getCliLogSpanSwapId(log) === swapId;
+    }
   );
 
-  return [...legacyLogs, ...logs];
+  const allLogs = [...legacyLogs, ...logs, ...rpcProcessLogs];
+  const allLogsWithoutDuplicates = uniqBy(
+    allLogs,
+    (log) => log.timestamp + log.fields.message
+  );
+  return allLogsWithoutDuplicates;
 }
 
 export async function makeFileExecutable(binary: Binary) {
