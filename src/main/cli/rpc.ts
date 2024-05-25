@@ -79,7 +79,7 @@ export async function makeRpcRequest<T>(
         RPC_LOG_EVENT_EMITTER.on((logs) => {
           const relevantLogs = logs.filter(
             (log) =>
-              getCliLogSpanLogReferenceId(log)?.includes(logReferenceId) ||
+              getCliLogSpanLogReferenceId(log) === logReferenceId ||
               (includeGloballyRelevantLogs &&
                 hasCliLogOneOfMultipleSpans(log, GLOBALLY_RELEVANT_SPANS))
           );
@@ -136,8 +136,8 @@ export async function makeBatchRpcRequest<T>(
       });
 
       RPC_LOG_EVENT_EMITTER.on((logs) => {
-        const relevantLogs = logs.filter((log) =>
-          getCliLogSpanLogReferenceId(log)?.includes(logReferenceId)
+        const relevantLogs = logs.filter(
+          (log) => getCliLogSpanLogReferenceId(log) === logReferenceId
         );
         if (relevantLogs.length > 0) {
           logCallback(relevantLogs);

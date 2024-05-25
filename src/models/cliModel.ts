@@ -267,7 +267,12 @@ export function getCliLogSpanSwapId(log: CliLog): string | null {
 }
 
 export function getCliLogSpanLogReferenceId(log: CliLog): string | null {
-  return getCliLogSpanAttribute<string>(log, 'log_reference_id');
+  return (
+    getCliLogSpanAttribute<string>(log, 'log_reference_id')?.replace(
+      /"/g,
+      ''
+    ) || null
+  );
 }
 
 export function hasCliLogOneOfMultipleSpans(
