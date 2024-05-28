@@ -115,7 +115,7 @@ export default function IpcInvokeButton<T>({
   }
 
   const requiresRpcAndNotReady =
-    requiresRpc && !isRpcReady && process.env.USE_EXTERNAL_RPC !== 'true';
+    !!requiresRpc && !isRpcReady && process.env.USE_EXTERNAL_RPC !== 'true';
   const isDisabled = disabled || requiresRpcAndNotReady || isLoading;
 
   return (
