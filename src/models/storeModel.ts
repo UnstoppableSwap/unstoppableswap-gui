@@ -10,6 +10,11 @@ export interface SwapSlice {
   swapId: string | null;
 }
 
+export type MoneroWalletRpcUpdateState = {
+  progress: string;
+  downloadUrl: string;
+};
+
 export interface SwapState {
   type: SwapStateType;
 }

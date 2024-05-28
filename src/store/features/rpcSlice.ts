@@ -4,8 +4,16 @@ import {
   MoneroRecoveryResponse,
   RpcProcessStateType,
 } from '../../models/rpcModel';
-import { CliLog, isCliLogStartedRpcServer } from '../../models/cliModel';
+import {
+  CliLog,
+  isCliLogDownloadingMoneroWalletRpc,
+  isCliLogFailedToSyncMoneroWallet,
+  isCliLogFinishedSyncingMoneroWallet,
+  isCliLogStartedRpcServer,
+  isCliLogStartedSyncingMoneroWallet,
+} from '../../models/cliModel';
 import { ExtendedProviderStatus, ProviderStatus } from '../../models/apiModel';
+import { MoneroWalletRpcUpdateState } from '../../models/storeModel';
 
 type Process =
   | {
@@ -37,6 +45,12 @@ interface State {
     swapId: string;
     keys: MoneroRecoveryResponse;
   } | null;
+  moneroWallet: {
+    isSyncing: boolean;
+  };
+  moneroWalletRpc: {
+    updateState: false | MoneroWalletRpcUpdateState;
+  };
 }
 
 export interface RPCSlice {
@@ -55,6 +69,12 @@ const initialState: RPCSlice = {
     rendezvous_discovered_sellers: [],
     swapInfos: {},
     moneroRecovery: null,
+    moneroWallet: {
+      isSyncing: false,
+    },
+    moneroWalletRpc: {
+      updateState: false,
+    },
   },
   busyEndpoints: [],
 };
@@ -82,6 +102,21 @@ export const rpcSlice = createSlice({
             stdOut: slice.process.stdOut,
             address: log.fields.addr,
           };
+        } else if (isCliLogDownloadingMoneroWalletRpc(log)) {
+          slice.state.moneroWalletRpc.updateState = {
+            progress: log.fields.progress,
+            downloadUrl: log.fields.download_url,
+          };
+
+          if (log.fields.progress === '100%') {
+            slice.state.moneroWalletRpc.updateState = false;
+          }
+        } else if (isCliLogStartedSyncingMoneroWallet(log)) {
+          slice.state.moneroWallet.isSyncing = true;
+        } else if (isCliLogFinishedSyncingMoneroWallet(log)) {
+          slice.state.moneroWallet.isSyncing = false;
+        } else if (isCliLogFailedToSyncMoneroWallet(log)) {
+          slice.state.moneroWallet.isSyncing = false;
         }
       });
     },
@@ -106,6 +141,12 @@ export const rpcSlice = createSlice({
           type: RpcProcessStateType.EXITED,
           stdOut: slice.process.stdOut,
           exitCode: action.payload.exitCode,
+        };
+        slice.state.moneroWalletRpc = {
+          updateState: false,
+        };
+        slice.state.moneroWallet = {
+          isSyncing: false,
         };
       }
     },

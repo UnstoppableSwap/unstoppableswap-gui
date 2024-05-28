@@ -2,11 +2,12 @@ import RedditIcon from '@material-ui/icons/Reddit';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import { Box, makeStyles } from '@material-ui/core';
 import LinkIconButton from '../icons/LinkIconButton';
-import UnfinishedSwapsAlert from './UnfinishedSwapsAlert';
-import FundsLeftInWalletAlert from './FundsLeftInWalletAlert';
+import UnfinishedSwapsAlert from '../alert/UnfinishedSwapsAlert';
+import FundsLeftInWalletAlert from '../alert/FundsLeftInWalletAlert';
 import RpcStatusAlert from '../alert/RpcStatusAlert';
 import DiscordIcon from '../icons/DiscordIcon';
 import { DISCORD_URL } from '../pages/help/ContactInfoBox';
+import MoneroWalletRpcUpdatingAlert from '../alert/MoneroWalletRpcUpdatingAlert';
 
 const useStyles = makeStyles((theme) => ({
   outer: {
@@ -29,6 +30,7 @@ export default function NavigationFooter() {
       <FundsLeftInWalletAlert />
       <UnfinishedSwapsAlert />
       <RpcStatusAlert />
+      <MoneroWalletRpcUpdatingAlert />
       <Box className={classes.linksOuter}>
         <LinkIconButton url="https://reddit.com/r/unstoppableswap">
           <RedditIcon />

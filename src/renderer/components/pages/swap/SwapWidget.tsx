@@ -177,6 +177,9 @@ function HasProviderSwapWidget({
 }
 
 function HasNoProvidersSwapWidget() {
+  const forceShowDialog = useAppSelector((state) =>
+    isSwapState(state.swap.state)
+  );
   const isPublicRegistryDown = useAppSelector((state) =>
     isRegistryDown(
       state.providers.registry.failedReconnectAttemptsSinceLastSuccess
@@ -184,31 +187,27 @@ function HasNoProvidersSwapWidget() {
   );
   const classes = useStyles();
 
-  if (isPublicRegistryDown) {
-    return (
-      <Alert severity="info">
-        <Box className={classes.noProvidersAlertOuter}>
-          <Typography>
-            Currently, the public registry of providers seems to be unreachable.
-            Here&apos;s what you can do:
-            <ul>
-              <li>
-                Try discovering a provider by connecting to a rendezvous point
-              </li>
-              <li>
-                Try again later when the public registry may be reachable again
-              </li>
-            </ul>
-          </Typography>
-          <Box>
-            <ListSellersDialogOpenButton />
-          </Box>
+  const alertBox = isPublicRegistryDown ? (
+    <Alert severity="info">
+      <Box className={classes.noProvidersAlertOuter}>
+        <Typography>
+          Currently, the public registry of providers seems to be unreachable.
+          Here&apos;s what you can do:
+          <ul>
+            <li>
+              Try discovering a provider by connecting to a rendezvous point
+            </li>
+            <li>
+              Try again later when the public registry may be reachable again
+            </li>
+          </ul>
+        </Typography>
+        <Box>
+          <ListSellersDialogOpenButton />
         </Box>
-      </Alert>
-    );
-  }
-
-  return (
+      </Box>
+    </Alert>
+  ) : (
     <Alert severity="info">
       <Box className={classes.noProvidersAlertOuter}>
         <Typography>
@@ -228,6 +227,13 @@ function HasNoProvidersSwapWidget() {
         </Box>
       </Box>
     </Alert>
+  );
+
+  return (
+    <Box>
+      {alertBox}
+      <SwapDialog open={forceShowDialog} onClose={() => {}} />
+    </Box>
   );
 }
 

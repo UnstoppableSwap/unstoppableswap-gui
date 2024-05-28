@@ -11,7 +11,7 @@ export default function FundsLeftInWalletAlert() {
     return (
       <Alert
         variant="filled"
-        severity="warning"
+        severity="info"
         action={
           <Button
             color="inherit"

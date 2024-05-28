@@ -3,12 +3,46 @@ import {
   ButtonProps,
   CircularProgress,
   IconButton,
+  Tooltip,
 } from '@material-ui/core';
 import { ipcRenderer } from 'electron';
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactElement, ReactNode, useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { useAppSelector } from '../../store/hooks';
 import { RpcProcessStateType } from '../../models/rpcModel';
+
+function IpcNotReadyTooltip({
+  show,
+  children,
+  processType,
+}: {
+  show: boolean;
+  children: ReactElement;
+  processType: RpcProcessStateType;
+}) {
+  const getMessage = () => {
+    if (!show) return '';
+
+    switch (processType) {
+      case RpcProcessStateType.LISTENING_FOR_CONNECTIONS:
+        return '';
+      case RpcProcessStateType.STARTED:
+        return 'Cannot execute this action because the Swap Daemon is still starting and not yet ready to accept connections. Please wait a moment and try again';
+      case RpcProcessStateType.EXITED:
+        return 'Cannot execute this action because the Swap Daemon has been stopped. Please start the Swap Daemon again to continue';
+      case RpcProcessStateType.NOT_STARTED:
+        return 'Cannot execute this action because the Swap Daemon has not been started yet. Please start the Swap Daemon first';
+      default:
+        return '';
+    }
+  };
+
+  return (
+    <Tooltip title={getMessage()} color="red">
+      {children}
+    </Tooltip>
+  );
+}
 
 interface IpcInvokeButtonProps<T> {
   ipcArgs: unknown[];
@@ -40,10 +74,9 @@ export default function IpcInvokeButton<T>({
 }: IpcInvokeButtonProps<T> & ButtonProps) {
   const { enqueueSnackbar } = useSnackbar();
 
-  const isRpcReady = useAppSelector(
-    (state) =>
-      state.rpc.process.type === RpcProcessStateType.LISTENING_FOR_CONNECTIONS
-  );
+  const rpcProcessType = useAppSelector((state) => state.rpc.process.type);
+  const isRpcReady =
+    rpcProcessType === RpcProcessStateType.LISTENING_FOR_CONNECTIONS;
   const [isPending, setIsPending] = useState(false);
   const [hasMinLoadingTimePassed, setHasMinLoadingTimePassed] = useState(false);
 
@@ -81,29 +114,34 @@ export default function IpcInvokeButton<T>({
     }
   }
 
-  const isDisabled =
-    disabled ||
-    (requiresRpc && !isRpcReady && process.env.USE_EXTERNAL_RPC !== 'true') ||
-    isLoading;
+  const requiresRpcAndNotReady =
+    requiresRpc && !isRpcReady && process.env.USE_EXTERNAL_RPC !== 'true';
+  const isDisabled = disabled || requiresRpcAndNotReady || isLoading;
 
-  if (isIconButton) {
-    return (
-      <IconButton
-        onClick={handleClick}
-        disabled={isDisabled}
-        {...(rest as any)}
-      >
-        {actualEndIcon}
-      </IconButton>
-    );
-  }
   return (
-    <Button
-      onClick={handleClick}
-      disabled={isDisabled}
-      endIcon={actualEndIcon}
-      {...rest}
-    />
+    <IpcNotReadyTooltip
+      show={requiresRpcAndNotReady}
+      processType={rpcProcessType}
+    >
+      <span>
+        {isIconButton ? (
+          <IconButton
+            onClick={handleClick}
+            disabled={isDisabled}
+            {...(rest as any)}
+          >
+            {actualEndIcon}
+          </IconButton>
+        ) : (
+          <Button
+            onClick={handleClick}
+            disabled={isDisabled}
+            endIcon={actualEndIcon}
+            {...rest}
+          />
+        )}
+      </span>
+    </IpcNotReadyTooltip>
   );
 }
 

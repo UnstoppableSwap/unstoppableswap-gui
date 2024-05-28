@@ -1,5 +1,6 @@
 import {
   MaterialDesignContent,
+  SnackbarKey,
   SnackbarProvider,
   useSnackbar,
 } from 'notistack';
@@ -14,6 +15,16 @@ const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
   },
 }));
 
+function CloseSnackbarButton({ snackbarId }: { snackbarId: SnackbarKey }) {
+  const { closeSnackbar } = useSnackbar();
+
+  return (
+    <IconButton onClick={() => closeSnackbar(snackbarId)}>
+      <Close />
+    </IconButton>
+  );
+}
+
 export default function GlobalSnackbarManager({
   children,
 }: {
@@ -21,15 +32,7 @@ export default function GlobalSnackbarManager({
 }) {
   return (
     <SnackbarProvider
-      action={(snackbarId) => {
-        const { closeSnackbar } = useSnackbar();
-
-        return (
-          <IconButton onClick={() => closeSnackbar(snackbarId)}>
-            <Close />
-          </IconButton>
-        );
-      }}
+      action={(snackbarId) => <CloseSnackbarButton snackbarId={snackbarId} />}
       Components={{
         success: StyledMaterialDesignContent,
         error: StyledMaterialDesignContent,
