@@ -106,8 +106,8 @@ export default function FeedbackDialog({
           Got something to say? Drop us a message below. Wanna hear back from
           us? Include your contact info. If not, no worries - anonymous feedback
           is cool too. If you had an issue with a specific swap, select it from
-          the dropdown to attach the logs. It'll help us figure out what went
-          wrong. Hit that submit button when you're ready. We appreciate you
+          the dropdown to attach the logs. It will help us figure out what went
+          wrong. Hit that submit button when you are ready. We appreciate you
           taking the time to share your thoughts!
         </DialogContentText>
         <Box style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>

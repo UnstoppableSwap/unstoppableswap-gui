@@ -8,8 +8,10 @@ import {
   DialogContentText,
   Link,
 } from '@material-ui/core';
-import { GetSwapInfoResponse } from '../../../../../models/rpcModel';
-import { isSwapMoneroRecoverable } from '../../../../../models/databaseModel';
+import {
+  GetSwapInfoResponse,
+  isSwapMoneroRecoverable,
+} from '../../../../../models/rpcModel';
 import IpcInvokeButton from '../../../IpcInvokeButton';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import DialogHeader from '../../../modal/DialogHeader';

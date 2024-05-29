@@ -1,54 +1,74 @@
 import { Step, StepLabel, Stepper, Typography } from '@material-ui/core';
-import { DbStatePathType, getTypeOfPathDbState } from 'models/databaseModel';
+import { SwapStateName } from 'models/rpcModel';
 import { useActiveSwapInfo, useAppSelector } from '../../../../store/hooks';
-import { SwapStateName } from '../../../../models/rpcModel';
+import { exhaustiveGuard } from '../../../../utils/typescriptUtils';
+
+export enum PathType {
+  HAPPY_PATH = 'happy path',
+  UNHAPPY_PATH = 'unhappy path',
+}
 
 function getActiveStep(
   stateName: SwapStateName | null,
   processExited: boolean
-): [DbStatePathType, number, boolean] {
-  if (stateName) {
-    const pathType = getTypeOfPathDbState(stateName);
+): [PathType, number, boolean] {
+  switch (stateName) {
+    /// // Happy Path
+    // Step: 1 (Waiting for Bitcoin Lock confirmation and XMR Lock Publication)
+    // These are the states where we have not yet locked the Bitcoin
+    // or we have only just published the Bitcoin lock transaction
+    case null:
+      return [PathType.HAPPY_PATH, 0, false];
+    case SwapStateName.Started:
+    case SwapStateName.SwapSetupCompleted:
+    case SwapStateName.BtcLocked:
+      return [PathType.HAPPY_PATH, 0, processExited];
 
-    if (pathType === DbStatePathType.HAPPY_PATH) {
-      if (stateName === SwapStateName.SwapSetupCompleted) {
-        return [pathType, 0, processExited];
-      }
-      if (stateName === SwapStateName.BtcLocked) {
-        return [pathType, 0, processExited];
-      }
-      if (stateName === SwapStateName.XmrLockProofReceived) {
-        return [pathType, 1, processExited];
-      }
-      if (stateName === SwapStateName.XmrLocked) {
-        return [pathType, 2, processExited];
-      }
-      if (stateName === SwapStateName.EncSigSent) {
-        return [pathType, 2, processExited];
-      }
-      if (stateName === SwapStateName.BtcRedeemed) {
-        return [pathType, 3, processExited];
-      }
-      if (stateName === SwapStateName.XmrRedeemed) {
-        return [pathType, 4, false];
-      }
-    } else {
-      if (stateName === SwapStateName.CancelTimelockExpired) {
-        return [pathType, 0, processExited];
-      }
-      if (stateName === SwapStateName.BtcCancelled) {
-        return [pathType, 1, processExited];
-      }
-      if (stateName === SwapStateName.BtcRefunded) {
-        return [pathType, 2, false];
-      }
-      if (stateName === SwapStateName.BtcPunished) {
-        return [pathType, 1, true];
-      }
-    }
-    return [pathType, 0, false];
+    // Step: 2 (Waiting for XMR Lock confirmation)
+    // We have locked the Bitcoin and the other party has locked their XMR
+    case SwapStateName.XmrLockProofReceived:
+      return [PathType.HAPPY_PATH, 1, processExited];
+
+    // Step: 3 (Sending Encrypted Signature and waiting for Bitcoin Redemption)
+    // The XMR lock transaction has been confirmed
+    // We now need to send the encrypted signature to the other party and wait for them to redeem the Bitcoin
+    case SwapStateName.XmrLocked:
+    case SwapStateName.EncSigSent:
+      return [PathType.HAPPY_PATH, 2, processExited];
+
+    // Step: 4 (Waiting for XMR Redemption)
+    case SwapStateName.BtcRedeemed:
+      return [PathType.HAPPY_PATH, 3, processExited];
+
+    // Step: 4 (Completed) (Swap completed, XMR redeemed)
+    case SwapStateName.XmrRedeemed:
+      return [PathType.HAPPY_PATH, 4, false];
+
+    // Edge Case of Happy Path where the swap is safely aborted. We "fail" at the first step.
+    case SwapStateName.SafelyAborted:
+      return [PathType.HAPPY_PATH, 0, true];
+
+    // // Unhappy Path
+    // Step: 1 (Cancelling swap, checking if cancel transaction has been published already by the other party)
+    case SwapStateName.CancelTimelockExpired:
+      return [PathType.UNHAPPY_PATH, 0, processExited];
+
+    // Step: 2 (Attempt to publish the Bitcoin refund transaction)
+    case SwapStateName.BtcCancelled:
+      return [PathType.UNHAPPY_PATH, 1, processExited];
+
+    // Step: 2 (Completed) (Bitcoin refunded)
+    case SwapStateName.BtcRefunded:
+      return [PathType.UNHAPPY_PATH, 2, false];
+
+    // Step: 2 (We failed to publish the Bitcoin refund transaction)
+    // We failed to publish the Bitcoin refund transaction because the timelock has expired.
+    // We will be punished. Nothing we can do about it now.
+    case SwapStateName.BtcPunished:
+      return [PathType.UNHAPPY_PATH, 1, true];
+    default:
+      return exhaustiveGuard(stateName);
   }
-  return [DbStatePathType.HAPPY_PATH, 0, false];
 }
 
 function HappyPathStepper({
@@ -130,7 +150,7 @@ export default function SwapStateStepper() {
   const processExited = useAppSelector((s) => !s.swap.processRunning);
   const [pathType, activeStep, error] = getActiveStep(stateName, processExited);
 
-  if (pathType === DbStatePathType.HAPPY_PATH) {
+  if (pathType === PathType.HAPPY_PATH) {
     return <HappyPathStepper activeStep={activeStep} error={error} />;
   }
   return <UnhappyPathStepper activeStep={activeStep} error={error} />;

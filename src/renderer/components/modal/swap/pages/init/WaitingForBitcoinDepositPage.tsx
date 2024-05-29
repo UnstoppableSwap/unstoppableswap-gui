@@ -62,10 +62,10 @@ export default function WaitingForBtcDepositPage({
                   <BitcoinAmount amount={state.minDeposit} /> and{' '}
                   <BitcoinAmount
                     amount={state.maximumAmount - satsToBtc(bitcoinBalance)}
-                  />
-                  to the address above{' '}
+                  />{' '}
+                  to the address above
                   {bitcoinBalance > 0 && (
-                    <>(on top of the already deposited funds)</>
+                    <> (on top of the already deposited funds)</>
                   )}
                 </li>
                 <li>

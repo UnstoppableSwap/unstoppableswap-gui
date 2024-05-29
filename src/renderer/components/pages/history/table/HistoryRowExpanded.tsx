@@ -14,10 +14,10 @@ import {
   getSwapExchangeRate,
   getSwapTxFees,
   getSwapXmrAmount,
-} from '../../../../../models/databaseModel';
+  GetSwapInfoResponse,
+} from '../../../../../models/rpcModel';
 import SwapLogFileOpenButton from './SwapLogFileOpenButton';
 import { SwapCancelRefundButton } from './HistoryRowActions';
-import { GetSwapInfoResponse } from '../../../../../models/rpcModel';
 import { getBitcoinTxExplorerUrl } from '../../../../../utils/conversionUtils';
 import { isTestnet } from '../../../../../store/config';
 import { SwapMoneroRecoveryButton } from './SwapMoneroRecoveryButton';

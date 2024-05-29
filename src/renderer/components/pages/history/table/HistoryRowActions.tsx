@@ -8,11 +8,9 @@ import IpcInvokeButton from '../../../IpcInvokeButton';
 import {
   GetSwapInfoResponse,
   SwapStateName,
+  isSwapStateNamePossiblyCancellableSwap,
+  isSwapStateNamePossiblyRefundableSwap,
 } from '../../../../../models/rpcModel';
-import {
-  isSwapCancellable,
-  isSwapRefundable,
-} from '../../../../../models/databaseModel';
 
 export function SwapResumeButton({
   swap,
@@ -39,7 +37,8 @@ export function SwapCancelRefundButton({
   ...props
 }: { swap: GetSwapInfoResponse } & ButtonProps) {
   const cancelOrRefundable =
-    isSwapCancellable(swap.stateName) || isSwapRefundable(swap.stateName);
+    isSwapStateNamePossiblyCancellableSwap(swap.stateName) ||
+    isSwapStateNamePossiblyRefundableSwap(swap.stateName);
 
   if (!cancelOrRefundable) {
     return <></>;

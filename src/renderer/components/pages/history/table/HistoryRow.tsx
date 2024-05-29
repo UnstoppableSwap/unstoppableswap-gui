@@ -14,10 +14,10 @@ import {
   getHumanReadableDbStateType,
   getSwapBtcAmount,
   getSwapXmrAmount,
-} from '../../../../../models/databaseModel';
+  GetSwapInfoResponse,
+} from '../../../../../models/rpcModel';
 import HistoryRowActions from './HistoryRowActions';
 import HistoryRowExpanded from './HistoryRowExpanded';
-import { GetSwapInfoResponse } from '../../../../../models/rpcModel';
 import { BitcoinAmount, MoneroAmount } from '../../../other/Units';
 
 type HistoryRowProps = {
