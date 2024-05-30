@@ -1,22 +1,26 @@
 ---
 name: Issue with swap
-about: You've started a swap and are not facing an issue
+about: You've started a swap and are now facing an issue
 labels: 'running swap'
 ---
 
 ## Explain what you did
 
-## Which state is your swap in? (You can check on the History tab in the GUI)
+<!--- What were the steps you took to get where you are now? -->
 
-<!--- State -->
+## Which state is your swap in?
+
+<!--- You can check on the History tab in the GUI -->
 
 ## What is the problem?
 
-<!--- What went wrong? -->
+<!--- What is not working? -->
 
-## Logs (History Tab -> Choose your swap -> Expand Arrow -> View Logs)
+## Logs
 
-<!-- Copy the logs of your swap here -->
+<!-- Go to History Tab -> Choose your swap -> Expand Arrow -> View Logs -->
 
 ## Your Environment
 
+- Operating System:
+- GUI Version: 
