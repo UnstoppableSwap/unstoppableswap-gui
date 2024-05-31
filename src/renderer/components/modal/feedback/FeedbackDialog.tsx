@@ -13,7 +13,7 @@ import {
 import { useState } from 'react';
 import { ipcRenderer } from 'electron';
 import { useSnackbar } from 'notistack';
-import { useAppSelector } from '../../../../store/hooks';
+import { useActiveSwapId, useAppSelector } from '../../../../store/hooks';
 import { parseDateString } from '../../../../utils/parseUtils';
 import { store } from '../../../store/storeRenderer';
 import { submitFeedbackViaHttp } from '../../../api';
@@ -90,12 +90,13 @@ export default function FeedbackDialog({
 }) {
   const [pending, setPending] = useState(false);
   const [bodyText, setBodyText] = useState('');
+  const currentSwapId = useActiveSwapId();
 
   const { enqueueSnackbar } = useSnackbar();
 
   const [selectedAttachedSwap, setSelectedAttachedSwap] = useState<
     string | number
-  >(0);
+  >(currentSwapId || 0);
 
   const bodyTooLong = bodyText.length > MAX_FEEDBACK_LENGTH;
 
