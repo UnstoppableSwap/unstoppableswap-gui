@@ -15,7 +15,7 @@ import { ipcRenderer } from 'electron';
 import { useSnackbar } from 'notistack';
 import { useAppSelector } from '../../../../store/hooks';
 import { parseDateString } from '../../../../utils/parseUtils';
-import { store } from '../../../../store/store';
+import { store } from '../../../store/storeRenderer';
 import { submitFeedbackViaHttp } from '../../../api';
 import { CliLog } from '../../../../models/cliModel';
 import { PiconeroAmount } from '../../other/Units';

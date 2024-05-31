@@ -1,15 +1,15 @@
 import { io, Socket } from 'socket.io-client';
 import { app } from 'electron';
+import { SocksProxyAgent } from 'socks-proxy-agent';
+import { SocksProxy } from 'socks';
 import { ExtendedProviderStatus, Provider } from '../models/apiModel';
 import logger from '../utils/logger';
 import { sendSnackbarAlertToRenderer } from './main';
-import { store } from '../store/store';
+import { store } from './store/mainStore';
 import {
   increaseFailedRegistryReconnectAttemptsSinceLastSuccess,
   setRegistryProviders,
 } from '../store/features/providersSlice';
-import { SocksProxyAgent } from 'socks-proxy-agent';
-import { SocksProxy } from 'socks';
 
 interface ServerToClientEvents {
   'provider-refresh': (list: Provider[]) => void;
@@ -48,7 +48,7 @@ function getSocketProxyInUse(): SocksProxy | null {
 
 function getAgent(): SocksProxyAgent | false {
   const state = store.getState();
-  const proxyStatus = state.tor.proxyStatus;
+  const { proxyStatus } = state.tor;
 
   if (proxyStatus && proxyStatus.bootstrapped) {
     logger.debug(
@@ -89,7 +89,7 @@ export default function initSocket() {
     }
   );
 
-  globalSocket = [socket, agent == false ? null : agent.proxy];
+  globalSocket = [socket, agent === false ? null : agent.proxy];
 
   logger.debug(
     {
@@ -152,19 +152,19 @@ export default function initSocket() {
   });
 
   const unsubscribeFromStore = store.subscribe(() => {
+    function reconnect() {
+      unsubscribeFromStore();
+      socket.disconnect();
+      globalSocket = null;
+      initSocket();
+    }
+
     // Check if we have a global socket
     // Also check if the global socket is the same as the socket this subscription is running on
     if (globalSocket !== null && getSocket() === socket) {
       const state = store.getState();
       const availableProxyStatus = state.tor.proxyStatus;
       const socksProxyInUse = getSocketProxyInUse();
-
-      function reconnect() {
-        unsubscribeFromStore();
-        socket.disconnect();
-        globalSocket = null;
-        initSocket();
-      }
 
       // If we don't have a SOCKS proxy in use but we now have a TOR Socks Proxy, we need to reconnect the socket
       if (
@@ -215,7 +215,7 @@ export function transmitReceivedQuoteFromProvider(
   minimumAmountBtc: number,
   maximumAmountBtc: number
 ) {
-  if(!getSocket()) {
+  if (!getSocket()) {
     // We only transmit the quote if we have a socket TOR connection
     // We do not want to expose the identity of the user if they are not using TOR
     return;
@@ -237,7 +237,7 @@ export function transmitSwapDetailsUpdated(
   stateType: string,
   firstEnteredDate: number
 ) {
-  if(!getSocket()) {
+  if (!getSocket()) {
     // We only transmit the swap details if we have a socket TOR connection
     // We do not want to expose the identity of the user if they are not using TOR
     return;

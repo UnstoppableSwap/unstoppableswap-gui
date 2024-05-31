@@ -16,7 +16,7 @@ import {
   SwapSellerInfo,
   WithdrawBitcoinResponse,
 } from '../../models/rpcModel';
-import { store } from '../../store/store';
+import { store } from '../store/mainStore';
 import {
   rpcResetWithdrawTxId,
   rpcSetBalance,
@@ -408,4 +408,9 @@ export async function getRawSwapInfos() {
   getSwapInfoBatchResults.forEach((info) => {
     store.dispatch(rpcSetSwapInfo(info));
   });
+}
+
+export async function getRawSwapInfo(swapId: string) {
+  const info = await getSwapInfo(swapId);
+  store.dispatch(rpcSetSwapInfo(info));
 }

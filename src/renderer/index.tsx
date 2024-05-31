@@ -1,7 +1,7 @@
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import App from './components/App';
-import { store } from '../store/store';
+import { store } from './store/storeRenderer';
 import logger from '../utils/logger';
 import { fetchAlertsViaHttp, fetchProvidersViaHttp } from './api';
 import { setRegistryProviders } from '../store/features/providersSlice';

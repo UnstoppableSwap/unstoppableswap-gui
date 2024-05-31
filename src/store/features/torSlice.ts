@@ -38,8 +38,8 @@ export const torSlice = createSlice({
           if (match) {
             slice.proxyStatus = {
               proxyHostname: match[1],
-              proxyPort: Number.parseInt(match[2]),
-              bootstrapped: !!slice.proxyStatus
+              proxyPort: Number.parseInt(match[2], 10),
+              bootstrapped: slice.proxyStatus
                 ? slice.proxyStatus.bootstrapped
                 : false,
             };

@@ -11,7 +11,7 @@ import { CliLog } from '../../models/cliModel';
 import { getCliDataBaseDir, getSwapBinary, makeFileExecutable } from './dirs';
 import logger from '../../utils/logger';
 import { getLogsFromRawFileString } from '../../utils/parseUtils';
-import { store } from '../../store/store';
+import { store } from '../store/mainStore';
 import {
   rpcAddLogs,
   rpcAppendStdOut,

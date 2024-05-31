@@ -3,7 +3,7 @@ import path from 'path';
 import { constants, promises as fs } from 'fs';
 import { chmod, stat } from 'fs/promises';
 import { uniqBy } from 'lodash';
-import { store } from '../../store/store';
+import { store } from '../store/mainStore';
 import { getPlatform, isTestnet } from '../../store/config';
 import { Binary } from '../../models/downloaderModel';
 import { CliLog, getCliLogSpanSwapId } from '../../models/cliModel';

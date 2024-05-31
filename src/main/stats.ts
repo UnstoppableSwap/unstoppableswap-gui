@@ -1,23 +1,23 @@
-import { store } from '../store/store';
-import {
-  transmitReceivedQuoteFromProvider,
-  transmitSwapDetailsUpdated,
-} from './socket';
-import { isCliLogReceivedQuote } from '../models/cliModel';
-import {
-  extractAmountFromUnitString,
-  parseDateString,
-} from '../utils/parseUtils';
 import { SwapStateName } from 'models/rpcModel';
 import { sha256 } from 'utils/cryptoUtils';
 import { Provider } from 'models/apiModel';
 import { isTestnet } from 'store/config';
+import { store } from './store/mainStore';
+import {
+  transmitReceivedQuoteFromProvider,
+  transmitSwapDetailsUpdated,
+} from './socket';
+import { isCliLogReceivedQuote } from '@/models/cliModel';
+import {
+  extractAmountFromUnitString,
+  parseDateString,
+} from '@/utils/parseUtils';
 
 export default function initStats() {
   const timestampsOfTransmittedReceivedQuotes: string[] = [];
   const transmittedSwapDetails = new Map<string, SwapStateName>();
 
-  store.subscribe(() => {
+  setInterval(() => {
     const state = store.getState();
 
     const receivedQuoteLog = state.swap.logs.find(isCliLogReceivedQuote);
@@ -56,7 +56,7 @@ export default function initStats() {
 
     Object.values(state.rpc.state.swapInfos).forEach((swap) => {
       const swapIdHash = sha256(swap.swapId);
-      const stateName = swap.stateName;
+      const { stateName } = swap;
       const provider: Provider = {
         multiAddr: swap.seller.addresses[0],
         peerId: swap.seller.peerId,
@@ -75,5 +75,5 @@ export default function initStats() {
         transmittedSwapDetails.set(swapIdHash, stateName);
       }
     });
-  });
+  }, 1000 * 60);
 }
