@@ -20,6 +20,7 @@ module.exports = {
         ],
       },
     ],
+    '@typescript-eslint/switch-exhaustiveness-check': 'error',
   },
   parserOptions: {
     ecmaVersion: 2020,
