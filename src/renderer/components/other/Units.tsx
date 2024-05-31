@@ -13,7 +13,8 @@ export function AmountWithUnit({
 }) {
   return (
     <span>
-      {amount ? amount.toFixed(fixedPrecision) : '?'} {unit}
+      {amount ? Number.parseFloat(amount.toFixed(fixedPrecision)) : '?'}{' '}
+      {unit}
     </span>
   );
 }
