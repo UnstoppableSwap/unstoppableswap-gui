@@ -4,6 +4,7 @@ import {
   CliLog,
   getCliLogSpanSwapId,
   isCliLogAdvancingState,
+  isCliLogReleasingSwapLockLog,
 } from '../../models/cliModel';
 import logger from '../../utils/logger';
 
@@ -17,18 +18,18 @@ export function createMainListeners() {
     },
     effect: async (action) => {
       const logs = action.payload.logs as CliLog[];
-      const advancingStateLog = logs.find(isCliLogAdvancingState);
+      const advancedStateIndicationLog = logs.find(log => isCliLogAdvancingState(log) || isCliLogReleasingSwapLockLog(log));
 
-      // Here we check if we got a new "Advancing state" log
-      // If we did, we fetch the swap infos because we know the state in the database has changed
+      // Here we check if we got a new "Advancing state" or a "Releasing swap lock" log
+      // If we did, we fetch the swap infos because we know the state in the database has likely changed
       // We want the state that is calculated (swapSlice) in the Redux state based on the logs to be up to date
       // with the state we have saved from the database
-      if (advancingStateLog) {
-        const swapId = getCliLogSpanSwapId(advancingStateLog);
+      if (advancedStateIndicationLog) {
+        const swapId = getCliLogSpanSwapId(advancedStateIndicationLog);
         if (swapId) {
           logger.debug(
             { swapId },
-            'Fetching swap infos because a new "Advancing state" log was found'
+            'Fetching swap infos because a new "Advancing state" or "Releasing swap lock" log was found'
           );
           await getRawSwapInfo(swapId);
         }
