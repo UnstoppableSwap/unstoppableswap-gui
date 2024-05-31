@@ -66,9 +66,6 @@ export const swapSlice = createSlice({
       slice.logs.push(...logs);
 
       logs.forEach((log) => {
-        // If the log contains a swap id, set it as the current swap id
-        slice.swapId = getCliLogSpanSwapId(log) ?? slice.swapId;
-
         if (
           isCliLogAcquiringSwapLockLog(log) &&
           !action.payload.isFromRestore
