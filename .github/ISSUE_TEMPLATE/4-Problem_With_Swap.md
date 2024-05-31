@@ -1,7 +1,7 @@
 ---
 name: Issue with swap
 about: You've started a swap and are now facing an issue
-labels: 'running swap'
+labels: 'Ongoing swap'
 ---
 
 ## Explain what you did
