@@ -19,6 +19,7 @@ import { store } from '../../../store/storeRenderer';
 import { submitFeedbackViaHttp } from '../../../api';
 import { CliLog } from '../../../../models/cliModel';
 import { PiconeroAmount } from '../../other/Units';
+import LoadingButton from '../../other/LoadingButton';
 
 async function submitFeedback(body: string, swapId: string | number) {
   let attachedBody = '';
@@ -103,12 +104,11 @@ export default function FeedbackDialog({
       <DialogTitle>Submit Feedback</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          Got something to say? Drop us a message below. Wanna hear back from
-          us? Include your contact info. If not, no worries - anonymous feedback
-          is cool too. If you had an issue with a specific swap, select it from
-          the dropdown to attach the logs. It will help us figure out what went
-          wrong. Hit that submit button when you are ready. We appreciate you
-          taking the time to share your thoughts!
+          Got something to say? Drop us a message below. If you had an issue
+          with a specific swap, select it from the dropdown to attach the logs.
+          It will help us figure out what went wrong. Hit that submit button
+          when you are ready. We appreciate you taking the time to share your
+          thoughts!
         </DialogContentText>
         <Box style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <TextField
@@ -134,7 +134,7 @@ export default function FeedbackDialog({
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button
+        <LoadingButton
           color="primary"
           variant="contained"
           onClick={async () => {
@@ -150,7 +150,7 @@ export default function FeedbackDialog({
               });
             } catch (e) {
               console.error(`Failed to submit feedback: ${e}`);
-              enqueueSnackbar('Failed to submit feedback', {
+              enqueueSnackbar(`Failed to submit feedback (${e})`, {
                 variant: 'error',
               });
             } finally {
@@ -158,9 +158,10 @@ export default function FeedbackDialog({
             }
             onClose();
           }}
+          loading={pending}
         >
           Submit
-        </Button>
+        </LoadingButton>
       </DialogActions>
     </Dialog>
   );

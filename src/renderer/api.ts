@@ -32,9 +32,7 @@ export async function submitFeedbackViaHttp(
   });
 
   if (!response.ok) {
-    throw new Error(
-      `Failed to submit feedback. Status: ${response.status}, Status Text: ${response.statusText}`
-    );
+    throw new Error(`Status: ${response.status}`);
   }
 
   const responseBody = (await response.json()) as Response;
