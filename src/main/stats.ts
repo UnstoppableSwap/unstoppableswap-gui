@@ -1,37 +1,24 @@
-import { DbStateType } from '../models/databaseModel';
 import { store } from '../store/store';
 import {
   transmitReceivedQuoteFromProvider,
   transmitSwapDetailsUpdated,
 } from './socket';
-import { sha256 } from '../utils/cryptoUtils';
 import { isCliLogReceivedQuote } from '../models/cliModel';
-import { extractAmountFromUnitString } from '../utils/parseUtils';
+import {
+  extractAmountFromUnitString,
+  parseDateString,
+} from '../utils/parseUtils';
+import { SwapStateName } from 'models/rpcModel';
+import { sha256 } from 'utils/cryptoUtils';
+import { Provider } from 'models/apiModel';
+import { isTestnet } from 'store/config';
 
 export default function initStats() {
-  const transmittedSwapDetails = new Map<string, DbStateType>();
   const timestampsOfTransmittedReceivedQuotes: string[] = [];
+  const transmittedSwapDetails = new Map<string, SwapStateName>();
 
   store.subscribe(() => {
     const state = store.getState();
-
-    state.history.forEach((h) => {
-      if (
-        !transmittedSwapDetails.has(h.swapId) ||
-        transmittedSwapDetails.get(h.swapId) !== h.type
-      ) {
-        transmittedSwapDetails.set(h.swapId, h.type);
-        const swapIdHash = sha256(h.swapId);
-
-        transmitSwapDetailsUpdated(
-          h.provider,
-          swapIdHash,
-          h.state.Bob.ExecutionSetupDone.state2.xmr,
-          h.type,
-          h.firstEnteredDate
-        );
-      }
-    });
 
     const receivedQuoteLog = state.swap.logs.find(isCliLogReceivedQuote);
     const receivedQuoteProvider = state.swap.provider;
@@ -66,5 +53,27 @@ export default function initStats() {
         );
       }
     }
+
+    Object.values(state.rpc.state.swapInfos).forEach((swap) => {
+      const swapIdHash = sha256(swap.swapId);
+      const stateName = swap.stateName;
+      const provider: Provider = {
+        multiAddr: swap.seller.addresses[0],
+        peerId: swap.seller.peerId,
+        testnet: isTestnet(),
+      };
+      const firstEnteredDate = parseDateString(swap.startDate);
+
+      if (transmittedSwapDetails.get(swapIdHash) !== stateName) {
+        transmitSwapDetailsUpdated(
+          provider,
+          swapIdHash,
+          swap.xmrAmount,
+          stateName,
+          firstEnteredDate
+        );
+        transmittedSwapDetails.set(swapIdHash, stateName);
+      }
+    });
   });
 }

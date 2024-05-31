@@ -48,6 +48,7 @@ export default function TorInfoBox() {
             ipcChannel="spawn-tor"
             ipcArgs={[]}
             endIcon={<PlayArrowIcon />}
+            requiresRpc={false}
           >
             Start Tor
           </IpcInvokeButton>
@@ -57,6 +58,7 @@ export default function TorInfoBox() {
             ipcChannel="stop-tor"
             ipcArgs={[]}
             endIcon={<StopIcon />}
+            requiresRpc={false}
           >
             Stop Tor
           </IpcInvokeButton>

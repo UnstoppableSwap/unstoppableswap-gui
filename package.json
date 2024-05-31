@@ -253,6 +253,7 @@
     "react-router-dom": "^6.2.1",
     "regenerator-runtime": "^0.13.9",
     "socket.io-client": "^4.4.0",
+    "socks-proxy-agent": "^8.0.3",
     "uuid": "^9.0.0",
     "virtua": "^0.31.0"
   },
