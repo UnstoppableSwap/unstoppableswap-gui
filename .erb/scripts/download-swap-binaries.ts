@@ -1,8 +1,8 @@
 import path from 'path';
 import download from 'download';
 import { chmod, emptyDir, ensureDir, stat } from 'fs-extra';
-import { Binary } from '../../src/models/downloaderModel';
 import { constants } from 'fs';
+import { Binary } from '../../src/models/downloaderModel';
 
 const swapBinDir = path.join(__dirname, '../../build/bin/swap');
 
@@ -16,20 +16,22 @@ async function makeFileExecutable(binary: Binary) {
   );
 }
 
+const CLI_VERSION = '0.13.0';
+
 const binaries = [
   {
     dest: path.join(swapBinDir, 'linux'),
-    url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/0.12.3/swap_0.12.3_Linux_x86_64.tar',
+    url: `https://github.com/comit-network/xmr-btc-swap/releases/download/${CLI_VERSION}/swap_${CLI_VERSION}_Linux_x86_64.tar`,
     filename: 'swap',
   },
   {
     dest: path.join(swapBinDir, 'mac'),
-    url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/0.12.3/swap_0.12.3_Darwin_x86_64.tar',
+    url: `https://github.com/comit-network/xmr-btc-swap/releases/download/${CLI_VERSION}/swap_${CLI_VERSION}_Darwin_x86_64.tar`,
     filename: 'swap',
   },
   {
     dest: path.join(swapBinDir, 'win'),
-    url: 'https://github.com/comit-network/xmr-btc-swap/releases/download/0.12.3/swap_0.12.3_Windows_x86_64.zip',
+    url: `https://github.com/comit-network/xmr-btc-swap/releases/download/${CLI_VERSION}/swap_${CLI_VERSION}_Windows_x86_64.zip`,
     filename: 'swap.exe',
   },
 ];
