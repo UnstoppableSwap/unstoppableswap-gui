@@ -1,3 +1,4 @@
+import { setXmrPrice } from '@/store/features/ratesSlice';
 import { Alert, ExtendedProviderStatus } from '../models/apiModel';
 
 const API_BASE_URL =
@@ -38,4 +39,25 @@ export async function submitFeedbackViaHttp(
   const responseBody = (await response.json()) as Response;
 
   return responseBody.feedbackId;
+}
+
+async function fetchCurrencyUsdPrice(currency: string): Promise<number> {
+  try {
+    const response = await fetch(
+      `https://api.coingecko.com/api/v3/simple/price?ids=${currency}&vs_currencies=usd`
+    );
+    const data = await response.json();
+    return data[currency].usd;
+  } catch (error) {
+    console.error(`Error fetching ${currency} price:`, error);
+    throw error;
+  }
+}
+
+export async function fetchBtcPrice(): Promise<number> {
+  return fetchCurrencyUsdPrice('bitcoin');
+}
+
+export async function fetchXmrPrice(): Promise<number> {
+  return fetchCurrencyUsdPrice('monero');
 }

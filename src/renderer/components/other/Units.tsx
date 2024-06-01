@@ -1,4 +1,6 @@
 import { piconerosToXmr, satsToBtc } from '../../../utils/conversionUtils';
+import { Tooltip } from '@material-ui/core';
+import { useAppSelector } from '../../../store/hooks';
 
 type Amount = number | null | undefined;
 
@@ -6,24 +8,32 @@ export function AmountWithUnit({
   amount,
   unit,
   fixedPrecision,
+  dollarRate,
 }: {
   amount: Amount;
   unit: string;
   fixedPrecision: number;
+  dollarRate?: Amount;
 }) {
   return (
-    <span>
-      {amount ? Number.parseFloat(amount.toFixed(fixedPrecision)) : '?'} {unit}
-    </span>
+    <Tooltip arrow title={(dollarRate != null && amount != null) ? `≈ $${(dollarRate * amount).toFixed(2)}` : ''}>
+      <span>
+        {amount ? Number.parseFloat(amount.toFixed(fixedPrecision)) : '?'} {unit}
+      </span>
+    </Tooltip>
   );
 }
 
 export function BitcoinAmount({ amount }: { amount: Amount }) {
-  return <AmountWithUnit amount={amount} unit="BTC" fixedPrecision={6} />;
+  const btcUsdRate = useAppSelector((state) => state.rates.btcPrice);
+
+  return <AmountWithUnit amount={amount} unit="BTC" fixedPrecision={6} dollarRate={btcUsdRate} />;
 }
 
 export function MoneroAmount({ amount }: { amount: Amount }) {
-  return <AmountWithUnit amount={amount} unit="XMR" fixedPrecision={4} />;
+  const xmrUsdRate = useAppSelector((state) => state.rates.xmrPrice);
+
+  return <AmountWithUnit amount={amount} unit="XMR" fixedPrecision={4} dollarRate={xmrUsdRate} />;
 }
 
 export function MoneroBitcoinExchangeRate({ rate }: { rate: Amount }) {
@@ -31,11 +41,10 @@ export function MoneroBitcoinExchangeRate({ rate }: { rate: Amount }) {
 }
 
 export function SatsAmount({ amount }: { amount: Amount }) {
-  return <BitcoinAmount amount={amount == null ? null : satsToBtc(amount)} />;
+  const btcAmount = amount == null ? null : satsToBtc(amount);
+  return <BitcoinAmount amount={btcAmount} />;
 }
 
 export function PiconeroAmount({ amount }: { amount: Amount }) {
-  return (
-    <MoneroAmount amount={amount == null ? null : piconerosToXmr(amount)} />
-  );
+  return <MoneroAmount amount={amount == null ? null : piconerosToXmr(amount)} />;
 }
