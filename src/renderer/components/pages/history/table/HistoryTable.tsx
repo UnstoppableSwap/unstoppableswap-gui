@@ -9,8 +9,10 @@ import {
   TableHead,
   TableRow,
 } from '@material-ui/core';
-import { useAppSelector } from '../../../../../store/hooks';
+import { useAppSelector, useSwapInfosSortedByDate } from '../../../../../store/hooks';
 import HistoryRow from './HistoryRow';
+import { sortBy } from 'lodash';
+import { parseDateString } from 'utils/parseUtils';
 
 const useStyles = makeStyles((theme) => ({
   outer: {
@@ -21,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function HistoryTable() {
   const classes = useStyles();
-  const swaps = useAppSelector((state) => state.rpc.state.swapInfos);
+  const swapSortedByDate = useSwapInfosSortedByDate();
 
   return (
     <Box className={classes.outer}>
@@ -37,8 +39,8 @@ export default function HistoryTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {Object.entries(swaps).map(([id, swap]) => (
-              <HistoryRow swap={swap} key={id} />
+            {swapSortedByDate.map((swap) => (
+              <HistoryRow swap={swap} key={swap.swapId} />
             ))}
           </TableBody>
         </Table>
