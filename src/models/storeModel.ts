@@ -80,7 +80,6 @@ export function isSwapStateWaitingForBtcDeposit(
 
 export interface SwapStateStarted extends SwapState {
   type: SwapStateType.STARTED;
-  id: string;
 }
 
 export function isSwapStateStarted(

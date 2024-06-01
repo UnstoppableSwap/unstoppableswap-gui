@@ -41,6 +41,7 @@ import {
   isYouHaveBeenPunishedCliLog,
   isCliLogAcquiringSwapLockLog,
   isCliLogApiCallError,
+  isCliLogDeterminedSwapAmount,
 } from '../../models/cliModel';
 import logger from '../../utils/logger';
 import { Provider } from '../../models/apiModel';
@@ -144,10 +145,15 @@ export const swapSlice = createSlice({
           ) {
             slice.state.maxGiveable = maxGiveable;
           }
+        } else if(isCliLogDeterminedSwapAmount(log)) {
+          const nextState: SwapStateStarted = {
+            type: SwapStateType.STARTED,
+          };
+
+          slice.state = nextState;
         } else if (isCliLogStartedSwap(log)) {
           const nextState: SwapStateStarted = {
             type: SwapStateType.STARTED,
-            id: log.fields.swap_id,
           };
 
           slice.state = nextState;

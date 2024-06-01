@@ -123,6 +123,20 @@ export function isCliLogReceivedBtc(log: CliLog): log is CliLogReceivedBtc {
   return log.fields.message === 'Received Bitcoin';
 }
 
+export interface CliLogDeterminedSwapAmount extends CliLog {
+  fields: {
+    message: 'Determined swap amount';
+    amount: string;
+    fees: string;
+  };
+}
+
+export function isCliLogDeterminedSwapAmount(
+  log: CliLog
+): log is CliLogDeterminedSwapAmount {
+  return log.fields.message === 'Determined swap amount';
+}
+
 export interface CliLogStartedSwap extends CliLog {
   fields: {
     message: 'Starting new swap';
