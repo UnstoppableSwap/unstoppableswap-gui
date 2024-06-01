@@ -41,14 +41,16 @@ export default function SwapMightBeCancelledAlert({
       The swap provider has taken a long time to lock their Monero. This might
       mean that:
       <ul className={classes.list}>
-        <li>They are a malicious actor</li>
         <li>
           There is a technical issue that prevents them from locking their funds
+        </li>
+        <li>
+          They are a malicious actor (unlikely)
         </li>
       </ul>
       <br />
       There is still hope for the swap to be successful but you have to be extra
-      careful. Regardless of the reason, it is important that you refund the
+      careful. Regardless of why it has taken them so long, it is important that you refund the
       swap within the required time period if the swap is not completed. If you
       fail to to do so, you will be punished and lose your money.
       <ul className={classes.list}>
