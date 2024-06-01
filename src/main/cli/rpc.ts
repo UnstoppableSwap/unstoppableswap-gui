@@ -223,6 +223,7 @@ export async function withdrawAllBitcoin(address: string) {
       address,
     }
   );
+  await checkBitcoinBalance(true);
   store.dispatch(rpcSetWithdrawTxId(response.txid));
 }
 
