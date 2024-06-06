@@ -145,7 +145,7 @@ export const swapSlice = createSlice({
           ) {
             slice.state.maxGiveable = maxGiveable;
           }
-        } else if(isCliLogDeterminedSwapAmount(log)) {
+        } else if (isCliLogDeterminedSwapAmount(log)) {
           const nextState: SwapStateStarted = {
             type: SwapStateType.STARTED,
           };

@@ -16,9 +16,17 @@ export function AmountWithUnit({
   dollarRate?: Amount;
 }) {
   return (
-    <Tooltip arrow title={(dollarRate != null && amount != null) ? `≈ $${(dollarRate * amount).toFixed(2)}` : ''}>
+    <Tooltip
+      arrow
+      title={
+        dollarRate != null && amount != null
+          ? `≈ $${(dollarRate * amount).toFixed(2)}`
+          : ''
+      }
+    >
       <span>
-        {amount ? Number.parseFloat(amount.toFixed(fixedPrecision)) : '?'} {unit}
+        {amount ? Number.parseFloat(amount.toFixed(fixedPrecision)) : '?'}{' '}
+        {unit}
       </span>
     </Tooltip>
   );
@@ -27,13 +35,27 @@ export function AmountWithUnit({
 export function BitcoinAmount({ amount }: { amount: Amount }) {
   const btcUsdRate = useAppSelector((state) => state.rates.btcPrice);
 
-  return <AmountWithUnit amount={amount} unit="BTC" fixedPrecision={6} dollarRate={btcUsdRate} />;
+  return (
+    <AmountWithUnit
+      amount={amount}
+      unit="BTC"
+      fixedPrecision={6}
+      dollarRate={btcUsdRate}
+    />
+  );
 }
 
 export function MoneroAmount({ amount }: { amount: Amount }) {
   const xmrUsdRate = useAppSelector((state) => state.rates.xmrPrice);
 
-  return <AmountWithUnit amount={amount} unit="XMR" fixedPrecision={4} dollarRate={xmrUsdRate} />;
+  return (
+    <AmountWithUnit
+      amount={amount}
+      unit="XMR"
+      fixedPrecision={4}
+      dollarRate={xmrUsdRate}
+    />
+  );
 }
 
 export function MoneroBitcoinExchangeRate({ rate }: { rate: Amount }) {
@@ -46,5 +68,7 @@ export function SatsAmount({ amount }: { amount: Amount }) {
 }
 
 export function PiconeroAmount({ amount }: { amount: Amount }) {
-  return <MoneroAmount amount={amount == null ? null : piconerosToXmr(amount)} />;
+  return (
+    <MoneroAmount amount={amount == null ? null : piconerosToXmr(amount)} />
+  );
 }

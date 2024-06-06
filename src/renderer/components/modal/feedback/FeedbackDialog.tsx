@@ -96,7 +96,7 @@ export default function FeedbackDialog({
 
   const [selectedAttachedSwap, setSelectedAttachedSwap] = useState<
     string | number
-  >(currentSwapId || 0);
+  >(currentSwapId || 0);
 
   const bodyTooLong = bodyText.length > MAX_FEEDBACK_LENGTH;
 

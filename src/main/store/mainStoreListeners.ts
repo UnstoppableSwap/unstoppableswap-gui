@@ -18,7 +18,10 @@ export function createMainListeners() {
     },
     effect: async (action) => {
       const logs = action.payload.logs as CliLog[];
-      const advancedStateIndicationLog = logs.find(log => isCliLogAdvancingState(log) || isCliLogReleasingSwapLockLog(log));
+      const advancedStateIndicationLog = logs.find(
+        (log) =>
+          isCliLogAdvancingState(log) || isCliLogReleasingSwapLockLog(log)
+      );
 
       // Here we check if we got a new "Advancing state" or a "Releasing swap lock" log
       // If we did, we fetch the swap infos because we know the state in the database has likely changed
