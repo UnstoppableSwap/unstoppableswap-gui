@@ -2,6 +2,9 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ExtendedProviderStatus, ProviderStatus } from '../../models/apiModel';
 import { sortProviderList } from '../../utils/sortUtils';
 import { isProviderCompatible } from '../../utils/multiAddrUtils';
+import { getStubTestnetProvider } from '../config';
+
+const stubTestnetProvider = getStubTestnetProvider();
 
 export interface ProvidersSlice {
   rendezvous: {
@@ -19,7 +22,7 @@ const initialState: ProvidersSlice = {
     providers: [],
   },
   registry: {
-    providers: null,
+    providers: stubTestnetProvider ? [stubTestnetProvider] : null,
     failedReconnectAttemptsSinceLastSuccess: 0,
   },
   selectedProvider: null,
@@ -78,25 +81,8 @@ export const providersSlice = createSlice({
       slice,
       action: PayloadAction<ExtendedProviderStatus[]>
     ) {
-      if (
-        process.env.STUB_TESTNET_PROVIDER_MULTIADDR &&
-        process.env.STUB_TESTNET_PROVIDER_PEER_ID &&
-        !action.payload.find(
-          (p) => p.peerId === process.env.STUB_TESTNET_PROVIDER_PEER_ID
-        )
-      ) {
-        action.payload.push({
-          multiAddr: process.env.STUB_TESTNET_PROVIDER_MULTIADDR,
-          peerId: process.env.STUB_TESTNET_PROVIDER_PEER_ID,
-          testnet: true,
-          age: 0,
-          maxSwapAmount: 10000000,
-          minSwapAmount: 100000,
-          price: 700000,
-          relevancy: 1,
-          uptime: 1,
-          recommended: true,
-        });
+      if (stubTestnetProvider) {
+        action.payload.push(stubTestnetProvider);
       }
 
       slice.registry.providers = sortProviderList(action.payload).filter(
