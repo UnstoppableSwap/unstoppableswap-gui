@@ -10,6 +10,7 @@ import { ReactElement, ReactNode, useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { useAppSelector } from '../../store/hooks';
 import { RpcProcessStateType } from '../../models/rpcModel';
+import { isExternalRpc } from 'store/config';
 
 function IpcNotReadyTooltip({
   show,
@@ -115,7 +116,7 @@ export default function IpcInvokeButton<T>({
   }
 
   const requiresRpcAndNotReady =
-    !!requiresRpc && !isRpcReady && process.env.USE_EXTERNAL_RPC !== 'true';
+    !!requiresRpc && !isRpcReady && !isExternalRpc();
   const isDisabled = disabled || requiresRpcAndNotReady || isLoading;
 
   return (

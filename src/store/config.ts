@@ -1,6 +1,9 @@
 export const isTestnet = () =>
   process.env.TESTNET?.toString().toLowerCase() === 'true';
 
+export const isExternalRpc = () =>
+  process.env.USE_EXTERNAL_RPC?.toString().toLowerCase() === 'true';
+
 export const isDevelopment =
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
