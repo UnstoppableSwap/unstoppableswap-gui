@@ -44,15 +44,14 @@ export default function SwapMightBeCancelledAlert({
         <li>
           There is a technical issue that prevents them from locking their funds
         </li>
-        <li>
-          They are a malicious actor (unlikely)
-        </li>
+        <li>They are a malicious actor (unlikely)</li>
       </ul>
       <br />
       There is still hope for the swap to be successful but you have to be extra
-      careful. Regardless of why it has taken them so long, it is important that you refund the
-      swap within the required time period if the swap is not completed. If you
-      fail to to do so, you will be punished and lose your money.
+      careful. Regardless of why it has taken them so long, it is important that
+      you refund the swap within the required time period if the swap is not
+      completed. If you fail to to do so, you will be punished and lose your
+      money.
       <ul className={classes.list}>
         {isSwapTimelockInfoNone(timelock) && (
           <>
@@ -88,8 +87,8 @@ export default function SwapMightBeCancelledAlert({
           </li>
         )}
         <li>
-          As long as you see this screen, the swap should be refunded
-          automatically when the time comes. If it is not you have to manually
+          As long as you see this screen, the swap will be refunded
+          automatically when the time comes. If this fails, you have to manually
           refund by navigating to the History page.
         </li>
       </ul>
