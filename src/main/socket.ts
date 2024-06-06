@@ -214,20 +214,23 @@ export function transmitReceivedQuoteFromProvider(
   priceBtc: number,
   minimumAmountBtc: number,
   maximumAmountBtc: number
-) {
-  if (!getSocket()) {
-    // We only transmit the quote if we have a socket TOR connection
+): boolean {
+  const socket = getSocket();
+  if (getSocketProxyInUse() == null || !socket) {
+    // We only transmit the swap details if we have a socket TOR connection
     // We do not want to expose the identity of the user if they are not using TOR
-    return;
+    return false;
   }
 
-  getSocket()?.emit(
+  socket.emit(
     'provider-quote-received',
     provider,
     priceBtc,
     minimumAmountBtc,
     maximumAmountBtc
   );
+
+  return true;
 }
 
 export function transmitSwapDetailsUpdated(
@@ -236,14 +239,15 @@ export function transmitSwapDetailsUpdated(
   amount: number,
   stateType: string,
   firstEnteredDate: number
-) {
-  if (!getSocket()) {
+): boolean {
+  const socket = getSocket();
+  if (getSocketProxyInUse() == null || !socket) {
     // We only transmit the swap details if we have a socket TOR connection
     // We do not want to expose the identity of the user if they are not using TOR
-    return;
+    return false;
   }
 
-  getSocket()?.emit(
+  socket.emit(
     'swap-details-updated',
     swapIdHash,
     provider,
@@ -251,4 +255,6 @@ export function transmitSwapDetailsUpdated(
     stateType,
     firstEnteredDate
   );
+
+  return true;
 }

@@ -7,11 +7,11 @@ import {
   transmitReceivedQuoteFromProvider,
   transmitSwapDetailsUpdated,
 } from './socket';
-import { isCliLogReceivedQuote } from '@/models/cliModel';
+import { isCliLogReceivedQuote } from '../models/cliModel';
 import {
   extractAmountFromUnitString,
   parseDateString,
-} from '@/utils/parseUtils';
+} from '../utils/parseUtils';
 
 export default function initStats() {
   const timestampsOfTransmittedReceivedQuotes: string[] = [];
@@ -40,17 +40,22 @@ export default function initStats() {
       );
 
       if (priceBtc && minimumAmountBtc && maximumAmountBtc) {
-        timestampsOfTransmittedReceivedQuotes.push(receivedQuoteLog.timestamp);
-        transmitReceivedQuoteFromProvider(
-          {
-            multiAddr: receivedQuoteProvider.multiAddr,
-            peerId: receivedQuoteProvider.peerId,
-            testnet: receivedQuoteProvider.testnet,
-          },
-          priceBtc,
-          minimumAmountBtc,
-          maximumAmountBtc
-        );
+        if (
+          transmitReceivedQuoteFromProvider(
+            {
+              multiAddr: receivedQuoteProvider.multiAddr,
+              peerId: receivedQuoteProvider.peerId,
+              testnet: receivedQuoteProvider.testnet,
+            },
+            priceBtc,
+            minimumAmountBtc,
+            maximumAmountBtc
+          )
+        ) {
+          timestampsOfTransmittedReceivedQuotes.push(
+            receivedQuoteLog.timestamp
+          );
+        }
       }
     }
 
@@ -65,14 +70,17 @@ export default function initStats() {
       const firstEnteredDate = parseDateString(swap.startDate);
 
       if (transmittedSwapDetails.get(swapIdHash) !== stateName) {
-        transmitSwapDetailsUpdated(
-          provider,
-          swapIdHash,
-          swap.xmrAmount,
-          stateName,
-          firstEnteredDate
-        );
-        transmittedSwapDetails.set(swapIdHash, stateName);
+        if (
+          transmitSwapDetailsUpdated(
+            provider,
+            swapIdHash,
+            swap.xmrAmount,
+            stateName,
+            firstEnteredDate
+          )
+        ) {
+          transmittedSwapDetails.set(swapIdHash, stateName);
+        }
       }
     });
   }, 1000 * 60);
