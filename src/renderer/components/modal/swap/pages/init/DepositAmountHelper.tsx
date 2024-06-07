@@ -30,10 +30,8 @@ function calcBtcAmountWithoutFees(amount: number, fees: number) {
 
 export default function DepositAmountHelper({
   state,
-  btcFees,
 }: {
   state: SwapStateWaitingForBtcDeposit;
-  btcFees: number;
 }) {
   const classes = useStyles();
   const [amount, setAmount] = useState(state.minDeposit);
@@ -56,13 +54,13 @@ export default function DepositAmountHelper({
     if (state.price == null) return null;
 
     console.log(
-      `Calculating calcBtcAmountWithoutFees(${getTotalAmountAfterDeposit()}, ${btcFees}) / ${
+      `Calculating calcBtcAmountWithoutFees(${getTotalAmountAfterDeposit()}, ${state.minBitcoinLockTxFee}) / ${
         state.price
       } - ${MONERO_FEE}`
     );
 
     return (
-      calcBtcAmountWithoutFees(getTotalAmountAfterDeposit(), btcFees) /
+      calcBtcAmountWithoutFees(getTotalAmountAfterDeposit(), state.minBitcoinLockTxFee) /
         state.price -
       MONERO_FEE
     );

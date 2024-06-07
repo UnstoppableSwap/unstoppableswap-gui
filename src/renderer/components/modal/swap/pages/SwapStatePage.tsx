@@ -59,7 +59,7 @@ export default function SwapStatePage({
     return <WaitingForBitcoinDepositPage state={swapState} />;
   }
   if (isSwapStateStarted(swapState)) {
-    return <StartedPage />;
+    return <StartedPage state={swapState} />;
   }
   if (isSwapStateBtcLockInMempool(swapState)) {
     return <BitcoinLockTxInMempoolPage state={swapState} />;

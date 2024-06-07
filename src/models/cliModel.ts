@@ -98,10 +98,13 @@ export interface CliLogWaitingForBtcDeposit extends CliLog {
   fields: {
     message: 'Waiting for Bitcoin deposit';
     deposit_address: string;
+    min_deposit_until_swap_will_start: string;
+    max_deposit_until_maximum_amount_is_reached: string;
     max_giveable: string;
     minimum_amount: string;
     maximum_amount: string;
-    min_deposit: string;
+    min_bitcoin_lock_tx_fee: string;
+    price: string;
   };
 }
 

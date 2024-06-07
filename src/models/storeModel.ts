@@ -69,6 +69,8 @@ export interface SwapStateWaitingForBtcDeposit extends SwapState {
   minimumAmount: number;
   maximumAmount: number;
   minDeposit: number;
+  maxDeposit: number;
+  minBitcoinLockTxFee: number;
   price: number | null;
 }
 
@@ -80,6 +82,10 @@ export function isSwapStateWaitingForBtcDeposit(
 
 export interface SwapStateStarted extends SwapState {
   type: SwapStateType.STARTED;
+  txLockDetails: {
+    amount: number;
+    fees: number;
+  } | null;
 }
 
 export function isSwapStateStarted(

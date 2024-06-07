@@ -34,13 +34,6 @@ export default function WaitingForBtcDepositPage({
   const classes = useStyles();
   const bitcoinBalance = useAppSelector((s) => s.rpc.state.balance) || 0;
 
-  // Convert to integer for accurate arithmetic operations
-  const fees = satsToBtc(
-    btcToSats(state.minDeposit) -
-      btcToSats(state.minimumAmount) +
-      bitcoinBalance
-  );
-
   // TODO: Account for BTC lock tx fees
   return (
     <Box>
@@ -61,7 +54,7 @@ export default function WaitingForBtcDepositPage({
                   Send any amount between{' '}
                   <BitcoinAmount amount={state.minDeposit} /> and{' '}
                   <BitcoinAmount
-                    amount={state.maximumAmount - satsToBtc(bitcoinBalance)}
+                    amount={state.maxDeposit}
                   />{' '}
                   to the address above
                   {bitcoinBalance > 0 && (
@@ -75,7 +68,7 @@ export default function WaitingForBtcDepositPage({
                 </li>
                 <li>
                   The network fee of{' '}
-                  <BitcoinAmount amount={fees >= 0 ? fees : null} /> will
+                  <BitcoinAmount amount={state.minBitcoinLockTxFee} /> will
                   automatically be deducted from the deposited coins
                 </li>
                 <li>
@@ -84,7 +77,7 @@ export default function WaitingForBtcDepositPage({
                 </li>
               </ul>
             </Typography>
-            <DepositAmountHelper btcFees={fees} state={state} />
+            <DepositAmountHelper btcFees={state.minBitcoinLockTxFee} state={state} />
           </Box>
         }
         icon={<BitcoinIcon />}

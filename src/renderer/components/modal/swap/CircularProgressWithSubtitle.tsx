@@ -4,6 +4,7 @@ import {
   makeStyles,
   Typography,
 } from '@material-ui/core';
+import { ReactNode } from 'react';
 
 const useStyles = makeStyles((theme) => ({
   subtitle: {
@@ -14,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
 export default function CircularProgressWithSubtitle({
   description,
 }: {
-  description: string;
+  description: string | ReactNode;
 }) {
   const classes = useStyles();
 

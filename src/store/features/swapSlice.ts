@@ -101,7 +101,10 @@ export const swapSlice = createSlice({
             log.fields.max_giveable
           );
           const minDeposit = extractAmountFromUnitString(
-            log.fields.min_deposit
+            log.fields.min_deposit_until_swap_will_start
+          );
+          const maxDeposit = extractAmountFromUnitString(
+            log.fields.max_deposit_until_maximum_amount_is_reached
           );
           const minimumAmount = extractAmountFromUnitString(
             log.fields.minimum_amount
@@ -109,17 +112,21 @@ export const swapSlice = createSlice({
           const maximumAmount = extractAmountFromUnitString(
             log.fields.maximum_amount
           );
+          const minBitcoinLockTxFee = extractAmountFromUnitString(
+            log.fields.min_bitcoin_lock_tx_fee
+          );
+          const price = extractAmountFromUnitString(log.fields.price);
 
           const depositAddress = log.fields.deposit_address;
-          const price = isSwapStateReceivedQuote(slice.state)
-            ? slice.state.price
-            : null;
 
           if (
             maxGiveable != null &&
             minimumAmount != null &&
             maximumAmount != null &&
-            minDeposit != null
+            minDeposit != null &&
+            maxDeposit != null &&
+            minBitcoinLockTxFee != null &&
+            price != null
           ) {
             const nextState: SwapStateWaitingForBtcDeposit = {
               type: SwapStateType.WAITING_FOR_BTC_DEPOSIT,
@@ -128,34 +135,33 @@ export const swapSlice = createSlice({
               minimumAmount,
               maximumAmount,
               minDeposit,
+              maxDeposit,
               price,
+              minBitcoinLockTxFee,
             };
 
             slice.state = nextState;
           }
-        } else if (isCliLogReceivedBtc(log)) {
-          const maxGiveable = extractAmountFromUnitString(
-            log.fields.max_giveable
-          );
-
-          if (
-            isSwapStateWaitingForBtcDeposit(slice.state) &&
-            maxGiveable != null
-          ) {
-            slice.state.maxGiveable = maxGiveable;
-          }
         } else if (isCliLogDeterminedSwapAmount(log)) {
+          const amount = extractAmountFromUnitString(log.fields.amount);
+          const fees = extractAmountFromUnitString(log.fields.fees);
+
           const nextState: SwapStateStarted = {
             type: SwapStateType.STARTED,
+            txLockDetails: (amount != null && fees != null) ? { amount, fees } : null, 
           };
 
           slice.state = nextState;
         } else if (isCliLogStartedSwap(log)) {
-          const nextState: SwapStateStarted = {
-            type: SwapStateType.STARTED,
-          };
-
-          slice.state = nextState;
+          if(slice.state?.type !== SwapStateType.STARTED) {
+            const nextState: SwapStateStarted = {
+              type: SwapStateType.STARTED,
+              txLockDetails: null,
+            };
+  
+            slice.state = nextState;
+          }
+          
           slice.swapId = log.fields.swap_id;
         } else if (isCliLogPublishedBtcTx(log)) {
           if (log.fields.kind === 'lock') {
