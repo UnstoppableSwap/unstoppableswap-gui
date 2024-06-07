@@ -1,6 +1,6 @@
 import { Step, StepLabel, Stepper } from '@material-ui/core';
-import { useAppSelector, useIsRpcEndpointBusy } from '../../../../store/hooks';
-import { RpcMethod } from '../../../../models/rpcModel';
+import { useAppSelector, useIsRpcEndpointBusy } from 'store/hooks';
+import { RpcMethod } from 'models/rpcModel';
 
 function getActiveStep(
   isWithdrawInProgress: boolean,

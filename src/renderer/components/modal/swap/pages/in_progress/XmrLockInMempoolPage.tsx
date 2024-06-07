@@ -1,5 +1,5 @@
 import { Box, DialogContentText } from '@material-ui/core';
-import { SwapStateXmrLockInMempool } from '../../../../../../models/storeModel';
+import { SwapStateXmrLockInMempool } from 'models/storeModel';
 import MoneroTransactionInfoBox from '../../MoneroTransactionInfoBox';
 
 type XmrLockTxInMempoolPageProps = {

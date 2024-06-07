@@ -1,5 +1,5 @@
 import { Tooltip } from '@material-ui/core';
-import { ButtonProps } from '@material-ui/core/Button/Button';
+import Button, { ButtonProps } from '@material-ui/core/Button/Button';
 import DoneIcon from '@material-ui/icons/Done';
 import ErrorIcon from '@material-ui/icons/Error';
 import { green, red } from '@material-ui/core/colors';

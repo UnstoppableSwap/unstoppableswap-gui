@@ -1,6 +1,6 @@
 import CircularProgressWithSubtitle from '../../CircularProgressWithSubtitle';
-import { useAppSelector } from '../../../../../../store/hooks';
-import { SwapSpawnType } from '../../../../../../models/cliModel';
+import { useAppSelector } from 'store/hooks';
+import { SwapSpawnType } from 'models/cliModel';
 
 export default function InitiatedPage() {
   const description = useAppSelector((s) => {

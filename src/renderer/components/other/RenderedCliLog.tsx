@@ -1,7 +1,7 @@
 import { Box, Chip, Typography } from '@material-ui/core';
 import { useMemo, useState } from 'react';
-import { CliLog } from '../../../models/cliModel';
-import { logsToRawString } from '../../../utils/parseUtils';
+import { CliLog } from 'models/cliModel';
+import { logsToRawString } from 'utils/parseUtils';
 import ScrollablePaperTextBox from './ScrollablePaperTextBox';
 
 function RenderedCliLog({ log }: { log: CliLog }) {

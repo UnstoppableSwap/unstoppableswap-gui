@@ -8,8 +8,8 @@ import {
 import { ipcRenderer } from 'electron';
 import { ReactElement, ReactNode, useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
-import { useAppSelector } from '../../store/hooks';
-import { RpcProcessStateType } from '../../models/rpcModel';
+import { useAppSelector } from 'store/hooks';
+import { RpcProcessStateType } from 'models/rpcModel';
 import { isExternalRpc } from 'store/config';
 
 function IpcNotReadyTooltip({

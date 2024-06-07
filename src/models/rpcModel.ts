@@ -1,5 +1,5 @@
-import { piconerosToXmr, satsToBtc } from '../utils/conversionUtils';
-import { exhaustiveGuard } from '../utils/typescriptUtils';
+import { piconerosToXmr, satsToBtc } from 'utils/conversionUtils';
+import { exhaustiveGuard } from 'utils/typescriptUtils';
 
 export enum RpcMethod {
   GET_BTC_BALANCE = 'get_bitcoin_balance',

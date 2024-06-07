@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { stateSyncEnhancer } from 'electron-redux';
-import { reducers } from '../../store/combinedReducer';
+import { reducers } from 'store/combinedReducer';
 import { createMainListeners } from './mainStoreListeners';
 
 export const store = configureStore({

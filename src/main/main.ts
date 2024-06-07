@@ -14,7 +14,7 @@ import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import blocked from 'blocked-at';
 import { resolveHtmlPath } from './util';
 import { startRPC, stopCli } from './cli/cli';
-import { getPlatform, isDevelopment } from '../store/config';
+import { getPlatform, isDevelopment, isTestnet } from 'store/config';
 import getSavedLogsOfSwapId, { getAssetPath, fixAppDataPath } from './cli/dirs';
 import initSocket from './socket';
 import logger from '../utils/logger';

@@ -1,13 +1,13 @@
 import { Box, Button, makeStyles, Typography } from '@material-ui/core';
 import { useState } from 'react';
 import SendIcon from '@material-ui/icons/Send';
-import { useAppSelector, useIsRpcEndpointBusy } from '../../../../store/hooks';
+import { useAppSelector, useIsRpcEndpointBusy } from 'store/hooks';
 import BitcoinIcon from '../../icons/BitcoinIcon';
 import WithdrawDialog from '../../modal/wallet/WithdrawDialog';
 import WalletRefreshButton from './WalletRefreshButton';
 import InfoBox from '../../modal/swap/InfoBox';
-import { satsToBtc } from '../../../../utils/conversionUtils';
-import { RpcMethod } from '../../../../models/rpcModel';
+import { satsToBtc } from 'utils/conversionUtils';
+import { RpcMethod } from 'models/rpcModel';
 
 const useStyles = makeStyles((theme) => ({
   title: {

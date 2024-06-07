@@ -16,7 +16,7 @@ import {
   SwapSellerInfo,
   WithdrawBitcoinResponse,
 } from '../../models/rpcModel';
-import { store } from '../store/mainStore';
+import { store } from 'main/store/mainStore';
 import {
   rpcResetWithdrawTxId,
   rpcSetBalance,
@@ -27,9 +27,9 @@ import {
   rpcSetWithdrawTxId,
 } from '../../store/features/rpcSlice';
 import logger from '../../utils/logger';
-import { Provider, ProviderStatus } from '../../models/apiModel';
-import { isTestnet } from '../../store/config';
-import { providerToConcatenatedMultiAddr } from '../../utils/multiAddrUtils';
+import { Provider, ProviderStatus } from 'models/apiModel';
+import { isTestnet } from 'store/config';
+import { providerToConcatenatedMultiAddr } from 'utils/multiAddrUtils';
 import {
   swapAddLog,
   swapInitiate,
@@ -43,8 +43,8 @@ import {
   SwapSpawnType,
 } from '../../models/cliModel';
 import getSavedLogsOfSwapId from './dirs';
-import { discoveredProvidersByRendezvous } from '../../store/features/providersSlice';
-import { SingleTypeEventEmitter } from '../../utils/event';
+import { discoveredProvidersByRendezvous } from 'store/features/providersSlice';
+import { SingleTypeEventEmitter } from 'utils/event';
 
 export const RPC_BIND_HOST = '0.0.0.0';
 export const RPC_BIND_PORT = 1234;

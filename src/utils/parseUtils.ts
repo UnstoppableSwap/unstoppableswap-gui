@@ -1,4 +1,4 @@
-import { CliLog, isCliLog } from '../models/cliModel';
+import { CliLog, isCliLog } from 'models/cliModel';
 
 /*
 Extract btc amount from string

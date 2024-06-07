@@ -6,20 +6,20 @@ import {
 import PQueue from 'p-queue';
 import pidtree from 'pidtree';
 import util from 'util';
-import { getPlatform, isTestnet } from '../../store/config';
-import { CliLog } from '../../models/cliModel';
+import { getPlatform, isTestnet } from 'store/config';
+import { CliLog } from 'models/cliModel';
 import { getCliDataBaseDir, getSwapBinary, makeFileExecutable } from './dirs';
 import logger from '../../utils/logger';
-import { getLogsFromRawFileString } from '../../utils/parseUtils';
-import { store } from '../store/mainStore';
+import { getLogsFromRawFileString } from 'utils/parseUtils';
+import { store } from 'main/store/mainStore';
 import {
   rpcAddLogs,
   rpcAppendStdOut,
   rpcInitiate,
   rpcProcessExited,
 } from '../../store/features/rpcSlice';
-import { swapProcessExited } from '../../store/features/swapSlice';
-import { RpcProcessStateType } from '../../models/rpcModel';
+import { swapProcessExited } from 'store/features/swapSlice';
+import { RpcProcessStateType } from 'models/rpcModel';
 import {
   checkBitcoinBalance,
   getRawSwapInfos,

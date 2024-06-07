@@ -4,14 +4,14 @@ import {
   isSwapStateXmrRedeemInMempool,
   SwapStateProcessExited,
 } from '../../../../../../models/storeModel';
-import { useActiveSwapInfo } from '../../../../../../store/hooks';
+import { useActiveSwapInfo } from 'store/hooks';
 import XmrRedeemInMempoolPage from '../done/XmrRedeemInMempoolPage';
 import BitcoinPunishedPage from '../done/BitcoinPunishedPage';
 // eslint-disable-next-line import/no-cycle
 import SwapStatePage from '../SwapStatePage';
 import BitcoinRefundedPage from '../done/BitcoinRefundedPage';
 import ProcessExitedAndNotDonePage from './ProcessExitedAndNotDonePage';
-import { SwapStateName } from '../../../../../../models/rpcModel';
+import { SwapStateName } from 'models/rpcModel';
 
 type ProcessExitedPageProps = {
   state: SwapStateProcessExited;

@@ -13,9 +13,9 @@ import {
   isSwapMoneroRecoverable,
 } from '../../../../../models/rpcModel';
 import IpcInvokeButton from '../../../IpcInvokeButton';
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
 import DialogHeader from '../../../modal/DialogHeader';
-import { rpcResetMoneroRecoveryKeys } from '../../../../../store/features/rpcSlice';
+import { rpcResetMoneroRecoveryKeys } from 'store/features/rpcSlice';
 import ScrollablePaperTextBox from '../../../other/ScrollablePaperTextBox';
 
 function MoneroRecoveryKeysDialog({ swap }: { swap: GetSwapInfoResponse }) {

@@ -12,8 +12,8 @@ import {
   isCliLogStartedRpcServer,
   isCliLogStartedSyncingMoneroWallet,
 } from '../../models/cliModel';
-import { ExtendedProviderStatus, ProviderStatus } from '../../models/apiModel';
-import { MoneroWalletRpcUpdateState } from '../../models/storeModel';
+import { ExtendedProviderStatus, ProviderStatus } from 'models/apiModel';
+import { MoneroWalletRpcUpdateState } from 'models/storeModel';
 
 type Process =
   | {

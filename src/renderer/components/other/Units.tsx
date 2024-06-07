@@ -1,6 +1,6 @@
-import { piconerosToXmr, satsToBtc } from '../../../utils/conversionUtils';
+import { piconerosToXmr, satsToBtc } from 'utils/conversionUtils';
 import { Tooltip } from '@material-ui/core';
-import { useAppSelector } from '../../../store/hooks';
+import { useAppSelector } from 'store/hooks';
 
 type Amount = number | null | undefined;
 

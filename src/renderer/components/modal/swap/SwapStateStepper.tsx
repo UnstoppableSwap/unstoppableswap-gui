@@ -1,7 +1,7 @@
 import { Step, StepLabel, Stepper, Typography } from '@material-ui/core';
 import { SwapStateName } from 'models/rpcModel';
-import { useActiveSwapInfo, useAppSelector } from '../../../../store/hooks';
-import { exhaustiveGuard } from '../../../../utils/typescriptUtils';
+import { useActiveSwapInfo, useAppSelector } from 'store/hooks';
+import { exhaustiveGuard } from 'utils/typescriptUtils';
 
 export enum PathType {
   HAPPY_PATH = 'happy path',

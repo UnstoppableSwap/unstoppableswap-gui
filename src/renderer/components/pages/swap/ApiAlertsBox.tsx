@@ -1,7 +1,7 @@
 import { Box } from '@material-ui/core';
 import { Alert, AlertTitle } from '@material-ui/lab';
 import { removeAlert } from 'store/features/alertsSlice';
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
 
 export default function ApiAlertsBox() {
   const alerts = useAppSelector((state) => state.alerts.alerts);

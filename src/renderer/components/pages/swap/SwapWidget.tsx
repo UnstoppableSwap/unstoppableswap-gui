@@ -13,11 +13,11 @@ import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 import { Alert } from '@material-ui/lab';
 import ProviderSelect from '../../modal/provider/ProviderSelect';
-import { satsToBtc } from '../../../../utils/conversionUtils';
+import { satsToBtc } from 'utils/conversionUtils';
 import SwapDialog from '../../modal/swap/SwapDialog';
-import { useAppSelector } from '../../../../store/hooks';
-import { ExtendedProviderStatus } from '../../../../models/apiModel';
-import { isSwapState } from '../../../../models/storeModel';
+import { useAppSelector } from 'store/hooks';
+import { ExtendedProviderStatus } from 'models/apiModel';
+import { isSwapState } from 'models/storeModel';
 import {
   ListSellersDialogOpenButton,
   ProviderSubmitDialogOpenButton,

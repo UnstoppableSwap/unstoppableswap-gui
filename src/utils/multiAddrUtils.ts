@@ -1,7 +1,7 @@
 import { Multiaddr } from 'multiaddr';
 import semver from 'semver';
-import { ExtendedProviderStatus, Provider } from '../models/apiModel';
-import { isTestnet } from '../store/config';
+import { ExtendedProviderStatus, Provider } from 'models/apiModel';
+import { isTestnet } from 'store/config';
 
 const MIN_ASB_VERSION = '0.12.0';
 

@@ -1,5 +1,4 @@
-import { setXmrPrice } from '@/store/features/ratesSlice';
-import { Alert, ExtendedProviderStatus } from '../models/apiModel';
+import { Alert, ExtendedProviderStatus } from 'models/apiModel';
 
 const API_BASE_URL =
   process.env.OVERWRITE_API_ADDRESS || 'https://api.unstoppableswap.net';

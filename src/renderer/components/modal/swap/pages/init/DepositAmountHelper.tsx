@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Box, makeStyles, TextField, Typography } from '@material-ui/core';
-import { SwapStateWaitingForBtcDeposit } from '../../../../../../models/storeModel';
-import { useAppSelector } from '../../../../../../store/hooks';
-import { satsToBtc } from '../../../../../../utils/conversionUtils';
+import { SwapStateWaitingForBtcDeposit } from 'models/storeModel';
+import { useAppSelector } from 'store/hooks';
+import { satsToBtc } from 'utils/conversionUtils';
 import { MoneroAmount } from '../../../../other/Units';
 
 const MONERO_FEE = 0.000016;

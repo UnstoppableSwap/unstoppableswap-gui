@@ -18,7 +18,7 @@ import {
   SwapTimelockInfoNone,
 } from '../../../models/rpcModel';
 import { SwapMoneroRecoveryButton } from '../pages/history/table/SwapMoneroRecoveryButton';
-import { exhaustiveGuard } from '../../../utils/typescriptUtils';
+import { exhaustiveGuard } from 'utils/typescriptUtils';
 
 const useStyles = makeStyles({
   box: {

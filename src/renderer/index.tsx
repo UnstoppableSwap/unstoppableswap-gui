@@ -1,7 +1,7 @@
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import App from './components/App';
-import { store } from './store/storeRenderer';
+import { store } from 'renderer/store/storeRenderer';
 import logger from '../utils/logger';
 import {
   fetchAlertsViaHttp,
@@ -9,9 +9,9 @@ import {
   fetchProvidersViaHttp,
   fetchXmrPrice,
 } from './api';
-import { setRegistryProviders } from '../store/features/providersSlice';
-import { setAlerts } from '../store/features/alertsSlice';
-import { setXmrPrice, setBtcPrice } from '../store/features/ratesSlice';
+import { setRegistryProviders } from 'store/features/providersSlice';
+import { setAlerts } from 'store/features/alertsSlice';
+import { setXmrPrice, setBtcPrice } from 'store/features/ratesSlice';
 
 render(
   <Provider store={store}>

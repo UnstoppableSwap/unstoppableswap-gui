@@ -4,7 +4,7 @@ import BitcoinAddressTextField from 'renderer/components/inputs/BitcoinAddressTe
 import MoneroAddressTextField from 'renderer/components/inputs/MoneroAddressTextField';
 import { useAppSelector } from 'store/hooks';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import { isTestnet } from '../../../../../../store/config';
+import { isTestnet } from 'store/config';
 import RemainingFundsWillBeUsedAlert from '../../../../alert/RemainingFundsWillBeUsedAlert';
 import IpcInvokeButton from '../../../../IpcInvokeButton';
 

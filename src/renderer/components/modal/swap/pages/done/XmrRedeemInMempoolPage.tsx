@@ -1,8 +1,8 @@
 import { Box, DialogContentText } from '@material-ui/core';
-import { SwapStateXmrRedeemInMempool } from '../../../../../../models/storeModel';
-import { useActiveSwapInfo } from '../../../../../../store/hooks';
+import { SwapStateXmrRedeemInMempool } from 'models/storeModel';
+import { useActiveSwapInfo } from 'store/hooks';
 import MoneroTransactionInfoBox from '../../MoneroTransactionInfoBox';
-import { getSwapXmrAmount } from '../../../../../../models/rpcModel';
+import { getSwapXmrAmount } from 'models/rpcModel';
 import FeedbackInfoBox from '../../../../pages/help/FeedbackInfoBox';
 
 type XmrRedeemInMempoolPageProps = {

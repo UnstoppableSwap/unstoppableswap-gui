@@ -3,12 +3,12 @@ import path from 'path';
 import { constants, promises as fs } from 'fs';
 import { chmod, stat } from 'fs/promises';
 import { uniqBy } from 'lodash';
-import { store } from '../store/mainStore';
-import { getPlatform, isTestnet } from '../../store/config';
-import { Binary } from '../../models/downloaderModel';
-import { CliLog, getCliLogSpanSwapId } from '../../models/cliModel';
-import { getLogsFromRawFileString } from '../../utils/parseUtils';
-import { RpcProcessStateType } from '../../models/rpcModel';
+import { store } from 'main/store/mainStore';
+import { getPlatform, isTestnet } from 'store/config';
+import { Binary } from 'models/downloaderModel';
+import { CliLog, getCliLogSpanSwapId } from 'models/cliModel';
+import { getLogsFromRawFileString } from 'utils/parseUtils';
+import { RpcProcessStateType } from 'models/rpcModel';
 
 // Be consistent with the way the cli generates the
 // data-dir on linux

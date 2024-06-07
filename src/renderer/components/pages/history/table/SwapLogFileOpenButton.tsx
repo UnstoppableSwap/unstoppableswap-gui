@@ -8,7 +8,7 @@ import {
 } from '@material-ui/core';
 import { useState } from 'react';
 import IpcInvokeButton from '../../../IpcInvokeButton';
-import { CliLog } from '../../../../../models/cliModel';
+import { CliLog } from 'models/cliModel';
 import CliLogsBox from '../../../other/RenderedCliLog';
 
 export default function SwapLogFileOpenButton({

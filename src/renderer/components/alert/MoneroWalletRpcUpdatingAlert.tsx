@@ -1,6 +1,6 @@
 import { Alert } from '@material-ui/lab';
 import { Box, LinearProgress } from '@material-ui/core';
-import { useAppSelector } from '../../../store/hooks';
+import { useAppSelector } from 'store/hooks';
 
 export default function MoneroWalletRpcUpdatingAlert() {
   const updateState = useAppSelector(

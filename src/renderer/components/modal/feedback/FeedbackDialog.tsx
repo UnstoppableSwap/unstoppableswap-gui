@@ -13,11 +13,11 @@ import {
 import { useState } from 'react';
 import { ipcRenderer } from 'electron';
 import { useSnackbar } from 'notistack';
-import { useActiveSwapId, useAppSelector } from '../../../../store/hooks';
-import { parseDateString } from '../../../../utils/parseUtils';
-import { store } from '../../../store/storeRenderer';
+import { useActiveSwapId, useAppSelector } from 'store/hooks';
+import { parseDateString } from 'utils/parseUtils';
+import { store } from 'renderer/store/storeRenderer';
 import { submitFeedbackViaHttp } from '../../../api';
-import { CliLog } from '../../../../models/cliModel';
+import { CliLog } from 'models/cliModel';
 import { PiconeroAmount } from '../../other/Units';
 import LoadingButton from '../../other/LoadingButton';
 

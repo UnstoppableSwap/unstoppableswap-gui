@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { extractAmountFromUnitString } from '../../utils/parseUtils';
+import { extractAmountFromUnitString } from 'utils/parseUtils';
 import {
   isSwapStateBtcLockInMempool,
   isSwapStateProcessExited,
@@ -44,7 +44,7 @@ import {
   isCliLogDeterminedSwapAmount,
 } from '../../models/cliModel';
 import logger from '../../utils/logger';
-import { Provider } from '../../models/apiModel';
+import { Provider } from 'models/apiModel';
 
 const initialState: SwapSlice = {
   state: null,

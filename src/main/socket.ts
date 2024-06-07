@@ -2,10 +2,10 @@ import { io, Socket } from 'socket.io-client';
 import { app } from 'electron';
 import { SocksProxyAgent } from 'socks-proxy-agent';
 import { SocksProxy } from 'socks';
-import { ExtendedProviderStatus, Provider } from '../models/apiModel';
+import { ExtendedProviderStatus, Provider } from 'models/apiModel';
 import logger from '../utils/logger';
 import { sendSnackbarAlertToRenderer } from './main';
-import { store } from './store/mainStore';
+import { store } from 'main/store/mainStore';
 import {
   increaseFailedRegistryReconnectAttemptsSinceLastSuccess,
   setRegistryProviders,

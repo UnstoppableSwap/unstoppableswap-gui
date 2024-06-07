@@ -1,5 +1,5 @@
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
-import type { AppDispatch, RootState } from '../renderer/store/storeRenderer';
+import type { AppDispatch, RootState } from 'renderer/store/storeRenderer';
 import { sortBy } from 'lodash';
 import { parseDateString } from 'utils/parseUtils';
 

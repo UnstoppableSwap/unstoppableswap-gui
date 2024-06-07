@@ -7,7 +7,7 @@ import {
   torInitiate,
   torAppendStdOut,
 } from '../store/features/torSlice';
-import { store } from './store/mainStore';
+import { store } from 'main/store/mainStore';
 import logger from '../utils/logger';
 import { getTorBinary, makeFileExecutable } from './cli/dirs';
 

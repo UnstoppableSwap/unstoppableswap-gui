@@ -6,7 +6,7 @@ import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import { RpcProcessStateType } from 'models/rpcModel';
 import InfoBox from '../../modal/swap/InfoBox';
 import CliLogsBox from '../../other/RenderedCliLog';
-import { getLogsAndStringsFromRawFileString } from '../../../../utils/parseUtils';
+import { getLogsAndStringsFromRawFileString } from 'utils/parseUtils';
 
 const useStyles = makeStyles((theme) => ({
   actionsOuter: {

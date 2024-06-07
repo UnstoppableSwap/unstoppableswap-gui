@@ -6,11 +6,11 @@ import {
   DialogContent,
   makeStyles,
 } from '@material-ui/core';
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
 import SwapStatePage from './pages/SwapStatePage';
 import SwapStateStepper from './SwapStateStepper';
 import SwapSuspendAlert from '../SwapSuspendAlert';
-import { swapReset } from '../../../../store/features/swapSlice';
+import { swapReset } from 'store/features/swapSlice';
 import SwapDialogTitle from './SwapDialogTitle';
 import DebugPage from './pages/DebugPage';
 

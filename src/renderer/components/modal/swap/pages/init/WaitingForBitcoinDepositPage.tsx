@@ -1,10 +1,10 @@
 import { Box, makeStyles, Typography } from '@material-ui/core';
-import { SwapStateWaitingForBtcDeposit } from '../../../../../../models/storeModel';
+import { SwapStateWaitingForBtcDeposit } from 'models/storeModel';
 import DepositAddressInfoBox from '../../DepositAddressInfoBox';
 import BitcoinIcon from '../../../../icons/BitcoinIcon';
-import { btcToSats, satsToBtc } from '../../../../../../utils/conversionUtils';
+import { btcToSats, satsToBtc } from 'utils/conversionUtils';
 import DepositAmountHelper from './DepositAmountHelper';
-import { useAppSelector } from '../../../../../../store/hooks';
+import { useAppSelector } from 'store/hooks';
 import {
   BitcoinAmount,
   MoneroBitcoinExchangeRate,
