@@ -54,13 +54,16 @@ export default function DepositAmountHelper({
     if (state.price == null) return null;
 
     console.log(
-      `Calculating calcBtcAmountWithoutFees(${getTotalAmountAfterDeposit()}, ${state.minBitcoinLockTxFee}) / ${
-        state.price
-      } - ${MONERO_FEE}`
+      `Calculating calcBtcAmountWithoutFees(${getTotalAmountAfterDeposit()}, ${
+        state.minBitcoinLockTxFee
+      }) / ${state.price} - ${MONERO_FEE}`
     );
 
     return (
-      calcBtcAmountWithoutFees(getTotalAmountAfterDeposit(), state.minBitcoinLockTxFee) /
+      calcBtcAmountWithoutFees(
+        getTotalAmountAfterDeposit(),
+        state.minBitcoinLockTxFee
+      ) /
         state.price -
       MONERO_FEE
     );

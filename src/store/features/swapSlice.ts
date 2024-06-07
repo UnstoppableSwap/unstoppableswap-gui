@@ -51,7 +51,7 @@ const initialState: SwapSlice = {
   swapId: null,
   logs: [],
   provider: null,
-  spawnType: null
+  spawnType: null,
 };
 
 export const swapSlice = createSlice({
@@ -148,20 +148,21 @@ export const swapSlice = createSlice({
 
           const nextState: SwapStateStarted = {
             type: SwapStateType.STARTED,
-            txLockDetails: (amount != null && fees != null) ? { amount, fees } : null, 
+            txLockDetails:
+              amount != null && fees != null ? { amount, fees } : null,
           };
 
           slice.state = nextState;
         } else if (isCliLogStartedSwap(log)) {
-          if(slice.state?.type !== SwapStateType.STARTED) {
+          if (slice.state?.type !== SwapStateType.STARTED) {
             const nextState: SwapStateStarted = {
               type: SwapStateType.STARTED,
               txLockDetails: null,
             };
-  
+
             slice.state = nextState;
           }
-          
+
           slice.swapId = log.fields.swap_id;
         } else if (isCliLogPublishedBtcTx(log)) {
           if (log.fields.kind === 'lock') {

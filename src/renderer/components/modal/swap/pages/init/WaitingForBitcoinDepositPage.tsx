@@ -53,10 +53,8 @@ export default function WaitingForBtcDepositPage({
                 <li>
                   Send any amount between{' '}
                   <BitcoinAmount amount={state.minDeposit} /> and{' '}
-                  <BitcoinAmount
-                    amount={state.maxDeposit}
-                  />{' '}
-                  to the address above
+                  <BitcoinAmount amount={state.maxDeposit} /> to the address
+                  above
                   {bitcoinBalance > 0 && (
                     <> (on top of the already deposited funds)</>
                   )}
@@ -77,7 +75,10 @@ export default function WaitingForBtcDepositPage({
                 </li>
               </ul>
             </Typography>
-            <DepositAmountHelper btcFees={state.minBitcoinLockTxFee} state={state} />
+            <DepositAmountHelper
+              btcFees={state.minBitcoinLockTxFee}
+              state={state}
+            />
           </Box>
         }
         icon={<BitcoinIcon />}

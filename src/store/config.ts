@@ -1,4 +1,4 @@
-import { ExtendedProviderStatus } from "models/apiModel";
+import { ExtendedProviderStatus } from 'models/apiModel';
 
 export const isTestnet = () =>
   process.env.TESTNET?.toString().toLowerCase() === 'true';
@@ -10,7 +10,11 @@ export const isDevelopment =
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
 export function getStubTestnetProvider(): ExtendedProviderStatus | null {
-  if(!isTestnet() || !process.env.STUB_TESTNET_PROVIDER_MULTIADDR || !process.env.STUB_TESTNET_PROVIDER_PEER_ID) {
+  if (
+    !isTestnet() ||
+    !process.env.STUB_TESTNET_PROVIDER_MULTIADDR ||
+    !process.env.STUB_TESTNET_PROVIDER_PEER_ID
+  ) {
     return null;
   }
 
@@ -27,7 +31,6 @@ export function getStubTestnetProvider(): ExtendedProviderStatus | null {
     recommended: true,
   };
 }
-
 
 export const getPlatform = () => {
   switch (process.platform) {

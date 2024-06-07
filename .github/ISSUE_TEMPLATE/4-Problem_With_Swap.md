@@ -23,4 +23,4 @@ labels: 'Ongoing swap'
 ## Your Environment
 
 - Operating System:
-- GUI Version: 
+- GUI Version:
