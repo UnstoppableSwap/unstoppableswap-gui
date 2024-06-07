@@ -51,15 +51,7 @@ const initialState: SwapSlice = {
   swapId: null,
   logs: [],
   provider: null,
-  spawnType: null,
-  parallelOperations: {
-    moneroWallet: {
-      isSyncing: false,
-    },
-    moneroWalletRpc: {
-      updateState: false,
-    },
-  },
+  spawnType: null
 };
 
 export const swapSlice = createSlice({
