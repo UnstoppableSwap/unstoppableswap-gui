@@ -36,6 +36,7 @@ let cli: ChildProcessWithoutNullStreams | null = null;
 
 async function attemptKillMoneroWalletRpcProcess() {
   if (process.env.SKIP_MONERO_WALLET_RPC_KILL === 'true') {
+    logger.debug('Skipping monero-wallet-rpc kill');
     return;
   }
 

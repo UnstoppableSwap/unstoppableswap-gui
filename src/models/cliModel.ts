@@ -348,3 +348,56 @@ export function isCliLogDownloadingMoneroWalletRpc(
 ): log is CliLogDownloadingMoneroWalletRpc {
   return log.fields.message === 'Downloading monero-wallet-rpc';
 }
+
+export interface CliLogStartedSyncingMoneroWallet extends CliLog {
+  fields: {
+    message: 'Syncing Monero wallet';
+    current_sync_height?: boolean;
+  };
+}
+
+export function isCliLogStartedSyncingMoneroWallet(
+  log: CliLog
+): log is CliLogStartedSyncingMoneroWallet {
+  return log.fields.message === 'Syncing Monero wallet';
+}
+
+export interface CliLogFinishedSyncingMoneroWallet extends CliLog {
+  fields: {
+    message: 'Synced Monero wallet';
+  };
+}
+
+export interface CliLogFailedToSyncMoneroWallet extends CliLog {
+  fields: {
+    message: 'Failed to sync Monero wallet';
+    error: string;
+  };
+}
+
+export function isCliLogFailedToSyncMoneroWallet(
+  log: CliLog
+): log is CliLogFailedToSyncMoneroWallet {
+  return log.fields.message === 'Failed to sync Monero wallet';
+}
+
+export function isCliLogFinishedSyncingMoneroWallet(
+  log: CliLog
+): log is CliLogFinishedSyncingMoneroWallet {
+  return log.fields.message === 'Synced Monero wallet';
+}
+
+export interface CliLogDownloadingMoneroWalletRpc extends CliLog {
+  fields: {
+    message: 'Downloading monero-wallet-rpc';
+    progress: string;
+    size: string;
+    download_url: string;
+  };
+}
+
+export function isCliLogDownloadingMoneroWalletRpc(
+  log: CliLog
+): log is CliLogDownloadingMoneroWalletRpc {
+  return log.fields.message === 'Downloading monero-wallet-rpc';
+}

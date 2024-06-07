@@ -32,6 +32,10 @@ import {
 
 let mainWindow: BrowserWindow | null = null;
 
+export function getMainWindow() {
+  return mainWindow;
+}
+
 async function installExtensions() {
   const installer = require('electron-devtools-installer');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;

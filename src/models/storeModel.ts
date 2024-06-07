@@ -8,6 +8,12 @@ export interface SwapSlice {
   provider: Provider | null;
   spawnType: SwapSpawnType | null;
   swapId: string | null;
+  parallelOperations: {
+    moneroWallet: {
+      isSyncing: boolean;
+    };
+    moneroWalletRpc: { updateState: false | MoneroWalletRpcUpdateState };
+  };
 }
 
 export type MoneroWalletRpcUpdateState = {

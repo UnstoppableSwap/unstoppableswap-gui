@@ -37,7 +37,6 @@ import {
   SwapSpawnType,
   isCliLogBtcTxFound,
   isCliLogReleasingSwapLockLog,
-  getCliLogSpanSwapId,
   isYouHaveBeenPunishedCliLog,
   isCliLogAcquiringSwapLockLog,
   isCliLogApiCallError,
@@ -53,6 +52,14 @@ const initialState: SwapSlice = {
   logs: [],
   provider: null,
   spawnType: null,
+  parallelOperations: {
+    moneroWallet: {
+      isSyncing: false,
+    },
+    moneroWalletRpc: {
+      updateState: false,
+    },
+  },
 };
 
 export const swapSlice = createSlice({
@@ -289,6 +296,7 @@ export const swapSlice = createSlice({
     },
     swapProcessExited(swap, action: PayloadAction<string | null>) {
       if (!swap.processRunning) {
+        logger.warn(`swapProcessExited called on a swap that is not running`);
         return;
       }
 
