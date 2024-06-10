@@ -1,10 +1,10 @@
 import { TextEncoder, TextDecoder } from 'util';
 
 import { AnyAction } from '@reduxjs/toolkit';
+import { ExtendedProviderStatus } from 'models/apiModel';
 import reducer, {
   setRegistryProviders,
 } from '../../store/features/providersSlice';
-import { ExtendedProviderStatus } from 'models/apiModel';
 
 Object.assign(global, { TextDecoder, TextEncoder });
 

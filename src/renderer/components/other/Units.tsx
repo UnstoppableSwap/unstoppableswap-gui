@@ -32,6 +32,10 @@ export function AmountWithUnit({
   );
 }
 
+AmountWithUnit.defaultProps = {
+  dollarRate: null,
+};
+
 export function BitcoinAmount({ amount }: { amount: Amount }) {
   const btcUsdRate = useAppSelector((state) => state.rates.btcPrice);
 

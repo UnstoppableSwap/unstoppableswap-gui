@@ -1,17 +1,17 @@
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import App from './components/App';
 import { store } from 'renderer/store/storeRenderer';
-import logger from '../utils/logger';
+import { setRegistryProviders } from 'store/features/providersSlice';
+import { setAlerts } from 'store/features/alertsSlice';
+import { setXmrPrice, setBtcPrice } from 'store/features/ratesSlice';
 import {
   fetchAlertsViaHttp,
   fetchBtcPrice,
   fetchProvidersViaHttp,
   fetchXmrPrice,
 } from './api';
-import { setRegistryProviders } from 'store/features/providersSlice';
-import { setAlerts } from 'store/features/alertsSlice';
-import { setXmrPrice, setBtcPrice } from 'store/features/ratesSlice';
+import logger from '../utils/logger';
+import App from './components/App';
 
 render(
   <Provider store={store}>

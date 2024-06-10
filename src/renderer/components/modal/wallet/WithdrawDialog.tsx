@@ -1,9 +1,9 @@
 import { Dialog } from '@material-ui/core';
-import DialogHeader from '../DialogHeader';
 import { useAppDispatch, useIsRpcEndpointBusy } from 'store/hooks';
-import WithdrawStatePage from './WithdrawStatePage';
 import { RpcMethod } from 'models/rpcModel';
 import { rpcResetWithdrawTxId } from 'store/features/rpcSlice';
+import WithdrawStatePage from './WithdrawStatePage';
+import DialogHeader from '../DialogHeader';
 
 export default function WithdrawDialog({
   open,

@@ -8,6 +8,8 @@ import {
   TableContainer,
   TableRow,
 } from '@material-ui/core';
+import { getBitcoinTxExplorerUrl } from 'utils/conversionUtils';
+import { isTestnet } from 'store/config';
 import {
   getHumanReadableDbStateType,
   getSwapBtcAmount,
@@ -18,8 +20,6 @@ import {
 } from '../../../../../models/rpcModel';
 import SwapLogFileOpenButton from './SwapLogFileOpenButton';
 import { SwapCancelRefundButton } from './HistoryRowActions';
-import { getBitcoinTxExplorerUrl } from 'utils/conversionUtils';
-import { isTestnet } from 'store/config';
 import { SwapMoneroRecoveryButton } from './SwapMoneroRecoveryButton';
 
 const useStyles = makeStyles((theme) => ({

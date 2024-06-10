@@ -8,18 +8,18 @@ import pidtree from 'pidtree';
 import util from 'util';
 import { getPlatform, isTestnet } from 'store/config';
 import { CliLog } from 'models/cliModel';
-import { getCliDataBaseDir, getSwapBinary, makeFileExecutable } from './dirs';
-import logger from '../../utils/logger';
 import { getLogsFromRawFileString } from 'utils/parseUtils';
 import { store } from 'main/store/mainStore';
+import { swapProcessExited } from 'store/features/swapSlice';
+import { RpcProcessStateType } from 'models/rpcModel';
 import {
   rpcAddLogs,
   rpcAppendStdOut,
   rpcInitiate,
   rpcProcessExited,
 } from '../../store/features/rpcSlice';
-import { swapProcessExited } from 'store/features/swapSlice';
-import { RpcProcessStateType } from 'models/rpcModel';
+import logger from '../../utils/logger';
+import { getCliDataBaseDir, getSwapBinary, makeFileExecutable } from './dirs';
 import {
   checkBitcoinBalance,
   getRawSwapInfos,

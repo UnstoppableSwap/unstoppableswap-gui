@@ -16,8 +16,8 @@ import { useSnackbar } from 'notistack';
 import { useActiveSwapId, useAppSelector } from 'store/hooks';
 import { parseDateString } from 'utils/parseUtils';
 import { store } from 'renderer/store/storeRenderer';
-import { submitFeedbackViaHttp } from '../../../api';
 import { CliLog } from 'models/cliModel';
+import { submitFeedbackViaHttp } from '../../../api';
 import { PiconeroAmount } from '../../other/Units';
 import LoadingButton from '../../other/LoadingButton';
 

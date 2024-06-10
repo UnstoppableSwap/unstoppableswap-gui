@@ -2,12 +2,12 @@ import {
   ChildProcessWithoutNullStreams,
   spawn as spawnProc,
 } from 'child_process';
+import { store } from 'main/store/mainStore';
 import {
   torProcessExited,
   torInitiate,
   torAppendStdOut,
 } from '../store/features/torSlice';
-import { store } from 'main/store/mainStore';
 import logger from '../utils/logger';
 import { getTorBinary, makeFileExecutable } from './cli/dirs';
 

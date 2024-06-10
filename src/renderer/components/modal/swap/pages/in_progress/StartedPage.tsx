@@ -1,6 +1,6 @@
 import { SwapStateStarted } from 'models/storeModel';
-import CircularProgressWithSubtitle from '../../CircularProgressWithSubtitle';
 import { BitcoinAmount } from 'renderer/components/other/Units';
+import CircularProgressWithSubtitle from '../../CircularProgressWithSubtitle';
 
 export default function StartedPage({ state }: { state: SwapStateStarted }) {
   const description = state.txLockDetails ? (

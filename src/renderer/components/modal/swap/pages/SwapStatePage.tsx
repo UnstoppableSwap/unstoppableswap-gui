@@ -1,4 +1,5 @@
 import { Box } from '@material-ui/core';
+import { useAppSelector } from 'store/hooks';
 import {
   isSwapStateBtcCancelled,
   isSwapStateBtcLockInMempool,
@@ -30,7 +31,6 @@ import XmrLockedPage from './in_progress/XmrLockedPage';
 import BitcoinCancelledPage from './in_progress/BitcoinCancelledPage';
 import BitcoinRefundedPage from './done/BitcoinRefundedPage';
 import BitcoinPunishedPage from './done/BitcoinPunishedPage';
-import { useAppSelector } from 'store/hooks';
 import { SyncingMoneroWalletPage } from './in_progress/SyncingMoneroWalletPage';
 
 export default function SwapStatePage({

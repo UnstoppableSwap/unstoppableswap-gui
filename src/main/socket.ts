@@ -3,9 +3,9 @@ import { app } from 'electron';
 import { SocksProxyAgent } from 'socks-proxy-agent';
 import { SocksProxy } from 'socks';
 import { ExtendedProviderStatus, Provider } from 'models/apiModel';
+import { store } from 'main/store/mainStore';
 import logger from '../utils/logger';
 import { sendSnackbarAlertToRenderer } from './main';
-import { store } from 'main/store/mainStore';
 import {
   increaseFailedRegistryReconnectAttemptsSinceLastSuccess,
   setRegistryProviders,

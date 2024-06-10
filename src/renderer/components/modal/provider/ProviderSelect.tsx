@@ -7,9 +7,9 @@ import {
 } from '@material-ui/core';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import { useState } from 'react';
+import { useAppSelector } from 'store/hooks';
 import ProviderInfo from './ProviderInfo';
 import ProviderListDialog from './ProviderListDialog';
-import { useAppSelector } from 'store/hooks';
 
 const useStyles = makeStyles({
   inner: {

@@ -15,17 +15,17 @@ import {
 import AddIcon from '@material-ui/icons/Add';
 import { useState } from 'react';
 import SearchIcon from '@material-ui/icons/Search';
-import ProviderInfo from './ProviderInfo';
 import { ExtendedProviderStatus } from 'models/apiModel';
 import {
   useAllProviders,
   useAppDispatch,
   useIsRpcEndpointBusy,
 } from 'store/hooks';
-import ProviderSubmitDialog from './ProviderSubmitDialog';
-import ListSellersDialog from '../listSellers/ListSellersDialog';
 import { setSelectedProvider } from 'store/features/providersSlice';
 import { RpcMethod } from 'models/rpcModel';
+import ProviderSubmitDialog from './ProviderSubmitDialog';
+import ListSellersDialog from '../listSellers/ListSellersDialog';
+import ProviderInfo from './ProviderInfo';
 
 const useStyles = makeStyles({
   dialogContent: {

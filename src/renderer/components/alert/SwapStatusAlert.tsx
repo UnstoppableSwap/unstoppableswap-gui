@@ -1,6 +1,7 @@
 import { Alert, AlertTitle } from '@material-ui/lab/';
 import { Box, makeStyles } from '@material-ui/core';
 import { ReactNode } from 'react';
+import { exhaustiveGuard } from 'utils/typescriptUtils';
 import {
   SwapCancelRefundButton,
   SwapResumeButton,
@@ -18,7 +19,6 @@ import {
   SwapTimelockInfoNone,
 } from '../../../models/rpcModel';
 import { SwapMoneroRecoveryButton } from '../pages/history/table/SwapMoneroRecoveryButton';
-import { exhaustiveGuard } from 'utils/typescriptUtils';
 
 const useStyles = makeStyles({
   box: {

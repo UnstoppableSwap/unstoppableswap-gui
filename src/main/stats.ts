@@ -3,11 +3,11 @@ import { sha256 } from 'utils/cryptoUtils';
 import { Provider } from 'models/apiModel';
 import { isTestnet } from 'store/config';
 import { store } from 'main/store/mainStore';
+import { isCliLogReceivedQuote } from 'models/cliModel';
 import {
   transmitReceivedQuoteFromProvider,
   transmitSwapDetailsUpdated,
 } from './socket';
-import { isCliLogReceivedQuote } from 'models/cliModel';
 import {
   extractAmountFromUnitString,
   parseDateString,

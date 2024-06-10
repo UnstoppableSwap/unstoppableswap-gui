@@ -1,8 +1,8 @@
+import { useAppSelector, useIsRpcEndpointBusy } from 'store/hooks';
+import { RpcMethod } from 'models/rpcModel';
 import AddressInputPage from './pages/AddressInputPage';
 import InitiatedPage from './pages/InitiatedPage';
 import BtcTxInMempoolPageContent from './pages/BitcoinWithdrawTxInMempoolPage';
-import { useAppSelector, useIsRpcEndpointBusy } from 'store/hooks';
-import { RpcMethod } from 'models/rpcModel';
 
 export default function WithdrawStatePage({
   onCancel,

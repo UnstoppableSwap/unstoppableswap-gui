@@ -1,7 +1,7 @@
 import { Box, DialogContentText } from '@material-ui/core';
 import { useActiveSwapInfo, useAppSelector } from 'store/hooks';
-import CliLogsBox from '../../../../other/RenderedCliLog';
 import { SwapStateProcessExited } from 'models/storeModel';
+import CliLogsBox from '../../../../other/RenderedCliLog';
 
 export default function ProcessExitedAndNotDonePage({
   state,

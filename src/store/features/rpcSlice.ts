@@ -1,4 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { ExtendedProviderStatus, ProviderStatus } from 'models/apiModel';
+import { MoneroWalletRpcUpdateState } from 'models/storeModel';
 import {
   GetSwapInfoResponse,
   MoneroRecoveryResponse,
@@ -12,8 +14,6 @@ import {
   isCliLogStartedRpcServer,
   isCliLogStartedSyncingMoneroWallet,
 } from '../../models/cliModel';
-import { ExtendedProviderStatus, ProviderStatus } from 'models/apiModel';
-import { MoneroWalletRpcUpdateState } from 'models/storeModel';
 
 type Process =
   | {

@@ -8,14 +8,14 @@ import {
   DialogContentText,
   Link,
 } from '@material-ui/core';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { rpcResetMoneroRecoveryKeys } from 'store/features/rpcSlice';
 import {
   GetSwapInfoResponse,
   isSwapMoneroRecoverable,
 } from '../../../../../models/rpcModel';
 import IpcInvokeButton from '../../../IpcInvokeButton';
-import { useAppDispatch, useAppSelector } from 'store/hooks';
 import DialogHeader from '../../../modal/DialogHeader';
-import { rpcResetMoneroRecoveryKeys } from 'store/features/rpcSlice';
 import ScrollablePaperTextBox from '../../../other/ScrollablePaperTextBox';
 
 function MoneroRecoveryKeysDialog({ swap }: { swap: GetSwapInfoResponse }) {

@@ -12,6 +12,11 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import blocked from 'blocked-at';
+import {
+  getPlatform,
+  getStubTestnetProvider,
+  isDevelopment,
+} from 'store/config';
 import { resolveHtmlPath } from './util';
 import { startRPC, stopCli } from './cli/cli';
 import { getPlatform, isDevelopment, isTestnet } from 'store/config';

@@ -1,11 +1,11 @@
 import { makeStyles } from '@material-ui/core';
 import { Alert, AlertTitle } from '@material-ui/lab';
-import HumanizedBitcoinBlockDuration from '../other/HumanizedBitcoinBlockDuration';
 import { useActiveSwapInfo } from 'store/hooks';
 import {
   isSwapTimelockInfoCancelled,
   isSwapTimelockInfoNone,
 } from 'models/rpcModel';
+import HumanizedBitcoinBlockDuration from '../other/HumanizedBitcoinBlockDuration';
 
 const useStyles = makeStyles((theme) => ({
   outer: {

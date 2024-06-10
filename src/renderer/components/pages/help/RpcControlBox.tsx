@@ -4,9 +4,9 @@ import { useAppSelector } from 'store/hooks';
 import StopIcon from '@material-ui/icons/Stop';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import { RpcProcessStateType } from 'models/rpcModel';
+import { getLogsAndStringsFromRawFileString } from 'utils/parseUtils';
 import InfoBox from '../../modal/swap/InfoBox';
 import CliLogsBox from '../../other/RenderedCliLog';
-import { getLogsAndStringsFromRawFileString } from 'utils/parseUtils';
 
 const useStyles = makeStyles((theme) => ({
   actionsOuter: {

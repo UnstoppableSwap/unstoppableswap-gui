@@ -9,13 +9,13 @@ import {
   TableHead,
   TableRow,
 } from '@material-ui/core';
+import { sortBy } from 'lodash';
+import { parseDateString } from 'utils/parseUtils';
 import {
   useAppSelector,
   useSwapInfosSortedByDate,
 } from '../../../../../store/hooks';
 import HistoryRow from './HistoryRow';
-import { sortBy } from 'lodash';
-import { parseDateString } from 'utils/parseUtils';
 
 const useStyles = makeStyles((theme) => ({
   outer: {
