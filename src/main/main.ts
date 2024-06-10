@@ -19,7 +19,6 @@ import {
 } from 'store/config';
 import { resolveHtmlPath } from './util';
 import { startRPC, stopCli } from './cli/cli';
-import { getPlatform, isDevelopment, isTestnet } from 'store/config';
 import getSavedLogsOfSwapId, { getAssetPath, fixAppDataPath } from './cli/dirs';
 import initSocket from './socket';
 import logger from '../utils/logger';
@@ -134,6 +133,12 @@ if (gotTheLock) {
       createWindow();
       initSocket();
       await startRPC();
+
+      // Don't spawn Tor if we have a stub testnet provider
+      // It's most likely gonna be a local one and we cannot build Tor circuits to it
+      if (getStubTestnetProvider() != null) {
+        await spawnTor();
+      }
 
       return 0;
     })
