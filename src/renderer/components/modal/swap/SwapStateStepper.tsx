@@ -82,7 +82,7 @@ function HappyPathStepper({
     <Stepper activeStep={activeStep}>
       <Step key={0}>
         <StepLabel
-          optional={<Typography variant="caption">~20min</Typography>}
+          optional={<Typography variant="caption">~12min</Typography>}
           error={error && activeStep === 0}
         >
           Locking your BTC
@@ -90,7 +90,7 @@ function HappyPathStepper({
       </Step>
       <Step key={1}>
         <StepLabel
-          optional={<Typography variant="caption">~20min</Typography>}
+          optional={<Typography variant="caption">~18min</Typography>}
           error={error && activeStep === 1}
         >
           They lock their XMR
