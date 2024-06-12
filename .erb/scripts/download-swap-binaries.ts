@@ -1,6 +1,6 @@
-import path from 'path';
+import path, { join } from 'path';
 import download from 'download';
-import { chmod, emptyDir, ensureDir, stat } from 'fs-extra';
+import { chmod, emptyDir, ensureDir, stat, move } from 'fs-extra';
 import { constants } from 'fs';
 import { Binary } from '../../src/models/downloaderModel';
 
@@ -17,6 +17,8 @@ async function makeFileExecutable(binary: Binary) {
 }
 
 const CLI_VERSION = '0.13.1';
+// Ensure the value here matches with the one in src/main/cli/dirs.ts
+const CLI_FILE_NAME_VERSION_PREFIX = '0_13_1_';
 
 const binaries = [
   {
@@ -45,6 +47,11 @@ Promise.all(
     await download(binary.url, binary.dest, {
       extract: true,
     });
+
+    // Append the prefix to the binary filename
+    const newFilename = `${CLI_FILE_NAME_VERSION_PREFIX}${binary.filename}`;
+    await move(join(binary.dest, binary.filename), join(binary.dest, newFilename));
+    binary.filename = newFilename;
 
     // Chmod binary in the directory to make them executable
     await makeFileExecutable({

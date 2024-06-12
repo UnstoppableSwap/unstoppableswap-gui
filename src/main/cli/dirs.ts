@@ -10,6 +10,12 @@ import { CliLog, getCliLogSpanSwapId } from 'models/cliModel';
 import { getLogsFromRawFileString } from 'utils/parseUtils';
 import { RpcProcessStateType } from 'models/rpcModel';
 
+// The CLI version is hardcoded here because the CLI version is hardcoded in .erb/scripts/download-swap-binaries.ts
+// Ensure the CLI version is updated in both places when updating the CLI version.
+// We need a different name for each CLI version to make sure, that the CLI is definitely updated
+// electron-builder sometimes doesn't update the CLI binary
+const CLI_FILE_NAME_VERSION_PREFIX = '0_13_1_';
+
 // Be consistent with the way the cli generates the
 // data-dir on linux
 // See https://docs.rs/directories-next/2.0.0/directories_next/struct.ProjectDirs.html#method.data_dir
@@ -88,18 +94,18 @@ export function getSwapBinary(): Binary {
     case 'mac':
       return {
         dirPath,
-        fileName: 'swap',
+        fileName: CLI_FILE_NAME_VERSION_PREFIX + 'swap',
       };
     case 'linux':
       return {
         dirPath,
-        fileName: 'swap',
+        fileName: CLI_FILE_NAME_VERSION_PREFIX + 'swap',
       };
     case 'win':
     default:
       return {
         dirPath,
-        fileName: 'swap.exe',
+        fileName: CLI_FILE_NAME_VERSION_PREFIX + 'swap.exe',
       };
   }
 }
