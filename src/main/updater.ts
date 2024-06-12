@@ -23,7 +23,7 @@ export default async function initAutoUpdater() {
   autoUpdater.allowPrerelease = false;
 
   // This is for development purposes only. It will force the auto updater to use the dev-app-update.yml file for updates.
-  if(isDevelopment) {
+  if (isDevelopment) {
     autoUpdater.forceDevUpdateConfig = true;
     autoUpdater.allowDowngrade = true;
   }

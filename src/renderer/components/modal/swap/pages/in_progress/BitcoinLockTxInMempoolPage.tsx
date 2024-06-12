@@ -26,7 +26,8 @@ export default function BitcoinLockTxInMempoolPage({
         loading
         additionalContent={
           <>
-            Most swap providers require one confirmation before locking their Monero
+            Most swap providers require one confirmation before locking their
+            Monero
             <br />
             Confirmations: {state.bobBtcLockTxConfirmations}
           </>

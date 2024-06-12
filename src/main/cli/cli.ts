@@ -8,7 +8,10 @@ import pidtree from 'pidtree';
 import util from 'util';
 import { getPlatform, isTestnet } from 'store/config';
 import { CliLog, isCliLog } from 'models/cliModel';
-import { getLogsAndStringsFromRawFileString, getLogsFromRawFileString } from 'utils/parseUtils';
+import {
+  getLogsAndStringsFromRawFileString,
+  getLogsFromRawFileString,
+} from 'utils/parseUtils';
 import { store } from 'main/store/mainStore';
 import { swapProcessExited } from 'store/features/swapSlice';
 import { RpcProcessStateType } from 'models/rpcModel';
@@ -103,9 +106,9 @@ export async function stopCli() {
 export async function spawnSubcommand(
   subCommand: string,
   options: { [option: string]: string },
-  onLog: ((log: (CliLog | string)[]) => unknown) | null,
+  onLog: ((log: (CliLog | string)[]) => unknown) | null,
   onExit: (code: number | null, signal: NodeJS.Signals | null) => void,
-  onStdOut: ((data: string) => unknown) | null,
+  onStdOut: ((data: string) => unknown) | null
 ): Promise<ChildProcessWithoutNullStreams> {
   /*
   This looks bad, I know
@@ -182,12 +185,12 @@ export async function spawnSubcommand(
                 stream.setEncoding('utf8');
                 stream.on('data', (data: string) => {
                   logger.debug({ subCommand, data }, `CLI stdout`);
-                  
-                  if(onStdOut != null) {
+
+                  if (onStdOut != null) {
                     onStdOut(data);
                   }
 
-                  if(onLog != null) {
+                  if (onLog != null) {
                     const logs = getLogsAndStringsFromRawFileString(data);
                     onLog(logs);
                   }
@@ -280,7 +283,7 @@ export async function startRPC() {
 
       isPeriodicRetrievalRunning = false;
     },
-    null,
+    null
   );
   store.dispatch(rpcInitiate());
 }

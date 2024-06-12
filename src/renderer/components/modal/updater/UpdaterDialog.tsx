@@ -24,7 +24,9 @@ export default function UpdaterDialog() {
   }
 
   function openDownloadUrl() {
-    const downloadUrl = `https://github.com/UnstoppableSwap/unstoppableswap-gui/releases/tag/v${updateNotification!.version}`;
+    const downloadUrl = `https://github.com/UnstoppableSwap/unstoppableswap-gui/releases/tag/v${
+      updateNotification!.version
+    }`;
     window.open(downloadUrl, '_blank');
     hideNotification();
   }

@@ -56,4 +56,4 @@ async function fetchInitialData() {
 }
 
 fetchInitialData();
-webFrame.setZoomFactor(1.2)
+webFrame.setZoomFactor(1.2);

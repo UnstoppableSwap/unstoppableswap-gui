@@ -88,7 +88,7 @@ export const rpcSlice = createSlice({
     rpcAddLogs(slice, action: PayloadAction<(CliLog | string)[]>) {
       if (
         slice.process.type === RpcProcessStateType.STARTED ||
-        slice.process.type === RpcProcessStateType.LISTENING_FOR_CONNECTIONS || 
+        slice.process.type === RpcProcessStateType.LISTENING_FOR_CONNECTIONS ||
         slice.process.type === RpcProcessStateType.EXITED
       ) {
         const logs = action.payload;
@@ -109,7 +109,7 @@ export const rpcSlice = createSlice({
               progress: log.fields.progress,
               downloadUrl: log.fields.download_url,
             };
-  
+
             if (log.fields.progress === '100%') {
               slice.state.moneroWalletRpc.updateState = false;
             }
