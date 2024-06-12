@@ -116,12 +116,12 @@ function HasProviderSwapWidget({
     if (parsedBtcAmount < satsToBtc(selectedProvider.minSwapAmount)) {
       return `The minimum swap amount is ${satsToBtc(
         selectedProvider.minSwapAmount,
-      )} BTC`;
+      )} BTC. Switch to a different provider if you want to swap less.`;
     }
     if (parsedBtcAmount > satsToBtc(selectedProvider.maxSwapAmount)) {
       return `The maximum swap amount is ${satsToBtc(
         selectedProvider.maxSwapAmount,
-      )} BTC`;
+      )} BTC. Switch to a different provider if you want to swap more.`;
     }
     return null;
   }
