@@ -8,10 +8,7 @@ import pidtree from 'pidtree';
 import util from 'util';
 import { getPlatform, isTestnet } from 'store/config';
 import { CliLog, isCliLog } from 'models/cliModel';
-import {
-  getLogsAndStringsFromRawFileString,
-  getLogsFromRawFileString,
-} from 'utils/parseUtils';
+import { getLogsAndStringsFromRawFileString } from 'utils/parseUtils';
 import { store } from 'main/store/mainStore';
 import { swapProcessExited } from 'store/features/swapSlice';
 import { RpcProcessStateType } from 'models/rpcModel';
@@ -35,6 +32,10 @@ const BITCOIN_BALANCE_FORCE_REFRESH_INTERVAL = 1000 * 60;
 
 const queue = new PQueue({ concurrency: 1 });
 let cli: ChildProcessWithoutNullStreams | null = null;
+
+export function isCliRunning() {
+  return cli !== null;
+}
 
 async function attemptKillMoneroWalletRpcProcess() {
   if (process.env.SKIP_MONERO_WALLET_RPC_KILL === 'true') {
@@ -83,20 +84,29 @@ async function getSpawnArgs(
 export async function stopCli() {
   const rootPid = cli?.pid;
   if (rootPid) {
-    const childrenPids = await pidtree(rootPid);
-    childrenPids.forEach((childPid) => {
-      try {
-        process.kill(childPid);
-      } catch (err) {
-        logger.error(
-          { pid: childPid, err },
-          `Failed to kill children cli process`,
-        );
-      }
-    });
+    try {
+      const childrenPids = await pidtree(rootPid);
+      childrenPids.forEach((childPid) => {
+        try {
+          process.kill(childPid);
+          logger.info({ pid: childPid }, `Force killed child cli process`);
+        } catch (err) {
+          logger.error(
+            { pid: childPid, err },
+            `Failed to kill children cli process`,
+          );
+        }
+      });
+    } catch (err) {
+      logger.error(
+        { pid: rootPid, err },
+        `Failed to get children cli processes`,
+      );
+    }
+
     try {
       process.kill(rootPid);
-      logger.info({ rootPid, childrenPids }, `Force killed cli`);
+      logger.info({ rootPid }, `Force killed cli`);
     } catch (err) {
       logger.error({ pid: rootPid, err }, `Failed to kill root cli process`);
     }

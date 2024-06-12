@@ -17,11 +17,11 @@ import {
   isDevelopment,
 } from 'store/config';
 import { resolveHtmlPath } from './util';
-import { startRPC, stopCli } from './cli/cli';
+import { isCliRunning, startRPC, stopCli } from './cli/cli';
 import getSavedLogsOfSwapId, { getAssetPath, fixAppDataPath } from './cli/dirs';
 import initSocket from './socket';
 import logger from '../utils/logger';
-import { spawnTor, stopTor } from './tor';
+import { isTorRunning, spawnTor, stopTor } from './tor';
 import {
   buyXmr,
   cancelRefundSwap,
@@ -105,9 +105,34 @@ async function createWindow() {
 
 fixAppDataPath();
 
-app.on('will-quit', async () => {
-  await stopCli();
-  stopTor();
+app.on('before-quit', async (e) => {
+  if (isCliRunning() || isTorRunning()) {
+    logger.debug(
+      'Preventing Electron from quitting, stopping CLI, Tor and their child processes first',
+    );
+    e.preventDefault();
+  } else {
+    logger.info('Letting Electron quit, there are no running child processes');
+    return;
+  }
+
+  if (isCliRunning()) {
+    try {
+      await stopCli();
+    } catch (err) {
+      logger.warn('Failed to stop CLI', err);
+    }
+  }
+
+  if (isTorRunning()) {
+    try {
+      stopTor();
+    } catch (err) {
+      logger.warn('Failed to stop Tor', err);
+    }
+  }
+
+  app.quit();
 });
 
 app.on('window-all-closed', () => {

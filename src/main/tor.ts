@@ -13,6 +13,10 @@ import { getTorBinary, makeFileExecutable } from './cli/dirs';
 
 let torProc: ChildProcessWithoutNullStreams | null = null;
 
+export function isTorRunning(): boolean {
+  return torProc != null;
+}
+
 export function stopTor() {
   torProc?.kill();
   torProc = null;
