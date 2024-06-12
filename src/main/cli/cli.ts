@@ -7,13 +7,13 @@ import PQueue from 'p-queue';
 import pidtree from 'pidtree';
 import util from 'util';
 import { getPlatform, isTestnet } from 'store/config';
-import { CliLog } from 'models/cliModel';
-import { getLogsFromRawFileString } from 'utils/parseUtils';
+import { CliLog, isCliLog } from 'models/cliModel';
+import { getLogsAndStringsFromRawFileString, getLogsFromRawFileString } from 'utils/parseUtils';
 import { store } from 'main/store/mainStore';
 import { swapProcessExited } from 'store/features/swapSlice';
 import { RpcProcessStateType } from 'models/rpcModel';
 import {
-  rpcAppendStdOut,
+  rpcAddLogs,
   rpcInitiate,
   rpcProcessExited,
 } from '../../store/features/rpcSlice';
@@ -103,9 +103,9 @@ export async function stopCli() {
 export async function spawnSubcommand(
   subCommand: string,
   options: { [option: string]: string },
-  onLog: (log: CliLog[]) => unknown | null,
+  onLog: ((log: (CliLog | string)[]) => unknown) | null,
   onExit: (code: number | null, signal: NodeJS.Signals | null) => void,
-  onStdOut: (data: string) => void
+  onStdOut: ((data: string) => unknown) | null,
 ): Promise<ChildProcessWithoutNullStreams> {
   /*
   This looks bad, I know
@@ -181,12 +181,14 @@ export async function spawnSubcommand(
               [cli.stderr, cli.stdout].forEach((stream) => {
                 stream.setEncoding('utf8');
                 stream.on('data', (data: string) => {
-                  onStdOut(data);
-
                   logger.debug({ subCommand, data }, `CLI stdout`);
+                  
+                  if(onStdOut != null) {
+                    onStdOut(data);
+                  }
 
                   if(onLog != null) {
-                    const logs = getLogsFromRawFileString(data);
+                    const logs = getLogsAndStringsFromRawFileString(data);
                     onLog(logs);
                   }
                 });
@@ -259,7 +261,9 @@ export async function startRPC() {
       'server-address': `${RPC_BIND_HOST}:${RPC_BIND_PORT}`,
     },
     async (logs) => {
-      RPC_LOG_EVENT_EMITTER.emit(logs);
+      RPC_LOG_EVENT_EMITTER.emit(logs.filter(isCliLog));
+
+      store.dispatch(rpcAddLogs(logs));
 
       const processType = store.getState().rpc.process.type;
       if (
@@ -276,9 +280,7 @@ export async function startRPC() {
 
       isPeriodicRetrievalRunning = false;
     },
-    (text) => {
-      store.dispatch(rpcAppendStdOut(text));
-    }
+    null,
   );
   store.dispatch(rpcInitiate());
 }

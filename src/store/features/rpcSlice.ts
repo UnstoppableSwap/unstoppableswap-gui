@@ -85,12 +85,13 @@ export const rpcSlice = createSlice({
   name: 'rpc',
   initialState,
   reducers: {
-    rpcAppendStdOut(slice, action: PayloadAction<string>) {
+    rpcAddLogs(slice, action: PayloadAction<(CliLog | string)[]>) {
       if (
         slice.process.type === RpcProcessStateType.STARTED ||
-        slice.process.type === RpcProcessStateType.LISTENING_FOR_CONNECTIONS
+        slice.process.type === RpcProcessStateType.LISTENING_FOR_CONNECTIONS || 
+        slice.process.type === RpcProcessStateType.EXITED
       ) {
-        const logs = getLogsAndStringsFromRawFileString(action.payload);
+        const logs = action.payload;
         slice.process.logs.push(...logs);
 
         logs.filter(isCliLog).forEach((log) => {
@@ -201,7 +202,7 @@ export const rpcSlice = createSlice({
 
 export const {
   rpcProcessExited,
-  rpcAppendStdOut,
+  rpcAddLogs,
   rpcInitiate,
   rpcSetBalance,
   rpcSetWithdrawTxId,
