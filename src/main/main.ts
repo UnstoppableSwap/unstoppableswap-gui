@@ -136,7 +136,7 @@ if (gotTheLock) {
 
       // Don't spawn Tor if we have a stub testnet provider
       // It's most likely gonna be a local one and we cannot build Tor circuits to it
-      if (getStubTestnetProvider() != null) {
+      if (getStubTestnetProvider() == null) {
         await spawnTor();
       }
 
