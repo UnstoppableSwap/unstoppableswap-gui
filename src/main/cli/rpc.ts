@@ -236,7 +236,7 @@ export async function getSwapInfo(swapId: string) {
 export async function getSwapInfoBatch(
   swapIds: string[],
 ): Promise<GetSwapInfoResponse[]> {
-  if(swapIds.length === 0) {
+  if (swapIds.length === 0) {
     logger.debug('No swaps present in history, skipping swap info retrieval');
     return [];
   }

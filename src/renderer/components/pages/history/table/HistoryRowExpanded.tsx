@@ -21,7 +21,11 @@ import {
 import SwapLogFileOpenButton from './SwapLogFileOpenButton';
 import { SwapCancelRefundButton } from './HistoryRowActions';
 import { SwapMoneroRecoveryButton } from './SwapMoneroRecoveryButton';
-import { BitcoinAmount, MoneroAmount, MoneroBitcoinExchangeRate } from 'renderer/components/other/Units';
+import {
+  BitcoinAmount,
+  MoneroAmount,
+  MoneroBitcoinExchangeRate,
+} from 'renderer/components/other/Units';
 
 const useStyles = makeStyles((theme) => ({
   outer: {

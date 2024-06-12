@@ -2,7 +2,6 @@ import { Box, Button, makeStyles, Typography } from '@material-ui/core';
 import { useState } from 'react';
 import SendIcon from '@material-ui/icons/Send';
 import { useAppSelector, useIsRpcEndpointBusy } from 'store/hooks';
-import { satsToBtc } from 'utils/conversionUtils';
 import { RpcMethod } from 'models/rpcModel';
 import BitcoinIcon from '../../icons/BitcoinIcon';
 import WithdrawDialog from '../../modal/wallet/WithdrawDialog';

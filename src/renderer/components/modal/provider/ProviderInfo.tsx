@@ -2,7 +2,10 @@ import { makeStyles, Box, Typography, Chip, Tooltip } from '@material-ui/core';
 import { VerifiedUser } from '@material-ui/icons';
 import { satsToBtc, secondsToDays } from 'utils/conversionUtils';
 import { ExtendedProviderStatus } from 'models/apiModel';
-import { MoneroBitcoinExchangeRate, SatsAmount } from 'renderer/components/other/Units';
+import {
+  MoneroBitcoinExchangeRate,
+  SatsAmount,
+} from 'renderer/components/other/Units';
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -38,7 +41,8 @@ export default function ProviderInfo({
         {provider.peerId.substring(0, 8)}...{provider.peerId.slice(-8)}
       </Typography>
       <Typography variant="caption">
-        Exchange rate: <MoneroBitcoinExchangeRate rate={satsToBtc(provider.price)} />
+        Exchange rate:{' '}
+        <MoneroBitcoinExchangeRate rate={satsToBtc(provider.price)} />
         <br />
         Minimum swap amount: <SatsAmount amount={provider.minSwapAmount} />
         <br />
