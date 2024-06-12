@@ -11,6 +11,8 @@ export default function ApiAlertsBox() {
     dispatch(removeAlert(id));
   }
 
+  if (alerts.length === 0) return null;
+
   return (
     <Box style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
       {alerts.map((alert) => (
