@@ -12,6 +12,7 @@ import {
 } from './api';
 import logger from '../utils/logger';
 import App from './components/App';
+import { webFrame } from 'electron';
 
 render(
   <Provider store={store}>
@@ -55,3 +56,4 @@ async function fetchInitialData() {
 }
 
 fetchInitialData();
+webFrame.setZoomFactor(1.2)

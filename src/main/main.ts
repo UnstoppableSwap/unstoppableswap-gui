@@ -11,7 +11,6 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
-import blocked from 'blocked-at';
 import {
   getPlatform,
   getStubTestnetProvider,
@@ -153,17 +152,6 @@ if (gotTheLock) {
 } else {
   logger.error('Failed to acquire lock! Exiting...');
   app.quit();
-}
-
-if (isDevelopment) {
-  blocked(
-    (time, stack) => {
-      logger.trace({ time, stack }, `Main thread has been blocked`);
-    },
-    {
-      threshold: 250,
-    }
-  );
 }
 
 ipcMain.handle('stop-cli', stopCli);
