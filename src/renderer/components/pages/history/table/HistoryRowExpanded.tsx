@@ -21,6 +21,7 @@ import {
 import SwapLogFileOpenButton from './SwapLogFileOpenButton';
 import { SwapCancelRefundButton } from './HistoryRowActions';
 import { SwapMoneroRecoveryButton } from './SwapMoneroRecoveryButton';
+import { BitcoinAmount, MoneroAmount, MoneroBitcoinExchangeRate } from 'renderer/components/other/Units';
 
 const useStyles = makeStyles((theme) => ({
   outer: {
@@ -69,19 +70,27 @@ export default function HistoryRowExpanded({
             </TableRow>
             <TableRow>
               <TableCell>Monero Amount</TableCell>
-              <TableCell>{xmrAmount} BTC</TableCell>
+              <TableCell>
+                <MoneroAmount amount={xmrAmount} />
+              </TableCell>
             </TableRow>
             <TableRow>
               <TableCell>Bitcoin Amount</TableCell>
-              <TableCell>{btcAmount || '?'} BTC</TableCell>
+              <TableCell>
+                <BitcoinAmount amount={btcAmount} />
+              </TableCell>
             </TableRow>
             <TableRow>
               <TableCell>Exchange Rate</TableCell>
-              <TableCell>{exchangeRate.toPrecision(6)} XMR/BTC</TableCell>
+              <TableCell>
+                <MoneroBitcoinExchangeRate rate={exchangeRate} />
+              </TableCell>
             </TableRow>
             <TableRow>
               <TableCell>Bitcoin Network Fees</TableCell>
-              <TableCell>{txFees} BTC</TableCell>
+              <TableCell>
+                <BitcoinAmount amount={txFees} />
+              </TableCell>
             </TableRow>
             <TableRow>
               <TableCell>Provider Address</TableCell>

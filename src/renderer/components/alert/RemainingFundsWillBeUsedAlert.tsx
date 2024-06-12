@@ -3,6 +3,7 @@ import { Box, makeStyles } from '@material-ui/core';
 import { useAppSelector } from 'store/hooks';
 import { satsToBtc } from 'utils/conversionUtils';
 import WalletRefreshButton from '../pages/wallet/WalletRefreshButton';
+import { SatsAmount } from '../other/Units';
 
 const useStyles = makeStyles((theme) => ({
   outer: {
@@ -25,7 +26,7 @@ export default function RemainingFundsWillBeUsedAlert() {
         action={<WalletRefreshButton />}
         variant="filled"
       >
-        The remaining funds of {satsToBtc(balance)} BTC in the wallet will be
+        The remaining funds of <SatsAmount amount={balance} /> in the wallet will be
         used for the next swap. If the remaining funds exceed the minimum swap
         amount of the provider, a swap will be initiated instantaneously.
       </Alert>

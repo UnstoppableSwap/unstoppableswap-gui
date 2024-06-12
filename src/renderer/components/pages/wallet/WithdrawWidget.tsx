@@ -8,6 +8,7 @@ import BitcoinIcon from '../../icons/BitcoinIcon';
 import WithdrawDialog from '../../modal/wallet/WithdrawDialog';
 import WalletRefreshButton from './WalletRefreshButton';
 import InfoBox from '../../modal/swap/InfoBox';
+import { SatsAmount } from 'renderer/components/other/Units';
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -38,7 +39,7 @@ export default function WithdrawWidget() {
         }
         mainContent={
           <Typography variant="h5">
-            {walletBalance === null ? '?' : satsToBtc(walletBalance)} BTC
+            <SatsAmount amount={walletBalance} />
           </Typography>
         }
         icon={<BitcoinIcon />}
