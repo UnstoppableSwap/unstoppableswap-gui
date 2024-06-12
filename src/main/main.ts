@@ -44,13 +44,13 @@ async function installExtensions() {
   return installer
     .default(
       extensions.map((name) => installer[name]),
-      forceDownload
+      forceDownload,
     )
     .catch((e: any) =>
       logger.error(
         { error: e.toString() },
-        'Failed to install browser extensions'
-      )
+        'Failed to install browser extensions',
+      ),
     );
 }
 
@@ -146,8 +146,8 @@ if (gotTheLock) {
     .catch((e) =>
       logger.error(
         { error: (e as Error).toString() },
-        'Failed to fully initiate app'
-      )
+        'Failed to fully initiate app',
+      ),
     );
 } else {
   logger.error('Failed to acquire lock! Exiting...');
@@ -165,25 +165,25 @@ ipcMain.handle('suspend-current-swap', suspendCurrentSwap);
 ipcMain.handle(
   'spawn-buy-xmr',
   (_event, provider, redeemAddress, refundAddress) =>
-    buyXmr(redeemAddress, refundAddress, provider)
+    buyXmr(redeemAddress, refundAddress, provider),
 );
 
 ipcMain.handle('spawn-cancel-refund', (_event, swapId) =>
-  cancelRefundSwap(swapId)
+  cancelRefundSwap(swapId),
 );
 
 ipcMain.handle('spawn-monero-recovery', (_event, swapId) =>
-  getMoneroRecoveryKeys(swapId)
+  getMoneroRecoveryKeys(swapId),
 );
 
 ipcMain.handle('spawn-resume-swap', (_event, swapId) => resumeSwap(swapId));
 
 ipcMain.handle('spawn-withdraw-btc', (_event, address) =>
-  withdrawAllBitcoin(address)
+  withdrawAllBitcoin(address),
 );
 
 ipcMain.handle('spawn-list-sellers', (_event, rendezvousPointAddress) =>
-  listSellers(rendezvousPointAddress)
+  listSellers(rendezvousPointAddress),
 );
 
 ipcMain.handle('spawn-tor', spawnTor);
@@ -191,19 +191,19 @@ ipcMain.handle('spawn-tor', spawnTor);
 ipcMain.handle('stop-tor', stopTor);
 
 ipcMain.handle('get-swap-logs', (_event, swapId) =>
-  getSavedLogsOfSwapId(swapId)
+  getSavedLogsOfSwapId(swapId),
 );
 
 export function sendSnackbarAlertToRenderer(
   message: string,
   variant: string,
   autoHideDuration: number | null,
-  key: string | null
+  key: string | null,
 ) {
   function send() {
     logger.debug(
       { message, variant, autoHideDuration, key },
-      'Attempting to send snackbar alert to renderer'
+      'Attempting to send snackbar alert to renderer',
     );
     if (mainWindow) {
       if (
@@ -211,22 +211,22 @@ export function sendSnackbarAlertToRenderer(
         mainWindow.webContents.isLoading()
       ) {
         logger.debug(
-          'Main window is loading, waiting for it to finish before sending snackbar alert'
+          'Main window is loading, waiting for it to finish before sending snackbar alert',
         );
         mainWindow.webContents.once('did-finish-load', () =>
-          setTimeout(send, 5000)
+          setTimeout(send, 5000),
         );
       } else {
         logger.debug(
           { message, variant, autoHideDuration, key },
-          'Sending snackbar alert to renderer'
+          'Sending snackbar alert to renderer',
         );
         mainWindow?.webContents.send(
           'display-snackbar-alert',
           message,
           variant,
           autoHideDuration,
-          key
+          key,
         );
       }
     } else {

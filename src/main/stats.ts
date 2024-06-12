@@ -26,17 +26,17 @@ export default function initStats() {
       receivedQuoteLog &&
       receivedQuoteProvider &&
       !timestampsOfTransmittedReceivedQuotes.includes(
-        receivedQuoteLog.timestamp
+        receivedQuoteLog.timestamp,
       )
     ) {
       const priceBtc = extractAmountFromUnitString(
-        receivedQuoteLog.fields.price
+        receivedQuoteLog.fields.price,
       );
       const minimumAmountBtc = extractAmountFromUnitString(
-        receivedQuoteLog.fields.minimum_amount
+        receivedQuoteLog.fields.minimum_amount,
       );
       const maximumAmountBtc = extractAmountFromUnitString(
-        receivedQuoteLog.fields.maximum_amount
+        receivedQuoteLog.fields.maximum_amount,
       );
 
       if (priceBtc && minimumAmountBtc && maximumAmountBtc) {
@@ -49,11 +49,11 @@ export default function initStats() {
             },
             priceBtc,
             minimumAmountBtc,
-            maximumAmountBtc
+            maximumAmountBtc,
           )
         ) {
           timestampsOfTransmittedReceivedQuotes.push(
-            receivedQuoteLog.timestamp
+            receivedQuoteLog.timestamp,
           );
         }
       }
@@ -76,7 +76,7 @@ export default function initStats() {
             swapIdHash,
             swap.xmrAmount,
             stateName,
-            firstEnteredDate
+            firstEnteredDate,
           )
         ) {
           transmittedSwapDetails.set(swapIdHash, stateName);

@@ -4,7 +4,7 @@ import { useAppSelector } from 'store/hooks';
 
 export default function MoneroWalletRpcUpdatingAlert() {
   const updateState = useAppSelector(
-    (s) => s.rpc.state.moneroWalletRpc.updateState
+    (s) => s.rpc.state.moneroWalletRpc.updateState,
   );
 
   if (updateState === false) {
@@ -12,7 +12,7 @@ export default function MoneroWalletRpcUpdatingAlert() {
   }
 
   const progress = Number.parseFloat(
-    updateState.progress.substring(0, updateState.progress.length - 1)
+    updateState.progress.substring(0, updateState.progress.length - 1),
   );
 
   return (

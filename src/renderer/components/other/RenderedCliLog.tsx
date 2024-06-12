@@ -69,7 +69,7 @@ export default function CliLogsBox({
       return logs;
     }
     return logs.filter((log) =>
-      JSON.stringify(log).toLowerCase().includes(searchQuery.toLowerCase())
+      JSON.stringify(log).toLowerCase().includes(searchQuery.toLowerCase()),
     );
   }, [logs, searchQuery]);
 
@@ -84,7 +84,7 @@ export default function CliLogsBox({
           <Typography component="pre">{log}</Typography>
         ) : (
           <RenderedCliLog log={log} key={JSON.stringify(log)} />
-        )
+        ),
       )}
     />
   );

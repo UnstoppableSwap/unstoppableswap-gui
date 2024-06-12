@@ -24,17 +24,17 @@ export default function InitPage() {
   const [redeemAddress, setRedeemAddress] = useState(
     isTestnet() && process.env.TESTNET_AUTOFILL_XMR_ADDRESS
       ? process.env.TESTNET_AUTOFILL_XMR_ADDRESS
-      : ''
+      : '',
   );
   const [refundAddress, setRefundAddress] = useState(
     isTestnet() && process.env.TESTNET_AUTOFILL_BTC_ADDRESS
       ? process.env.TESTNET_AUTOFILL_BTC_ADDRESS
-      : ''
+      : '',
   );
   const [redeemAddressValid, setRedeemAddressValid] = useState(false);
   const [refundAddressValid, setRefundAddressValid] = useState(false);
   const selectedProvider = useAppSelector(
-    (state) => state.providers.selectedProvider
+    (state) => state.providers.selectedProvider,
   );
 
   return (

@@ -11,8 +11,8 @@ export function useResumeableSwapsCount() {
   return useAppSelector(
     (state) =>
       Object.values(state.rpc.state.swapInfos).filter(
-        (swapInfo) => !swapInfo.completed
-      ).length
+        (swapInfo) => !swapInfo.completed,
+      ).length,
   );
 }
 
@@ -22,7 +22,7 @@ export function useIsSwapRunning() {
 
 export function useSwapInfo(swapId: string | null) {
   return useAppSelector((state) =>
-    swapId ? state.rpc.state.swapInfos[swapId] ?? null : null
+    swapId ? state.rpc.state.swapInfos[swapId] ?? null : null,
   );
 }
 
@@ -51,6 +51,6 @@ export function useSwapInfosSortedByDate() {
   const swapInfos = useAppSelector((state) => state.rpc.state.swapInfos);
   return sortBy(
     Object.values(swapInfos),
-    (swap) => -parseDateString(swap.startDate)
+    (swap) => -parseDateString(swap.startDate),
   );
 }

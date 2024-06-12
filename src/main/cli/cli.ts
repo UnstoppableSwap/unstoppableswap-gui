@@ -51,19 +51,19 @@ async function attemptKillMoneroWalletRpcProcess() {
     const { stderr, stdout } = await util.promisify(exec)(command);
     logger.debug(
       { stderr, stdout },
-      'Attempted to kill monero-wallet-rpc using command'
+      'Attempted to kill monero-wallet-rpc using command',
     );
   } catch (e) {
     logger.error(
       { e },
-      'Attempted monero-wallet-rpc kill using command failed'
+      'Attempted monero-wallet-rpc kill using command failed',
     );
   }
 }
 
 async function getSpawnArgs(
   subCommand: string,
-  options: { [option: string]: string }
+  options: { [option: string]: string },
 ): Promise<string[]> {
   const cliAppDataDir = await getCliDataBaseDir();
 
@@ -90,7 +90,7 @@ export async function stopCli() {
       } catch (err) {
         logger.error(
           { pid: childPid, err },
-          `Failed to kill children cli process`
+          `Failed to kill children cli process`,
         );
       }
     });
@@ -108,7 +108,7 @@ export async function spawnSubcommand(
   options: { [option: string]: string },
   onLog: ((log: (CliLog | string)[]) => unknown) | null,
   onExit: (code: number | null, signal: NodeJS.Signals | null) => void,
-  onStdOut: ((data: string) => unknown) | null
+  onStdOut: ((data: string) => unknown) | null,
 ): Promise<ChildProcessWithoutNullStreams> {
   /*
   This looks bad, I know
@@ -132,7 +132,7 @@ export async function spawnSubcommand(
               } catch (err) {
                 logger.error(
                   { err, binary },
-                  'Failed to make swap binary executable'
+                  'Failed to make swap binary executable',
                 );
               }
 
@@ -152,7 +152,7 @@ export async function spawnSubcommand(
                       pid: cli.pid,
                       subCommand,
                     },
-                    'Spawned CLI process'
+                    'Spawned CLI process',
                   );
 
                   resolveSpawn(cli);
@@ -163,8 +163,8 @@ export async function spawnSubcommand(
                 cli = null;
                 rejectSpawn(
                   new Error(
-                    `Failed to spawn ${subCommand} Cwd: ${binary.dirPath} Binary: ${binary.fileName} Error: ${e}`
-                  )
+                    `Failed to spawn ${subCommand} Cwd: ${binary.dirPath} Binary: ${binary.fileName} Error: ${e}`,
+                  ),
                 );
                 resolveRunning();
               });
@@ -198,13 +198,13 @@ export async function spawnSubcommand(
               });
             } catch (e) {
               rejectSpawn(
-                new Error(`Failed to spawn ${subCommand} Error: ${e}`)
+                new Error(`Failed to spawn ${subCommand} Error: ${e}`),
               );
               resolveRunning();
             }
-          })
+          }),
       );
-    }
+    },
   );
 }
 
@@ -240,7 +240,7 @@ export async function startRPC() {
     while (isPeriodicRetrievalRunning) {
       // Wait for the next interval before repeating
       await new Promise((resolve) =>
-        setTimeout(resolve, PERIODIC_API_RETRIEVAL_INTERVAL)
+        setTimeout(resolve, PERIODIC_API_RETRIEVAL_INTERVAL),
       );
 
       await getRawSwapInfos();
@@ -283,7 +283,7 @@ export async function startRPC() {
 
       isPeriodicRetrievalRunning = false;
     },
-    null
+    null,
   );
   store.dispatch(rpcInitiate());
 }

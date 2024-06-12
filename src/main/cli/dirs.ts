@@ -147,7 +147,7 @@ export async function getFileData(file: string): Promise<string> {
 }
 
 export default async function getSavedLogsOfSwapId(
-  swapId: string
+  swapId: string,
 ): Promise<CliLog[]> {
   const logsFile = await getCliLogFile();
   const fileData = await getFileData(logsFile);
@@ -175,7 +175,7 @@ export default async function getSavedLogsOfSwapId(
   const allLogs = [...legacyLogs, ...logs, ...rpcProcessLogs];
   const allLogsWithoutDuplicates = uniqBy(
     allLogs,
-    (log) => log.timestamp + log.fields.message
+    (log) => log.timestamp + log.fields.message,
   );
   return allLogsWithoutDuplicates;
 }
@@ -186,6 +186,6 @@ export async function makeFileExecutable(binary: Binary) {
   await chmod(
     fullPath,
     // eslint-disable-next-line no-bitwise
-    mode | constants.S_IXUSR | constants.S_IXGRP | constants.S_IXOTH
+    mode | constants.S_IXUSR | constants.S_IXGRP | constants.S_IXOTH,
   );
 }

@@ -39,7 +39,7 @@ export default function SwapStatePage({
   swapState: SwapState | null;
 }) {
   const isSyncingMoneroWallet = useAppSelector(
-    (state) => state.rpc.state.moneroWallet.isSyncing
+    (state) => state.rpc.state.moneroWallet.isSyncing,
   );
 
   if (isSyncingMoneroWallet) {
@@ -93,8 +93,8 @@ export default function SwapStatePage({
     `No swap state page found for swap state State: ${JSON.stringify(
       swapState,
       null,
-      4
-    )}`
+      4,
+    )}`,
   );
   return (
     <Box>

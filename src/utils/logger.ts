@@ -7,5 +7,5 @@ export default pino(
   },
   pretty({
     colorize: true,
-  })
+  }),
 );

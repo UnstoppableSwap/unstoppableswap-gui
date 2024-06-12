@@ -20,14 +20,14 @@ test('should return null when parsing btc amount with invalid string', () => {
   expect(extractAmountFromUnitString('')).toBeNull();
   expect(extractAmountFromUnitString(null as unknown as string)).toBeNull();
   expect(
-    extractAmountFromUnitString(undefined as unknown as string)
+    extractAmountFromUnitString(undefined as unknown as string),
   ).toBeNull();
 });
 
 test('should parse UTC date string with offset correctly', () => {
   // TODO: Handle timezones properly
   expect(
-    parseDateString('2021-12-29 14:25:59.64082 +00:00:00')
+    parseDateString('2021-12-29 14:25:59.64082 +00:00:00'),
   ).toBeGreaterThan(1640000000000);
 });
 
@@ -41,11 +41,11 @@ test('should extract lines from string and ignore empty oness', () => {
   expect(getLinesOfString(`hello\r\nworld`)).toStrictEqual(['hello', 'world']);
   expect(
     getLinesOfString(`hello
-world`)
+world`),
   ).toStrictEqual(['hello', 'world']);
   expect(
     getLinesOfString(`hello
 
-world`)
+world`),
   ).toStrictEqual(['hello', 'world']);
 });

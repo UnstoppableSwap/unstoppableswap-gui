@@ -36,13 +36,13 @@ export type RawRpcResponseError = {
 export type RawRpcResponse<T> = RawRpcResponseSuccess<T> | RawRpcResponseError;
 
 export function isSuccessResponse<T>(
-  response: RawRpcResponse<T>
+  response: RawRpcResponse<T>,
 ): response is RawRpcResponseSuccess<T> {
   return 'result' in response;
 }
 
 export function isErrorResponse<T>(
-  response: RawRpcResponse<T>
+  response: RawRpcResponse<T>,
 ): response is RawRpcResponseError {
   return 'error' in response;
 }
@@ -88,19 +88,19 @@ export type SwapTimelockInfo =
   | SwapTimelockInfoPunished;
 
 export function isSwapTimelockInfoNone(
-  info: SwapTimelockInfo
+  info: SwapTimelockInfo,
 ): info is SwapTimelockInfoNone {
   return typeof info === 'object' && 'None' in info;
 }
 
 export function isSwapTimelockInfoCancelled(
-  info: SwapTimelockInfo
+  info: SwapTimelockInfo,
 ): info is SwapTimelockInfoCancelled {
   return typeof info === 'object' && 'Cancel' in info;
 }
 
 export function isSwapTimelockInfoPunished(
-  info: SwapTimelockInfo
+  info: SwapTimelockInfo,
 ): info is SwapTimelockInfoPunished {
   return info === 'Punish';
 }
@@ -174,7 +174,7 @@ export type GetSwapInfoResponseRunningSwap = GetSwapInfoResponse & {
 };
 
 export function isSwapStateNameRunningSwap(
-  state: SwapStateName
+  state: SwapStateName,
 ): state is SwapStateNameRunningSwap {
   return ![
     SwapStateName.Started,
@@ -193,7 +193,7 @@ export type SwapStateNameCompletedSwap =
   | SwapStateName.SafelyAborted;
 
 export function isSwapStateNameCompletedSwap(
-  state: SwapStateName
+  state: SwapStateName,
 ): state is SwapStateNameCompletedSwap {
   return [
     SwapStateName.XmrRedeemed,
@@ -223,7 +223,7 @@ The following conditions must be met:
 See: https://github.com/comit-network/xmr-btc-swap/blob/7023e75bb51ab26dff4c8fcccdc855d781ca4b15/swap/src/cli/cancel.rs#L16-L35
  */
 export function isSwapStateNamePossiblyCancellableSwap(
-  state: SwapStateName
+  state: SwapStateName,
 ): state is SwapStateNamePossiblyCancellableSwap {
   return [
     SwapStateName.BtcLocked,
@@ -254,7 +254,7 @@ The following conditions must be met:
 See: https://github.com/comit-network/xmr-btc-swap/blob/7023e75bb51ab26dff4c8fcccdc855d781ca4b15/swap/src/cli/refund.rs#L16-L34
  */
 export function isSwapStateNamePossiblyRefundableSwap(
-  state: SwapStateName
+  state: SwapStateName,
 ): state is SwapStateNamePossiblyRefundableSwap {
   return [
     SwapStateName.BtcLocked,
@@ -273,7 +273,7 @@ export function isSwapStateNamePossiblyRefundableSwap(
  * @param response
  */
 export function isGetSwapInfoResponseRunningSwap(
-  response: GetSwapInfoResponse
+  response: GetSwapInfoResponse,
 ): response is GetSwapInfoResponseRunningSwap {
   return isSwapStateNameRunningSwap(response.stateName);
 }

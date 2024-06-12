@@ -14,7 +14,7 @@ import { updateShownToUser } from 'store/features/updateSlice';
 export default function UpdaterDialog() {
   const dispatch = useAppDispatch();
   const updateNotification: UpdateInfo | null = useAppSelector(
-    (state) => state.update.updateNotification
+    (state) => state.update.updateNotification,
   );
 
   if (updateNotification == null) return null;

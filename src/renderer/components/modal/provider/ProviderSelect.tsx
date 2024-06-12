@@ -30,7 +30,7 @@ export default function ProviderSelect() {
   const classes = useStyles();
   const [selectDialogOpen, setSelectDialogOpen] = useState(false);
   const selectedProvider = useAppSelector(
-    (state) => state.providers.selectedProvider
+    (state) => state.providers.selectedProvider,
   );
 
   if (!selectedProvider) return <>No provider selected</>;

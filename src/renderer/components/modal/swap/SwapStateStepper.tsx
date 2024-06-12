@@ -10,7 +10,7 @@ export enum PathType {
 
 function getActiveStep(
   stateName: SwapStateName | null,
-  processExited: boolean
+  processExited: boolean,
 ): [PathType, number, boolean] {
   switch (stateName) {
     /// // Happy Path

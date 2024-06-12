@@ -18,7 +18,7 @@ const alertsSlice = createSlice({
     },
     removeAlert(slice, action: PayloadAction<number>) {
       slice.alerts = slice.alerts.filter(
-        (alert) => alert.id !== action.payload
+        (alert) => alert.id !== action.payload,
       );
     },
   },

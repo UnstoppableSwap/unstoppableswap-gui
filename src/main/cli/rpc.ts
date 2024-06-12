@@ -64,7 +64,7 @@ export async function makeRpcRequest<T>(
   method: RpcMethod,
   params: jayson.RequestParamsLike,
   logCallback?: (log: CliLog[]) => void,
-  includeGloballyRelevantLogs?: boolean
+  includeGloballyRelevantLogs?: boolean,
 ) {
   return new Promise<T>(async (resolve, reject) => {
     console.time(`makeRpcRequest ${method}`);
@@ -81,7 +81,7 @@ export async function makeRpcRequest<T>(
             (log) =>
               getCliLogSpanLogReferenceId(log) === logReferenceId ||
               (includeGloballyRelevantLogs &&
-                hasCliLogOneOfMultipleSpans(log, GLOBALLY_RELEVANT_SPANS))
+                hasCliLogOneOfMultipleSpans(log, GLOBALLY_RELEVANT_SPANS)),
           );
           if (relevantLogs.length > 0) {
             logCallback(relevantLogs);
@@ -91,19 +91,19 @@ export async function makeRpcRequest<T>(
 
       const response = (await rpcClient.request(
         method,
-        params
+        params,
       )) as RawRpcResponse<T>;
 
       if (isErrorResponse(response)) {
         reject(
           new Error(
-            `RPC request failed Error: ${response.error.message} (Code: ${response.error.code})`
-          )
+            `RPC request failed Error: ${response.error.message} (Code: ${response.error.code})`,
+          ),
         );
       } else {
         logger.debug(
           { method, params, response },
-          'Received RPC response (success)'
+          'Received RPC response (success)',
         );
 
         resolve(response.result);
@@ -120,7 +120,7 @@ export async function makeRpcRequest<T>(
 export async function makeBatchRpcRequest<T>(
   method: RpcMethod,
   params: jayson.RequestParamsLike[],
-  logCallback?: (log: CliLog[]) => void
+  logCallback?: (log: CliLog[]) => void,
 ): Promise<T[]> {
   return new Promise<T[]>(async (resolve, reject) => {
     console.time(`makeRpcRequest ${method} (batch)`);
@@ -137,7 +137,7 @@ export async function makeBatchRpcRequest<T>(
 
       RPC_LOG_EVENT_EMITTER.on((logs) => {
         const relevantLogs = logs.filter(
-          (log) => getCliLogSpanLogReferenceId(log) === logReferenceId
+          (log) => getCliLogSpanLogReferenceId(log) === logReferenceId,
         );
         if (relevantLogs.length > 0) {
           logCallback(relevantLogs);
@@ -146,7 +146,7 @@ export async function makeBatchRpcRequest<T>(
     }
 
     const batch = params.map((param) =>
-      rpcClient.request(method, param, undefined, false)
+      rpcClient.request(method, param, undefined, false),
     );
 
     try {
@@ -158,18 +158,18 @@ export async function makeBatchRpcRequest<T>(
         throw new Error(
           `One or more RPC requests failed Errors: ${errorResponses
             .map((r) => `${r.error.message} (${r.error.code})`)
-            .join(', ')}`
+            .join(', ')}`,
         );
       }
 
       logger.debug(
         { method, length: responses.length },
-        'Received batched RPC response (success)'
+        'Received batched RPC response (success)',
       );
 
       // Because we know that all responses are successful, we can cast them to RawRpcResponseSuccess
       const results = (responses as RawRpcResponseSuccess<T>[]).map(
-        (r) => r.result
+        (r) => r.result,
       );
       resolve(results);
     } catch (e) {
@@ -182,7 +182,7 @@ export async function makeBatchRpcRequest<T>(
 }
 
 function providerFromGetSellerResponse(
-  providerResponse: SwapSellerInfo
+  providerResponse: SwapSellerInfo,
 ): Provider {
   const multiAddr = new Multiaddr(providerResponse.addresses[0])
     .decapsulate('p2p')
@@ -200,7 +200,7 @@ export async function checkBitcoinBalance(forceRefresh: boolean) {
     RpcMethod.GET_BTC_BALANCE,
     {
       force_refresh: forceRefresh,
-    }
+    },
   );
   store.dispatch(rpcSetBalance(response.balance));
 }
@@ -210,7 +210,7 @@ export async function getMoneroRecoveryKeys(swapId: string) {
     RpcMethod.GET_MONERO_RECOVERY_KEYS,
     {
       swap_id: swapId,
-    }
+    },
   );
   store.dispatch(rpcSetMoneroRecoveryKeys([swapId, response]));
 }
@@ -221,7 +221,7 @@ export async function withdrawAllBitcoin(address: string) {
     RpcMethod.WITHDRAW_BTC,
     {
       address,
-    }
+    },
   );
   await checkBitcoinBalance(true);
   store.dispatch(rpcSetWithdrawTxId(response.txid));
@@ -234,25 +234,25 @@ export async function getSwapInfo(swapId: string) {
 }
 
 export async function getSwapInfoBatch(
-  swapIds: string[]
+  swapIds: string[],
 ): Promise<GetSwapInfoResponse[]> {
   return makeBatchRpcRequest<GetSwapInfoResponse>(
     RpcMethod.GET_SWAP_INFO,
-    swapIds.map((swapId) => ({ swap_id: swapId }))
+    swapIds.map((swapId) => ({ swap_id: swapId })),
   );
 }
 
 export async function buyXmr(
   redeemAddress: string,
   refundAddress: string,
-  provider: Provider
+  provider: Provider,
 ) {
   store.dispatch(
     swapInitiate({
       provider,
       spawnType: SwapSpawnType.INIT,
       swapId: null,
-    })
+    }),
   );
 
   try {
@@ -268,10 +268,10 @@ export async function buyXmr(
           swapAddLog({
             logs,
             isFromRestore: false,
-          })
+          }),
         );
       },
-      true
+      true,
     );
   } catch (e) {
     store.dispatch(swapProcessExited((e as Error).toString()));
@@ -287,7 +287,7 @@ export async function cancelRefundSwap(swapId: string) {
     swapAddLog({
       logs: previousLogs,
       isFromRestore: true,
-    })
+    }),
   );
 
   store.dispatch(
@@ -295,7 +295,7 @@ export async function cancelRefundSwap(swapId: string) {
       provider: providerFromGetSellerResponse(swapInfo.seller),
       spawnType: SwapSpawnType.CANCEL_REFUND,
       swapId,
-    })
+    }),
   );
 
   await makeRpcRequest(
@@ -308,10 +308,10 @@ export async function cancelRefundSwap(swapId: string) {
         swapAddLog({
           logs,
           isFromRestore: false,
-        })
+        }),
       );
     },
-    true
+    true,
   );
 }
 
@@ -324,14 +324,14 @@ export async function resumeSwap(swapId: string) {
       provider: providerFromGetSellerResponse(swapInfo.seller),
       spawnType: SwapSpawnType.RESUME,
       swapId,
-    })
+    }),
   );
 
   store.dispatch(
     swapAddLog({
       logs: previousLogs,
       isFromRestore: true,
-    })
+    }),
   );
 
   await makeRpcRequest(
@@ -344,21 +344,21 @@ export async function resumeSwap(swapId: string) {
         swapAddLog({
           logs,
           isFromRestore: false,
-        })
+        }),
       );
     },
-    true
+    true,
   );
 }
 
 export async function listSellers(
-  rendezvousPointAddress: string
+  rendezvousPointAddress: string,
 ): Promise<number> {
   const response = await makeRpcRequest<{ sellers: RpcSellerStatus[] }>(
     RpcMethod.LIST_SELLERS,
     {
       rendezvous_point: rendezvousPointAddress,
-    }
+    },
   );
   const reachableSellers: ProviderStatus[] = response.sellers
     .map((s) => {
@@ -389,7 +389,7 @@ export async function suspendCurrentSwap() {
       swapAddLog({
         logs,
         isFromRestore: false,
-      })
+      }),
     );
   });
 }
@@ -397,7 +397,7 @@ export async function suspendCurrentSwap() {
 export async function getAllSwapIds(): Promise<string[]> {
   const result = await makeRpcRequest<GetHistoryResponse>(
     RpcMethod.GET_HISTORY,
-    {}
+    {},
   );
   return result.swaps.map((swap) => swap[0]);
 }

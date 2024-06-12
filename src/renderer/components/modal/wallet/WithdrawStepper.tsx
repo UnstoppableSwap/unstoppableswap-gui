@@ -4,7 +4,7 @@ import { RpcMethod } from 'models/rpcModel';
 
 function getActiveStep(
   isWithdrawInProgress: boolean,
-  withdrawTxId: string | null
+  withdrawTxId: string | null,
 ) {
   if (isWithdrawInProgress) {
     return 1;

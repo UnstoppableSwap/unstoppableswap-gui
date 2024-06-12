@@ -21,7 +21,7 @@ export function createMainListeners() {
       const logs = action.payload.logs as CliLog[];
       const advancedStateIndicationLog = logs.find(
         (log) =>
-          isCliLogAdvancingState(log) || isCliLogReleasingSwapLockLog(log)
+          isCliLogAdvancingState(log) || isCliLogReleasingSwapLockLog(log),
       );
 
       // Here we check if we got a new "Advancing state" or a "Releasing swap lock" log
@@ -33,7 +33,7 @@ export function createMainListeners() {
         if (swapId) {
           logger.debug(
             { swapId },
-            'Fetching swap infos because a new "Advancing state" or "Releasing swap lock" log was found'
+            'Fetching swap infos because a new "Advancing state" or "Releasing swap lock" log was found',
           );
           await getRawSwapInfo(swapId);
         }

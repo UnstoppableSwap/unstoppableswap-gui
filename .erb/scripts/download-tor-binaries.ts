@@ -14,7 +14,7 @@ async function makeFileExecutable(binary: Binary) {
   await chmod(
     fullPath,
     // eslint-disable-next-line no-bitwise
-    mode | constants.S_IXUSR | constants.S_IXGRP | constants.S_IXOTH
+    mode | constants.S_IXUSR | constants.S_IXGRP | constants.S_IXOTH,
   );
 }
 
@@ -56,7 +56,7 @@ emptyDir(torBuildDir, (error) => {
             dirPath: binary[0],
             fileName: binary[1],
           });
-        })
+        }),
       );
     } else {
       console.log('Tor binaries download failed!');
@@ -66,7 +66,7 @@ emptyDir(torBuildDir, (error) => {
 
   ls.on('spawn', () => {
     console.log(
-      `Downloading precompiled tor binaries from ${TOR_BINARIES_GIT_URL}`
+      `Downloading precompiled tor binaries from ${TOR_BINARIES_GIT_URL}`,
     );
   });
 });

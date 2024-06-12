@@ -12,7 +12,7 @@ export function providerToConcatenatedMultiAddr(provider: Provider) {
 }
 
 export function isProviderCompatible(
-  provider: ExtendedProviderStatus
+  provider: ExtendedProviderStatus,
 ): boolean {
   if (provider.version) {
     if (!semver.satisfies(provider.version, `>=${MIN_ASB_VERSION}`))

@@ -11,7 +11,7 @@ export default function IpcSnackbar() {
       message: string,
       variant: any,
       autoHideDuration: number | null,
-      key: string | null
+      key: string | null,
     ) {
       enqueueSnackbar(message, {
         variant,

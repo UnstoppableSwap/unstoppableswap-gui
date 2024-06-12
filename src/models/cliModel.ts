@@ -39,7 +39,7 @@ export interface CliLogStartedRpcServer extends CliLog {
 }
 
 export function isCliLogStartedRpcServer(
-  log: CliLog
+  log: CliLog,
 ): log is CliLogStartedRpcServer {
   return log.fields.message === 'Started RPC server';
 }
@@ -52,7 +52,7 @@ export interface CliLogReleasingSwapLockLog extends CliLog {
 }
 
 export function isCliLogReleasingSwapLockLog(
-  log: CliLog
+  log: CliLog,
 ): log is CliLogReleasingSwapLockLog {
   return log.fields.message === 'Releasing swap lock';
 }
@@ -76,7 +76,7 @@ export interface CliLogAcquiringSwapLockLog extends CliLog {
 }
 
 export function isCliLogAcquiringSwapLockLog(
-  log: CliLog
+  log: CliLog,
 ): log is CliLogAcquiringSwapLockLog {
   return log.fields.message === 'Acquiring swap lock';
 }
@@ -109,7 +109,7 @@ export interface CliLogWaitingForBtcDeposit extends CliLog {
 }
 
 export function isCliLogWaitingForBtcDeposit(
-  log: CliLog
+  log: CliLog,
 ): log is CliLogWaitingForBtcDeposit {
   return log.fields.message === 'Waiting for Bitcoin deposit';
 }
@@ -135,7 +135,7 @@ export interface CliLogDeterminedSwapAmount extends CliLog {
 }
 
 export function isCliLogDeterminedSwapAmount(
-  log: CliLog
+  log: CliLog,
 ): log is CliLogDeterminedSwapAmount {
   return log.fields.message === 'Determined swap amount';
 }
@@ -160,7 +160,7 @@ export interface CliLogPublishedBtcTx extends CliLog {
 }
 
 export function isCliLogPublishedBtcTx(
-  log: CliLog
+  log: CliLog,
 ): log is CliLogPublishedBtcTx {
   return log.fields.message === 'Published Bitcoin transaction';
 }
@@ -186,7 +186,7 @@ export interface CliLogBtcTxStatusChanged extends CliLog {
 }
 
 export function isCliLogBtcTxStatusChanged(
-  log: CliLog
+  log: CliLog,
 ): log is CliLogBtcTxStatusChanged {
   return log.fields.message === 'Bitcoin transaction status changed';
 }
@@ -199,7 +199,7 @@ export interface CliLogAliceLockedXmr extends CliLog {
 }
 
 export function isCliLogAliceLockedXmr(
-  log: CliLog
+  log: CliLog,
 ): log is CliLogAliceLockedXmr {
   return log.fields.message === 'Alice locked Monero';
 }
@@ -214,7 +214,7 @@ export interface CliLogReceivedXmrLockTxConfirmation extends CliLog {
 }
 
 export function isCliLogReceivedXmrLockTxConfirmation(
-  log: CliLog
+  log: CliLog,
 ): log is CliLogReceivedXmrLockTxConfirmation {
   return log.fields.message === 'Received new confirmation for Monero lock tx';
 }
@@ -240,7 +240,7 @@ export interface CliLogAdvancingState extends CliLog {
 }
 
 export function isCliLogAdvancingState(
-  log: CliLog
+  log: CliLog,
 ): log is CliLogAdvancingState {
   return log.fields.message === 'Advancing state';
 }
@@ -264,7 +264,7 @@ export interface YouHaveBeenPunishedCliLog extends CliLog {
 }
 
 export function isYouHaveBeenPunishedCliLog(
-  log: CliLog
+  log: CliLog,
 ): log is YouHaveBeenPunishedCliLog {
   return (
     log.fields.message === 'You have been punished for not refunding in time'
@@ -287,14 +287,14 @@ export function getCliLogSpanLogReferenceId(log: CliLog): string | null {
   return (
     getCliLogSpanAttribute<string>(log, 'log_reference_id')?.replace(
       /"/g,
-      ''
+      '',
     ) || null
   );
 }
 
 export function hasCliLogOneOfMultipleSpans(
   log: CliLog,
-  spanNames: string[]
+  spanNames: string[],
 ): boolean {
   return log.spans?.some((s) => spanNames.includes(s.name)) ?? false;
 }
@@ -307,7 +307,7 @@ export interface CliLogStartedSyncingMoneroWallet extends CliLog {
 }
 
 export function isCliLogStartedSyncingMoneroWallet(
-  log: CliLog
+  log: CliLog,
 ): log is CliLogStartedSyncingMoneroWallet {
   return log.fields.message === 'Syncing Monero wallet';
 }
@@ -326,13 +326,13 @@ export interface CliLogFailedToSyncMoneroWallet extends CliLog {
 }
 
 export function isCliLogFailedToSyncMoneroWallet(
-  log: CliLog
+  log: CliLog,
 ): log is CliLogFailedToSyncMoneroWallet {
   return log.fields.message === 'Failed to sync Monero wallet';
 }
 
 export function isCliLogFinishedSyncingMoneroWallet(
-  log: CliLog
+  log: CliLog,
 ): log is CliLogFinishedSyncingMoneroWallet {
   return log.fields.message === 'Monero wallet synced';
 }
@@ -347,7 +347,7 @@ export interface CliLogDownloadingMoneroWalletRpc extends CliLog {
 }
 
 export function isCliLogDownloadingMoneroWalletRpc(
-  log: CliLog
+  log: CliLog,
 ): log is CliLogDownloadingMoneroWalletRpc {
   return log.fields.message === 'Downloading monero-wallet-rpc';
 }
@@ -376,7 +376,7 @@ export interface CliLogGotNotificationForNewBlock extends CliLog {
 }
 
 export function isCliLogGotNotificationForNewBlock(
-  log: CliLog
+  log: CliLog,
 ): log is CliLogGotNotificationForNewBlock {
   return log.fields.message === 'Got notification for new block';
 }

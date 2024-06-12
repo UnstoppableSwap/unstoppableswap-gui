@@ -20,14 +20,14 @@ interface ClientToServerEvents {
     provider: Provider,
     priceBtc: number,
     minimumAmountBtc: number,
-    maximumAmountBtc: number
+    maximumAmountBtc: number,
   ) => void;
   'swap-details-updated': (
     swapIdHash: string,
     provider: Provider,
     amount: number,
     stateType: string,
-    firstEnteredDate: number
+    firstEnteredDate: number,
   ) => void;
 }
 
@@ -56,10 +56,10 @@ function getAgent(): SocksProxyAgent | false {
         proxyHostname: proxyStatus.proxyHostname,
         proxyPort: proxyStatus.proxyPort,
       },
-      'Using Tor as a SOCKS proxy for the UnstoppableSwap Socket API'
+      'Using Tor as a SOCKS proxy for the UnstoppableSwap Socket API',
     );
     return new SocksProxyAgent(
-      `socks5://${proxyStatus.proxyHostname}:${proxyStatus.proxyPort}`
+      `socks5://${proxyStatus.proxyHostname}:${proxyStatus.proxyPort}`,
     );
   }
 
@@ -69,7 +69,7 @@ function getAgent(): SocksProxyAgent | false {
 export default function initSocket() {
   if (globalSocket !== null && globalSocket[0].connected) {
     logger.warn(
-      'Skipping UnstoppableSwap Socket initialization because we already have a running socket that is connected'
+      'Skipping UnstoppableSwap Socket initialization because we already have a running socket that is connected',
     );
     return;
   }
@@ -86,7 +86,7 @@ export default function initSocket() {
       },
       // We need to do this because for some reason the typedef of agent here is string and not https.Agent
       agent: agent as unknown as string,
-    }
+    },
   );
 
   globalSocket = [socket, agent === false ? null : agent.proxy];
@@ -97,7 +97,7 @@ export default function initSocket() {
       path: socket.io.opts.path,
       agent,
     },
-    `Connecting to UnstoppableSwap Socket API`
+    `Connecting to UnstoppableSwap Socket API`,
   );
 
   socket.on('connect', () => {
@@ -106,7 +106,7 @@ export default function initSocket() {
         host: socket.io.opts.hostname,
         path: socket.io.opts.path,
       },
-      `Connected to UnstoppableSwap Socket API`
+      `Connected to UnstoppableSwap Socket API`,
     );
 
     connectionErrorsDisplayedToUser = [];
@@ -118,7 +118,7 @@ export default function initSocket() {
         host: socket.io.opts.hostname,
         path: socket.io.opts.path,
       },
-      `Disconnected from UnstoppableSwap Socket API`
+      `Disconnected from UnstoppableSwap Socket API`,
     );
   });
 
@@ -131,7 +131,7 @@ export default function initSocket() {
         path: socket.io.opts.path,
         err,
       },
-      `Failed to connect to UnstoppableSwap Socket API`
+      `Failed to connect to UnstoppableSwap Socket API`,
     );
 
     const errMessage = err.message;
@@ -140,7 +140,7 @@ export default function initSocket() {
         `Failed to connect to public registry (${errMessage})`,
         'error',
         10000,
-        `${err.message}`
+        `${err.message}`,
       );
 
       connectionErrorsDisplayedToUser.push(errMessage);
@@ -173,7 +173,7 @@ export default function initSocket() {
         availableProxyStatus.bootstrapped
       ) {
         logger.info(
-          'Detected that the Tor SOCKS proxy is now available, reconnecting the UnstoppableSwap Socket API'
+          'Detected that the Tor SOCKS proxy is now available, reconnecting the UnstoppableSwap Socket API',
         );
         return reconnect();
       }
@@ -181,7 +181,7 @@ export default function initSocket() {
       // We have a SOCKS proxy in use but it is no longer available
       if (socksProxyInUse !== null && availableProxyStatus === false) {
         logger.info(
-          'Detected that the Tor SOCKS proxy is no longer available, reconnecting the UnstoppableSwap Socket API'
+          'Detected that the Tor SOCKS proxy is no longer available, reconnecting the UnstoppableSwap Socket API',
         );
         return reconnect();
       }
@@ -200,7 +200,7 @@ export default function initSocket() {
         ) {
           logger.info(
             { socksProxyInUse, proxyStatus: availableProxyStatus },
-            'Detected that the Tor SOCKS proxy has changed or has become available, reconnecting the UnstoppableSwap Socket API'
+            'Detected that the Tor SOCKS proxy has changed or has become available, reconnecting the UnstoppableSwap Socket API',
           );
           return reconnect();
         }
@@ -213,7 +213,7 @@ export function transmitReceivedQuoteFromProvider(
   provider: Provider,
   priceBtc: number,
   minimumAmountBtc: number,
-  maximumAmountBtc: number
+  maximumAmountBtc: number,
 ): boolean {
   const socket = getSocket();
   if (getSocketProxyInUse() == null || !socket) {
@@ -227,7 +227,7 @@ export function transmitReceivedQuoteFromProvider(
     provider,
     priceBtc,
     minimumAmountBtc,
-    maximumAmountBtc
+    maximumAmountBtc,
   );
 
   return true;
@@ -238,7 +238,7 @@ export function transmitSwapDetailsUpdated(
   swapIdHash: string,
   amount: number,
   stateType: string,
-  firstEnteredDate: number
+  firstEnteredDate: number,
 ): boolean {
   const socket = getSocket();
   if (getSocketProxyInUse() == null || !socket) {
@@ -253,7 +253,7 @@ export function transmitSwapDetailsUpdated(
     provider,
     amount,
     stateType,
-    firstEnteredDate
+    firstEnteredDate,
   );
 
   return true;

@@ -22,14 +22,14 @@ export function parseDateString(str: string): number {
   const parts = str.split(' ').slice(0, -1);
   if (parts.length !== 2) {
     throw new Error(
-      `Date string does not consist solely of date and time Str: ${str} Parts: ${parts}`
+      `Date string does not consist solely of date and time Str: ${str} Parts: ${parts}`,
     );
   }
   const wholeString = parts.join(' ');
   const date = Date.parse(wholeString);
   if (Number.isNaN(date)) {
     throw new Error(
-      `Date string could not be parsed Str: ${str} Parts: ${parts}`
+      `Date string could not be parsed Str: ${str} Parts: ${parts}`,
     );
   }
   return date;
@@ -45,7 +45,7 @@ export function getLinesOfString(data: string): string[] {
 }
 
 export function getLogsAndStringsFromRawFileString(
-  rawFileData: string
+  rawFileData: string,
 ): (CliLog | string)[] {
   return getLinesOfString(rawFileData).map((line) => {
     try {

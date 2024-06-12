@@ -12,7 +12,7 @@ async function makeFileExecutable(binary: Binary) {
   await chmod(
     fullPath,
     // eslint-disable-next-line no-bitwise
-    mode | constants.S_IXUSR | constants.S_IXGRP | constants.S_IXOTH
+    mode | constants.S_IXUSR | constants.S_IXGRP | constants.S_IXOTH,
   );
 }
 
@@ -50,7 +50,10 @@ Promise.all(
 
     // Append the prefix to the binary filename
     const newFilename = `${CLI_FILE_NAME_VERSION_PREFIX}${binary.filename}`;
-    await move(join(binary.dest, binary.filename), join(binary.dest, newFilename));
+    await move(
+      join(binary.dest, binary.filename),
+      join(binary.dest, newFilename),
+    );
     binary.filename = newFilename;
 
     // Chmod binary in the directory to make them executable
@@ -60,7 +63,7 @@ Promise.all(
     });
 
     console.log(`Downloaded and extracted ${binary.url} to ${binary.dest}`);
-  })
+  }),
 )
   .then(() => {
     console.log(`Successfully downloaded ${binaries.length} swap binaries!`);

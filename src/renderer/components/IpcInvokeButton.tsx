@@ -90,7 +90,7 @@ export default function IpcInvokeButton<T>({
     setHasMinLoadingTimePassed(false);
     setTimeout(
       () => setHasMinLoadingTimePassed(true),
-      DELAY_BEFORE_SHOWING_LOADING_MS
+      DELAY_BEFORE_SHOWING_LOADING_MS,
     );
   }, [isPending]);
 

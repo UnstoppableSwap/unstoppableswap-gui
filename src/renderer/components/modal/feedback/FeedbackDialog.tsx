@@ -28,7 +28,7 @@ async function submitFeedback(body: string, swapId: string | number) {
     const swapInfo = store.getState().rpc.state.swapInfos[swapId];
     const logs = (await ipcRenderer.invoke(
       'get-swap-logs',
-      swapId
+      swapId,
     )) as CliLog[];
 
     if (swapInfo === undefined) {
@@ -57,7 +57,7 @@ function SwapSelectDropDown({
   setSelectedSwap: (swapId: string | number) => void;
 }) {
   const swaps = useAppSelector((state) =>
-    Object.values(state.rpc.state.swapInfos)
+    Object.values(state.rpc.state.swapInfos),
   );
 
   return (

@@ -85,11 +85,11 @@ function HasProviderSwapWidget({
   const classes = useStyles();
 
   const forceShowDialog = useAppSelector((state) =>
-    isSwapState(state.swap.state)
+    isSwapState(state.swap.state),
   );
   const [showDialog, setShowDialog] = useState(false);
   const [btcFieldValue, setBtcFieldValue] = useState<number | string>(
-    satsToBtc(selectedProvider.minSwapAmount)
+    satsToBtc(selectedProvider.minSwapAmount),
   );
   const [xmrFieldValue, setXmrFieldValue] = useState(1);
 
@@ -115,12 +115,12 @@ function HasProviderSwapWidget({
     }
     if (parsedBtcAmount < satsToBtc(selectedProvider.minSwapAmount)) {
       return `The minimum swap amount is ${satsToBtc(
-        selectedProvider.minSwapAmount
+        selectedProvider.minSwapAmount,
       )} BTC`;
     }
     if (parsedBtcAmount > satsToBtc(selectedProvider.maxSwapAmount)) {
       return `The maximum swap amount is ${satsToBtc(
-        selectedProvider.maxSwapAmount
+        selectedProvider.maxSwapAmount,
       )} BTC`;
     }
     return null;
@@ -178,12 +178,12 @@ function HasProviderSwapWidget({
 
 function HasNoProvidersSwapWidget() {
   const forceShowDialog = useAppSelector((state) =>
-    isSwapState(state.swap.state)
+    isSwapState(state.swap.state),
   );
   const isPublicRegistryDown = useAppSelector((state) =>
     isRegistryDown(
-      state.providers.registry.failedReconnectAttemptsSinceLastSuccess
-    )
+      state.providers.registry.failedReconnectAttemptsSinceLastSuccess,
+    ),
   );
   const classes = useStyles();
 
@@ -253,15 +253,15 @@ function ProviderLoadingSwapWidget() {
 
 export default function SwapWidget() {
   const selectedProvider = useAppSelector(
-    (state) => state.providers.selectedProvider
+    (state) => state.providers.selectedProvider,
   );
   // If we fail more than RECONNECTION_ATTEMPTS_UNTIL_ASSUME_DOWN reconnect attempts, we'll show the "no providers" widget. We can assume the public registry is down.
   const providerLoading = useAppSelector(
     (state) =>
       state.providers.registry.providers === null &&
       !isRegistryDown(
-        state.providers.registry.failedReconnectAttemptsSinceLastSuccess
-      )
+        state.providers.registry.failedReconnectAttemptsSinceLastSuccess,
+      ),
   );
 
   if (providerLoading) {

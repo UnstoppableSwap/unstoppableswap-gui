@@ -134,7 +134,7 @@ export const rpcSlice = createSlice({
       action: PayloadAction<{
         exitCode: number | null;
         exitSignal: NodeJS.Signals | null;
-      }>
+      }>,
     ) {
       if (
         slice.process.type === RpcProcessStateType.STARTED ||
@@ -161,7 +161,7 @@ export const rpcSlice = createSlice({
     },
     rpcSetRendezvousDiscoveredProviders(
       slice,
-      action: PayloadAction<(ExtendedProviderStatus | ProviderStatus)[]>
+      action: PayloadAction<(ExtendedProviderStatus | ProviderStatus)[]>,
     ) {
       slice.state.rendezvous_discovered_sellers = action.payload;
     },
@@ -184,7 +184,7 @@ export const rpcSlice = createSlice({
     },
     rpcSetMoneroRecoveryKeys(
       slice,
-      action: PayloadAction<[string, MoneroRecoveryResponse]>
+      action: PayloadAction<[string, MoneroRecoveryResponse]>,
     ) {
       const swapId = action.payload[0];
       const keys = action.payload[1];

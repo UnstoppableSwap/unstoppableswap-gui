@@ -17,7 +17,7 @@ export async function fetchAlertsViaHttp(): Promise<Alert[]> {
 
 export async function submitFeedbackViaHttp(
   body: string,
-  attachedData: string
+  attachedData: string,
 ): Promise<string> {
   type Response = {
     feedbackId: string;
@@ -43,7 +43,7 @@ export async function submitFeedbackViaHttp(
 async function fetchCurrencyUsdPrice(currency: string): Promise<number> {
   try {
     const response = await fetch(
-      `https://api.coingecko.com/api/v3/simple/price?ids=${currency}&vs_currencies=usd`
+      `https://api.coingecko.com/api/v3/simple/price?ids=${currency}&vs_currencies=usd`,
     );
     const data = await response.json();
     return data[currency].usd;

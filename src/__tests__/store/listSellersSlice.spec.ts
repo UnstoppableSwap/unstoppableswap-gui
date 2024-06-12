@@ -60,8 +60,8 @@ describe('testnet', () => {
     expect(
       reducer(
         initialState,
-        setRegistryProviders([exampleMainnetProvider, exampleTestnetProvider])
-      )
+        setRegistryProviders([exampleMainnetProvider, exampleTestnetProvider]),
+      ),
     ).toMatchObject({
       registry: {
         providers: [exampleTestnetProvider],
@@ -81,8 +81,8 @@ describe('mainnet', () => {
     expect(
       reducer(
         initialState,
-        setRegistryProviders([exampleMainnetProvider, exampleTestnetProvider])
-      )
+        setRegistryProviders([exampleMainnetProvider, exampleTestnetProvider]),
+      ),
     ).toMatchObject({
       registry: {
         providers: [exampleMainnetProvider],

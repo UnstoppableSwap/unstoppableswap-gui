@@ -59,7 +59,7 @@ export const torSlice = createSlice({
       action: PayloadAction<{
         exitCode: number | null;
         exitSignal: NodeJS.Signals | null;
-      }>
+      }>,
     ) {
       slice.processRunning = false;
       slice.exitCode = action.payload.exitCode;

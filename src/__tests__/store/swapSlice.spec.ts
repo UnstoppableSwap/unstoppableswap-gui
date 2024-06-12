@@ -42,7 +42,7 @@ const mPublishedBtcRefundTxLog: CliLog = require('../mock_cli_logs/cli_log_publi
 
 function testChainedReducer(
   initialState: SwapSlice,
-  states: [AnyAction, unknown][]
+  states: [AnyAction, unknown][],
 ) {
   let state = initialState;
 

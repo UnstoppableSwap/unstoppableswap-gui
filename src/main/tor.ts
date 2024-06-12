@@ -59,7 +59,7 @@ export async function spawnTor(): Promise<void> {
         const text = Buffer.from(data).toString();
         store.dispatch(torAppendStdOut(text));
         logger.debug({ text }, `Tor stdout/stderr`);
-      })
+      }),
     );
   });
 }

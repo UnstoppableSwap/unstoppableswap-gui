@@ -110,7 +110,7 @@ export default function ListSellersDialog({
               clickable
               label={`${rAddress.substring(
                 0,
-                Math.min(rAddress.length - 1, 20)
+                Math.min(rAddress.length - 1, 20),
               )}...`}
               onClick={() => setRendezvousAddress(rAddress)}
             />

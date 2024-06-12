@@ -18,7 +18,7 @@ render(
   <Provider store={store}>
     <App />
   </Provider>,
-  document.getElementById('root')
+  document.getElementById('root'),
 );
 
 async function fetchInitialData() {
@@ -28,7 +28,7 @@ async function fetchInitialData() {
 
     logger.info(
       { providerList },
-      'Fetched providers via UnstoppableSwap HTTP API'
+      'Fetched providers via UnstoppableSwap HTTP API',
     );
   } catch (e) {
     logger.error(e, 'Failed to fetch providers via UnstoppableSwap HTTP API');

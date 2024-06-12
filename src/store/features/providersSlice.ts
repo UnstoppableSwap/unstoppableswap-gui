@@ -30,7 +30,7 @@ const initialState: ProvidersSlice = {
 
 function selectNewSelectedProvider(
   slice: ProvidersSlice,
-  peerId?: string
+  peerId?: string,
 ): ProviderStatus {
   const selectedPeerId = peerId || slice.selectedProvider?.peerId;
 
@@ -49,20 +49,20 @@ export const providersSlice = createSlice({
   reducers: {
     discoveredProvidersByRendezvous(
       slice,
-      action: PayloadAction<ProviderStatus[]>
+      action: PayloadAction<ProviderStatus[]>,
     ) {
       action.payload.forEach((discoveredProvider) => {
         if (
           !slice.registry.providers?.some(
             (prov) =>
               prov.peerId === discoveredProvider.peerId &&
-              prov.multiAddr === discoveredProvider.multiAddr
+              prov.multiAddr === discoveredProvider.multiAddr,
           )
         ) {
           const indexOfExistingProvider = slice.rendezvous.providers.findIndex(
             (prov) =>
               prov.peerId === discoveredProvider.peerId &&
-              prov.multiAddr === discoveredProvider.multiAddr
+              prov.multiAddr === discoveredProvider.multiAddr,
           );
 
           // Avoid duplicates, replace instead
@@ -79,14 +79,14 @@ export const providersSlice = createSlice({
     },
     setRegistryProviders(
       slice,
-      action: PayloadAction<ExtendedProviderStatus[]>
+      action: PayloadAction<ExtendedProviderStatus[]>,
     ) {
       if (stubTestnetProvider) {
         action.payload.push(stubTestnetProvider);
       }
 
       slice.registry.providers = sortProviderList(action.payload).filter(
-        isProviderCompatible
+        isProviderCompatible,
       );
       slice.selectedProvider = selectNewSelectedProvider(slice);
     },
@@ -97,11 +97,11 @@ export const providersSlice = createSlice({
       slice,
       action: PayloadAction<{
         peerId: string;
-      }>
+      }>,
     ) {
       slice.selectedProvider = selectNewSelectedProvider(
         slice,
-        action.payload.peerId
+        action.payload.peerId,
       );
     },
   },

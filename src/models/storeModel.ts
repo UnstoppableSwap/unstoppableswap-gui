@@ -44,7 +44,7 @@ export interface SwapStateInitiated extends SwapState {
 }
 
 export function isSwapStateInitiated(
-  state?: SwapState | null
+  state?: SwapState | null,
 ): state is SwapStateInitiated {
   return state?.type === SwapStateType.INITIATED;
 }
@@ -57,7 +57,7 @@ export interface SwapStateReceivedQuote extends SwapState {
 }
 
 export function isSwapStateReceivedQuote(
-  state?: SwapState | null
+  state?: SwapState | null,
 ): state is SwapStateReceivedQuote {
   return state?.type === SwapStateType.RECEIVED_QUOTE;
 }
@@ -75,7 +75,7 @@ export interface SwapStateWaitingForBtcDeposit extends SwapState {
 }
 
 export function isSwapStateWaitingForBtcDeposit(
-  state?: SwapState | null
+  state?: SwapState | null,
 ): state is SwapStateWaitingForBtcDeposit {
   return state?.type === SwapStateType.WAITING_FOR_BTC_DEPOSIT;
 }
@@ -89,7 +89,7 @@ export interface SwapStateStarted extends SwapState {
 }
 
 export function isSwapStateStarted(
-  state?: SwapState | null
+  state?: SwapState | null,
 ): state is SwapStateStarted {
   return state?.type === SwapStateType.STARTED;
 }
@@ -101,7 +101,7 @@ export interface SwapStateBtcLockInMempool extends SwapState {
 }
 
 export function isSwapStateBtcLockInMempool(
-  state?: SwapState | null
+  state?: SwapState | null,
 ): state is SwapStateBtcLockInMempool {
   return state?.type === SwapStateType.BTC_LOCK_TX_IN_MEMPOOL;
 }
@@ -113,7 +113,7 @@ export interface SwapStateXmrLockInMempool extends SwapState {
 }
 
 export function isSwapStateXmrLockInMempool(
-  state?: SwapState | null
+  state?: SwapState | null,
 ): state is SwapStateXmrLockInMempool {
   return state?.type === SwapStateType.XMR_LOCK_TX_IN_MEMPOOL;
 }
@@ -123,7 +123,7 @@ export interface SwapStateXmrLocked extends SwapState {
 }
 
 export function isSwapStateXmrLocked(
-  state?: SwapState | null
+  state?: SwapState | null,
 ): state is SwapStateXmrLocked {
   return state?.type === SwapStateType.XMR_LOCKED;
 }
@@ -133,7 +133,7 @@ export interface SwapStateBtcRedemeed extends SwapState {
 }
 
 export function isSwapStateBtcRedemeed(
-  state?: SwapState | null
+  state?: SwapState | null,
 ): state is SwapStateBtcRedemeed {
   return state?.type === SwapStateType.BTC_REDEEMED;
 }
@@ -145,7 +145,7 @@ export interface SwapStateXmrRedeemInMempool extends SwapState {
 }
 
 export function isSwapStateXmrRedeemInMempool(
-  state?: SwapState | null
+  state?: SwapState | null,
 ): state is SwapStateXmrRedeemInMempool {
   return state?.type === SwapStateType.XMR_REDEEM_IN_MEMPOOL;
 }
@@ -156,7 +156,7 @@ export interface SwapStateBtcCancelled extends SwapState {
 }
 
 export function isSwapStateBtcCancelled(
-  state?: SwapState | null
+  state?: SwapState | null,
 ): state is SwapStateBtcCancelled {
   return state?.type === SwapStateType.BTC_CANCELLED;
 }
@@ -167,7 +167,7 @@ export interface SwapStateBtcRefunded extends SwapState {
 }
 
 export function isSwapStateBtcRefunded(
-  state?: SwapState | null
+  state?: SwapState | null,
 ): state is SwapStateBtcRefunded {
   return state?.type === SwapStateType.BTC_REFUNDED;
 }
@@ -177,7 +177,7 @@ export interface SwapStateBtcPunished extends SwapState {
 }
 
 export function isSwapStateBtcPunished(
-  state?: SwapState | null
+  state?: SwapState | null,
 ): state is SwapStateBtcPunished {
   return state?.type === SwapStateType.BTC_PUNISHED;
 }
@@ -189,7 +189,7 @@ export interface SwapStateProcessExited extends SwapState {
 }
 
 export function isSwapStateProcessExited(
-  state?: SwapState | null
+  state?: SwapState | null,
 ): state is SwapStateProcessExited {
   return state?.type === SwapStateType.PROCESS_EXITED;
 }

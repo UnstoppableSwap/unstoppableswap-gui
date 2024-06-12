@@ -60,7 +60,7 @@ export const swapSlice = createSlice({
   reducers: {
     swapAddLog(
       slice,
-      action: PayloadAction<{ logs: CliLog[]; isFromRestore: boolean }>
+      action: PayloadAction<{ logs: CliLog[]; isFromRestore: boolean }>,
     ) {
       const { logs } = action.payload;
       slice.logs.push(...logs);
@@ -76,10 +76,10 @@ export const swapSlice = createSlice({
         } else if (isCliLogReceivedQuote(log)) {
           const price = extractAmountFromUnitString(log.fields.price);
           const minimumSwapAmount = extractAmountFromUnitString(
-            log.fields.minimum_amount
+            log.fields.minimum_amount,
           );
           const maximumSwapAmount = extractAmountFromUnitString(
-            log.fields.maximum_amount
+            log.fields.maximum_amount,
           );
 
           if (
@@ -98,22 +98,22 @@ export const swapSlice = createSlice({
           }
         } else if (isCliLogWaitingForBtcDeposit(log)) {
           const maxGiveable = extractAmountFromUnitString(
-            log.fields.max_giveable
+            log.fields.max_giveable,
           );
           const minDeposit = extractAmountFromUnitString(
-            log.fields.min_deposit_until_swap_will_start
+            log.fields.min_deposit_until_swap_will_start,
           );
           const maxDeposit = extractAmountFromUnitString(
-            log.fields.max_deposit_until_maximum_amount_is_reached
+            log.fields.max_deposit_until_maximum_amount_is_reached,
           );
           const minimumAmount = extractAmountFromUnitString(
-            log.fields.minimum_amount
+            log.fields.minimum_amount,
           );
           const maximumAmount = extractAmountFromUnitString(
-            log.fields.maximum_amount
+            log.fields.maximum_amount,
           );
           const minBitcoinLockTxFee = extractAmountFromUnitString(
-            log.fields.min_bitcoin_lock_tx_fee
+            log.fields.min_bitcoin_lock_tx_fee,
           );
           const price = extractAmountFromUnitString(log.fields.price);
 
@@ -198,7 +198,7 @@ export const swapSlice = createSlice({
               if (newStatusText.startsWith('confirmed with')) {
                 const confirmations = Number.parseInt(
                   newStatusText.split(' ')[2],
-                  10
+                  10,
                 );
 
                 slice.state.bobBtcLockTxConfirmations = confirmations;
@@ -218,7 +218,7 @@ export const swapSlice = createSlice({
             if (slice.state.aliceXmrLockTxId === log.fields.txid) {
               slice.state.aliceXmrLockTxConfirmations = Number.parseInt(
                 log.fields.seen_confirmations,
-                10
+                10,
               );
             }
           }
@@ -280,7 +280,7 @@ export const swapSlice = createSlice({
         provider: Provider | null;
         spawnType: SwapSpawnType;
         swapId: string | null;
-      }>
+      }>,
     ) {
       const nextState: SwapStateInitiated = {
         type: SwapStateType.INITIATED,

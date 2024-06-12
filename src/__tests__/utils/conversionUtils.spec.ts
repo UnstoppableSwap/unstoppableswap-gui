@@ -29,19 +29,19 @@ test('should compute correct btc mainnet txid blockexplorer url', () => {
   expect(
     getBitcoinTxExplorerUrl(
       '9667aa63c2bd953b33de5ebc283ff483a65234b3115a53ccae9cc82371e211dd',
-      false
-    )
+      false,
+    ),
   ).toBe(
-    'https://blockchair.com/bitcoin/transaction/9667aa63c2bd953b33de5ebc283ff483a65234b3115a53ccae9cc82371e211dd'
+    'https://blockchair.com/bitcoin/transaction/9667aa63c2bd953b33de5ebc283ff483a65234b3115a53ccae9cc82371e211dd',
   );
 
   expect(
     getBitcoinTxExplorerUrl(
       'adacf40f257376fd29531bb08fad8e5450f857f82a31438e15054d2b6404113e',
-      false
-    )
+      false,
+    ),
   ).toBe(
-    'https://blockchair.com/bitcoin/transaction/adacf40f257376fd29531bb08fad8e5450f857f82a31438e15054d2b6404113e'
+    'https://blockchair.com/bitcoin/transaction/adacf40f257376fd29531bb08fad8e5450f857f82a31438e15054d2b6404113e',
   );
 });
 
@@ -49,19 +49,19 @@ test('should compute correct btc testnet txid blockexplorer url', () => {
   expect(
     getBitcoinTxExplorerUrl(
       'c70b2ae3a2397c340df99da61ae36bfaa2523f4dd9a9cdd3283f6505eb346869',
-      true
-    )
+      true,
+    ),
   ).toBe(
-    'https://blockchair.com/bitcoin/testnet/transaction/c70b2ae3a2397c340df99da61ae36bfaa2523f4dd9a9cdd3283f6505eb346869'
+    'https://blockchair.com/bitcoin/testnet/transaction/c70b2ae3a2397c340df99da61ae36bfaa2523f4dd9a9cdd3283f6505eb346869',
   );
 
   expect(
     getBitcoinTxExplorerUrl(
       '2fcfbc4f61a6657d043e2236315a1e7a1c3d13820165d4f887ffe4acac81a1df',
-      true
-    )
+      true,
+    ),
   ).toBe(
-    'https://blockchair.com/bitcoin/testnet/transaction/2fcfbc4f61a6657d043e2236315a1e7a1c3d13820165d4f887ffe4acac81a1df'
+    'https://blockchair.com/bitcoin/testnet/transaction/2fcfbc4f61a6657d043e2236315a1e7a1c3d13820165d4f887ffe4acac81a1df',
   );
 });
 
@@ -69,19 +69,19 @@ test('should compute correct xmr mainnet txid blockexplorer url', () => {
   expect(
     getMoneroTxExplorerUrl(
       'cdcbef3d1e4653eda2ab67901d5e66d1d9fc7624079b2910b5c9aff58e954238',
-      false
-    )
+      false,
+    ),
   ).toBe(
-    'https://xmrchain.net/tx/cdcbef3d1e4653eda2ab67901d5e66d1d9fc7624079b2910b5c9aff58e954238'
+    'https://xmrchain.net/tx/cdcbef3d1e4653eda2ab67901d5e66d1d9fc7624079b2910b5c9aff58e954238',
   );
 
   expect(
     getMoneroTxExplorerUrl(
       '443bec12b0589ff9feb8e7fd8fb08c1a24d755e901b0d8a7197807613b9ff391',
-      false
-    )
+      false,
+    ),
   ).toBe(
-    'https://xmrchain.net/tx/443bec12b0589ff9feb8e7fd8fb08c1a24d755e901b0d8a7197807613b9ff391'
+    'https://xmrchain.net/tx/443bec12b0589ff9feb8e7fd8fb08c1a24d755e901b0d8a7197807613b9ff391',
   );
 });
 
@@ -89,19 +89,19 @@ test('should compute correct xmr testnet txid blockexplorer url', () => {
   expect(
     getMoneroTxExplorerUrl(
       '59e02e88fca6edbdafbddb97a87dc6f616eae2059e44207918c6c9f91a261117',
-      true
-    )
+      true,
+    ),
   ).toBe(
-    'https://stagenet.xmrchain.net/tx/59e02e88fca6edbdafbddb97a87dc6f616eae2059e44207918c6c9f91a261117'
+    'https://stagenet.xmrchain.net/tx/59e02e88fca6edbdafbddb97a87dc6f616eae2059e44207918c6c9f91a261117',
   );
 
   expect(
     getMoneroTxExplorerUrl(
       'a358cac3efacd939821977357acaa32f2d571bb332bf306376f35f2eb415ba1a',
-      true
-    )
+      true,
+    ),
   ).toBe(
-    'https://stagenet.xmrchain.net/tx/a358cac3efacd939821977357acaa32f2d571bb332bf306376f35f2eb415ba1a'
+    'https://stagenet.xmrchain.net/tx/a358cac3efacd939821977357acaa32f2d571bb332bf306376f35f2eb415ba1a',
   );
 });
 
@@ -110,15 +110,15 @@ describe('xmr address validation', () => {
     expect(
       isXmrAddressValid(
         '59McWTPGc745SRWrSMoh8oTjoXoQq6sPUgKZ66dQWXuKFQ2q19h9gvhJNZcFTizcnT12r63NFgHiGd6gBCjabzmzHAMoyD6',
-        true
-      )
+        true,
+      ),
     ).toBe(true);
 
     expect(
       isXmrAddressValid(
         '59McWTPGc745SRWrSMoh8oTjoXoQq6sPUgKZ66dQWXuKFQ2q19h9gvhJNZcFTizcnT12r63NFgHiGd6gBCjabzmzHAMoyD6',
-        false
-      )
+        false,
+      ),
     ).toBe(false);
   });
 
@@ -126,15 +126,15 @@ describe('xmr address validation', () => {
     expect(
       isXmrAddressValid(
         '73a4nWuvkYoYoksGurDjKZQcZkmaxLaKbbeiKzHnMmqKivrCzq5Q2JtJG1UZNZFqLPbQ3MiXCk2Q5bdwdUNSr7X9QrPubkn',
-        true
-      )
+        true,
+      ),
     ).toBe(true);
 
     expect(
       isXmrAddressValid(
         '73a4nWuvkYoYoksGurDjKZQcZkmaxLaKbbeiKzHnMmqKivrCzq5Q2JtJG1UZNZFqLPbQ3MiXCk2Q5bdwdUNSr7X9QrPubkn',
-        false
-      )
+        false,
+      ),
     ).toBe(false);
   });
 
@@ -142,15 +142,15 @@ describe('xmr address validation', () => {
     expect(
       isXmrAddressValid(
         '4AdUndXHHZ6cfufTMvppY6JwXNouMBzSkbLYfpAV5Usx3skxNgYeYTRj5UzqtReoS44qo9mtmXCqY45DJ852K5Jv2684Rge',
-        false
-      )
+        false,
+      ),
     ).toBe(true);
 
     expect(
       isXmrAddressValid(
         '4AdUndXHHZ6cfufTMvppY6JwXNouMBzSkbLYfpAV5Usx3skxNgYeYTRj5UzqtReoS44qo9mtmXCqY45DJ852K5Jv2684Rge',
-        true
-      )
+        true,
+      ),
     ).toBe(false);
   });
 
@@ -158,15 +158,15 @@ describe('xmr address validation', () => {
     expect(
       isXmrAddressValid(
         '87jS4C7ngk9EHdqFFuxGFgg8AyH63dRUoULshWDybFJaP75UA89qsutG5B1L1QTc4w228nsqsv8EjhL7bz8fB3611Mh98mg',
-        false
-      )
+        false,
+      ),
     ).toBe(true);
 
     expect(
       isXmrAddressValid(
         '87jS4C7ngk9EHdqFFuxGFgg8AyH63dRUoULshWDybFJaP75UA89qsutG5B1L1QTc4w228nsqsv8EjhL7bz8fB3611Mh98mg',
-        true
-      )
+        true,
+      ),
     ).toBe(false);
   });
 
@@ -174,15 +174,15 @@ describe('xmr address validation', () => {
     expect(
       isXmrAddressValid(
         '9nWuvkYoYoksGurDjKZQcZkmaxLaKbbeiKzHnMmqKivrCzq5Q2JtJG1UZNZFqLPbQ3MiXCk2Q5bdwdUNSr7X9QrPubkn',
-        true
-      )
+        true,
+      ),
     ).toBe(false);
 
     expect(
       isXmrAddressValid(
         '9nWuvkYoYoksGurDjKZQcZkmaxLaKbbeiKzHnMmqKivrCzq5Q2JtJG1UZNZFqLPbQ3MiXCk2Q5bdwdUNSr7X9QrPubkn',
-        false
-      )
+        false,
+      ),
     ).toBe(false);
   });
 });
@@ -190,55 +190,55 @@ describe('xmr address validation', () => {
 describe('btc address validation', () => {
   test('should detect valid mainnet bech32 address to be valid for mainnet and invalid for testnet', () => {
     expect(
-      isBtcAddressValid('bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq', false)
+      isBtcAddressValid('bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq', false),
     ).toBe(true);
     expect(
-      isBtcAddressValid('bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq', true)
+      isBtcAddressValid('bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq', true),
     ).toBe(false);
   });
 
   test('should detect valid testnet bech32 address to be valid for testnet and invalid for mainnet', () => {
     expect(
-      isBtcAddressValid('tb1qw508d6qejxtdg4y5r3zarvary0c5xw7kxpjzsx', true)
+      isBtcAddressValid('tb1qw508d6qejxtdg4y5r3zarvary0c5xw7kxpjzsx', true),
     ).toBe(true);
     expect(
-      isBtcAddressValid('tb1qw508d6qejxtdg4y5r3zarvary0c5xw7kxpjzsx', false)
+      isBtcAddressValid('tb1qw508d6qejxtdg4y5r3zarvary0c5xw7kxpjzsx', false),
     ).toBe(false);
   });
 
   test('should detect valid testnet p2pkh address to be invalid for testnet and mainnet', () => {
     expect(isBtcAddressValid('mipcBbFg9gMiCh81Kj8tqqdgoZub1ZJRfn', true)).toBe(
-      false
+      false,
     );
     expect(isBtcAddressValid('mipcBbFg9gMiCh81Kj8tqqdgoZub1ZJRfn', false)).toBe(
-      false
+      false,
     );
   });
 
   test('should detect valid mainnet p2pkh address to be invalid for testnet and mainnet', () => {
     expect(isBtcAddressValid('17VZNX1SN5NtKa8UQFxwQbFeFc3iqRYhem', true)).toBe(
-      false
+      false,
     );
     expect(isBtcAddressValid('17VZNX1SN5NtKa8UQFxwQbFeFc3iqRYhem', false)).toBe(
-      false
+      false,
     );
   });
 
   test('should detect valid testnet p2sh address to be invalid for testnet and mainnet', () => {
     expect(isBtcAddressValid('2MzQwSSnBHWHqSAqtTVQ6v47XtaisrJa1Vc', true)).toBe(
-      false
+      false,
     );
     expect(
-      isBtcAddressValid('2MzQwSSnBHWHqSAqtTVQ6v47XtaisrJa1Vc', false)
+      isBtcAddressValid('2MzQwSSnBHWHqSAqtTVQ6v47XtaisrJa1Vc', false),
     ).toBe(false);
   });
 
   test('should detect valid mainnet p2sh address to be invalid for testnet and mainnet', () => {
     expect(isBtcAddressValid('3EktnHQD7RiAE6uzMj2ZifT9YgRrkSgzQX', true)).toBe(
-      false
+      false,
     );
     expect(isBtcAddressValid('3EktnHQD7RiAE6uzMj2ZifT9YgRrkSgzQX', false)).toBe(
-      false
+      false,
     );
   });
 
