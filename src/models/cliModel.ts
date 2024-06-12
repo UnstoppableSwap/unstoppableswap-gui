@@ -334,7 +334,7 @@ export function isCliLogFailedToSyncMoneroWallet(
 export function isCliLogFinishedSyncingMoneroWallet(
   log: CliLog
 ): log is CliLogFinishedSyncingMoneroWallet {
-  return log.fields.message === 'Synced Monero wallet';
+  return log.fields.message === 'Monero wallet synced';
 }
 
 export interface CliLogDownloadingMoneroWalletRpc extends CliLog {
