@@ -16,7 +16,7 @@ async function makeFileExecutable(binary: Binary) {
   );
 }
 
-const CLI_VERSION = '0.13.0';
+const CLI_VERSION = '0.13.1';
 
 const binaries = [
   {
