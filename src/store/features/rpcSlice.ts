@@ -8,26 +8,28 @@ import {
 } from '../../models/rpcModel';
 import {
   CliLog,
+  isCliLog,
   isCliLogDownloadingMoneroWalletRpc,
   isCliLogFailedToSyncMoneroWallet,
   isCliLogFinishedSyncingMoneroWallet,
   isCliLogStartedRpcServer,
   isCliLogStartedSyncingMoneroWallet,
 } from '../../models/cliModel';
+import { getLogsAndStringsFromRawFileString } from 'utils/parseUtils';
 
 type Process =
   | {
       type: RpcProcessStateType.STARTED;
-      stdOut: string;
+      logs: (CliLog | string)[];
     }
   | {
       type: RpcProcessStateType.LISTENING_FOR_CONNECTIONS;
-      stdOut: string;
+      logs: (CliLog | string)[];
       address: string;
     }
   | {
       type: RpcProcessStateType.EXITED;
-      stdOut: string;
+      logs: (CliLog | string)[];
       exitCode: number | null;
     }
   | {
@@ -88,42 +90,42 @@ export const rpcSlice = createSlice({
         slice.process.type === RpcProcessStateType.STARTED ||
         slice.process.type === RpcProcessStateType.LISTENING_FOR_CONNECTIONS
       ) {
-        slice.process.stdOut += action.payload;
-      }
-    },
-    rpcAddLogs(slice, action: PayloadAction<CliLog[]>) {
-      action.payload.forEach((log) => {
-        if (
-          isCliLogStartedRpcServer(log) &&
-          slice.process.type === RpcProcessStateType.STARTED
-        ) {
-          slice.process = {
-            type: RpcProcessStateType.LISTENING_FOR_CONNECTIONS,
-            stdOut: slice.process.stdOut,
-            address: log.fields.addr,
-          };
-        } else if (isCliLogDownloadingMoneroWalletRpc(log)) {
-          slice.state.moneroWalletRpc.updateState = {
-            progress: log.fields.progress,
-            downloadUrl: log.fields.download_url,
-          };
+        const logs = getLogsAndStringsFromRawFileString(action.payload);
+        slice.process.logs.push(...logs);
 
-          if (log.fields.progress === '100%') {
-            slice.state.moneroWalletRpc.updateState = false;
+        logs.filter(isCliLog).forEach((log) => {
+          if (
+            isCliLogStartedRpcServer(log) &&
+            slice.process.type === RpcProcessStateType.STARTED
+          ) {
+            slice.process = {
+              type: RpcProcessStateType.LISTENING_FOR_CONNECTIONS,
+              logs: slice.process.logs,
+              address: log.fields.addr,
+            };
+          } else if (isCliLogDownloadingMoneroWalletRpc(log)) {
+            slice.state.moneroWalletRpc.updateState = {
+              progress: log.fields.progress,
+              downloadUrl: log.fields.download_url,
+            };
+  
+            if (log.fields.progress === '100%') {
+              slice.state.moneroWalletRpc.updateState = false;
+            }
+          } else if (isCliLogStartedSyncingMoneroWallet(log)) {
+            slice.state.moneroWallet.isSyncing = true;
+          } else if (isCliLogFinishedSyncingMoneroWallet(log)) {
+            slice.state.moneroWallet.isSyncing = false;
+          } else if (isCliLogFailedToSyncMoneroWallet(log)) {
+            slice.state.moneroWallet.isSyncing = false;
           }
-        } else if (isCliLogStartedSyncingMoneroWallet(log)) {
-          slice.state.moneroWallet.isSyncing = true;
-        } else if (isCliLogFinishedSyncingMoneroWallet(log)) {
-          slice.state.moneroWallet.isSyncing = false;
-        } else if (isCliLogFailedToSyncMoneroWallet(log)) {
-          slice.state.moneroWallet.isSyncing = false;
-        }
-      });
+        });
+      }
     },
     rpcInitiate(slice) {
       slice.process = {
         type: RpcProcessStateType.STARTED,
-        stdOut: '',
+        logs: [],
       };
     },
     rpcProcessExited(
@@ -139,7 +141,7 @@ export const rpcSlice = createSlice({
       ) {
         slice.process = {
           type: RpcProcessStateType.EXITED,
-          stdOut: slice.process.stdOut,
+          logs: slice.process.logs,
           exitCode: action.payload.exitCode,
         };
         slice.state.moneroWalletRpc = {
@@ -200,7 +202,6 @@ export const rpcSlice = createSlice({
 export const {
   rpcProcessExited,
   rpcAppendStdOut,
-  rpcAddLogs,
   rpcInitiate,
   rpcSetBalance,
   rpcSetWithdrawTxId,

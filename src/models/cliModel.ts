@@ -367,3 +367,16 @@ export interface CliLogDownloadingMoneroWalletRpc extends CliLog {
     download_url: string;
   };
 }
+
+export interface CliLogGotNotificationForNewBlock extends CliLog {
+  fields: {
+    message: 'Got notification for new block';
+    block_height: string;
+  };
+}
+
+export function isCliLogGotNotificationForNewBlock(
+  log: CliLog
+): log is CliLogGotNotificationForNewBlock {
+  return log.fields.message === 'Got notification for new block';
+}

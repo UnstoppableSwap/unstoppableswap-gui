@@ -29,7 +29,7 @@ export default function RpcControlBox() {
         isRunning || rpcProcess.type === RpcProcessStateType.EXITED ? (
           <CliLogsBox
             label="Swap Daemon Logs (current session only)"
-            logs={getLogsAndStringsFromRawFileString(rpcProcess.stdOut)}
+            logs={rpcProcess.logs}
           />
         ) : null
       }

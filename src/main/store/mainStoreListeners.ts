@@ -1,9 +1,10 @@
 import { createListenerMiddleware } from '@reduxjs/toolkit';
-import { getRawSwapInfo } from '../cli/rpc';
+import { getRawSwapInfo, getRawSwapInfos } from '../cli/rpc';
 import {
   CliLog,
   getCliLogSpanSwapId,
   isCliLogAdvancingState,
+  isCliLogGotNotificationForNewBlock,
   isCliLogReleasingSwapLockLog,
 } from '../../models/cliModel';
 import logger from '../../utils/logger';
@@ -36,6 +37,23 @@ export function createMainListeners() {
           );
           await getRawSwapInfo(swapId);
         }
+      }
+    },
+  });
+
+  // Listener for "Got notification for new Block" log
+  // If we get a new block, we fetch all swap infos because the state of the timelocks might have changed
+  listener.startListening({
+    predicate: (action) => {
+      return action.type === 'rpc/rpcAddLog';
+    },
+    effect: async (action) => {
+      const logs = action.payload.logs as CliLog[];
+      const newBlockLog = logs.find(isCliLogGotNotificationForNewBlock);
+
+      if (newBlockLog) {
+        logger.debug('Fetching all swap infos because a new block was found');
+        await getRawSwapInfos();
       }
     },
   });

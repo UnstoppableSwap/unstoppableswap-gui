@@ -160,14 +160,11 @@ export default async function getSavedLogsOfSwapId(
 
   const rpcProcess = store.getState().rpc.process;
   const currentProcessLogs =
-    rpcProcess.type === RpcProcessStateType.NOT_STARTED
-      ? ''
-      : rpcProcess.stdOut;
-  const rpcProcessLogs = getLogsFromRawFileString(currentProcessLogs).filter(
-    (log) => {
-      return getCliLogSpanSwapId(log) === swapId;
-    }
-  );
+    rpcProcess.type === RpcProcessStateType.NOT_STARTED ? [] : rpcProcess.logs;
+
+  const rpcProcessLogs = currentProcessLogs.filter((log): log is CliLog => {
+    return typeof log !== 'string' && getCliLogSpanSwapId(log) === swapId;
+  });
 
   const allLogs = [...legacyLogs, ...logs, ...rpcProcessLogs];
   const allLogsWithoutDuplicates = uniqBy(

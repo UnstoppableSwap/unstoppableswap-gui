@@ -13,7 +13,6 @@ import { store } from 'main/store/mainStore';
 import { swapProcessExited } from 'store/features/swapSlice';
 import { RpcProcessStateType } from 'models/rpcModel';
 import {
-  rpcAddLogs,
   rpcAppendStdOut,
   rpcInitiate,
   rpcProcessExited,
@@ -104,7 +103,7 @@ export async function stopCli() {
 export async function spawnSubcommand(
   subCommand: string,
   options: { [option: string]: string },
-  onLog: (log: CliLog[]) => void,
+  onLog: (log: CliLog[]) => unknown | null,
   onExit: (code: number | null, signal: NodeJS.Signals | null) => void,
   onStdOut: (data: string) => void
 ): Promise<ChildProcessWithoutNullStreams> {
@@ -185,9 +184,11 @@ export async function spawnSubcommand(
                   onStdOut(data);
 
                   logger.debug({ subCommand, data }, `CLI stdout`);
-                  const logs = getLogsFromRawFileString(data);
 
-                  onLog(logs);
+                  if(onLog != null) {
+                    const logs = getLogsFromRawFileString(data);
+                    onLog(logs);
+                  }
                 });
               });
             } catch (e) {
@@ -258,7 +259,6 @@ export async function startRPC() {
       'server-address': `${RPC_BIND_HOST}:${RPC_BIND_PORT}`,
     },
     async (logs) => {
-      store.dispatch(rpcAddLogs(logs));
       RPC_LOG_EVENT_EMITTER.emit(logs);
 
       const processType = store.getState().rpc.process.type;
