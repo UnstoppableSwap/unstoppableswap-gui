@@ -1,0 +1,5 @@
+owner: UnstoppableSwap
+repo: unstoppableswap-gui
+provider: github
+releaseType: prerelease
+updaterCacheDirName: unstoppableswap-gui-updater

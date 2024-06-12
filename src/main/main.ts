@@ -33,6 +33,7 @@ import {
   suspendCurrentSwap,
   withdrawAllBitcoin,
 } from './cli/rpc';
+import initAutoUpdater from './updater';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -140,6 +141,7 @@ if (gotTheLock) {
         await spawnTor();
       }
 
+      initAutoUpdater();
       return 0;
     })
     .catch((e) =>

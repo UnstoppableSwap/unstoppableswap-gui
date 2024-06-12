@@ -1,20 +1,13 @@
-import { autoUpdater } from 'electron-updater';
-import { BrowserWindow, dialog } from 'electron';
+import { UpdateInfo, autoUpdater } from 'electron-updater';
 import logger from '../utils/logger';
+import { isDevelopment } from 'store/config';
+import { updateReceived } from 'store/features/updateSlice';
+import { store } from './store/mainStore';
 
-export default async function initAutoUpdater(mainWindow: BrowserWindow) {
-  autoUpdater.on('update-downloaded', (info: any) => {
-    logger.info({ info }, 'Update downloaded');
-  });
-  autoUpdater.on('update-available', (info: any) => {
-    if (mainWindow === null) {
-      return;
-    }
-    dialog.showMessageBoxSync(mainWindow, {
-      title: 'Update available',
-      message: `Version ${info.version} is available. We recommend you update now by downloading the latest release from https://unstoppableswap.net/`,
-      type: 'info',
-    });
+export default async function initAutoUpdater() {
+  autoUpdater.on('update-available', (info: UpdateInfo) => {
+    store.dispatch(updateReceived(info));
+    logger.info({ info }, 'Update available');
   });
   autoUpdater.on('update-not-available', (info: any) => {
     logger.info({ info }, 'Update not available');
@@ -29,7 +22,12 @@ export default async function initAutoUpdater(mainWindow: BrowserWindow) {
   autoUpdater.autoDownload = false;
   autoUpdater.allowPrerelease = false;
 
-  logger.info('Starting auto updater');
+  // This is for development purposes only. It will force the auto updater to use the dev-app-update.yml file for updates.
+  if(isDevelopment) {
+    autoUpdater.forceDevUpdateConfig = true;
+    autoUpdater.allowDowngrade = true;
+  }
 
-  await autoUpdater.checkForUpdatesAndNotify();
+  logger.info('Starting auto updater');
+  await autoUpdater.checkForUpdates();
 }
