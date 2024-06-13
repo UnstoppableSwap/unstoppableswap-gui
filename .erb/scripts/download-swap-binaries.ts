@@ -62,7 +62,7 @@ Promise.all(
       fileName: binary.filename,
     });
 
-    console.log(`Downloaded and extracted ${binary.url} to ${binary.dest}`);
+    console.log(`Downloaded and extracted ${binary.url} to ${binary.dest} as ${binary.fileName}`);
   }),
 )
   .then(() => {
