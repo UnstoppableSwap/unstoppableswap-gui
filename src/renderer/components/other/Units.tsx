@@ -25,7 +25,9 @@ export function AmountWithUnit({
       }
     >
       <span>
-        {amount != null ? Number.parseFloat(amount.toFixed(fixedPrecision)) : '?'}{' '}
+        {amount != null
+          ? Number.parseFloat(amount.toFixed(fixedPrecision))
+          : '?'}{' '}
         {unit}
       </span>
     </Tooltip>

@@ -47,13 +47,13 @@ export default function UpdaterDialog() {
           released on{' '}
           {new Date(updateNotification.releaseDate).toLocaleDateString()}.
           <br />
-          Updating ensures you have the latest improvements and security fixes. Please visit the release page, download one of the files listed below, and install it manually.
+          Updating ensures you have the latest improvements and security fixes.
+          Please visit the release page, download one of the files listed below,
+          and install it manually.
           <Typography variant="caption">
             <ul style={{ padding: '0', paddingLeft: '1rem' }}>
               {updateNotification.files.map((file) => (
-                <li key={file.url}>
-                  {file.url}
-                </li>
+                <li key={file.url}>{file.url}</li>
               ))}
             </ul>
           </Typography>
