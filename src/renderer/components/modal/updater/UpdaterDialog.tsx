@@ -6,8 +6,9 @@ import {
   DialogContentText,
   DialogActions,
   Button,
+  Typography,
 } from '@material-ui/core';
-import { UpdateInfo } from 'electron-updater';
+import { UpdateFileInfo, UpdateInfo } from 'electron-updater';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { updateShownToUser } from 'store/features/updateSlice';
 
@@ -23,18 +24,19 @@ export default function UpdaterDialog() {
     dispatch(updateShownToUser());
   }
 
+  const releasePageUrl = `https://github.com/UnstoppableSwap/unstoppableswap-gui/releases/tag/v${
+    updateNotification!.version
+  }/`;
+
   function openDownloadUrl() {
-    const downloadUrl = `https://github.com/UnstoppableSwap/unstoppableswap-gui/releases/tag/v${
-      updateNotification!.version
-    }`;
-    window.open(downloadUrl, '_blank');
+    window.open(releasePageUrl, '_blank');
     hideNotification();
   }
 
   return (
     <Dialog
       fullWidth
-      maxWidth="xs"
+      maxWidth="sm"
       open={Boolean(updateNotification)}
       onClose={() => hideNotification()}
     >
@@ -44,9 +46,17 @@ export default function UpdaterDialog() {
           A new version (v{updateNotification.version}) of the software was
           released on{' '}
           {new Date(updateNotification.releaseDate).toLocaleDateString()}.
-          Please download and install the update manually to benefit from new
-          features and enhancements. Staying updated ensures you have the latest
-          improvements and security fixes.
+          <br />
+          Updating ensures you have the latest improvements and security fixes. Please visit the release page, download one of the files listed below, and install it manually.
+          <Typography variant="caption">
+            <ul style={{ padding: '0', paddingLeft: '1rem' }}>
+              {updateNotification.files.map((file) => (
+                <li key={file.url}>
+                  {file.url}
+                </li>
+              ))}
+            </ul>
+          </Typography>
         </DialogContentText>
       </DialogContent>
       <DialogActions>
@@ -63,7 +73,7 @@ export default function UpdaterDialog() {
           onClick={openDownloadUrl}
           color="primary"
         >
-          Download
+          OPEN DOWNLOAD PAGE
         </Button>
       </DialogActions>
     </Dialog>
