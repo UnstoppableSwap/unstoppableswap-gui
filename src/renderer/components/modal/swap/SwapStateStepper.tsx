@@ -1,4 +1,5 @@
 import { Step, StepLabel, Stepper, Typography } from '@material-ui/core';
+import { SwapSpawnType } from 'models/cliModel';
 import { SwapStateName } from 'models/rpcModel';
 import { useActiveSwapInfo, useAppSelector } from 'store/hooks';
 import { exhaustiveGuard } from 'utils/typescriptUtils';
@@ -14,15 +15,17 @@ function getActiveStep(
 ): [PathType, number, boolean] {
   switch (stateName) {
     /// // Happy Path
-    // Step: 1 (Waiting for Bitcoin Lock confirmation and XMR Lock Publication)
-    // These are the states where we have not yet locked the Bitcoin
-    // or we have only just published the Bitcoin lock transaction
+    // Step: 0 (Waiting for Bitcoin lock tx to be published)
     case null:
       return [PathType.HAPPY_PATH, 0, false];
     case SwapStateName.Started:
     case SwapStateName.SwapSetupCompleted:
-    case SwapStateName.BtcLocked:
       return [PathType.HAPPY_PATH, 0, processExited];
+
+    // Step: 1 (Waiting for Bitcoin Lock confirmation and XMR Lock Publication)
+    // We have locked the Bitcoin and are waiting for the other party to lock their XMR
+    case SwapStateName.BtcLocked:
+      return [PathType.HAPPY_PATH, 1, processExited];
 
     // Step: 2 (Waiting for XMR Lock confirmation)
     // We have locked the Bitcoin and the other party has locked their XMR
@@ -146,9 +149,15 @@ function UnhappyPathStepper({
 }
 
 export default function SwapStateStepper() {
+  const currentSwapSpawnType = useAppSelector((s) => s.swap.spawnType);
   const stateName = useActiveSwapInfo()?.stateName ?? null;
   const processExited = useAppSelector((s) => !s.swap.processRunning);
   const [pathType, activeStep, error] = getActiveStep(stateName, processExited);
+
+  // If the current swap is being manually cancelled and refund, we want to show the unhappy path even though the current state is not a "unhappy" state
+  if (currentSwapSpawnType === SwapSpawnType.CANCEL_REFUND) {
+    return <UnhappyPathStepper activeStep={0} error={error} />;
+  }
 
   if (pathType === PathType.HAPPY_PATH) {
     return <HappyPathStepper activeStep={activeStep} error={error} />;
