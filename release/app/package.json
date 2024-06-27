@@ -1,6 +1,6 @@
 {
   "name": "unstoppableswap-gui",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Graphical User Interface for XMR<>BTC Atomic Swaps",
   "main": "./dist/main/main.js",
   "scripts": {
