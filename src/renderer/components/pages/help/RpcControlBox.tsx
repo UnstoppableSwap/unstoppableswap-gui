@@ -7,11 +7,13 @@ import { RpcProcessStateType } from 'models/rpcModel';
 import { getLogsAndStringsFromRawFileString } from 'utils/parseUtils';
 import InfoBox from '../../modal/swap/InfoBox';
 import CliLogsBox from '../../other/RenderedCliLog';
+import FolderOpenIcon from '@material-ui/icons/FolderOpen';
 
 const useStyles = makeStyles((theme) => ({
   actionsOuter: {
     display: 'flex',
     gap: theme.spacing(1),
+    alignItems: 'center',
   },
 }));
 
@@ -55,6 +57,15 @@ export default function RpcControlBox() {
           >
             Stop Daemon
           </IpcInvokeButton>
+          <IpcInvokeButton
+            ipcChannel="open-data-dir-in-file-explorer"
+            ipcArgs={[]}
+            endIcon={<FolderOpenIcon />}
+            requiresRpc={false}
+            isIconButton
+            size="small"
+            tooltipTitle='Open the data directory of the Swap Daemon in your file explorer'
+          />
         </Box>
       }
       icon={null}

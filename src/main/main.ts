@@ -18,7 +18,7 @@ import {
 } from 'store/config';
 import { resolveHtmlPath } from './util';
 import { isCliRunning, startRPC, stopCli } from './cli/cli';
-import getSavedLogsOfSwapId, { getAssetPath, fixAppDataPath } from './cli/dirs';
+import getSavedLogsOfSwapId, { getAssetPath, fixAppDataPath, getCliDataDir } from './cli/dirs';
 import initSocket from './socket';
 import logger from '../utils/logger';
 import { isTorRunning, spawnTor, stopTor } from './tor';
@@ -218,6 +218,10 @@ ipcMain.handle('stop-tor', stopTor);
 ipcMain.handle('get-swap-logs', (_event, swapId) =>
   getSavedLogsOfSwapId(swapId),
 );
+
+ipcMain.handle('open-data-dir-in-file-explorer', async () => {
+  shell.openPath(await getCliDataDir());
+});
 
 export function sendSnackbarAlertToRenderer(
   message: string,

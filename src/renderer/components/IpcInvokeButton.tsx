@@ -12,17 +12,27 @@ import { useAppSelector } from 'store/hooks';
 import { RpcProcessStateType } from 'models/rpcModel';
 import { isExternalRpc } from 'store/config';
 
-function IpcNotReadyTooltip({
-  show,
+function IpcButtonTooltip({
+  requiresRpcAndNotReady,
   children,
   processType,
+  tooltipTitle,
 }: {
-  show: boolean;
+  requiresRpcAndNotReady: boolean;
   children: ReactElement;
   processType: RpcProcessStateType;
+  tooltipTitle?: string;
 }) {
-  const getMessage = () => {
-    if (!show) return '';
+  if(tooltipTitle) {
+    return (
+      <Tooltip title={tooltipTitle}>
+        {children}
+      </Tooltip>
+    );
+  }
+
+  const getMessage = () => {    
+    if (!requiresRpcAndNotReady) return '';
 
     switch (processType) {
       case RpcProcessStateType.LISTENING_FOR_CONNECTIONS:
@@ -55,6 +65,7 @@ interface IpcInvokeButtonProps<T> {
   requiresRpc?: boolean;
   disabled?: boolean;
   displayErrorSnackbar?: boolean;
+  tooltipTitle?: string;
 }
 
 const DELAY_BEFORE_SHOWING_LOADING_MS = 0;
@@ -71,6 +82,7 @@ export default function IpcInvokeButton<T>({
   isIconButton,
   requiresRpc,
   displayErrorSnackbar,
+  tooltipTitle,
   ...rest
 }: IpcInvokeButtonProps<T> & ButtonProps) {
   const { enqueueSnackbar } = useSnackbar();
@@ -120,9 +132,10 @@ export default function IpcInvokeButton<T>({
   const isDisabled = disabled || requiresRpcAndNotReady || isLoading;
 
   return (
-    <IpcNotReadyTooltip
-      show={requiresRpcAndNotReady}
+    <IpcButtonTooltip
+      requiresRpcAndNotReady={requiresRpcAndNotReady}
       processType={rpcProcessType}
+      tooltipTitle={tooltipTitle}
     >
       <span>
         {isIconButton ? (
@@ -142,7 +155,7 @@ export default function IpcInvokeButton<T>({
           />
         )}
       </span>
-    </IpcNotReadyTooltip>
+    </IpcButtonTooltip>
   );
 }
 
