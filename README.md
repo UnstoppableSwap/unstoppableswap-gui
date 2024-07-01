@@ -18,10 +18,8 @@
 
 ## Table Of Contents
 
-- [About the Project](#about-the-project)
-- [Built With](#built-with)
 - [Documentation](#documentation)
-- [Getting Started](#getting-started)
+- [Getting Started with Development](#getting-started)
 - [Development](#development)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
@@ -30,32 +28,15 @@
 - [License](#license)
 - [Acknowledgements](#acknowledgements)
 
-## About The Project
+![main screen](https://github.com/UnstoppableSwap/unstoppableswap-gui/assets/86064887/75634e8e-73da-4ba2-8287-8e99171cd329)
 
-![main screen](https://user-images.githubusercontent.com/86064887/152649852-4c8c6c3f-0568-4347-89d1-c291c17f2d30.png)
+## [Documentation](https://docs.unstoppableswap.net/)
 
-Atomic swaps between BTC and XMR have been one of the most discussed and anticipated developments in the field for quite some time.
-
-While Farcaster is still working on the implementation of their protocol, the COMIT team has already delivered an MVP. Trustless cross-chain swaps are becoming a tangible reality.
-However, for atomic swaps to gain widespread and adopted, the user experience needs to be drastically improved. People shouldn't have to manually type commands into a terminal or understand the protocol at a technical level to participate. That's the problem this project aims to solve.
-
-_Make atomic swaps accessible to all!_
-
-## Documentation
-
-- [How to swap on testnet](/docs/SWAP_TESTNET.md)
-
-## Built With
-
-- [COMIT Swap CLI](https://github.com/comit-network/xmr-btc-swap)
-- [Electron](https://github.com/comit-network/xmr-btc-swap)
-- [React](https://reactjs.org)
-- [Redux](https://redux.js.org)
-- [Material UI](https://mui.com)
+Please note that the documentation is still a work in progress.
 
 ## Getting Started
 
-Please download the GUI from the [release page](https://github.com/UnstoppableSwap/unstoppableswap-gui/releases). Choose your respective version (.dmg for Mac, .AppImage for Linux and .exe for Windows). You may need to [manually allow the opening](https://support.apple.com/en-us/HT202491) of the GUI on Mac OS.
+Please download the GUI from the [release page](https://github.com/UnstoppableSwap/unstoppableswap-gui/releases). Choose your respective version (.dmg for Mac, .AppImage for Linux and .exe for Windows).
 
 ## Donate
 
@@ -63,21 +44,24 @@ We rely on generous donors like you to keep development moving forward. To bring
 
 If you interested in a partnership or want to support the project in a way that requires coordination with the contributors, contact `@binarybaron:matrix.org` on Matrix.
 
+```filename="Monero Donation Address
+49LEH26DJGuCyr8xzRAzWPUryzp7bpccC7Hie1DiwyfJEyUKvMFAethRLybDYrFdU1eHaMkKQpUPebY4WT3cSjEvThmpjPa
 ```
-XMR: 87jS4C7ngk9EHdqFFuxGFgg8AyH63dRUoULshWDybFJaP75UA89qsutG5B1L1QTc4w228nsqsv8EjhL7bz8fB3611Mh98mg
-BTC: bc1q8hj4aq59fucrhz59rxpqnwgy8y6spxxvq4wcj2
+
+```filename="Monero Donation Address
+bc1qz6lfs0r206396a9psunmkfpqh7sdf2zh3e7tnf
 ```
 
 ## Development
 
-To get a local copy up and running follow these simple steps.
+To get a local copy up and running follow these steps.
 
 ### Prerequisites
 
 Before proceeding you should install the following:
 
 - [node (v16)](https://nodejs.org/en/download/)
-- [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) (probably bundled with your installation)
+- [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 
 ### Installation
 
