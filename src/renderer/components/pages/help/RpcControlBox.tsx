@@ -64,7 +64,7 @@ export default function RpcControlBox() {
             requiresRpc={false}
             isIconButton
             size="small"
-            tooltipTitle='Open the data directory of the Swap Daemon in your file explorer'
+            tooltipTitle="Open the data directory of the Swap Daemon in your file explorer"
           />
         </Box>
       }

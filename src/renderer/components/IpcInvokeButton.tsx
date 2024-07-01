@@ -23,15 +23,11 @@ function IpcButtonTooltip({
   processType: RpcProcessStateType;
   tooltipTitle?: string;
 }) {
-  if(tooltipTitle) {
-    return (
-      <Tooltip title={tooltipTitle}>
-        {children}
-      </Tooltip>
-    );
+  if (tooltipTitle) {
+    return <Tooltip title={tooltipTitle}>{children}</Tooltip>;
   }
 
-  const getMessage = () => {    
+  const getMessage = () => {
     if (!requiresRpcAndNotReady) return '';
 
     switch (processType) {

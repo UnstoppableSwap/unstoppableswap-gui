@@ -18,7 +18,11 @@ import {
 } from 'store/config';
 import { resolveHtmlPath } from './util';
 import { isCliRunning, startRPC, stopCli } from './cli/cli';
-import getSavedLogsOfSwapId, { getAssetPath, fixAppDataPath, getCliDataDir } from './cli/dirs';
+import getSavedLogsOfSwapId, {
+  getAssetPath,
+  fixAppDataPath,
+  getCliDataDir,
+} from './cli/dirs';
 import initSocket from './socket';
 import logger from '../utils/logger';
 import { isTorRunning, spawnTor, stopTor } from './tor';
