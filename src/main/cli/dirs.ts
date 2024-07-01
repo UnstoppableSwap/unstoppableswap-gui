@@ -14,7 +14,7 @@ import { RpcProcessStateType } from 'models/rpcModel';
 // Ensure the CLI version is updated in both places when updating the CLI version.
 // We need a different name for each CLI version to make sure, that the CLI is definitely updated
 // electron-builder sometimes doesn't update the CLI binary
-const CLI_FILE_NAME_VERSION_PREFIX = '0_13_1_';
+const CLI_FILE_NAME_VERSION_PREFIX = '0_13_2_';
 
 // Be consistent with the way the cli generates the
 // data-dir on linux

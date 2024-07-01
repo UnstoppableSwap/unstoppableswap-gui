@@ -16,9 +16,9 @@ async function makeFileExecutable(binary: Binary) {
   );
 }
 
-const CLI_VERSION = '0.13.1';
+const CLI_VERSION = '0.13.2';
 // Ensure the value here matches with the one in src/main/cli/dirs.ts
-const CLI_FILE_NAME_VERSION_PREFIX = '0_13_1_';
+const CLI_FILE_NAME_VERSION_PREFIX = '0_13_2_';
 
 const binaries = [
   {
