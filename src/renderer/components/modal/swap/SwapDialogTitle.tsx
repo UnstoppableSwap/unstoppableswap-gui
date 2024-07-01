@@ -7,11 +7,13 @@ import {
   Typography,
 } from '@material-ui/core';
 import TorStatusBadge from './pages/TorStatusBadge';
+import DebugPageSwitchBadge from './pages/DebugPageSwitchBadge';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
   rightSide: {
     display: 'flex',
@@ -35,17 +37,8 @@ export default function SwapDialogTitle({
     <DialogTitle disableTypography className={classes.root}>
       <Typography variant="h6">{title}</Typography>
       <Box className={classes.rightSide}>
+        <DebugPageSwitchBadge enabled={debug} setEnabled={setDebug} />
         <TorStatusBadge />
-        <FormControlLabel
-          control={
-            <Switch
-              color="default"
-              checked={debug}
-              onChange={() => setDebug(!debug)}
-            />
-          }
-          label="Debug"
-        />
       </Box>
     </DialogTitle>
   );
