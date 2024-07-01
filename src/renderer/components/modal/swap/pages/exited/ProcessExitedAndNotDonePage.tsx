@@ -2,6 +2,7 @@ import { Box, DialogContentText } from '@material-ui/core';
 import { useActiveSwapInfo, useAppSelector } from 'store/hooks';
 import { SwapStateProcessExited } from 'models/storeModel';
 import CliLogsBox from '../../../../other/RenderedCliLog';
+import { SwapSpawnType } from 'models/cliModel';
 
 export default function ProcessExitedAndNotDonePage({
   state,
@@ -10,24 +11,46 @@ export default function ProcessExitedAndNotDonePage({
 }) {
   const swap = useActiveSwapInfo();
   const logs = useAppSelector((s) => s.swap.logs);
+  const spawnType = useAppSelector((s) => s.swap.spawnType);
 
-  const text = swap ? (
-    <>
-      The swap exited unexpectedly without completing. The current state is
-      &quot;{swap.stateName}&quot;. You might have to manually take some action.
-    </>
-  ) : (
-    <>
-      The swap exited unexpectedly before any funds were locked and without
-      completing.
-    </>
-  );
+  function getText() {
+    const isCancelRefund = spawnType === SwapSpawnType.CANCEL_REFUND;
+    const hasRpcError = state.rpcError != null;
+    const hasSwap = swap != null;
+
+    let messages = [];
+
+    messages.push(
+      isCancelRefund
+        ? 'The manual cancel and refund was unsuccessful.'
+        : 'The swap exited unexpectedly without completing.',
+    );
+
+    if (!hasSwap && !isCancelRefund) {
+      messages.push('No funds were locked.');
+    }
+
+    messages.push(
+      hasRpcError
+        ? 'Check the error and the logs below for more information.'
+        : 'Check the logs below for more information.',
+    );
+
+    if (hasSwap) {
+      messages.push(`The swap is in the "${swap.stateName}" state.`);
+      if (!isCancelRefund) {
+        messages.push(
+          'Try resuming the swap or attempt to initiate a manual cancel and refund.',
+        );
+      }
+    }
+
+    return messages.join(' ');
+  }
 
   return (
     <Box>
-      <DialogContentText>
-        {text} Please check the logs displayed below for more information.
-      </DialogContentText>
+      <DialogContentText>{getText()}</DialogContentText>
       <Box
         style={{
           display: 'flex',
@@ -35,13 +58,13 @@ export default function ProcessExitedAndNotDonePage({
           gap: '0.5rem',
         }}
       >
-        <CliLogsBox logs={logs} label="Logs relevant to the swap" />
         {state.rpcError && (
           <CliLogsBox
             logs={[state.rpcError]}
             label="Error returned by the Swap Daemon"
           />
         )}
+        <CliLogsBox logs={logs} label="Logs relevant to the swap" />
       </Box>
     </Box>
   );
