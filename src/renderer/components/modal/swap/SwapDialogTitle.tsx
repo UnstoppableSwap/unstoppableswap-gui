@@ -7,6 +7,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import TorStatusBadge from './pages/TorStatusBadge';
+import FeedbackSubmitBadge from './pages/FeedbackSubmitBadge';
 import DebugPageSwitchBadge from './pages/DebugPageSwitchBadge';
 
 const useStyles = makeStyles((theme) => ({
@@ -37,6 +38,7 @@ export default function SwapDialogTitle({
     <DialogTitle disableTypography className={classes.root}>
       <Typography variant="h6">{title}</Typography>
       <Box className={classes.rightSide}>
+        <FeedbackSubmitBadge />
         <DebugPageSwitchBadge enabled={debug} setEnabled={setDebug} />
         <TorStatusBadge />
       </Box>
