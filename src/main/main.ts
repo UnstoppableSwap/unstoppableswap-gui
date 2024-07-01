@@ -101,9 +101,9 @@ async function createWindow() {
   });
 
   // Open urls in the user's browser
-  mainWindow.webContents.addListener('new-window', (event, url) => {
-    event.preventDefault();
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url);
+    return { action: 'deny' };
   });
 }
 

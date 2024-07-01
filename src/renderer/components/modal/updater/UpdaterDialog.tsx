@@ -7,12 +7,23 @@ import {
   DialogActions,
   Button,
   Typography,
+  makeStyles,
 } from '@material-ui/core';
 import { UpdateFileInfo, UpdateInfo } from 'electron-updater';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { updateShownToUser } from 'store/features/updateSlice';
 
+const useStyles = makeStyles((theme) => ({
+  fileLink: {
+    '&:hover': {
+      textDecoration: 'underline',
+      cursor: 'pointer',
+    },
+  },
+}));
+
 export default function UpdaterDialog() {
+  const classes = useStyles();
   const dispatch = useAppDispatch();
   const updateNotification: UpdateInfo | null = useAppSelector(
     (state) => state.update.updateNotification,
@@ -27,10 +38,15 @@ export default function UpdaterDialog() {
   const releasePageUrl = `https://github.com/UnstoppableSwap/unstoppableswap-gui/releases/tag/v${
     updateNotification!.version
   }/`;
+  const releasePageDownloadBaseUrl = `https://github.com/UnstoppableSwap/unstoppableswap-gui/releases/download/v${updateNotification!.version}`;
 
   function openDownloadUrl() {
     window.open(releasePageUrl, '_blank');
     hideNotification();
+  }
+
+  function openDownloadFile(file: UpdateFileInfo) {
+    window.open(releasePageDownloadBaseUrl + '/' + file.url, '_blank');
   }
 
   return (
@@ -53,7 +69,13 @@ export default function UpdaterDialog() {
           <Typography variant="caption">
             <ul style={{ padding: '0', paddingLeft: '1rem' }}>
               {updateNotification.files.map((file) => (
-                <li key={file.url}>{file.url}</li>
+                <li
+                  key={file.url}
+                  className={classes.fileLink}
+                  onClick={() => openDownloadFile(file)}
+                >
+                  {file.url}
+                </li>
               ))}
             </ul>
           </Typography>
