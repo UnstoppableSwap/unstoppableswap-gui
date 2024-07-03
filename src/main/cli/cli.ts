@@ -220,7 +220,7 @@ export async function spawnSubcommand(
 
 export async function startRPC() {
   let isPeriodicRetrievalRunning = false;
-  let lastBitcoinBalanceForceCheckTime = Date.now();
+  let lastBitcoinBalanceForceCheckTime = 0;
 
   /**
    * Starts the periodic retrieval of swap information and Bitcoin balance.
@@ -244,16 +244,16 @@ export async function startRPC() {
    */
   const startPeriodicRetrieval = async () => {
     isPeriodicRetrievalRunning = true;
-    await getRawSwapInfos();
-    await checkBitcoinBalance(true);
 
     while (isPeriodicRetrievalRunning) {
-      // Wait for the next interval before repeating
-      await new Promise((resolve) =>
-        setTimeout(resolve, PERIODIC_API_RETRIEVAL_INTERVAL),
-      );
-
-      await getRawSwapInfos();
+      try {
+        await getRawSwapInfos();
+      } catch (e: unknown) {
+        logger.error(
+          { err: (e as Error).toString() },
+          'Failed to periodically get raw swap infos',
+        );
+      }
 
       // Check if enough time has elapsed to set forceCheck to true
       const currentTime = Date.now();
@@ -264,7 +264,19 @@ export async function startRPC() {
         lastBitcoinBalanceForceCheckTime = currentTime; // Reset the timer
       }
 
-      await checkBitcoinBalance(forceCheck);
+      try {
+        await checkBitcoinBalance(forceCheck);
+      } catch (e: unknown) {
+        logger.error(
+          { err: (e as Error).toString() },
+          'Failed to periodically check bitcoin balance',
+        );
+      }
+
+      // Wait for the next interval before repeating
+      await new Promise((resolve) =>
+        setTimeout(resolve, PERIODIC_API_RETRIEVAL_INTERVAL),
+      );
     }
   };
 

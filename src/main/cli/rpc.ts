@@ -97,7 +97,7 @@ export async function makeRpcRequest<T>(
       if (isErrorResponse(response)) {
         reject(
           new Error(
-            `RPC request failed Error: ${response.error.message} (Code: ${response.error.code})`,
+            `Method: ${method} Params: ${JSON.stringify(params)} RPC request failed Error: ${response.error.message} (Code: ${response.error.code})`,
           ),
         );
       } else {
@@ -241,10 +241,39 @@ export async function getSwapInfoBatch(
     return [];
   }
 
-  return makeBatchRpcRequest<GetSwapInfoResponse>(
-    RpcMethod.GET_SWAP_INFO,
-    swapIds.map((swapId) => ({ swap_id: swapId })),
-  );
+  try {
+    return await makeBatchRpcRequest<GetSwapInfoResponse>(
+      RpcMethod.GET_SWAP_INFO,
+      swapIds.map((swapId) => ({ swap_id: swapId })),
+    );
+  } catch (error) {
+    logger.error(
+      'Batch request failed, falling back to individual requests',
+      error,
+    );
+    const swapInfoPromises = swapIds.map(async (swapId) => {
+      try {
+        return await makeRpcRequest<GetSwapInfoResponse>(
+          RpcMethod.GET_SWAP_INFO,
+          { swap_id: swapId },
+        );
+      } catch (individualError) {
+        logger.error(
+          `Failed to retrieve swap info for swap ID: ${swapId}`,
+          individualError,
+        );
+        return null;
+      }
+    });
+
+    // Ignore errors, only await settled promises
+    return (await Promise.allSettled(swapInfoPromises))
+      .filter(
+        (r): r is PromiseFulfilledResult<GetSwapInfoResponse> =>
+          r.status === 'fulfilled',
+      )
+      .map((r) => r.value);
+  }
 }
 
 export async function buyXmr(
