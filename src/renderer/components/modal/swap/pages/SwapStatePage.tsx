@@ -89,15 +89,19 @@ export default function SwapStatePage({
   if (isSwapStateBtcPunished(swapState)) {
     return <BitcoinPunishedPage state={null} />;
   }
-  if(isSwapStateAttemptingCooperativeRedeeem(swapState)) {
-    return <CircularProgressWithSubtitle description="Attempting to redeem the Monero with the help of the other party" />;
+  if (isSwapStateAttemptingCooperativeRedeeem(swapState)) {
+    return (
+      <CircularProgressWithSubtitle description="Attempting to redeem the Monero with the help of the other party" />
+    );
   }
-  if(isSwapStateCooperativeRedeemAccepted(swapState)) {
-    return <CircularProgressWithSubtitle description="The other party is cooperating with us to redeem the Monero..." />;
+  if (isSwapStateCooperativeRedeemAccepted(swapState)) {
+    return (
+      <CircularProgressWithSubtitle description="The other party is cooperating with us to redeem the Monero..." />
+    );
   }
-  if(isSwapStateCooperativeRedeemRejected(swapState)) {
+  if (isSwapStateCooperativeRedeemRejected(swapState)) {
     return <BitcoinPunishedPage state={swapState} />;
-  } 
+  }
   if (isSwapStateProcessExited(swapState)) {
     return <ProcessExitedPage state={swapState} />;
   }

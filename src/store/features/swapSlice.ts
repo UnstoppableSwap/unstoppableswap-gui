@@ -263,27 +263,31 @@ export const swapSlice = createSlice({
           };
 
           slice.state = nextState;
-        } else if (isCliLogAliceRejectedOurRequestForCooperativeXmrRedeem(log)) {
+        } else if (
+          isCliLogAliceRejectedOurRequestForCooperativeXmrRedeem(log)
+        ) {
           const nextState: SwapStateCooperativeRedeemRejected = {
             type: SwapStateType.COOPERATIVE_REDEEM_REJECTED,
             reason: log.fields.reason,
           };
 
           slice.state = nextState;
-        } else if (isCliLogAliceHasAcceptedOurRequestToCooperativelyRedeemTheXmr(log)) {
+        } else if (
+          isCliLogAliceHasAcceptedOurRequestToCooperativelyRedeemTheXmr(log)
+        ) {
           const nextState: SwapStateCooperativeRedeemAccepted = {
             type: SwapStateType.COOPERATIVE_REDEEM_ACCEPTED,
           };
 
           slice.state = nextState;
-        } else if(isCliLogFailedToRequestCooperativeXmrRedeemFromAlice(log)) {
+        } else if (isCliLogFailedToRequestCooperativeXmrRedeemFromAlice(log)) {
           const nextState: SwapStateCooperativeRedeemRejected = {
             type: SwapStateType.COOPERATIVE_REDEEM_REJECTED,
             reason: 'Failed to connect to Alice: ' + log.fields.error,
           };
 
           slice.state = nextState;
-        }else if (
+        } else if (
           isCliLogReleasingSwapLockLog(log) &&
           !action.payload.isFromRestore
         ) {
