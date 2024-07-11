@@ -414,7 +414,8 @@ export function isCliLogAliceRejectedOurRequestForCooperativeXmrRedeem(
 }
 
 // tracing::error!(?error, "Failed to request cooperative XMR redeem from Alice");
-export interface CliLogFailedToRequestCooperativeXmrRedeemFromAlice extends CliLog {
+export interface CliLogFailedToRequestCooperativeXmrRedeemFromAlice
+  extends CliLog {
   fields: {
     message: 'Failed to request cooperative XMR redeem from Alice';
     error: string;
@@ -425,8 +426,6 @@ export function isCliLogFailedToRequestCooperativeXmrRedeemFromAlice(
   log: CliLog,
 ): log is CliLogFailedToRequestCooperativeXmrRedeemFromAlice {
   return (
-    log.fields.message ===
-    'Failed to request cooperative XMR redeem from Alice'
+    log.fields.message === 'Failed to request cooperative XMR redeem from Alice'
   );
 }
-

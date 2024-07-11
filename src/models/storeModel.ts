@@ -35,7 +35,7 @@ export enum SwapStateType {
   BTC_PUNISHED = 'btc punished',
   ATTEMPTING_COOPERATIVE_REDEEM = 'attempting cooperative redeem',
   COOPERATIVE_REDEEM_REJECTED = 'cooperative redeem rejected',
-  COOPERATIVE_REDEEM_ACCEPTED = 'cooperative redeem accepted'
+  COOPERATIVE_REDEEM_ACCEPTED = 'cooperative redeem accepted',
 }
 
 export function isSwapState(state?: SwapState | null): state is SwapState {

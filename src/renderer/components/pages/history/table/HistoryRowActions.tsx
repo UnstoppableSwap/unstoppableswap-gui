@@ -82,14 +82,10 @@ export default function HistoryRowActions({
   if (swap.stateName === SwapStateName.BtcPunished) {
     return (
       <Tooltip title="You have been punished. You can attempt to recover the Monero with the help of the other party but that is not guaranteed to work">
-        <SwapResumeButton swap={swap}>
-          Attempt recovery
-        </SwapResumeButton>
+        <SwapResumeButton swap={swap}>Attempt recovery</SwapResumeButton>
       </Tooltip>
     );
   }
 
-  return <SwapResumeButton swap={swap}>
-    Resume
-  </SwapResumeButton>
+  return <SwapResumeButton swap={swap}>Resume</SwapResumeButton>;
 }

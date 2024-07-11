@@ -8,17 +8,22 @@ import { GetSwapInfoResponse, SwapStateName } from 'models/rpcModel';
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
-export function useResumeableSwapsCount(filter?: (s: GetSwapInfoResponse) => boolean) {
+export function useResumeableSwapsCount(
+  filter?: (s: GetSwapInfoResponse) => boolean,
+) {
   return useAppSelector(
     (state) =>
       Object.values(state.rpc.state.swapInfos).filter(
-        (swapInfo) => !swapInfo.completed && (filter == null || filter(swapInfo))
+        (swapInfo) =>
+          !swapInfo.completed && (filter == null || filter(swapInfo)),
       ).length,
   );
 }
 
 export function useResumeableSwapsCountExclusindPunished() {
-  return useResumeableSwapsCount(s => s.stateName !== SwapStateName.BtcPunished);
+  return useResumeableSwapsCount(
+    (s) => s.stateName !== SwapStateName.BtcPunished,
+  );
 }
 
 export function useIsSwapRunning() {
