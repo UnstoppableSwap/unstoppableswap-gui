@@ -14,6 +14,7 @@ import {
 
 export function SwapResumeButton({
   swap,
+  children,
   ...props
 }: { swap: GetSwapInfoResponse } & ButtonProps) {
   return (
@@ -27,7 +28,7 @@ export function SwapResumeButton({
       requiresRpc
       {...props}
     >
-      Resume
+      {children}
     </IpcInvokeButton>
   );
 }
@@ -80,11 +81,15 @@ export default function HistoryRowActions({
 
   if (swap.stateName === SwapStateName.BtcPunished) {
     return (
-      <Tooltip title="The swap is completed because you have been punished">
-        <ErrorIcon style={{ color: red[500] }} />
+      <Tooltip title="You have been punished. You can attempt to recover the Monero with the help of the other party but that is not guaranteed to work">
+        <SwapResumeButton swap={swap}>
+          Attempt recovery
+        </SwapResumeButton>
       </Tooltip>
     );
   }
 
-  return <SwapResumeButton swap={swap} />;
+  return <SwapResumeButton swap={swap}>
+    Resume
+  </SwapResumeButton>
 }

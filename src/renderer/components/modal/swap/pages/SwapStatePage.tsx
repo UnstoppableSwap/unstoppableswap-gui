@@ -1,11 +1,14 @@
 import { Box } from '@material-ui/core';
 import { useAppSelector } from 'store/hooks';
 import {
+  isSwapStateAttemptingCooperativeRedeeem,
   isSwapStateBtcCancelled,
   isSwapStateBtcLockInMempool,
   isSwapStateBtcPunished,
   isSwapStateBtcRedemeed,
   isSwapStateBtcRefunded,
+  isSwapStateCooperativeRedeemAccepted,
+  isSwapStateCooperativeRedeemRejected,
   isSwapStateInitiated,
   isSwapStateProcessExited,
   isSwapStateReceivedQuote,
@@ -32,6 +35,7 @@ import BitcoinCancelledPage from './in_progress/BitcoinCancelledPage';
 import BitcoinRefundedPage from './done/BitcoinRefundedPage';
 import BitcoinPunishedPage from './done/BitcoinPunishedPage';
 import { SyncingMoneroWalletPage } from './in_progress/SyncingMoneroWalletPage';
+import CircularProgressWithSubtitle from '../CircularProgressWithSubtitle';
 
 export default function SwapStatePage({
   swapState,
@@ -83,8 +87,17 @@ export default function SwapStatePage({
     return <BitcoinRefundedPage state={swapState} />;
   }
   if (isSwapStateBtcPunished(swapState)) {
-    return <BitcoinPunishedPage />;
+    return <BitcoinPunishedPage state={null} />;
   }
+  if(isSwapStateAttemptingCooperativeRedeeem(swapState)) {
+    return <CircularProgressWithSubtitle description="Attempting to redeem the Monero with the help of the other party" />;
+  }
+  if(isSwapStateCooperativeRedeemAccepted(swapState)) {
+    return <CircularProgressWithSubtitle description="The other party is cooperating with us to redeem the Monero..." />;
+  }
+  if(isSwapStateCooperativeRedeemRejected(swapState)) {
+    return <BitcoinPunishedPage state={swapState} />;
+  } 
   if (isSwapStateProcessExited(swapState)) {
     return <ProcessExitedPage state={swapState} />;
   }

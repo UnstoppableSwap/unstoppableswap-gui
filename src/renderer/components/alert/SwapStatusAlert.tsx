@@ -221,7 +221,7 @@ export default function SwapStatusAlert({
     <Alert
       key={swap.swapId}
       severity="warning"
-      action={<SwapResumeButton swap={swap} />}
+      action={<SwapResumeButton swap={swap}>Resume</SwapResumeButton>}
       variant="filled"
     >
       <AlertTitle>

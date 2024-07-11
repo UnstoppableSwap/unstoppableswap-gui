@@ -3,6 +3,7 @@ import { SwapStateName } from 'models/rpcModel';
 import {
   isSwapStateBtcPunished,
   isSwapStateBtcRefunded,
+  isSwapStateCooperativeRedeemRejected,
   isSwapStateXmrRedeemInMempool,
   SwapStateProcessExited,
 } from '../../../../../../models/storeModel';
@@ -24,7 +25,8 @@ export default function ProcessExitedPage({ state }: ProcessExitedPageProps) {
   if (
     isSwapStateXmrRedeemInMempool(state.prevState) ||
     isSwapStateBtcRefunded(state.prevState) ||
-    isSwapStateBtcPunished(state.prevState)
+    isSwapStateBtcPunished(state.prevState) ||
+    isSwapStateCooperativeRedeemRejected(state.prevState)
   ) {
     return <SwapStatePage swapState={state.prevState} />;
   }
