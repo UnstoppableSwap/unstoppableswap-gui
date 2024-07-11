@@ -8,11 +8,14 @@ import {
   isSwapStateWaitingForBtcDeposit,
   isSwapStateXmrLockInMempool,
   SwapSlice,
+  SwapStateAttemptingCooperativeRedeeem,
   SwapStateBtcCancelled,
   SwapStateBtcLockInMempool,
   SwapStateBtcPunished,
   SwapStateBtcRedemeed,
   SwapStateBtcRefunded,
+  SwapStateCooperativeRedeemAccepted,
+  SwapStateCooperativeRedeemRejected,
   SwapStateInitiated,
   SwapStateProcessExited,
   SwapStateReceivedQuote,
@@ -42,6 +45,10 @@ import {
   isCliLogAcquiringSwapLockLog,
   isCliLogApiCallError,
   isCliLogDeterminedSwapAmount,
+  isCliLogAttemptingToCooperativelyRedeemXmr,
+  isCliLogAliceRejectedOurRequestForCooperativeXmrRedeem,
+  isCliLogAliceHasAcceptedOurRequestToCooperativelyRedeemTheXmr,
+  isCliLogFailedToRequestCooperativeXmrRedeemFromAlice,
 } from '../../models/cliModel';
 import logger from '../../utils/logger';
 
@@ -250,7 +257,33 @@ export const swapSlice = createSlice({
           };
 
           slice.state = nextState;
-        } else if (
+        } else if (isCliLogAttemptingToCooperativelyRedeemXmr(log)) {
+          const nextState: SwapStateAttemptingCooperativeRedeeem = {
+            type: SwapStateType.ATTEMPTING_COOPERATIVE_REDEEM,
+          };
+
+          slice.state = nextState;
+        } else if (isCliLogAliceRejectedOurRequestForCooperativeXmrRedeem(log)) {
+          const nextState: SwapStateCooperativeRedeemRejected = {
+            type: SwapStateType.COOPERATIVE_REDEEM_REJECTED,
+            reason: log.fields.reason,
+          };
+
+          slice.state = nextState;
+        } else if (isCliLogAliceHasAcceptedOurRequestToCooperativelyRedeemTheXmr(log)) {
+          const nextState: SwapStateCooperativeRedeemAccepted = {
+            type: SwapStateType.COOPERATIVE_REDEEM_ACCEPTED,
+          };
+
+          slice.state = nextState;
+        } else if(isCliLogFailedToRequestCooperativeXmrRedeemFromAlice(log)) {
+          const nextState: SwapStateCooperativeRedeemRejected = {
+            type: SwapStateType.COOPERATIVE_REDEEM_REJECTED,
+            reason: 'Failed to connect to Alice: ' + log.fields.error,
+          };
+
+          slice.state = nextState;
+        }else if (
           isCliLogReleasingSwapLockLog(log) &&
           !action.payload.isFromRestore
         ) {
