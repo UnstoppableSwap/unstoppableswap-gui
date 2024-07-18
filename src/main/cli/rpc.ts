@@ -406,7 +406,7 @@ export async function listSellers(
           peerId,
           price: s.status.Online.price,
           minSwapAmount: s.status.Online.min_quantity,
-          maxSwapAmount: s.status.Online.min_quantity,
+          maxSwapAmount: s.status.Online.max_quantity,
           testnet: isTestnet(),
         };
       }
