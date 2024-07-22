@@ -4,6 +4,7 @@ import { useActiveSwapInfo } from 'store/hooks';
 import { getSwapXmrAmount } from 'models/rpcModel';
 import MoneroTransactionInfoBox from '../../MoneroTransactionInfoBox';
 import FeedbackInfoBox from '../../../../pages/help/FeedbackInfoBox';
+import { MoneroAmount } from 'renderer/components/other/Units';
 
 type XmrRedeemInMempoolPageProps = {
   state: SwapStateXmrRedeemInMempool | null;
@@ -13,11 +14,13 @@ export default function XmrRedeemInMempoolPage({
   state,
 }: XmrRedeemInMempoolPageProps) {
   const swap = useActiveSwapInfo();
-  const additionalContent = swap
-    ? `This transaction transfers ${getSwapXmrAmount(swap).toFixed(6)} XMR to ${
-        state?.bobXmrRedeemAddress
-      }`
-    : null;
+  const additionalContent = swap ? (
+    <>
+      This transaction transfers{' '}
+      <MoneroAmount amount={getSwapXmrAmount(swap)} /> to the{' '}
+      {state?.bobXmrRedeemAddress}
+    </>
+  ) : null;
 
   return (
     <Box>
