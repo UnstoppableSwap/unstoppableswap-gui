@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ExtendedProviderStatus, ProviderStatus } from 'models/apiModel';
 import { sortProviderList } from 'utils/sortUtils';
-import { isProviderCompatible } from 'utils/multiAddrUtils';
+import { isProviderOutdated } from 'utils/multiAddrUtils';
 import { getStubTestnetProvider } from 'store/config';
 
 const stubTestnetProvider = getStubTestnetProvider();
@@ -81,13 +81,12 @@ export const providersSlice = createSlice({
       slice,
       action: PayloadAction<ExtendedProviderStatus[]>,
     ) {
+      // Add stub testnet provider if it exists
       if (stubTestnetProvider) {
         action.payload.push(stubTestnetProvider);
       }
 
-      slice.registry.providers = sortProviderList(action.payload).filter(
-        isProviderCompatible,
-      );
+      slice.registry.providers = sortProviderList(action.payload);
       slice.selectedProvider = selectNewSelectedProvider(slice);
     },
     increaseFailedRegistryReconnectAttemptsSinceLastSuccess(slice) {
