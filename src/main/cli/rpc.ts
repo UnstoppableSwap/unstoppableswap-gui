@@ -278,7 +278,7 @@ export async function getSwapInfoBatch(
 
 export async function buyXmr(
   redeemAddress: string,
-  refundAddress: string,
+  refundAddress: string | null,
   provider: Provider,
 ) {
   store.dispatch(
@@ -289,14 +289,22 @@ export async function buyXmr(
     }),
   );
 
+  let params =
+    refundAddress === null
+      ? {
+          monero_receive_address: redeemAddress,
+          seller: providerToConcatenatedMultiAddr(provider),
+        }
+      : {
+          bitcoin_change_address: refundAddress,
+          monero_receive_address: redeemAddress,
+          seller: providerToConcatenatedMultiAddr(provider),
+        };
+
   try {
     await makeRpcRequest<BuyXmrResponse>(
       RpcMethod.BUY_XMR,
-      {
-        bitcoin_change_address: refundAddress,
-        monero_receive_address: redeemAddress,
-        seller: providerToConcatenatedMultiAddr(provider),
-      },
+      params,
       (logs) => {
         store.dispatch(
           swapAddLog({

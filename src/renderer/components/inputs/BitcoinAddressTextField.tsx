@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
-import { TextField } from '@material-ui/core';
+import { InputAdornment, TextField } from '@material-ui/core';
 import { TextFieldProps } from '@material-ui/core/TextField/TextField';
 import { isBtcAddressValid } from 'utils/conversionUtils';
 import { isTestnet } from 'store/config';
+import BitcoinIcon from '../icons/BitcoinIcon';
 
 export default function BitcoinAddressTextField({
   address,
@@ -35,6 +36,13 @@ export default function BitcoinAddressTextField({
       helperText={address.length > 0 ? errorText || helperText : helperText}
       placeholder={placeholder}
       variant="outlined"
+      InputProps={{
+        startAdornment: (
+          <InputAdornment position="start">
+            <BitcoinIcon />
+          </InputAdornment>
+        )
+      }}
       {...props}
     />
   );
