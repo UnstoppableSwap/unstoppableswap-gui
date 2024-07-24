@@ -20,7 +20,7 @@ export function useResumeableSwapsCount(
   );
 }
 
-export function useResumeableSwapsCountExclusindPunished() {
+export function useResumeableSwapsCountExcludingPunished() {
   return useResumeableSwapsCount(
     (s) => s.stateName !== SwapStateName.BtcPunished,
   );
