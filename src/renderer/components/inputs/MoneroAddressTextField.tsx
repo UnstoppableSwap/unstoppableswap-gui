@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
-import { TextField } from '@material-ui/core';
+import { InputAdornment, TextField } from '@material-ui/core';
 import { TextFieldProps } from '@material-ui/core/TextField/TextField';
 import { isXmrAddressValid } from 'utils/conversionUtils';
 import { isTestnet } from 'store/config';
+import MoneroIcon from '../icons/MoneroIcon';
 
 export default function MoneroAddressTextField({
   address,
@@ -33,6 +34,13 @@ export default function MoneroAddressTextField({
       helperText={address.length > 0 ? errorText || helperText : helperText}
       placeholder={placeholder}
       variant="outlined"
+      InputProps={{
+        startAdornment: (
+          <InputAdornment position="start">
+            <MoneroIcon />
+          </InputAdornment>
+        )
+      }}
       {...props}
     />
   );
