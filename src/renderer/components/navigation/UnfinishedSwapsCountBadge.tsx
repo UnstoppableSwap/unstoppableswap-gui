@@ -1,12 +1,12 @@
 import { Badge } from '@material-ui/core';
-import { useResumeableSwapsCountExclusindPunished } from 'store/hooks';
+import { useResumeableSwapsCountExcludingPunished } from 'store/hooks';
 
 export default function UnfinishedSwapsBadge({
   children,
 }: {
   children: JSX.Element;
 }) {
-  const resumableSwapsCount = useResumeableSwapsCountExclusindPunished();
+  const resumableSwapsCount = useResumeableSwapsCountExcludingPunished();
 
   if (resumableSwapsCount > 0) {
     return (
