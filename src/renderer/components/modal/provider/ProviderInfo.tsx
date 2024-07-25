@@ -6,6 +6,8 @@ import {
   MoneroBitcoinExchangeRate,
   SatsAmount,
 } from 'renderer/components/other/Units';
+import { isProviderOutdated } from 'utils/multiAddrUtils';
+import WarningIcon from '@material-ui/icons/Warning';
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -28,6 +30,7 @@ export default function ProviderInfo({
   provider: ExtendedProviderStatus;
 }) {
   const classes = useStyles();
+  const isOutdated = isProviderOutdated(provider);
 
   return (
     <Box className={classes.content}>
@@ -67,6 +70,11 @@ export default function ProviderInfo({
         {provider.recommended === true && (
           <Tooltip title="This provider has shown to be exceptionally reliable">
             <Chip label="Recommended" icon={<VerifiedUser />} color="primary" />
+          </Tooltip>
+        )}
+        {isOutdated && (
+          <Tooltip title="This provider is running an outdated version of the software. Outdated providers may be unreliable and cause swaps to take longer to complete or fail entirely.">
+            <Chip label="Outdated" icon={<WarningIcon />} color="primary" />
           </Tooltip>
         )}
       </Box>
