@@ -39,7 +39,7 @@ export default function MoneroAddressTextField({
           <InputAdornment position="start">
             <MoneroIcon />
           </InputAdornment>
-        )
+        ),
       }}
       {...props}
     />

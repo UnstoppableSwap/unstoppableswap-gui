@@ -1,5 +1,9 @@
 import { createListenerMiddleware } from '@reduxjs/toolkit';
-import { checkBitcoinBalance, getRawSwapInfo, getRawSwapInfos } from '../cli/rpc';
+import {
+  checkBitcoinBalance,
+  getRawSwapInfo,
+  getRawSwapInfos,
+} from '../cli/rpc';
 import {
   CliLog,
   getCliLogSpanSwapId,
@@ -50,8 +54,10 @@ export function createMainListeners() {
       return action.type === 'rpc/rpcAddLogs';
     },
     effect: async (action) => {
-      const logs = action.payload as CliLog[];
-      const newBlockLog = logs.find(isCliLogGotNotificationForNewBlock);
+      const logs = action.payload as (CliLog | string)[];
+      const newBlockLog = logs
+        .filter(isCliLog)
+        .find(isCliLogGotNotificationForNewBlock);
 
       if (newBlockLog) {
         logger.debug('Fetching all swap infos because a new block was found');
@@ -67,18 +73,20 @@ export function createMainListeners() {
       return action.type === 'rpc/rpcAddLogs';
     },
     effect: async (action) => {
-      const logs = action.payload as (CliLog | string)[];
-      const publishedBitcoinTransactionLog = logs.filter(isCliLog).find(
-       isCliLogPublishedBtcTx
-      );
+      const logs = action.payload as (CliLog | string)[];
+      const publishedBitcoinTransactionLog = logs
+        .filter(isCliLog)
+        .find(isCliLogPublishedBtcTx);
 
       if (publishedBitcoinTransactionLog) {
-        logger.info('Refreshing Bitcoin balance because a Bitcoin transaction was published which might have changed the balance');
-        
+        logger.info(
+          'Refreshing Bitcoin balance because a Bitcoin transaction was published which might have changed the balance',
+        );
+
         // Refresh 3 times with a delay of 5 seconds in between
         // This is because the balance might not be updated immediately after the transaction is published
         const delay = 5 * 1000;
-        for(let _ in [1, 2, 3]) {
+        for (let _ in [1, 2, 3]) {
           await checkBitcoinBalance(true);
           await new Promise((resolve) => setTimeout(resolve, delay));
         }

@@ -41,7 +41,7 @@ export default function BitcoinAddressTextField({
           <InputAdornment position="start">
             <BitcoinIcon />
           </InputAdornment>
-        )
+        ),
       }}
       {...props}
     />

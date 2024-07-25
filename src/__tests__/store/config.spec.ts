@@ -1,4 +1,5 @@
-import { isTestnet } from 'store/config';x
+import { isTestnet } from 'store/config';
+x;
 
 test('should detect testnet environment', () => {
   process.env.TESTNET = 'true';
