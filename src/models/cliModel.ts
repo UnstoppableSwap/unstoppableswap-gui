@@ -352,22 +352,6 @@ export function isCliLogDownloadingMoneroWalletRpc(
   return log.fields.message === 'Downloading monero-wallet-rpc';
 }
 
-export interface CliLogStartedSyncingMoneroWallet extends CliLog {
-  fields: {
-    message: 'Syncing Monero wallet';
-    current_sync_height?: boolean;
-  };
-}
-
-export interface CliLogDownloadingMoneroWalletRpc extends CliLog {
-  fields: {
-    message: 'Downloading monero-wallet-rpc';
-    progress: string;
-    size: string;
-    download_url: string;
-  };
-}
-
 export interface CliLogGotNotificationForNewBlock extends CliLog {
   fields: {
     message: 'Got notification for new block';
@@ -379,4 +363,69 @@ export function isCliLogGotNotificationForNewBlock(
   log: CliLog,
 ): log is CliLogGotNotificationForNewBlock {
   return log.fields.message === 'Got notification for new block';
+}
+
+export interface CliLogAttemptingToCooperativelyRedeemXmr extends CliLog {
+  fields: {
+    message: 'Attempting to cooperatively redeem XMR after being punished';
+  };
+}
+
+export function isCliLogAttemptingToCooperativelyRedeemXmr(
+  log: CliLog,
+): log is CliLogAttemptingToCooperativelyRedeemXmr {
+  return (
+    log.fields.message ===
+    'Attempting to cooperatively redeem XMR after being punished'
+  );
+}
+
+export interface CliLogAliceHasAcceptedOurRequestToCooperativelyRedeemTheXmr
+  extends CliLog {
+  fields: {
+    message: 'Alice has accepted our request to cooperatively redeem the XMR';
+  };
+}
+
+export function isCliLogAliceHasAcceptedOurRequestToCooperativelyRedeemTheXmr(
+  log: CliLog,
+): log is CliLogAliceHasAcceptedOurRequestToCooperativelyRedeemTheXmr {
+  return (
+    log.fields.message ===
+    'Alice has accepted our request to cooperatively redeem the XMR'
+  );
+}
+
+export interface CliLogAliceRejectedOurRequestForCooperativeXmrRedeem
+  extends CliLog {
+  fields: {
+    message: 'Alice rejected our request for cooperative XMR redeem';
+    reason: string;
+  };
+}
+
+export function isCliLogAliceRejectedOurRequestForCooperativeXmrRedeem(
+  log: CliLog,
+): log is CliLogAliceRejectedOurRequestForCooperativeXmrRedeem {
+  return (
+    log.fields.message ===
+    'Alice rejected our request for cooperative XMR redeem'
+  );
+}
+
+// tracing::error!(?error, "Failed to request cooperative XMR redeem from Alice");
+export interface CliLogFailedToRequestCooperativeXmrRedeemFromAlice
+  extends CliLog {
+  fields: {
+    message: 'Failed to request cooperative XMR redeem from Alice';
+    error: string;
+  };
+}
+
+export function isCliLogFailedToRequestCooperativeXmrRedeemFromAlice(
+  log: CliLog,
+): log is CliLogFailedToRequestCooperativeXmrRedeemFromAlice {
+  return (
+    log.fields.message === 'Failed to request cooperative XMR redeem from Alice'
+  );
 }

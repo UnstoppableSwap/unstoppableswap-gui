@@ -33,6 +33,9 @@ export enum SwapStateType {
   BTC_CANCELLED = 'btc cancelled',
   BTC_REFUNDED = 'btc refunded',
   BTC_PUNISHED = 'btc punished',
+  ATTEMPTING_COOPERATIVE_REDEEM = 'attempting cooperative redeem',
+  COOPERATIVE_REDEEM_REJECTED = 'cooperative redeem rejected',
+  COOPERATIVE_REDEEM_ACCEPTED = 'cooperative redeem accepted',
 }
 
 export function isSwapState(state?: SwapState | null): state is SwapState {
@@ -136,6 +139,37 @@ export function isSwapStateBtcRedemeed(
   state?: SwapState | null,
 ): state is SwapStateBtcRedemeed {
   return state?.type === SwapStateType.BTC_REDEEMED;
+}
+
+export interface SwapStateAttemptingCooperativeRedeeem extends SwapState {
+  type: SwapStateType.ATTEMPTING_COOPERATIVE_REDEEM;
+}
+
+export function isSwapStateAttemptingCooperativeRedeeem(
+  state?: SwapState | null,
+): state is SwapStateAttemptingCooperativeRedeeem {
+  return state?.type === SwapStateType.ATTEMPTING_COOPERATIVE_REDEEM;
+}
+
+export interface SwapStateCooperativeRedeemAccepted extends SwapState {
+  type: SwapStateType.COOPERATIVE_REDEEM_ACCEPTED;
+}
+
+export function isSwapStateCooperativeRedeemAccepted(
+  state?: SwapState | null,
+): state is SwapStateCooperativeRedeemAccepted {
+  return state?.type === SwapStateType.COOPERATIVE_REDEEM_ACCEPTED;
+}
+
+export interface SwapStateCooperativeRedeemRejected extends SwapState {
+  type: SwapStateType.COOPERATIVE_REDEEM_REJECTED;
+  reason: string;
+}
+
+export function isSwapStateCooperativeRedeemRejected(
+  state?: SwapState | null,
+): state is SwapStateCooperativeRedeemRejected {
+  return state?.type === SwapStateType.COOPERATIVE_REDEEM_REJECTED;
 }
 
 export interface SwapStateXmrRedeemInMempool extends SwapState {
