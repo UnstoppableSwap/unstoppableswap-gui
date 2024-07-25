@@ -1,10 +1,16 @@
 import { createListenerMiddleware } from '@reduxjs/toolkit';
-import { getRawSwapInfo, getRawSwapInfos } from '../cli/rpc';
+import {
+  checkBitcoinBalance,
+  getRawSwapInfo,
+  getRawSwapInfos,
+} from '../cli/rpc';
 import {
   CliLog,
   getCliLogSpanSwapId,
+  isCliLog,
   isCliLogAdvancingState,
   isCliLogGotNotificationForNewBlock,
+  isCliLogPublishedBtcTx,
   isCliLogReleasingSwapLockLog,
 } from '../../models/cliModel';
 import logger from '../../utils/logger';
@@ -45,15 +51,45 @@ export function createMainListeners() {
   // If we get a new block, we fetch all swap infos because the state of the timelocks might have changed
   listener.startListening({
     predicate: (action) => {
-      return action.type === 'rpc/rpcAddLog';
+      return action.type === 'rpc/rpcAddLogs';
     },
     effect: async (action) => {
-      const logs = action.payload.logs as CliLog[];
-      const newBlockLog = logs.find(isCliLogGotNotificationForNewBlock);
+      const logs = action.payload as (CliLog | string)[];
+      const newBlockLog = logs
+        .filter(isCliLog)
+        .find(isCliLogGotNotificationForNewBlock);
 
       if (newBlockLog) {
         logger.debug('Fetching all swap infos because a new block was found');
         await getRawSwapInfos();
+      }
+    },
+  });
+
+  // Listener for "Published Bitcoin transaction" log
+  // We refresh the Bitcoin balance because the balance might have changed
+  listener.startListening({
+    predicate: (action) => {
+      return action.type === 'rpc/rpcAddLogs';
+    },
+    effect: async (action) => {
+      const logs = action.payload as (CliLog | string)[];
+      const publishedBitcoinTransactionLog = logs
+        .filter(isCliLog)
+        .find(isCliLogPublishedBtcTx);
+
+      if (publishedBitcoinTransactionLog) {
+        logger.info(
+          'Refreshing Bitcoin balance because a Bitcoin transaction was published which might have changed the balance',
+        );
+
+        // Refresh 3 times with a delay of 5 seconds in between
+        // This is because the balance might not be updated immediately after the transaction is published
+        const delay = 5 * 1000;
+        for (let _ in [1, 2, 3]) {
+          await checkBitcoinBalance(true);
+          await new Promise((resolve) => setTimeout(resolve, delay));
+        }
       }
     },
   });
