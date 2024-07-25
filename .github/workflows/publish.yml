@@ -49,4 +49,4 @@ jobs:
           EP_GH_IGNORE_TIME: true
         run: |
           npm run build
-          npm exec electron-builder -- --publish onTagOrDraft --win --mac --linux
+          npm exec electron-builder -- --publish always --win --mac --linux
