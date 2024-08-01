@@ -12,6 +12,10 @@
     .
     <a href="https://github.com/UnstoppableSwap/unstoppableswap-gui/issues">Request Feature</a>
   </p>
+
+  <h4 align="center">
+    <a href="https://repo.getmonero.org/monero-project/ccs-proposals/-/merge_requests/477">🌟 Consider supporting our crowdfunding proposal 💰🚀</a>
+  </h3>
 </p>
 
 ![Downloads](https://img.shields.io/github/downloads/UnstoppableSwap/unstoppableswap-gui/total) ![Contributors](https://img.shields.io/github/contributors/UnstoppableSwap/unstoppableswap-gui?color=dark-green) ![Issues](https://img.shields.io/github/issues/UnstoppableSwap/unstoppableswap-gui) ![License](https://img.shields.io/github/license/UnstoppableSwap/unstoppableswap-gui)
