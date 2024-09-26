@@ -49,3 +49,7 @@ export const getPlatform = () => {
       return 'linux';
   }
 };
+
+export function getElectrumRpcUrl(): string {
+  return process.env.OVERRIDE_ELECTRUM_RPC_URL ?? 'tcp://blockstream.info:110';
+}

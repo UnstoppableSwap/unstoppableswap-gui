@@ -6,7 +6,7 @@ import {
 import PQueue from 'p-queue';
 import pidtree from 'pidtree';
 import util from 'util';
-import { getPlatform, isTestnet } from 'store/config';
+import { getElectrumRpcUrl, getPlatform, isTestnet } from 'store/config';
 import { CliLog, isCliLog } from 'models/cliModel';
 import { getLogsAndStringsFromRawFileString } from 'utils/parseUtils';
 import { store } from 'main/store/mainStore';
@@ -284,6 +284,7 @@ export async function startRPC() {
     'start-daemon',
     {
       'server-address': `${RPC_BIND_HOST}:${RPC_BIND_PORT}`,
+      'electrum-rpc': getElectrumRpcUrl(),
     },
     async (logs) => {
       RPC_LOG_EVENT_EMITTER.emit(logs.filter(isCliLog));
