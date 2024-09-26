@@ -1,5 +1,8 @@
 import { ExtendedProviderStatus } from 'models/apiModel';
 
+const DEFAULT_MAINNET_ELECTRUM_RPC_URL = 'tcp://blockstream.info:110';
+const DEFAULT_TESTNET_ELECTRUM_RPC_URL = 'ssl://testnet.foundation.xyz:50002';
+
 export const isTestnet = () =>
   process.env.TESTNET?.toString().toLowerCase() === 'true';
 
@@ -49,3 +52,17 @@ export const getPlatform = () => {
       return 'linux';
   }
 };
+
+export function getElectrumRpcUrl(): string {
+  if (isTestnet()) {
+    // If running on testnet, return the testnet Electrum RPC URL from environment variable or use the default
+    return (
+      process.env.OVERRIDE_TESTNET_ELECTRUM_RPC_URL ??
+      DEFAULT_TESTNET_ELECTRUM_RPC_URL
+    );
+  }
+  // If running on mainnet, return the mainnet Electrum RPC URL from environment variable or use the default
+  return (
+    process.env.OVERRIDE_ELECTRUM_RPC_URL ?? DEFAULT_MAINNET_ELECTRUM_RPC_URL
+  );
+}
