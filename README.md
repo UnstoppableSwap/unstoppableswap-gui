@@ -1,7 +1,11 @@
 <br/>
 <p align="center">
-  <h3 align="center">UnstoppableSwap GUI</h3>
-
+  <h1>
+     <p align="center">
+    ⚠️ <strong>NOTICE:</strong> This repository has been moved to <a href="https://github.com/UnstoppableSwap/core">UnstoppableSwap/core</a>. Please refer to the new repository for the latest updates. ⚠️
+  </p>
+  </h1>
+ 
   <p align="center">
     Graphical User Interface (GUI) For Trustless Cross-Chain XMR<>BTC Atomic Swaps 
     <br/>
